@@ -4,6 +4,11 @@ from os.path import join
 import numpy as np
 import json
 from transformers import AdamW, get_linear_schedule_with_warmup
+from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
+from hgntransformers import (BertConfig, BertTokenizer, BertModel,
+                             RobertaConfig, RobertaTokenizer, RobertaModel,
+                             AlbertConfig, AlbertTokenizer, AlbertModel)
+
 from csr_mhqa.utils import load_encoder_model, compute_loss, convert_to_tokens
 from models.HGN import HierarchicalGraphNetwork
 import pytorch_lightning as pl
@@ -15,10 +20,7 @@ from csr_mhqa.data_processing import DataHelper
 from utils.jdutils import log_metrics
 import logging
 
-from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
-from hgntransformers import (BertConfig, BertTokenizer, BertModel,
-                             RobertaConfig, RobertaTokenizer, RobertaModel,
-                             AlbertConfig, AlbertTokenizer, AlbertModel)
+
 MODEL_CLASSES = {
     'bert': (BertConfig, BertModel, BertTokenizer),
     'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
