@@ -14,12 +14,10 @@ import itertools
 import spacy
 
 from spacy.tokenizer import Tokenizer
-from collections import Counter
 from tqdm import tqdm
 
 from model_envs import MODEL_CLASSES
-from envs import DATASET_FOLDER
-from csr_mhqa.data_processing import Example, InputFeatures, get_cached_filename
+from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
 from eval.hotpot_evaluate_v1 import normalize_answer
 from utils.jdutils import normalize_question
 
@@ -32,7 +30,6 @@ def custom_tokenizer(nlp):
 
 nlp = spacy.load("en_core_web_lg", disable=['tagger', 'parser'])
 nlp.tokenizer.infix_finditer = infix_re.finditer
-
 
 # nlp.tokenizer = custom_tokenizer(nlp)
 
@@ -62,7 +59,7 @@ def read_hotpot_examples(para_file,
 
         word_offset = 0
         for c in range(len(sent)):
-            if word_offset >= len(word_start_idx) - 1 or c < word_start_idx[word_offset + 1]:
+            if word_offset >= len(word_start_idx)-1 or c < word_start_idx[word_offset+1]:
                 char_to_word_offset.append(word_offset + offset)
             else:
                 char_to_word_offset.append(word_offset + offset + 1)
@@ -70,7 +67,10 @@ def read_hotpot_examples(para_file,
         return words, char_to_word_offset, word_start_idx
 
     max_sent_cnt, max_entity_cnt = 0, 0
-
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    max_token_cnt = 0
+    spacy_token_cnt_512 = 0
+    #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     examples = []
     for case in tqdm(full_data):
         key = case['_id']
@@ -103,8 +103,7 @@ def read_hotpot_examples(para_file,
         ctx_word_to_char_idx = []
 
         # process question entity span
-        # question_text = case['question']
-        question_text = normalize_question(case['question'])
+        question_text = case['question']
         question_tokens, ques_char_to_word_offset, ques_word_to_char_idx = split_sent(question_text)
         answer_norm = normalize_answer(case['answer'])
 
@@ -122,16 +121,22 @@ def read_hotpot_examples(para_file,
 
         sel_paras = para_data[key]
         ner_context = dict(ner_data[key]['context'])
+        #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        para_names = [] ## for paragraph evaluation and checking
+        #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         for title in itertools.chain.from_iterable(sel_paras):
             stripped_title = re.sub(r' \(.*?\)$', '', title)
             stripped_title_norm = normalize_answer(stripped_title)
+            ####++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            para_names.append(title)
+            ####++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
             sents = context[title]
             sents_ner = ner_context[title]
-            assert len(sents) == len(sents_ner)
+            assert len(sents) == len(sents_ner) ## the ners are extracted for each sentence
 
-            title_to_id[title] = title_id
+            title_to_id[title] = title_id ## all the selected documents in sequence
 
             para_start_position = len(doc_tokens)
             prev_sent_id = None
@@ -139,17 +144,17 @@ def read_hotpot_examples(para_file,
             ctx_answer_set = set()
             for local_sent_id, (sent, sent_ner) in enumerate(zip(sents, sents_ner)):
                 # Determine the global sent id for supporting facts
-                local_sent_name = (title, local_sent_id)
-                sent_to_id[local_sent_name] = sent_id
-                sent_names.append(local_sent_name)
+                local_sent_name = (title, local_sent_id)## pair of title and sent_id
+                sent_to_id[local_sent_name] = sent_id   ## local to global sent_id
+                sent_names.append(local_sent_name)      ## sent_names is a list of (title, sent_id) pair
 
-                # P -> S
+                # P -> S, connection between paragraph all its sentences (hierarchical structure)
                 p_s_edges.append((title_id, sent_id))
                 if prev_sent_id is not None:
-                    # S -> S
+                    # S -> S, the sentence in same para-graph are connected in sequence)
                     s_s_edges.append((prev_sent_id, sent_id))
 
-                sent += " "
+                sent += " " ## adding space at the end of each sentence
                 ctx_text += sent
                 sent_start_word_id = len(doc_tokens)
                 sent_start_char_id = len(ctx_char_to_word_offset)
@@ -157,6 +162,7 @@ def read_hotpot_examples(para_file,
                 prev_is_whitespace = True
                 cur_sent_words, cur_sent_char_to_word_offset, cur_sent_words_start_idx = split_sent(sent, offset=len(
                     doc_tokens))
+                # #+++++++++++++++++
                 doc_tokens.extend(cur_sent_words)
                 ctx_char_to_word_offset.extend(cur_sent_char_to_word_offset)
                 for cur_sent_word in cur_sent_words_start_idx:
@@ -237,6 +243,11 @@ def read_hotpot_examples(para_file,
 
         max_sent_cnt = max(max_sent_cnt, len(sent_start_end_position))
         max_entity_cnt = max(max_entity_cnt, len(ctx_entity_start_end_position))
+        #############################
+        max_token_cnt = max((max_token_cnt, len(doc_tokens)))
+        if len(doc_tokens) > 512:
+            spacy_token_cnt_512 = spacy_token_cnt_512 + 1
+        #############################
 
         if len(ans_start_position) > 1:
             # take the exact match for answer to avoid case of partial match
@@ -249,6 +260,7 @@ def read_hotpot_examples(para_file,
             start_position = ans_start_position
             end_position = ans_end_position
 
+        assert len(para_names) >= 2
         example = Example(
             qas_id=key,
             qas_type=qas_type,
@@ -279,20 +291,24 @@ def read_hotpot_examples(para_file,
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
+    print("Maximum token cnt: {} before tokenized".format(max_token_cnt))
+    print("Spacy tokenization leads to longer 512 {}".format(spacy_token_cnt_512))
 
     return examples
 
-
-def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_length, max_entity_num,
+def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_length, max_entity_num, model_type,
                                  cls_token='[CLS]',
                                  sep_token='[SEP]',
                                  is_roberta=False,
                                  filter_no_ans=False):
     features = []
     failed = 0
+    is_roberta = model_type in ['roberta']
+    ##############
+    tokenized_token_len_512 = 0
+    ##############
     for (example_index, example) in enumerate(tqdm(examples)):
-        def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens,
-                              orig_start_position, orig_end_position, orig_text):
+        def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens, orig_start_position, orig_end_position, orig_text):
             if orig_start_position is None:
                 return 0, 0
 
@@ -305,7 +321,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
             else:
                 tok_end_position = len(subword_tokens) - 1
             # Make answer span more accurate.
-            if is_roberta:  # hack for roberta now
+            if is_roberta: # hack for roberta now
                 tok_end_position = orig_to_tok_back_index[orig_end_position]
                 return tok_start_position, tok_end_position
             else:
@@ -332,22 +348,19 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
             ques_orig_to_tok_back_index.append(len(all_query_tokens) - 1)
 
         if is_roberta:
-            all_query_tokens = all_query_tokens[:max_query_length - 2]
-            tok_to_orig_index = tok_to_orig_index[:max_query_length - 2] + [-1, -1]
+            all_query_tokens = all_query_tokens[:max_query_length-2]
+            tok_to_orig_index = tok_to_orig_index[:max_query_length-2] + [-1, -1]
             # roberta uses an extra separator b/w pairs of sentences
             all_query_tokens += [sep_token, sep_token]
         else:
-            all_query_tokens = all_query_tokens[:max_query_length - 1]
-            tok_to_orig_index = tok_to_orig_index[:max_query_length - 1] + [-1]
+            all_query_tokens = all_query_tokens[:max_query_length-1]
+            tok_to_orig_index = tok_to_orig_index[:max_query_length-1] + [-1]
             all_query_tokens += [sep_token]
 
         entity_spans = []
         answer_candidates_ids = []
-        for q_ent_text, (q_ent_start, q_ent_end) in zip(example.ques_entities_text,
-                                                        example.ques_entity_start_end_position):
-            _start_pos, _end_pos = relocate_tok_span(ques_orig_to_tok_index, ques_orig_to_tok_back_index,
-                                                     example.question_tokens, all_query_tokens, q_ent_start, q_ent_end,
-                                                     q_ent_text)
+        for q_ent_text, (q_ent_start, q_ent_end) in zip(example.ques_entities_text, example.ques_entity_start_end_position):
+            _start_pos, _end_pos = relocate_tok_span(ques_orig_to_tok_index, ques_orig_to_tok_back_index, example.question_tokens, all_query_tokens, q_ent_start, q_ent_end, q_ent_text)
             if _start_pos < max_query_length and _end_pos < max_query_length:
                 entity_spans.append((_start_pos, _end_pos))
 
@@ -363,11 +376,19 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         for (i, token) in enumerate(example.doc_tokens):
             orig_to_tok_index.append(len(all_doc_tokens))
-            sub_tokens = tokenizer.tokenize(token, add_prefix_space=True)
+            if is_roberta:
+                sub_tokens = tokenizer.tokenize(token, add_prefix_space=True)
+            else:
+                sub_tokens = tokenizer.tokenize(token)
             for sub_token in sub_tokens:
-                tok_to_orig_index.append(i + len(example.question_tokens))
+                tok_to_orig_index.append(i+len(example.question_tokens))
                 all_doc_tokens.append(sub_token)
             orig_to_tok_back_index.append(len(all_doc_tokens) - 1)
+
+        ##############
+        if len(all_doc_tokens) > 512:
+            tokenized_token_len_512 = tokenized_token_len_512 + 1
+        ##############
 
         for sent_span in example.sent_start_end_position:
             if sent_span[0] >= len(orig_to_tok_index) or sent_span[0] >= sent_span[1]:
@@ -385,17 +406,14 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         # entity part
         q_entity_cnt = len(entity_spans)
-        answer_candidates_ids.extend(
-            list(range(q_entity_cnt)))  # all entities in question would be in the answer candidates
-        for c_ent_text, (c_ent_start, c_ent_end) in zip(example.ctx_entities_text,
-                                                        example.ctx_entity_start_end_position):
-            _start_pos, _end_pos = relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, example.doc_tokens,
-                                                     all_doc_tokens, c_ent_start, c_ent_end, c_ent_text)
+        answer_candidates_ids.extend(list(range(q_entity_cnt))) # all entities in question would be in the answer candidates
+        for c_ent_text, (c_ent_start, c_ent_end) in zip(example.ctx_entities_text, example.ctx_entity_start_end_position):
+            _start_pos, _end_pos = relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, example.doc_tokens, all_doc_tokens, c_ent_start, c_ent_end, c_ent_text)
             if _start_pos < max_seq_length and _end_pos < max_seq_length:
                 entity_spans.append((_start_pos, _end_pos))
         entity_spans = entity_spans[:max_entity_num]
 
-        sent_max_index = _largest_valid_index(sentence_spans, max_seq_length - 1)
+        sent_max_index = _largest_valid_index(sentence_spans, max_seq_length-1)
 
         if sent_max_index < len(sentence_spans):
             sentence_spans = sentence_spans[:sent_max_index]
@@ -429,7 +447,6 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                     if key == 'ent' and val >= max_entity_cnt:
                         res = True
                 return res
-
             edges = {}
             for keys, edge in example.edges.items():
                 if keys not in edges:
@@ -443,15 +460,14 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         # reassign entity id
         sent_ent_edges = []
         for _l, _r in edges['sent_ent']:
-            if _l < len(sentence_spans) and _r < len(entity_spans):
+            if _l < len(sentence_spans) and  _r < len(entity_spans):
                 sent_ent_edges.append((_l, _r + q_entity_cnt))
         edges['sent_ent'] = sent_ent_edges
 
         # answer part
         ans_start_position, ans_end_position = [], []
         for ans_start, ans_end in zip(example.start_position, example.end_position):
-            _start_pos, _end_pos = relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, example.doc_tokens,
-                                                     all_doc_tokens,
+            _start_pos, _end_pos = relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, example.doc_tokens, all_doc_tokens,
                                                      ans_start, ans_end, example.orig_answer_text)
             assert _start_pos <= _end_pos
             if _start_pos < len(all_doc_tokens) and _end_pos < len(all_doc_tokens):
@@ -481,7 +497,8 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
             assert answer_in_entity_ids[0] in answer_candidates_ids
 
         # Padding Document
-        all_doc_tokens = all_doc_tokens[:max_seq_length - 1] + [sep_token]
+        if len(all_doc_tokens) >= max_seq_length:
+            all_doc_tokens = all_doc_tokens[:max_seq_length - 1] + [sep_token]
         doc_input_ids = tokenizer.convert_tokens_to_ids(all_doc_tokens)
         query_input_ids = tokenizer.convert_tokens_to_ids(all_query_tokens)
 
@@ -527,6 +544,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         if filter_no_ans and ans_start_position[0] == 0 and ans_end_position[0] == 0:
             continue
 
+
         features.append(
             InputFeatures(qas_id=example.qas_id,
                           doc_tokens=all_doc_tokens,
@@ -552,8 +570,8 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                           start_position=ans_start_position,
                           end_position=ans_end_position)
         )
-    print(failed)
-
+    print('Number of failed examples = {}'.format(failed))
+    print('Number of tokenized seq length > 512: {}'.format(tokenized_token_len_512))
     return features
 
 
@@ -613,11 +631,10 @@ def create_graphs(case, max_para_num, max_sent_num, max_entity_num):
 
 def build_graph(args, examples, features, entity_num):
     examples_dict = {e.qas_id: e for e in examples}
-
     graphs = {}
     for case in tqdm(features):
         graph = create_graphs(case,
-                              max_para_num=4,
+                              max_para_num=args.max_para_num, #max_para_num=4,
                               max_sent_num=args.max_sent_num,
                               max_entity_num=entity_num)
         graphs[case.qas_id] = {'adj': graph}
@@ -627,7 +644,6 @@ def build_graph(args, examples, features, entity_num):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-
     # Required parameters
     parser.add_argument("--para_path", type=str, required=True)
     parser.add_argument("--full_data", type=str, required=True)
@@ -645,6 +661,7 @@ if __name__ == '__main__':
                         help="Path to pre-trained model")
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
+    parser.add_argument("--max_para_num", default=4, type=int)
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
@@ -658,6 +675,10 @@ if __name__ == '__main__':
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)
+    # if args.model_type in ['unifiedqa']:
+    #     tokenizer.sep_token = '</s>'
+    #     tokenizer.cls_token = '</s>'
+
 
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
@@ -674,7 +695,7 @@ if __name__ == '__main__':
                                             max_entity_num=args.max_entity_num,
                                             cls_token=tokenizer.cls_token,
                                             sep_token=tokenizer.sep_token,
-                                            is_roberta=bool(args.model_type in ['roberta']),
+                                            model_type=args.model_type,
                                             filter_no_ans=args.filter_no_ans)
     cached_features_file = os.path.join(args.output_dir,
                                         get_cached_filename('features', args))

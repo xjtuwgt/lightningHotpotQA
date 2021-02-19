@@ -15,6 +15,7 @@ def get_cached_filename(f_type, config):
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
 
 class Example(object):
+
     def __init__(self,
                  qas_id,
                  qas_type,
@@ -443,7 +444,6 @@ class HotpotDataset(Dataset):
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
         assert len(data) == len(sorted_idxs)
-        batch_size = len(data)
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         data = [data[_] for _ in sorted_idxs]
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
