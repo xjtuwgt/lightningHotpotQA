@@ -300,6 +300,8 @@ def read_hotpot_examples(para_file,
     return examples
 
 def unifiedqa_convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_length, max_entity_num,
+                                           cls_token='[CLS]',
+                                           sep_token='[SEP]',
                                  filter_no_ans=False):
     features = []
     failed = 0
@@ -329,9 +331,9 @@ def unifiedqa_convert_examples_to_features(examples, tokenizer, max_seq_length, 
             return _improve_answer_span(
                 subword_tokens, tok_start_position, tok_end_position, tokenizer, orig_text)
 
-        all_query_tokens = []
-        tok_to_orig_index = []
-        ques_tok_to_orig_index = []
+        all_query_tokens = [cls_token]
+        tok_to_orig_index = [-1]
+        ques_tok_to_orig_index = [0]
         ques_orig_to_tok_index = []
         ques_orig_to_tok_back_index = []
 
@@ -500,8 +502,8 @@ def unifiedqa_convert_examples_to_features(examples, tokenizer, max_seq_length, 
 
         # Padding Document
         if len(all_doc_tokens) >= max_seq_length:
-            # all_doc_tokens = all_doc_tokens[:max_seq_length - 1] + [sep_token]
-            all_doc_tokens = all_doc_tokens[:max_seq_length]
+            all_doc_tokens = all_doc_tokens[:max_seq_length - 1] + [sep_token]
+            # all_doc_tokens = all_doc_tokens[:max_seq_length]
         doc_input_ids = tokenizer.convert_tokens_to_ids(all_doc_tokens)
         query_input_ids = tokenizer.convert_tokens_to_ids(all_query_tokens)
 
@@ -696,6 +698,8 @@ if __name__ == '__main__':
                                             max_seq_length=args.max_seq_length,
                                             max_query_length=args.max_query_length,
                                             max_entity_num=args.max_entity_num,
+                                            cls_token=tokenizer.eos_token,
+                                            sep_token=tokenizer.eos_token,
                                             filter_no_ans=args.filter_no_ans)
     cached_features_file = os.path.join(args.output_dir,
                                         get_cached_filename('features', args))
