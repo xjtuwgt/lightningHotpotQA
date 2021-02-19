@@ -7,12 +7,12 @@ import sys
 from utils.gpu_utils import gpu_setting
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.lightningHGN import lightningHGN
-
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
-
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def gpu_id_setting(args):
     if torch.cuda.is_available():
         if args.gpus > 0:
@@ -26,19 +26,19 @@ def gpu_id_setting(args):
             args.gpu_list = gpu_list_str
             logging.info('gpu list = {}'.format(gpu_list_str))
     return args
-
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def trainer_builder(args):
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     logging.info("PyTorch Lighting Trainer constructing...")
     tb_logger = pl_loggers.TensorBoardLogger(save_dir=args.exp_name)
-    ####################################################################################################################
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     check_point_dir = args.exp_name
     checkpoint_callback = ModelCheckpoint(monitor='valid_loss',
                                           mode='min',
                                           save_top_k=-1,
                                           dirpath=check_point_dir,
                                           filename='HGN_hotpotQA-{epoch:02d}-{valid_loss:.4f}')
-    ####################################################################################################################
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if args.gpus > 0:
         gpu_list_str = args.gpu_list
         gpu_ids = [int(x) for x in gpu_list_str.split(',')]
@@ -61,8 +61,7 @@ def trainer_builder(args):
                              log_every_n_steps=args.logging_steps,
                              max_epochs=int(args.num_train_epochs))
     return trainer
-
-
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def set_args(cmd_argv):
     parser = default_train_parser()
     # args_config_provided = parser.parse_args(sys.argv[1:])
@@ -85,10 +84,10 @@ def set_args(cmd_argv):
     for a in args_dict:
         logger.info('%-28s  %s' % (a, args_dict[a]))
     return args
-
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def main(args):
     pl.seed_everything(args.seed)
-    #########################################################################
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     model = lightningHGN(args=args)
     model.prepare_data()
     model.setup()
@@ -98,9 +97,7 @@ def main(args):
         logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     logging.info('*' * 75)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    ####################################################################################################################
     trainer = trainer_builder(args=args)
-    ####################################################################################################################
     return trainer, model
 
 if __name__ == '__main__':
@@ -111,3 +108,4 @@ if __name__ == '__main__':
     args = set_args(cmd_argv=sys.argv[1:])
     trainer, model = main(args=args)
     trainer.fit(model=model)
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
