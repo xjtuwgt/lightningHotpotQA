@@ -66,6 +66,6 @@ for batch_idx, batch in enumerate(dev_loader):
 
     for idx, id in enumerate(ids):
         print(dev_example_dict[id].question_tokens)
-        print(tokenizer.decode(batch['context_idxs']))
+        print(tokenizer.decode(batch['context_idxs'][idx]))
     print(batch['context_lens'])
     # print(row['ids'])
