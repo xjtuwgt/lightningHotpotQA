@@ -30,6 +30,21 @@ def json_to_argv(json_file):
     return argv
 
 def set_seed(args):
+    ##+++++++++++++++++++++++
+    random_seed = args.seed + args.local_rank
+    ##+++++++++++++++++++++++
+    # random.seed(args.seed)
+    # np.random.seed(args.seed)
+    # torch.manual_seed(args.seed)
+    # if args.n_gpu > 0:
+    #     torch.cuda.manual_seed_all(args.seed)
+    random.seed(random_seed)
+    np.random.seed(random_seed)
+    torch.manual_seed(random_seed)
+    if args.n_gpu > 0:
+        torch.cuda.manual_seed_all(random_seed)
+
+def set_seed(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
