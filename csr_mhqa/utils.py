@@ -87,7 +87,7 @@ def compute_loss(args, batch, start, end, para, sent, ent, q_type):
         logging.info('Hhhhhhhhhhhhhhhhh {}'.format((loss_span, loss_type, loss_sup, loss_ent, loss_para)))
         start_list = start.tolist()
         for x_idx, x in enumerate(start_list):
-            print(x, batch['y2'][x_idx][x])
+            print(x, batch['y1'][x_idx][x])
         # logging.info(start)
         # logging.info(batch['y1'])
         # logging.info(criterion(start, batch['y1']))
