@@ -83,6 +83,9 @@ def compute_loss(args, batch, start, end, para, sent, ent, q_type):
 
     loss = loss_span + loss_type + loss_sup + loss_ent + loss_para
 
+    if loss_span > 1000:
+        logging.info('Hhhhhhhhhhhhhhhhh')
+
     return loss, loss_span, loss_type, loss_sup, loss_ent, loss_para
 
 
