@@ -58,5 +58,8 @@ def get_data_loader(dataset):
 dev_loader = get_data_loader(dataset=dev_dataloader)
 for batch_idx, batch in enumerate(dev_loader):
     row = batch
+    ids = batch['ids']
+    for id in ids:
+        print(dev_example_dict[id])
     print(row['context_lens'])
     # print(row['ids'])
