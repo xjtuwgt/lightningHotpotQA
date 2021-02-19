@@ -3,10 +3,10 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import loggers as pl_loggers
 import logging
 import torch
-import sys, os
+import sys
 from utils.gpu_utils import gpu_setting
 from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from lightningmodel.lightningHGN import lightningHGN
+from plmodels.lightningHGN import lightningHGN
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
