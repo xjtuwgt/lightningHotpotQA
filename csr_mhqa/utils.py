@@ -85,7 +85,7 @@ def compute_loss(args, batch, start, end, para, sent, ent, q_type):
 
     if loss_span > 1000:
         logging.info('Hhhhhhhhhhhhhhhhh {}'.format((loss_span, loss_type, loss_sup, loss_ent, loss_para)))
-        logging.info('y1', criterion(start, batch['y1'], 'y2', criterion(end, batch['y2']))
+        logging.info('y1', criterion(start, batch['y1']), 'y2', criterion(end, batch['y2']))
         logging.info('start', start, batch['y1'])
         logging.info('end', end, batch['y2'])
 
