@@ -644,3 +644,4 @@ class HotpotDataset(Dataset):
         return id, input_length, graphs, context_idxs, context_mask, segment_idxs, para_mapping, para_start_mapping, \
                para_end_mapping, para_mask, sent_mapping, sent_start_mapping, sent_end_mapping, sent_mask, ent_start_mapping, \
                ent_end_mapping, ent_mapping, ent_mask, is_gold_ent, ans_cand_mask, is_support, q_type, y1, y2, q_type
+
