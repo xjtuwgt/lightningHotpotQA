@@ -176,6 +176,9 @@ for epoch in train_iterator:
         if args.gradient_accumulation_steps > 1:
             for loss in loss_list:
                 loss = loss / args.gradient_accumulation_steps
+        print(loss)
+        if loss[0] > 100000:
+            print('hhhhhhhhhhhhhhhh')
         if args.fp16:
             with amp.scale_loss(loss_list[0], optimizer) as scaled_loss:
                 scaled_loss.backward()
