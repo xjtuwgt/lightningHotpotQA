@@ -3,6 +3,7 @@ import os
 from os.path import join
 import numpy as np
 import json
+from transformers import AdamW, get_linear_schedule_with_warmup
 from csr_mhqa.utils import load_encoder_model, compute_loss, convert_to_tokens
 from models.HGN import HierarchicalGraphNetwork
 import pytorch_lightning as pl
@@ -10,7 +11,6 @@ import torch.nn.functional as F
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 import shutil
 from argparse import Namespace
-from transformers import AdamW, get_linear_schedule_with_warmup
 from csr_mhqa.data_processing import DataHelper
 from utils.jdutils import log_metrics
 import logging
