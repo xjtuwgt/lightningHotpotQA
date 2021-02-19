@@ -85,19 +85,17 @@ def compute_loss(args, batch, start, end, para, sent, ent, q_type):
 
     if loss_span > 1000:
         logging.info('Hhhhhhhhhhhhhhhhh {}'.format((loss_span, loss_type, loss_sup, loss_ent, loss_para)))
-        start_list = start.tolist()
-        print(start_list)
-        print(batch['y1'].shape)
-        # for x_idx, x in enumerate(start_list):
-        #     print(x, batch['y1'][x_idx][x])
+        start_list = batch['y1'].tolist()
+        for x_idx, x in enumerate(start_list):
+            print(x, start[x_idx][x])
         # logging.info(start)
         # logging.info(batch['y1'])
         # logging.info(criterion(start, batch['y1']))
         logging.info('*' * 10)
         # logging.info(end)
-        # end_list = end.tolist()
-        # for x_idx, x in enumerate(end_list):
-        #     print(x, batch['y2'][x_idx][x])
+        end_list = batch['y2'].tolist()
+        for x_idx, x in enumerate(end_list):
+            print(x, end[x_idx][x])
         # logging.info(batch['y2'])
         # logging.info(criterion(end, batch['y2']))
 
