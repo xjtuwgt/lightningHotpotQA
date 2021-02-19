@@ -9,7 +9,7 @@ from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import *
 
 from models.HGN import *
-from model_envs import MODEL_CLASSES, ALL_MODELS
+from model_envs import MODEL_CLASSES
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',

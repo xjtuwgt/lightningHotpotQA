@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from torch import nn
 from tqdm import tqdm
 
-from model_envs import MODEL_CLASSES, ALL_MODELS
+from model_envs import MODEL_CLASSES
 from hgntransformers.tokenization_bert import whitespace_tokenize, BasicTokenizer, BertTokenizer
 from hgntransformers import AdamW
 from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
