@@ -48,7 +48,7 @@ dev_dataloader = helper.dev_loader
 def get_data_loader(dataset):
     dataloader = DataLoader(
         dataset=dataset,
-        batch_size=4,
+        batch_size=16,
         shuffle=False,
         num_workers=max(1, 6),
         collate_fn=HotpotDataset.collate_fn
