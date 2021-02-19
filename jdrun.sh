@@ -65,10 +65,10 @@ preprocess() {
 #        # switch to RoBERTa for final leaderboard
 #        python scripts/3_paragraph_ranking.py --data_dir $OUTPUT_PROCESSED --eval_ckpt $DATA_ROOT/models/finetuned/PS/pytorch_model.bin --raw_data $INPUT_FILE --input_data $OUTPUT_PROCESSED/hotpot_ss_$DATA_TYPE.csv --model_name_or_path roberta-large --model_type roberta --max_seq_length 256 --per_gpu_eval_batch_size 128 --fp16
 #
-        echo "4. MultiHop Paragraph Selection"
-        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, para_ranking.json
-        # Output: multihop_para.json
-        python scripts/4_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/para_ranking.json $OUTPUT_PROCESSED/multihop_para.json
+#        echo "4. MultiHop Paragraph Selection"
+#        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, para_ranking.json
+#        # Output: multihop_para.json
+#        python scripts/4_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/para_ranking.json $OUTPUT_PROCESSED/multihop_para.json
 
         echo "5. Dump features"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --raw_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json
