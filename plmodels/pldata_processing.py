@@ -1,14 +1,10 @@
 import gzip
 import pickle
-import json
 import torch
 import numpy as np
-import os
 
 from os.path import join
-from tqdm import tqdm
 from torch.utils.data import Dataset
-from numpy.random import shuffle
 
 from envs import DATASET_FOLDER
 
@@ -16,7 +12,6 @@ IGNORE_INDEX = -100
 
 def get_cached_filename(f_type, config):
     assert f_type in ['examples', 'features', 'graphs']
-
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
 
 class Example(object):
@@ -128,212 +123,9 @@ class InputFeatures(object):
         self.start_position = start_position
         self.end_position = end_position
 
-
-
-
-class DataIteratorPack(object):
-    def __init__(self,
-                 features, example_dict, graph_dict,
-                 bsz, device,
-                 para_limit, sent_limit, ent_limit, ans_ent_limit,
-                 mask_edge_types,
-                 sequential=False):
-        self.bsz = bsz
-        self.device = device
-        self.features = features
-        self.example_dict = example_dict
-        self.graph_dict = graph_dict
-        self.sequential = sequential
-        self.para_limit = para_limit
-        self.sent_limit = sent_limit
-        self.ent_limit = ent_limit
-        self.ans_ent_limit = ans_ent_limit
-        self.graph_nodes_num = 1 + para_limit + sent_limit + ent_limit
-        self.example_ptr = 0
-        self.mask_edge_types = mask_edge_types
-        self.max_seq_length = 512
-        if not sequential:
-            shuffle(self.features)
-
-    def refresh(self):
-        self.example_ptr = 0
-        if not self.sequential:
-            shuffle(self.features)
-
-    def empty(self):
-        return self.example_ptr >= len(self.features)
-
-    def __len__(self):
-        return int(np.ceil(len(self.features)/self.bsz))
-
-    def __iter__(self):
-        # BERT input
-        context_idxs = torch.LongTensor(self.bsz, self.max_seq_length)
-        context_mask = torch.LongTensor(self.bsz, self.max_seq_length)
-        segment_idxs = torch.LongTensor(self.bsz, self.max_seq_length)
-
-        # Mappings
-        query_mapping = torch.Tensor(self.bsz, self.max_seq_length).cuda(self.device)
-        para_start_mapping = torch.Tensor(self.bsz, self.para_limit, self.max_seq_length).cuda(self.device)
-        para_end_mapping = torch.Tensor(self.bsz, self.para_limit, self.max_seq_length).cuda(self.device)
-        para_mapping = torch.Tensor(self.bsz, self.max_seq_length, self.para_limit).cuda(self.device)
-        sent_start_mapping = torch.Tensor(self.bsz, self.sent_limit, self.max_seq_length).cuda(self.device)
-        sent_end_mapping = torch.Tensor(self.bsz, self.sent_limit, self.max_seq_length).cuda(self.device)
-        sent_mapping = torch.Tensor(self.bsz, self.max_seq_length, self.sent_limit).cuda(self.device)
-        ent_start_mapping = torch.Tensor(self.bsz, self.ent_limit, self.max_seq_length).cuda(self.device)
-        ent_end_mapping = torch.Tensor(self.bsz, self.ent_limit, self.max_seq_length).cuda(self.device)
-        ent_mapping = torch.Tensor(self.bsz, self.max_seq_length, self.ent_limit).cuda(self.device)
-
-        # Mask
-        para_mask = torch.FloatTensor(self.bsz, self.para_limit).cuda(self.device)
-        sent_mask = torch.FloatTensor(self.bsz, self.sent_limit).cuda(self.device)
-        ent_mask = torch.FloatTensor(self.bsz, self.ent_limit).cuda(self.device)
-        ans_cand_mask = torch.FloatTensor(self.bsz, self.ent_limit).cuda(self.device)
-
-        # Label tensor
-        y1 = torch.LongTensor(self.bsz).cuda(self.device)
-        y2 = torch.LongTensor(self.bsz).cuda(self.device)
-        q_type = torch.LongTensor(self.bsz).cuda(self.device)
-        is_support = torch.FloatTensor(self.bsz, self.sent_limit).cuda(self.device)
-        is_gold_para = torch.FloatTensor(self.bsz, self.para_limit).cuda(self.device)
-        is_gold_ent = torch.FloatTensor(self.bsz).cuda(self.device)
-
-        # Graph related
-        graphs = torch.Tensor(self.bsz, self.graph_nodes_num, self.graph_nodes_num).cuda(self.device)
-
-        while True:
-            if self.example_ptr >= len(self.features):
-                break
-            start_id = self.example_ptr
-            cur_bsz = min(self.bsz, len(self.features) - start_id)
-            cur_batch = self.features[start_id: start_id + cur_bsz]
-            cur_batch.sort(key=lambda x: sum(x.doc_input_mask), reverse=True)
-
-            ids = []
-            for mapping in [para_mapping, para_start_mapping, para_end_mapping, \
-                            sent_mapping, sent_start_mapping, sent_end_mapping, \
-                            ent_mapping, ent_start_mapping, ent_end_mapping, \
-                            ans_cand_mask,
-                            query_mapping]:
-                mapping.zero_()
-
-            is_support.fill_(IGNORE_INDEX)
-            is_gold_para.fill_(IGNORE_INDEX)
-            is_gold_ent.fill_(IGNORE_INDEX)
-
-            for i in range(len(cur_batch)):
-                case = cur_batch[i]
-                context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
-                context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
-                segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
-
-                if len(case.sent_spans) > 0:
-                    for j in range(case.sent_spans[0][0] - 1):
-                        query_mapping[i, j] = 1
-
-                for j, para_span in enumerate(case.para_spans[:self.para_limit]):
-                    is_gold_flag = j in case.sup_para_ids
-                    start, end, _ = para_span
-                    if start <= end:
-                        end = min(end, self.max_seq_length-1)
-                        is_gold_para[i, j] = int(is_gold_flag)
-                        para_mapping[i, start:end+1, j] = 1
-                        para_start_mapping[i, j, start] = 1
-                        para_end_mapping[i, j, end] = 1
-
-                for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
-                    is_sp_flag = j in case.sup_fact_ids
-                    start, end = sent_span
-                    if start <= end:
-                        end = min(end, self.max_seq_length-1)
-                        is_support[i, j] = int(is_sp_flag)
-                        sent_mapping[i, start:end+1, j] = 1
-                        sent_start_mapping[i, j, start] = 1
-                        sent_end_mapping[i, j, end] = 1
-
-                for j, ent_span in enumerate(case.entity_spans[:self.ent_limit]):
-                    start, end = ent_span
-                    if start <= end:
-                        end = min(end, self.max_seq_length-1)
-                        ent_mapping[i, start:end+1, j] = 1
-                        ent_start_mapping[i, j, start] = 1
-                        ent_end_mapping[i, j, end] = 1
-                    ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
-
-                is_gold_ent[i] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX
-
-                if case.ans_type == 0 or case.ans_type == 3:
-                    if len(case.end_position) == 0:
-                        y1[i] = y2[i] = 0
-                    elif case.end_position[0] < self.max_seq_length and context_mask[i][case.end_position[0]+1] == 1: # "[SEP]" is the last token
-                        y1[i] = case.start_position[0]
-                        y2[i] = case.end_position[0]
-                    else:
-                        y1[i] = y2[i] = 0
-                    q_type[i] = case.ans_type if is_gold_ent[i] > 0 else 0
-                elif case.ans_type == 1:
-                    y1[i] = IGNORE_INDEX
-                    y2[i] = IGNORE_INDEX
-                    q_type[i] = 1
-                elif case.ans_type == 2:
-                    y1[i] = IGNORE_INDEX
-                    y2[i] = IGNORE_INDEX
-                    q_type[i] = 2
-                # ignore entity loss if there is no entity
-                if case.ans_type != 3:
-                    is_gold_ent[i].fill_(IGNORE_INDEX)
-
-                tmp_graph = self.graph_dict[case.qas_id]
-                graph_adj = torch.from_numpy(tmp_graph['adj']).to(self.device)
-                for k in range(graph_adj.size(0)):
-                    graph_adj[k, k] = 8
-                for edge_type in self.mask_edge_types:
-                    graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
-                graphs[i] = graph_adj
-
-                ids.append(case.qas_id)
-
-            input_lengths = (context_mask[:cur_bsz] > 0).long().sum(dim=1)
-            max_c_len = int(input_lengths.max())
-
-            para_mask = (para_mapping > 0).any(1).float()
-            sent_mask = (sent_mapping > 0).any(1).float()
-            ent_mask = (ent_mapping > 0).any(1).float()
-
-            self.example_ptr += cur_bsz
-
-            yield {
-                'context_idxs': context_idxs[:cur_bsz, :max_c_len].contiguous().to(self.device),
-                'context_mask': context_mask[:cur_bsz, :max_c_len].contiguous().to(self.device),
-                'segment_idxs': segment_idxs[:cur_bsz, :max_c_len].contiguous().to(self.device),
-                'context_lens': input_lengths.contiguous().to(self.device),
-                'y1': y1[:cur_bsz],
-                'y2': y2[:cur_bsz],
-                'ids': ids,
-                'q_type': q_type[:cur_bsz],
-                'is_support': is_support[:cur_bsz, :].contiguous(),
-                'is_gold_para': is_gold_para[:cur_bsz, :].contiguous(),
-                'is_gold_ent': is_gold_ent[:cur_bsz].contiguous(),
-                'query_mapping': query_mapping[:cur_bsz, :max_c_len].contiguous(),
-                'para_mapping': para_mapping[:cur_bsz, :max_c_len, :],
-                'para_start_mapping': para_start_mapping[:cur_bsz, :, :max_c_len],
-                'para_end_mapping': para_end_mapping[:cur_bsz, :, :max_c_len],
-                'para_mask': para_mask[:cur_bsz, :],
-                'sent_mapping': sent_mapping[:cur_bsz, :max_c_len, :],
-                'sent_start_mapping': sent_start_mapping[:cur_bsz, :, :max_c_len],
-                'sent_end_mapping': sent_end_mapping[:cur_bsz, :, :max_c_len],
-                'sent_mask': sent_mask[:cur_bsz, :],
-                'ent_mapping': ent_mapping[:cur_bsz, :max_c_len, :],
-                'ent_start_mapping': ent_start_mapping[:cur_bsz, :, :max_c_len],
-                'ent_end_mapping': ent_end_mapping[:cur_bsz, :, :max_c_len],
-                'ent_mask': ent_mask[:cur_bsz, :],
-                'ans_cand_mask': ans_cand_mask[:cur_bsz, :],
-                'graphs': graphs[:cur_bsz, :, :]
-            }
-
 class DataHelper:
     def __init__(self, gz=True, config=None):
-        self.DataIterator = DataIteratorPack
+        self.Dataset = HotpotDataset
         self.gz = gz
         self.suffix = '.pkl.gz' if gz else '.pkl'
 
@@ -462,27 +254,21 @@ class DataHelper:
 
     @property
     def dev_loader(self):
-        return self.DataIterator(*self.load_dev(),
-                                 bsz=self.config.eval_batch_size,
-                                 device=self.config.device,
+        return self.Dataset(*self.load_dev(),
                                  para_limit=self.config.max_para_num,
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
-                                 mask_edge_types=self.config.mask_edge_types,
-                                 sequential=True)
+                                 mask_edge_types=self.config.mask_edge_types)
 
     @property
     def train_loader(self):
-        return self.DataIterator(*self.load_train(),
-                                 bsz=self.config.batch_size,
-                                 device=self.config.device,
+        return self.Dataset(*self.load_train(),
                                  para_limit=self.config.max_para_num,
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
-                                 mask_edge_types=self.config.mask_edge_types,
-                                 sequential=False)
+                                 mask_edge_types=self.config.mask_edge_types)
 
 
 class HotpotDataset(Dataset):
@@ -504,144 +290,181 @@ class HotpotDataset(Dataset):
 
     def __getitem__(self, idx):
         # BERT input
-        # context_idxs = torch.LongTensor(self.bsz, self.max_seq_length)
-        # context_mask = torch.LongTensor(self.bsz, self.max_seq_length)
-        # segment_idxs = torch.LongTensor(self.bsz, self.max_seq_length)
-        context_idxs = torch.zeros(self.max_seq_length, dtype=torch.float)
-        context_mask = torch.zeros(self.max_seq_length, dtype=torch.float)
-        segment_idxs = torch.zeros(self.max_seq_length, dtype=torch.float)
+        context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.float)
+        context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.float)
+        segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.float)
 
         # Mappings
-        # query_mapping = torch.Tensor(self.bsz, self.max_seq_length).cuda(self.device)
-        query_mapping = torch.zeros(self.max_seq_length, dtype=torch.float)
+        query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
+        para_start_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
+        para_end_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
+        para_mapping = torch.zeros(1, self.max_seq_length, self.para_limit, dtype=torch.float)
 
-        # para_start_mapping = torch.Tensor(self.bsz, self.para_limit, self.max_seq_length).cuda(self.device)
-        # para_end_mapping = torch.Tensor(self.bsz, self.para_limit, self.max_seq_length).cuda(self.device)
-        # para_mapping = torch.Tensor(self.bsz, self.max_seq_length, self.para_limit).cuda(self.device)
-        para_start_mapping = torch.zeros(self.para_limit, self.max_seq_length, dtype=torch.float)
-        para_end_mapping = torch.zeros(self.para_limit, self.max_seq_length, dtype=torch.float)
-        para_mapping = torch.zeros(self.max_seq_length, self.para_limit, dtype=torch.float)
+        sent_start_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
+        sent_end_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
+        sent_mapping = torch.zeros(1, self.max_seq_length, self.sent_limit, dtype=torch.float)
 
-        # sent_start_mapping = torch.Tensor(self.bsz, self.sent_limit, self.max_seq_length).cuda(self.device)
-        # sent_end_mapping = torch.Tensor(self.bsz, self.sent_limit, self.max_seq_length).cuda(self.device)
-        # sent_mapping = torch.Tensor(self.bsz, self.max_seq_length, self.sent_limit).cuda(self.device)
-        sent_start_mapping = torch.zeros(self.sent_limit, self.max_seq_length, dtype=torch.float)
-        sent_end_mapping = torch.zeros(self.sent_limit, self.max_seq_length, dtype=torch.float)
-        sent_mapping = torch.zeros(self.max_seq_length, self.sent_limit, dtype=torch.float)
-
-        # ent_start_mapping = torch.Tensor(self.bsz, self.ent_limit, self.max_seq_length).cuda(self.device)
-        # ent_end_mapping = torch.Tensor(self.bsz, self.ent_limit, self.max_seq_length).cuda(self.device)
-        # ent_mapping = torch.Tensor(self.bsz, self.max_seq_length, self.ent_limit).cuda(self.device)
-        ent_start_mapping = torch.zeros(self.ent_limit, self.max_seq_length, dtype=torch.float)
-        ent_end_mapping = torch.zeros(self.ent_limit, self.max_seq_length, dtype=torch.float)
-        ent_mapping = torch.zeros(self.max_seq_length, self.ent_limit, dtype=torch.float)
+        ent_start_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
+        ent_end_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
+        ent_mapping = torch.zeros(1, self.max_seq_length, self.ent_limit, dtype=torch.float)
 
         # Mask
-        # para_mask = torch.FloatTensor(self.bsz, self.para_limit).cuda(self.device)
-        # sent_mask = torch.FloatTensor(self.bsz, self.sent_limit).cuda(self.device)
-        # ent_mask = torch.FloatTensor(self.bsz, self.ent_limit).cuda(self.device)
-        # ans_cand_mask = torch.FloatTensor(self.bsz, self.ent_limit).cuda(self.device)
-        para_mask = torch.zeros(self.para_limit, dtype=torch.float)
-        sent_mask = torch.zeros(self.sent_limit, dtype=torch.float)
-        ent_mask = torch.zeros(self.ent_limit, dtype=torch.float)
-        ans_cand_mask = torch.zeros(self.ent_limit, dtype=torch.float)
+        para_mask = torch.zeros(1, self.para_limit, dtype=torch.float)
+        sent_mask = torch.zeros(1, self.sent_limit, dtype=torch.float)
+        ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
+        ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
 
         # Label tensor
-        # y1 = torch.LongTensor(self.bsz).cuda(self.device)
-        # y2 = torch.LongTensor(self.bsz).cuda(self.device)
-        # q_type = torch.LongTensor(self.bsz).cuda(self.device)
-        # is_support = torch.FloatTensor(self.bsz, self.sent_limit).cuda(self.device)
-        # is_gold_para = torch.FloatTensor(self.bsz, self.para_limit).cuda(self.device)
-        # is_gold_ent = torch.FloatTensor(self.bsz).cuda(self.device)
         y1 = torch.zeros(1, dtype=torch.long)
         y2 = torch.zeros(1, dtype=torch.long)
         q_type = torch.zeros(1, dtype=torch.long)
-        is_support = torch.zeros(self.sent_limit, dtype=torch.float)
-        is_gold_para = torch.zeros(self.para_limit, dtype=torch.float)
+        is_support = torch.zeros(1, self.sent_limit, dtype=torch.float)
+        is_gold_para = torch.zeros(1, self.para_limit, dtype=torch.float)
         is_gold_ent = torch.zeros(1, dtype=torch.float)
 
         # Graph related
-        # graphs = torch.Tensor(self.bsz, self.graph_nodes_num, self.graph_nodes_num).cuda(self.device)
-        graphs = torch.zeros(self.graph_nodes_num, self.graph_nodes_num, dtype=torch.float)
+        graphs = torch.zeros(1, self.graph_nodes_num, self.graph_nodes_num, dtype=torch.float)
         is_support.fill_(IGNORE_INDEX)
         is_gold_para.fill_(IGNORE_INDEX)
         is_gold_ent.fill_(IGNORE_INDEX)
         ################################################################################################################
         case = self.features[idx]
-        context_idxs.copy_(torch.Tensor(case.doc_input_ids))
-        context_mask.copy_(torch.Tensor(case.doc_input_mask))
-        segment_idxs.copy_(torch.Tensor(case.doc_segment_ids))
+        ################################################################################################################
+        i = 0
+        context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
+        context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
+        segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
+
         if len(case.sent_spans) > 0:
             for j in range(case.sent_spans[0][0] - 1):
-                query_mapping[j] = 1
+                query_mapping[i, j] = 1
 
         for j, para_span in enumerate(case.para_spans[:self.para_limit]):
             is_gold_flag = j in case.sup_para_ids
             start, end, _ = para_span
             if start <= end:
                 end = min(end, self.max_seq_length - 1)
-                is_gold_para[j] = int(is_gold_flag)
-                para_mapping[start:end + 1, j] = 1
-                para_start_mapping[j, start] = 1
-                para_end_mapping[j, end] = 1
+                is_gold_para[i, j] = int(is_gold_flag)
+                para_mapping[i, start:end + 1, j] = 1
+                para_start_mapping[i, j, start] = 1
+                para_end_mapping[i, j, end] = 1
 
         for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
             is_sp_flag = j in case.sup_fact_ids
             start, end = sent_span
             if start <= end:
                 end = min(end, self.max_seq_length - 1)
-                is_support[j] = int(is_sp_flag)
-                sent_mapping[start:end + 1, j] = 1
-                sent_start_mapping[j, start] = 1
-                sent_end_mapping[j, end] = 1
+                is_support[i, j] = int(is_sp_flag)
+                sent_mapping[i, start:end + 1, j] = 1
+                sent_start_mapping[i, j, start] = 1
+                sent_end_mapping[i, j, end] = 1
 
         for j, ent_span in enumerate(case.entity_spans[:self.ent_limit]):
             start, end = ent_span
             if start <= end:
                 end = min(end, self.max_seq_length - 1)
-                ent_mapping[start:end + 1, j] = 1
-                ent_start_mapping[j, start] = 1
-                ent_end_mapping[j, end] = 1
-            ans_cand_mask[j] = int(j in case.answer_candidates_ids)
+                ent_mapping[i, start:end + 1, j] = 1
+                ent_start_mapping[i, j, start] = 1
+                ent_end_mapping[i, j, end] = 1
+            ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
 
-        is_gold_ent[0] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX
+        is_gold_ent[i] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX ## no need for loss computation
 
         if case.ans_type == 0 or case.ans_type == 3:
             if len(case.end_position) == 0:
-                y1[0] = y2[0] = 0
-            elif case.end_position[0] < self.max_seq_length and context_mask[
+                y1[i] = y2[i] = 0
+            elif case.end_position[0] < self.max_seq_length and context_mask[i][
                 case.end_position[0] + 1] == 1:  # "[SEP]" is the last token
-                y1[0] = case.start_position[0]
-                y2[0] = case.end_position[0]
+                y1[i] = case.start_position[0]
+                y2[i] = case.end_position[0]
             else:
-                y1[0] = y2[0] = 0
-            q_type[0] = case.ans_type if is_gold_ent[0] > 0 else 0
+                y1[i] = y2[i] = 0
+            q_type[i] = case.ans_type if is_gold_ent[i] > 0 else 0
         elif case.ans_type == 1:
-            y1[0] = IGNORE_INDEX
-            y2[0] = IGNORE_INDEX
-            q_type[0] = 1
+            y1[i] = IGNORE_INDEX
+            y2[i] = IGNORE_INDEX
+            q_type[i] = 1
         elif case.ans_type == 2:
-            y1[0] = IGNORE_INDEX
-            y2[0] = IGNORE_INDEX
-            q_type[0] = 2
+            y1[i] = IGNORE_INDEX
+            y2[i] = IGNORE_INDEX
+            q_type[i] = 2
         # ignore entity loss if there is no entity
         if case.ans_type != 3:
-            is_gold_ent[0].fill_(IGNORE_INDEX)
+            is_gold_ent[i].fill_(IGNORE_INDEX)
 
         tmp_graph = self.graph_dict[case.qas_id]
-        graph_adj = torch.from_numpy(tmp_graph['adj'])
+        graph_adj = torch.from_numpy(tmp_graph['adj']).to(self.device)
         for k in range(graph_adj.size(0)):
             graph_adj[k, k] = 8
         for edge_type in self.mask_edge_types:
             graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
-        graphs = graph_adj
+        graphs[i] = graph_adj
+
         id = case.qas_id
-        input_length = (context_mask > 0).long().sum()
-        para_mask = (para_mapping > 0).any(1).float()
+        input_length = (context_mask > 0).long().sum(dim=1)[0]
+        para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
         sent_mask = (sent_mapping > 0).any(1).float()
         ent_mask = (ent_mapping > 0).any(1).float()
 
-        return id, input_length, graphs, context_idxs, context_mask, segment_idxs, para_mapping, para_start_mapping, \
-               para_end_mapping, para_mask, sent_mapping, sent_start_mapping, sent_end_mapping, sent_mask, ent_start_mapping, \
-               ent_end_mapping, ent_mapping, ent_mask, is_gold_ent, ans_cand_mask, is_support, q_type, y1, y2, q_type
+        res = {
+            'context_idxs': context_idxs,
+            'context_mask': context_mask,
+            'segment_idxs': segment_idxs,
+            'context_lens': input_length,
+            'y1': y1,
+            'y2': y2,
+            'ids': id,
+            'q_type': q_type,
+            'is_support': is_support,
+            'is_gold_para': is_gold_para,
+            'is_gold_ent': is_gold_ent,
+            'query_mapping': query_mapping,
+            'para_mapping': para_mapping,
+            'para_start_mapping': para_start_mapping,
+            'para_end_mapping': para_end_mapping,
+            'para_mask': para_mask,
+            'sent_mapping': sent_mapping,
+            'sent_start_mapping': sent_start_mapping,
+            'sent_end_mapping': sent_end_mapping,
+            'sent_mask': sent_mask,
+            'ent_mapping': ent_mapping,
+            'ent_start_mapping': ent_start_mapping,
+            'ent_end_mapping': ent_end_mapping,
+            'ent_mask': ent_mask,
+            'ans_cand_mask': ans_cand_mask,
+            'graphs': graphs
+        }
+        return res ## 26 elements
 
+    @staticmethod
+    def collate_fn(data):
+        assert len(data[0]) == 26
+        context_lens_np = np.array([_['context_lens'] for _ in data])
+        max_c_len = context_lens_np.max()
+        sorted_idxs = np.argsort(context_lens_np)[::-1]
+        assert len(data) == len(sorted_idxs)
+        batch_size = len(data)
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        data = [data[_] for _ in sorted_idxs]
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        data_keys = data[0].keys()
+        batch_data = {}
+        for key in data_keys:
+            if key in {'ids'}:
+                batch_data[key] = [_[key] for _ in data]
+            elif key in {'context_lens'}:
+                batch_data[key] = torch.LongTensor([_[key] for _ in data])
+            else:
+                batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
+        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
+        for key in trim_keys:
+            batch_data[key] = batch_data[key][:,:max_c_len]
+        trim_map_keys = ['para_mapping', 'sent_mapping', 'ent_mapping']
+        for key in trim_map_keys:
+            batch_data[key] = batch_data[key][:,:max_c_len,:]
+        trim_start_end_keys = ['para_start_mapping', 'para_end_mapping',
+                               'sent_start_mapping', 'sent_end_mapping',
+                               'ent_start_mapping', 'ent_end_mapping']
+        for key in trim_start_end_keys:
+            batch_data[key] = batch_data[key][:, :, :max_c_len]
+        return batch_data
