@@ -58,4 +58,4 @@ def get_data_loader(dataset):
 dev_loader = get_data_loader(dataset=dev_dataloader)
 for batch_idx, batch in enumerate(dev_loader):
     row = batch
-    print(batch_idx)
+    print(row['ids'])
