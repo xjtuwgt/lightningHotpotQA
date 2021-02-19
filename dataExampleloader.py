@@ -3,6 +3,7 @@ import sys
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper, HotpotDataset
 import logging
+from model_envs import MODEL_CLASSES
 from torch.utils.data import DataLoader
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -45,6 +46,10 @@ dev_example_dict = helper.dev_example_dict
 dev_feature_dict = helper.dev_feature_dict
 dev_dataloader = helper.dev_loader
 
+_, _, tokenizer_class = MODEL_CLASSES[args.model_type]
+tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
+                                            do_lower_case=args.do_lower_case)
+
 def get_data_loader(dataset):
     dataloader = DataLoader(
         dataset=dataset,
@@ -57,9 +62,10 @@ def get_data_loader(dataset):
 
 dev_loader = get_data_loader(dataset=dev_dataloader)
 for batch_idx, batch in enumerate(dev_loader):
-    row = batch
     ids = batch['ids']
-    for id in ids:
-        print(dev_example_dict[id])
-    print(row['context_lens'])
+
+    for idx, id in enumerate(ids):
+        print(dev_example_dict[id].question_tokens)
+        print(tokenizer.decode(batch['context_idxs']))
+    print(batch['context_lens'])
     # print(row['ids'])
