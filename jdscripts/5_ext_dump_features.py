@@ -668,7 +668,9 @@ if __name__ == '__main__':
                         help="Set this flag if you are using an uncased model.")
     args = parser.parse_args()
 
-
+    for key, value in vars(args).items():
+        print('{}:\t{}'.format(key, value))
+    print('*' * 75)
 
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
