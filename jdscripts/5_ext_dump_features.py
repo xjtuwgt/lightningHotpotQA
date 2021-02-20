@@ -296,7 +296,7 @@ def read_hotpot_examples(para_file,
 
     return examples
 
-def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_length, max_entity_num, model_type,
+def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_length, max_entity_num,
                                  cls_token='[CLS]',
                                  sep_token='[SEP]',
                                  is_roberta=False,
@@ -687,13 +687,18 @@ if __name__ == '__main__':
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)
+    model_type = args.model_type
+    if 'roberta' in model_type:
+        is_roberta = True
+    else:
+        is_roberta = False
     features = convert_examples_to_features(examples, tokenizer,
                                             max_seq_length=args.max_seq_length,
                                             max_query_length=args.max_query_length,
                                             max_entity_num=args.max_entity_num,
                                             cls_token=tokenizer.cls_token,
                                             sep_token=tokenizer.sep_token,
-                                            model_type=args.model_type,
+                                            is_roberta=is_roberta,
                                             filter_no_ans=args.filter_no_ans)
     cached_features_file = os.path.join(args.output_dir,
                                         get_cached_filename('features', args))
