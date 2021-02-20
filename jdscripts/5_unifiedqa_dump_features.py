@@ -395,8 +395,10 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         sent_max_index = _largest_valid_index(sentence_spans, max_seq_length - 1)
 
-        if len(sentence_spans) <= 0:
+        if sent_max_index <= 0:
             print('Example id = {}'.format(example.qas_id))
+            print(sentence_spans)
+            print('example = {}'.format(example.doc_tokens))
             print('*'*75)
 
 
