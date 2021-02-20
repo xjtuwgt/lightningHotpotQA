@@ -299,7 +299,7 @@ def read_hotpot_examples(para_file,
 def unifiedqa_convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_length, max_entity_num,
                                            cls_token='[CLS]',
                                            sep_token='[SEP]',
-                                 filter_no_ans=False):
+                                            filter_no_ans=False):
     features = []
     failed = 0
     ##############
@@ -353,9 +353,9 @@ def unifiedqa_convert_examples_to_features(examples, tokenizer, max_seq_length, 
         #     all_query_tokens = all_query_tokens[:max_query_length-1]
         #     tok_to_orig_index = tok_to_orig_index[:max_query_length-1] + [-1]
         #     all_query_tokens += [sep_token]
-        all_query_tokens = all_query_tokens[:max_query_length-3]
-        tok_to_orig_index = tok_to_orig_index[:max_query_length-3] + [-1, -1, -1]
-        all_query_tokens += ['▁', '\\', 'n']
+        all_query_tokens = all_query_tokens[:max_query_length-1]
+        tok_to_orig_index = tok_to_orig_index[:max_query_length-1] + [-1]
+        all_query_tokens += [sep_token]
 
         entity_spans = []
         answer_candidates_ids = []
