@@ -542,7 +542,6 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         if filter_no_ans and ans_start_position[0] == 0 and ans_end_position[0] == 0:
             continue
 
-
         features.append(
             InputFeatures(qas_id=example.qas_id,
                           doc_tokens=all_doc_tokens,
@@ -638,7 +637,6 @@ def build_graph(args, examples, features, entity_num):
         graphs[case.qas_id] = {'adj': graph}
 
     return graphs
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
