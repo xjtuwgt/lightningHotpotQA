@@ -672,12 +672,6 @@ if __name__ == '__main__':
                         help="Set this flag if you are using an uncased model.")
     args = parser.parse_args()
 
-    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
-                                                do_lower_case=args.do_lower_case)
-    # if args.model_type in ['unifiedqa']:
-    #     tokenizer.sep_token = '</s>'
-    #     tokenizer.cls_token = '</s>'
 
 
     examples = read_hotpot_examples(para_file=args.para_path,
@@ -689,6 +683,10 @@ if __name__ == '__main__':
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
 
+    #################################################################################################################
+    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
+                                                do_lower_case=args.do_lower_case)
     features = convert_examples_to_features(examples, tokenizer,
                                             max_seq_length=args.max_seq_length,
                                             max_query_length=args.max_query_length,
