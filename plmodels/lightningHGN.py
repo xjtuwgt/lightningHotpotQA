@@ -3,6 +3,7 @@ import os
 from os.path import join
 import numpy as np
 import json
+from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
 from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
 from hgntransformers import (BertConfig, BertTokenizer, BertModel,
@@ -18,6 +19,7 @@ import shutil
 from argparse import Namespace
 from csr_mhqa.data_processing import DataHelper
 from utils.jdutils import log_metrics
+from plmodels.pldata_processing import HotpotDataset
 import logging
 
 
@@ -74,10 +76,24 @@ class lightningHGN(pl.LightningModule):
             print('total steps = {}'.format(self.total_steps))
 
     def train_dataloader(self):
-        return self.train_data
+        dataloader = DataLoader(dataset=self.train_data,
+                                batch_size=self.args.per_gpu_train_batch_size,
+                                shuffle=True,
+                                drop_last=True,
+                                pin_memory=True,
+                                num_workers=max(1, self.args.cpu_num // 2),
+                                collate_fn=HotpotDataset.collate_fn)
+        return dataloader
 
     def val_dataloader(self):
-        return self.dev_data
+        dataloader = DataLoader(dataset=self.dev_data,
+                                batch_size=self.args.eval_batch_size,
+                                shuffle=False,
+                                drop_last=False,
+                                pin_memory=True,
+                                num_workers=max(1, self.args.cpu_num // 2),
+                                collate_fn=HotpotDataset.collate_fn)
+        return dataloader
 
     def forward(self, batch):
         inputs = {'input_ids':      batch['context_idxs'],
