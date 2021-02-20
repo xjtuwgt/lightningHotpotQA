@@ -17,9 +17,8 @@ import torch.nn.functional as F
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 import shutil
 from argparse import Namespace
-from csr_mhqa.data_processing import DataHelper
 from utils.jdutils import log_metrics
-from plmodels.pldata_processing import HotpotDataset
+from plmodels.pldata_processing import HotpotDataset, DataHelper
 import logging
 
 
