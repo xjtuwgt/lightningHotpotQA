@@ -397,6 +397,8 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         if len(sentence_spans) <= 0:
             print('Example id = {}'.format(example.qas_id))
+            print('*'*75)
+
 
         if sent_max_index < len(sentence_spans):
             sentence_spans = sentence_spans[:sent_max_index]
