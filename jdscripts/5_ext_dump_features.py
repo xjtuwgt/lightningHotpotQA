@@ -19,7 +19,6 @@ from tqdm import tqdm
 from model_envs import MODEL_CLASSES
 from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
 from eval.hotpot_evaluate_v1 import normalize_answer
-from utils.jdutils import normalize_question
 
 infix_re = re.compile(r'''[-—–~]''')
 
