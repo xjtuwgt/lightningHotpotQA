@@ -6,7 +6,6 @@ import argparse
 import json
 import gzip
 import pickle
-import copy
 import re
 import os
 import numpy as np
