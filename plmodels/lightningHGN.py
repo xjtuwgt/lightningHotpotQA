@@ -40,13 +40,12 @@ class lightningHGN(pl.LightningModule):
             encoder_path = join(self.args.exp_name, self.cached_config['encoder'])
             model_path = join(self.args.exp_name, self.cached_config['model'])
         else:
-            encoder_path = None
             model_path = None
             self.cached_config = None
 
         _, _, tokenizer_class = MODEL_CLASSES[self.args.model_type]
         self.tokenizer = tokenizer_class.from_pretrained(self.args.encoder_name_or_path,
-                                                    do_lower_case=args.do_lower_case)
+                                                    do_lower_case=self.args.do_lower_case)
         # Set Encoder and Model
         self.encoder, _ = load_encoder_model(self.args.encoder_name_or_path, self.args.model_type)
         self.model = HierarchicalGraphNetwork(config=self.args)
