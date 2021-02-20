@@ -1,4 +1,4 @@
-from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config, T5Tokenizer
+from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
 from hgntransformers import (BertConfig, BertTokenizer, BertModel,
                              RobertaConfig, RobertaTokenizer, RobertaModel,
                              AlbertConfig, AlbertTokenizer, AlbertModel)
