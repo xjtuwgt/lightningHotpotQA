@@ -667,9 +667,9 @@ if __name__ == '__main__':
     parser.add_argument("--filter_no_ans", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     args = parser.parse_args()
-
+    print('*' * 75)
     for key, value in vars(args).items():
-        print('{}:\t{}'.format(key, value))
+        print('Hype-parameter: {}:\t{}'.format(key, value))
     print('*' * 75)
 
     examples = read_hotpot_examples(para_file=args.para_path,
