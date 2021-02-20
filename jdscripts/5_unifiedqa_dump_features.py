@@ -395,6 +395,9 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         sent_max_index = _largest_valid_index(sentence_spans, max_seq_length - 1)
 
+        if len(sentence_spans) <= 0:
+            print('Example id = {}'.format(example.qas_id))
+
         if sent_max_index < len(sentence_spans):
             sentence_spans = sentence_spans[:sent_max_index]
             max_tok_length = sentence_spans[-1][1]
