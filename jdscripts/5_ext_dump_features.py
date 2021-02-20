@@ -103,10 +103,7 @@ def read_hotpot_examples(para_file,
         ctx_word_to_char_idx = []
 
         # process question entity span
-        # question_text = case['question']
-        #######################################################
-        question_text = normalize_question(case['question'])
-        #######################################################
+        question_text = case['question']
         question_tokens, ques_char_to_word_offset, ques_word_to_char_idx = split_sent(question_text)
         answer_norm = normalize_answer(case['answer'])
 
