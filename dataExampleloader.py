@@ -68,9 +68,13 @@ for batch_idx, batch in enumerate(dev_loader):
         print(dev_example_dict[id].question_tokens)
         print('query', tokenizer.decode(batch['context_idxs'][idx] * batch['query_mapping'][idx], skip_special_tokens=True))
         print('context', tokenizer.decode(batch['context_idxs'][idx] * batch['context_mask'][idx], skip_special_tokens=True))
-        print(batch['para_mapping'][idx].sum(dim=0), batch['para_mapping'][idx].shape)
-        print(batch['sent_mapping'][idx].sum(dim=0), batch['sent_mapping'][idx].shape)
-        print(batch['ent_mapping'][idx].sum(dim=0), batch['ent_mapping'].shape)
+        para_num = batch['para_mapping'].shape[-1]
+        for j in range(para_num):
+            para_mask_j = batch['para_mapping'][idx][:,j]
+            print('doc {} = {}'.format(j, tokenizer.decode(batch['context_idxs'][idx] * para_mask_j, skip_special_tokens=True)))
+        # print(batch['para_mapping'][idx].sum(dim=0), batch['para_mapping'][idx].shape)
+        # print(batch['sent_mapping'][idx].sum(dim=0), batch['sent_mapping'][idx].shape)
+        # print(batch['ent_mapping'][idx].sum(dim=0), batch['ent_mapping'].shape)
         # print(batch['query_mapping'][idx])
     print('*' * 75)
     print(batch['context_lens'])
