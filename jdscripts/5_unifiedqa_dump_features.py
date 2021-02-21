@@ -291,7 +291,6 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
     failed = 0
     #########
     no_two_support_sentences = 0
-    no_two_support_documents = 0
     #########
     for (example_index, example) in enumerate(tqdm(examples)):
         def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens,
@@ -400,7 +399,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         sent_max_index = _largest_valid_index(sentence_spans, max_seq_length - 1)
 
-        if sent_max_index <= 0:
+        if sent_max_index <= 1:
             print('Example id = {}'.format(example.qas_id))
             print(sentence_spans)
             print('*'*75)

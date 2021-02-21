@@ -305,6 +305,9 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
     ##############
     tokenized_token_len_512 = 0
     ##############
+    #########
+    no_two_support_sentences = 0
+    #########
     for (example_index, example) in enumerate(tqdm(examples)):
         def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens, orig_start_position, orig_end_position, orig_text):
             if orig_start_position is None:
@@ -412,6 +415,14 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         entity_spans = entity_spans[:max_entity_num]
 
         sent_max_index = _largest_valid_index(sentence_spans, max_seq_length-1)
+
+        if sent_max_index <= 1:
+            print('Example id = {}'.format(example.qas_id))
+            print(sentence_spans)
+            print('*'*75)
+        if sent_max_index <= 1:
+            no_two_support_sentences = no_two_support_sentences + 1
+            continue
 
         if sent_max_index < len(sentence_spans):
             sentence_spans = sentence_spans[:sent_max_index]
@@ -569,6 +580,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         )
     print('Number of failed examples = {}'.format(failed))
     print('Number of tokenized seq length > 512: {}'.format(tokenized_token_len_512))
+    print('Number of sentences < 2 = {}'.format(no_two_support_sentences))
     return features
 
 
