@@ -66,8 +66,8 @@ for batch_idx, batch in enumerate(dev_loader):
 
     for idx, id in enumerate(ids):
         print(dev_example_dict[id].question_tokens)
-        print(tokenizer.decode(batch['context_idxs'][idx] * batch['query_mapping'][idx], skip_special_tokens=True))
-        print(tokenizer.decode(batch['context_idxs'][idx] * batch['context_mask'][idx], skip_special_tokens=True))
+        print('query', tokenizer.decode(batch['context_idxs'][idx] * batch['query_mapping'][idx], skip_special_tokens=True))
+        print('context', tokenizer.decode(batch['context_idxs'][idx] * batch['context_mask'][idx], skip_special_tokens=True))
         # print(batch['query_mapping'][idx])
     print('*' * 75)
     print(batch['context_lens'])
