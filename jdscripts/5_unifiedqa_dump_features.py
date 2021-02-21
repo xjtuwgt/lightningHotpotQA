@@ -247,6 +247,7 @@ def read_hotpot_examples(para_file,
             start_position = ans_start_position
             end_position = ans_end_position
 
+
         example = Example(
             qas_id=key,
             qas_type=qas_type,
@@ -288,6 +289,10 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                                  filter_no_ans=False):
     features = []
     failed = 0
+    #########
+    no_two_support_sentences = 0
+    no_two_support_documents = 0
+    #########
     for (example_index, example) in enumerate(tqdm(examples)):
         def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens,
                               orig_start_position, orig_end_position, orig_text):
@@ -398,9 +403,10 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         if sent_max_index <= 0:
             print('Example id = {}'.format(example.qas_id))
             print(sentence_spans)
-            print('example = {} \n {}'.format(example.doc_tokens, max_seq_length - 1))
             print('*'*75)
-
+        if sent_max_index <= 1:
+            no_two_support_sentences = no_two_support_sentences + 1
+            continue
 
         if sent_max_index < len(sentence_spans):
             sentence_spans = sentence_spans[:sent_max_index]
@@ -558,6 +564,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                           end_position=ans_end_position)
         )
     print('Number of failed examples = {}'.format(failed))
+    print('Number of sentences < 2 = {}'.format(no_two_support_sentences))
 
     return features
 
