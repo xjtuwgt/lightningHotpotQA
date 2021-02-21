@@ -581,6 +581,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
     print('Number of failed examples = {}'.format(failed))
     print('Number of tokenized seq length > 512: {}'.format(tokenized_token_len_512))
     print('Number of sentences < 2 = {}'.format(no_two_support_sentences))
+    print('Number of training features = {}'.format(len(features)))
     return features
 
 
