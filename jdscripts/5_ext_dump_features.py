@@ -664,6 +664,10 @@ if __name__ == '__main__':
     parser.add_argument("--filter_no_ans", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     args = parser.parse_args()
+    print('*' * 75)
+    for key, value in vars(args).items():
+        print('Hype-parameter: {}:\t{}'.format(key, value))
+    print('*' * 75)
 
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
