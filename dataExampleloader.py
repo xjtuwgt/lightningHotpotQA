@@ -68,6 +68,7 @@ for batch_idx, batch in enumerate(dev_loader):
         print(dev_example_dict[id].question_tokens)
         print('query', tokenizer.decode(batch['context_idxs'][idx] * batch['query_mapping'][idx], skip_special_tokens=True))
         print('context', tokenizer.decode(batch['context_idxs'][idx] * batch['context_mask'][idx], skip_special_tokens=True))
+        print('-' * 75)
         para_num = batch['para_mapping'].shape[-1]
         sent_num = batch['sent_mapping'].shape[-1]
         ent_num = batch['ent_mapping'].shape[-1]
