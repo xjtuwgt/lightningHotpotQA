@@ -8,7 +8,8 @@ from tqdm import tqdm, trange
 from tensorboardX import SummaryWriter
 
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
+# from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
+from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import *
 
 from models.HGN import *
@@ -158,6 +159,11 @@ for epoch in train_iterator:
     for step, batch in enumerate(epoch_iterator):
         encoder.train()
         model.train()
+        ##################################
+        for key, value in batch.items():
+            if key not in {'ids'}:
+                batch[key] = value.to(args.device)
+        ##################################
 
         inputs = {'input_ids':      batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
