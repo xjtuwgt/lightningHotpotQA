@@ -288,9 +288,6 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                                  filter_no_ans=False):
     features = []
     failed = 0
-    #########
-    no_two_support_sentences = 0
-    #########
     for (example_index, example) in enumerate(tqdm(examples)):
         def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens,
                               orig_start_position, orig_end_position, orig_text):
@@ -397,13 +394,6 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         entity_spans = entity_spans[:max_entity_num]
 
         sent_max_index = _largest_valid_index(sentence_spans, max_seq_length - 1)
-        if sent_max_index <= 1:
-            print('Example id = {}'.format(example.qas_id))
-            print(sentence_spans)
-            print('*'*75)
-        if sent_max_index <= 1:
-            no_two_support_sentences = no_two_support_sentences + 1
-            continue
 
         if sent_max_index < len(sentence_spans):
             sentence_spans = sentence_spans[:sent_max_index]
@@ -560,9 +550,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                           start_position=ans_start_position,
                           end_position=ans_end_position)
         )
-    print('Number of failed examples = {}'.format(failed))
-    print('Number of sentences < 2 = {}'.format(no_two_support_sentences))
-    print('Number of training features = {}'.format(len(features)))
+    print(failed)
 
     return features
 
@@ -664,13 +652,8 @@ if __name__ == '__main__':
     parser.add_argument("--filter_no_ans", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     args = parser.parse_args()
-    print('*' * 75)
-    for key, value in vars(args).items():
-        print('Hype-parameter: {}:\t{}'.format(key, value))
-    print('*' * 75)
 
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    print(config_class, model_class, tokenizer_class)
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)
 
