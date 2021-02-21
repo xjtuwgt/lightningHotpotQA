@@ -699,7 +699,7 @@ if __name__ == '__main__':
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)
     model_type = args.model_type
-    if 'roberta' in model_type:
+    if model_type in {'roberta'}:
         is_roberta = True
     else:
         is_roberta = False
