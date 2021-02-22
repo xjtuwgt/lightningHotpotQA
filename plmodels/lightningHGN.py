@@ -35,13 +35,18 @@ class lightningHGN(pl.LightningModule):
         self.args = args
         cached_config_file = join(self.args.exp_name, 'cached_config.bin')
         if os.path.exists(cached_config_file):
-            self.cached_config = torch.load(cached_config_file)
-            encoder_path = join(self.args.exp_name, self.cached_config['encoder'])
-            model_path = join(self.args.exp_name, self.cached_config['model'])
+            cached_config = torch.load(cached_config_file)
+            encoder_path = join(self.args.exp_name, cached_config['encoder'])
+            model_path = join(self.args.exp_name, cached_config['model'])
         else:
-            model_path = None
-            encoder_path = None
-            self.cached_config = None
+            if self.args.fine_tuned_model is not None:
+                model_path = join(self.args.output_dir, self.args.fine_tuned_model, 'model.pkl')
+            else:
+                model_path = None
+            if self.args.fine_tuned_encoder is not None:
+                encoder_path = join(self.args.output_dir, self.args.fine_tuned_encoder, 'encoder.pkl')
+            else:
+                encoder_path = None
 
         _, _, tokenizer_class = MODEL_CLASSES[self.args.model_type]
         self.tokenizer = tokenizer_class.from_pretrained(self.args.encoder_name_or_path,
