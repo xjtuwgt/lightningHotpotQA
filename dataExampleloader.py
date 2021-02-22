@@ -53,7 +53,7 @@ tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
 def get_data_loader(dataset):
     dataloader = DataLoader(
         dataset=dataset,
-        batch_size=16,
+        batch_size=4,
         shuffle=False,
         num_workers=max(1, 6),
         collate_fn=HotpotDataset.collate_fn
