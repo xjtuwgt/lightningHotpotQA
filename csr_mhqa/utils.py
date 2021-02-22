@@ -118,6 +118,11 @@ def eval_model(args, encoder, model, dataloader, example_dict, feature_dict, pre
     total_sp_dict = [{} for _ in range(N_thresh)]
 
     for batch in tqdm(dataloader):
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for key, value in batch.items():
+            if key not in {'ids'}:
+                batch[key] = value.to(args.device)
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         with torch.no_grad():
             inputs = {'input_ids':      batch['context_idxs'],
                       'attention_mask': batch['context_mask'],
