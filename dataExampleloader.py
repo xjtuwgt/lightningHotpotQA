@@ -65,6 +65,7 @@ for batch_idx, batch in enumerate(dev_loader):
     ids = batch['ids']
     for key, value in batch.items():
         print(type(value))
+        print(key, value)
     break
 
     # for idx, id in enumerate(ids):
