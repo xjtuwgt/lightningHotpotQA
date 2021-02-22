@@ -190,7 +190,7 @@ class lightningHGN(pl.LightningModule):
                               'sp': total_sp_dict[thresh_i],
                               'type': answer_type_dict,
                               'type_prob': answer_type_prob_dict}
-                tmp_file = os.path.join(os.path.dirname(pred_file), 'tmp.json')
+                tmp_file = os.path.join(os.path.dirname(pred_file), 'tmp_{}.json'.format(self.trainer.root_gpu))
                 with open(tmp_file, 'w') as f:
                     json.dump(prediction, f)
                 metrics = hotpot_eval(tmp_file, self.args.dev_gold_file)
