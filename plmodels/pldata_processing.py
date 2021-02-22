@@ -402,7 +402,7 @@ class HotpotDataset(Dataset):
         graphs[i] = graph_adj
 
         id = case.qas_id
-        input_length = (context_mask > 0).long().sum(dim=1)[0]
+        input_length = (context_mask > 0).long().sum(dim=1)
         para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
         sent_mask = (sent_mapping > 0).any(1).float()
         ent_mask = (ent_mapping > 0).any(1).float()
