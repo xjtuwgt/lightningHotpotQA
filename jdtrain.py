@@ -153,8 +153,8 @@ model.zero_grad()
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
     epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
-    train_dataloader.refresh()
-    dev_dataloader.refresh()
+    # train_dataloader.refresh()
+    # dev_dataloader.refresh()
 
     for step, batch in enumerate(epoch_iterator):
         encoder.train()
