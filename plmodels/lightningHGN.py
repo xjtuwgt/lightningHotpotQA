@@ -4,7 +4,8 @@ from os.path import join
 import numpy as np
 import json
 from torch.utils.data import DataLoader
-from transformers import AdamW, get_linear_schedule_with_warmup
+# from transformers import AdamW, get_linear_schedule_with_warmup
+from hgntransformers import AdamW, get_linear_schedule_with_warmup
 from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
 from hgntransformers import (BertConfig, BertTokenizer, BertModel,
                              RobertaConfig, RobertaTokenizer, RobertaModel,
