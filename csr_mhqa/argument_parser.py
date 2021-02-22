@@ -86,7 +86,7 @@ def complete_default_train_parser(args):
     args.exp_name = os.path.join(args.output_dir, args.exp_name)
 
     set_seed(args)
-    print(args.exp_name)
+    print(args.output_dir, args.exp_name)
     os.makedirs(args.exp_name, exist_ok=True)
     torch.save(args, join(args.exp_name, "training_args.bin"))
 
