@@ -58,6 +58,7 @@ class lightningHGN(pl.LightningModule):
             self.encoder.load_state_dict(torch.load(encoder_path))
         if model_path is not None:
             self.model.load_state_dict(torch.load(model_path))
+        logging.info('Loading encoder and model completed')
 
     def prepare_data(self):
         helper = DataHelper(gz=True, config=self.args)
