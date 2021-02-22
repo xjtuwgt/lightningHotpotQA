@@ -51,10 +51,12 @@ for a in args_dict:
 helper = DataHelper(gz=True, config=args)
 
 # Set datasets
-train_dataloader = helper.train_loader
+# train_dataloader = helper.train_loader
+train_dataloader = helper.hotpot_train_dataloader
 dev_example_dict = helper.dev_example_dict
 dev_feature_dict = helper.dev_feature_dict
-dev_dataloader = helper.dev_loader
+# dev_dataloader = helper.dev_loader
+dev_dataloader = helper.hotpot_val_dataloader
 
 #########################################################################
 # Initialize Model
