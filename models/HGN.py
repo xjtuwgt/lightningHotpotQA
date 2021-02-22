@@ -54,7 +54,7 @@ class HierarchicalGraphNetwork(nn.Module):
 
 
         input_state = self.bi_attn_linear(attn_output) # N x L x d
-        print(input_state.dtype, input_state.device)
+        # print(input_state.dtype, input_state.device)
         input_state = self.sent_lstm(input_state, batch['context_lens'])
 
         if self.config.q_update:
