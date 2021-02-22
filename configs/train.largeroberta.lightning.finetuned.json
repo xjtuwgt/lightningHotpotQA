@@ -7,8 +7,6 @@
     "learning_rate": 2e-5,
     "gradient_accumulation_steps": 1,
     "gpus": 4,
-    "fine_tuned_model": "roberta",
-    "fine_tuned_encoder": "roberta",
     "gnn_drop": 0.3,
     "bi_attn_drop": 0.3,
     "trans_drop": 0.2,
