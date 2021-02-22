@@ -291,9 +291,9 @@ class HotpotDataset(Dataset):
 
     def __getitem__(self, idx):
         # BERT input
-        context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.float)
-        context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.float)
-        segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.float)
+        context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
 
         # Mappings
         query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
