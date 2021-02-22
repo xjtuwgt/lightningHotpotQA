@@ -155,6 +155,7 @@ for epoch in train_iterator:
         encoder.train()
         model.train()
 
+        print('here')
         for key, value in batch:
             if key not in {'ids'}:
                 print(key, value.shape, value.device)
