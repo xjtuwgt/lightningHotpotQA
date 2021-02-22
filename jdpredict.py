@@ -1,8 +1,10 @@
 import numpy as np
 import logging
 import sys
+from utils.gpu_utils import single_free_cuda
 
 from os.path import join
+import torch
 
 from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
@@ -60,6 +62,12 @@ encoder_path = join(args.exp_name, 'encoder.pkl')
 model_path = join(args.exp_name, 'model.pkl')
 logger.info("Loading encoder from: {}".format(encoder_path))
 logger.info("Loading model from: {}".format(model_path))
+
+if torch.cuda.is_available():
+    device, _, _ = single_free_cuda()
+else:
+    device = torch.device('cpu')
+
 
 encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = HierarchicalGraphNetwork(config=args)

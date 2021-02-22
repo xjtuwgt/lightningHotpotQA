@@ -20,7 +20,7 @@ def single_free_cuda():
     free_gpu_id, used_memory = get_single_free_gpu()
     device = torch.device('cuda:'+str(free_gpu_id))
     torch.cuda.set_device(device=device)
-    return [free_gpu_id], used_memory
+    return device, [free_gpu_id], used_memory
 
 def get_multi_free_gpus():
     gpu_stats = subprocess.check_output(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"])
