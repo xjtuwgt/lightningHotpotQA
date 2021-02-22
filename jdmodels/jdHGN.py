@@ -29,7 +29,6 @@ class HierarchicalGraphNetwork(nn.Module):
         self.graph_blocks.append(GraphBlock(self.config.q_attn, config, input_dim=self.hidden_dim * 2, hidden_dim=self.hidden_dim))
         for _ in range(self.config.num_gnn_layers-1):
             self.graph_blocks.append(GraphBlock(self.config.q_attn, config, input_dim=self.hidden_dim, hidden_dim=self.hidden_dim))
-
         self.ctx_attention = GatedAttention(input_dim=config.hidden_dim*2,
                                             memory_dim=config.hidden_dim,
                                             hid_dim=self.config.ctx_attn_hidden_dim,
