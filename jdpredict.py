@@ -65,7 +65,8 @@ logger.info("Loading encoder from: {}".format(encoder_path))
 logger.info("Loading model from: {}".format(model_path))
 
 if torch.cuda.is_available():
-    device, _, _ = single_free_cuda()
+    device_ids, _ = single_free_cuda()
+    device = torch.device('cuda: {}'.format(device_ids[0]))
 else:
     device = torch.device('cpu')
 
