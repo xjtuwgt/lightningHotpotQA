@@ -126,7 +126,7 @@ class InputFeatures(object):
         self.end_position = end_position
 
 class DataHelper:
-    def __init__(self, gz=True, config=None):
+    def __init__(self, gz=True, config=None, ext=False):
         self.Dataset = HotpotDataset
         self.gz = gz
         self.suffix = '.pkl.gz' if gz else '.pkl'
@@ -147,17 +147,28 @@ class DataHelper:
 
         self.config = config
 
+        self.ext = ext
+
     def get_feature_file(self, tag):
-        cached_filename = get_cached_filename('features', self.config)
+        if self.ext:
+            cached_filename = get_cached_filename('ext_features', self.config)
+        else:
+            cached_filename = get_cached_filename('features', self.config)
         return join(self.data_dir, tag, cached_filename)
 
     def get_example_file(self, tag):
-        cached_filename = get_cached_filename('examples', self.config)
+        if self.ext:
+            cached_filename = get_cached_filename('examples', self.config)
+        else:
+            cached_filename = get_cached_filename('ext_examples', self.config)
 
         return join(self.data_dir, tag, cached_filename)
 
     def get_graph_file(self, tag):
-        cached_filename = get_cached_filename('graphs', self.config)
+        if self.ext:
+            cached_filename = get_cached_filename('examples', self.config)
+        else:
+            cached_filename = get_cached_filename('graphs', self.config)
         return join(self.data_dir, tag, cached_filename)
 
     @property

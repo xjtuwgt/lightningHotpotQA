@@ -679,7 +679,7 @@ if __name__ == '__main__':
                                     ner_file=args.ner_path,
                                     doc_link_file=args.doc_link_ner)
     cached_examples_file = os.path.join(args.output_dir,
-                                        get_cached_filename('examples', args))
+                                        get_cached_filename('ext_examples', args))
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
 
@@ -692,14 +692,14 @@ if __name__ == '__main__':
                                             is_roberta=bool(args.model_type in ['roberta']),
                                             filter_no_ans=args.filter_no_ans)
     cached_features_file = os.path.join(args.output_dir,
-                                        get_cached_filename('features', args))
+                                        get_cached_filename('ext_features', args))
 
     with gzip.open(cached_features_file, 'wb') as fout:
         pickle.dump(features, fout)
 
     # build graphs
     cached_graph_file = os.path.join(args.output_dir,
-                                     get_cached_filename('graphs', args))
+                                     get_cached_filename('ext_graphs', args))
 
     graphs = build_graph(args, examples, features, args.max_entity_num)
     with gzip.open(cached_graph_file, 'wb') as fout:
