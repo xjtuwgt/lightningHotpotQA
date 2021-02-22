@@ -40,6 +40,7 @@ class lightningHGN(pl.LightningModule):
             model_path = join(self.args.exp_name, self.cached_config['model'])
         else:
             model_path = None
+            encoder_path = None
             self.cached_config = None
 
         _, _, tokenizer_class = MODEL_CLASSES[self.args.model_type]
