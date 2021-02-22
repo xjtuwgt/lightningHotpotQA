@@ -155,6 +155,10 @@ for epoch in train_iterator:
         encoder.train()
         model.train()
 
+        for key, value in batch:
+            if key not in {'ids'}:
+                print(key, value.shape, value.device)
+
         inputs = {'input_ids':      batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
                   'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
