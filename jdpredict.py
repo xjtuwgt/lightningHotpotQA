@@ -10,9 +10,9 @@ import torch
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
-from csr_mhqa.utils import *
+from csr_mhqa.utils import load_encoder_model, eval_model
 
-from models.HGN import *
+from models.HGN import HierarchicalGraphNetwork
 from model_envs import MODEL_CLASSES
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
