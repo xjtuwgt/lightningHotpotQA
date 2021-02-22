@@ -156,7 +156,7 @@ for epoch in train_iterator:
         model.train()
 
         print('here')
-        for key, value in batch:
+        for key, value in batch.items():
             if key not in {'ids'}:
                 print(key, value.shape, value.device)
 
