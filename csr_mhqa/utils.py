@@ -111,7 +111,7 @@ def eval_model(args, encoder, model, dataloader, example_dict, feature_dict, pre
     answer_type_dict = {}
     answer_type_prob_dict = {}
 
-    dataloader.refresh()
+    # dataloader.refresh()
 
     thresholds = np.arange(0.1, 1.0, 0.05)
     N_thresh = len(thresholds)
