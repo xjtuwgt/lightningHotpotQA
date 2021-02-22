@@ -54,6 +54,8 @@ def HypeParameterSpace():
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [10]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
+    fine_tuned_model = {'name': 'fine_tuned_model', 'type': 'choice', 'values': ['roberta']}
+    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta']}
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
