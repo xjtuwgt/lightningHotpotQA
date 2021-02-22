@@ -65,7 +65,7 @@ for batch_idx, batch in enumerate(dev_loader):
     ids = batch['ids']
     for key, value in batch.items():
         if key not in {'ids'}:
-            print(key, value.shape, value.device)
+            print(key, value.shape, value.device, value.dtype)
         # print(type(value))
         # print(key, value)
     break
