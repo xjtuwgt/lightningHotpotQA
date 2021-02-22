@@ -416,12 +416,12 @@ class LSTMWrapper(nn.Module):
         output = input
         outputs = []
 
-        print(input_lengths)
+        print('input', input_lengths)
 
         if input_lengths is not None:
             lens = input_lengths.data.cpu().numpy()
 
-            print(lens)
+            print('lens', lens)
         for i in range(self.n_layer):
             output = F.dropout(output, p=self.dropout, training=self.training)
 
