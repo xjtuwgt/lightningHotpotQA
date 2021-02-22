@@ -1,7 +1,6 @@
 from models.layers import mean_pooling, BiAttention, LSTMWrapper, GatedAttention
-from jdmodels.jdlayers import GraphBlock, encoder_graph_node_feature, PredictionLayer, ParaSentEntPredictionLayer
+from jdmodels.jdlayers import GraphBlock, init_encoder_graph_node_feature, PredictionLayer, ParaSentEntPredictionLayer
 from torch import nn
-
 
 class HierarchicalGraphNetwork(nn.Module):
     """
@@ -11,7 +10,6 @@ class HierarchicalGraphNetwork(nn.Module):
         super(HierarchicalGraphNetwork, self).__init__()
         self.config = config
         self.max_query_length = self.config.max_query_length
-
         self.bi_attention = BiAttention(input_dim=config.input_dim,
                                         memory_dim=config.input_dim,
                                         hid_dim=config.hidden_dim,
@@ -23,9 +21,7 @@ class HierarchicalGraphNetwork(nn.Module):
                                      n_layer=1,
                                      dropout=config.lstm_drop) ### output: 2 * self.hidden_dim
 
-
-        q_dim = self.hidden_dim if config.q_update else config.input_dim
-        self.q_map = nn.Linear(in_features=q_dim, out_features=self.hidden_dim * 2)
+        self.q_map = nn.Linear(in_features=config.input_dim, out_features=self.hidden_dim * 2)
         if self.q_map:
             nn.init.xavier_uniform_(self.q_map.weight, gain=1.414)
 
@@ -55,12 +51,10 @@ class HierarchicalGraphNetwork(nn.Module):
                                                            trunc_query_mapping)
         input_state = self.bi_attn_linear(attn_output) # N x L x d
         input_state = self.sent_lstm(input_state, batch['context_lens'])
-        if self.config.q_update:
-            query_vec = mean_pooling(trunc_query_state, trunc_query_mapping)
-
+        ###############################################################################################################
         query_vec = self.q_map(query_vec)
         ################################################################################################################
-        graph_state_dict = encoder_graph_node_feature(batch=batch, input_state=input_state, hidden_dim=self.hidden_dim)
+        graph_state_dict = init_encoder_graph_node_feature(batch=batch, input_state=input_state, hidden_dim=self.hidden_dim)
         graph_state, graph_mask = None, None
         ################################################################################################################
         for l in range(self.config.num_gnn_layers):

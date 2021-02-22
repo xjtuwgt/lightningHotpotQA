@@ -6,7 +6,7 @@ from csr_mhqa.utils import get_weights, get_act
 import torch.nn.functional as F
 import numpy as np
 
-def encoder_graph_node_feature(batch, input_state, hidden_dim):
+def init_encoder_graph_node_feature(batch, input_state, hidden_dim):
     sent_start_mapping = batch['sent_start_mapping']
     sent_end_mapping = batch['sent_end_mapping']
     para_start_mapping = batch['para_start_mapping']
