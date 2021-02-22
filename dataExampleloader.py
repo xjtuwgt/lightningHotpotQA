@@ -63,6 +63,8 @@ def get_data_loader(dataset):
 dev_loader = get_data_loader(dataset=dev_dataloader)
 for batch_idx, batch in enumerate(dev_loader):
     ids = batch['ids']
+    for key, value in batch.items():
+        print(type(value))
 
     for idx, id in enumerate(ids):
         print(dev_example_dict[id].question_tokens)
@@ -89,4 +91,5 @@ for batch_idx, batch in enumerate(dev_loader):
         # print(batch['query_mapping'][idx])
     print('*' * 75)
     print(batch['context_lens'])
+    break
     # print(row['ids'])
