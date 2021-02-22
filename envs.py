@@ -7,7 +7,7 @@ from os.path import join
 # is there a better way to handle the sub module path append problem?
 PROJECT_FOLDER = os.path.dirname(__file__)
 print(PROJECT_FOLDER)
-sys.path.append(join(PROJECT_FOLDER, ''))
+sys.path.append(join(PROJECT_FOLDER))
 
 # Define the dataset folder and model folder based on environment
 # HOME_DATA_FOLDER = '/ssd/HGN/data'
