@@ -1,4 +1,4 @@
-from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
+# from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
 from hgntransformers import (BertConfig, BertTokenizer, BertModel,
                              RobertaConfig, RobertaTokenizer, RobertaModel,
                              AlbertConfig, AlbertTokenizer, AlbertModel)
@@ -15,5 +15,5 @@ MODEL_CLASSES = {
     'bert': (BertConfig, BertModel, BertTokenizer),
     'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
     'albert': (AlbertConfig, AlbertModel, AlbertTokenizer),
-    'unifiedqa': (T5Config, T5ForConditionalGeneration, AutoTokenizer)
+    # 'unifiedqa': (T5Config, T5ForConditionalGeneration, AutoTokenizer)
 }
