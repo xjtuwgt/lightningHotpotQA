@@ -158,15 +158,15 @@ class DataHelper:
 
     def get_example_file(self, tag):
         if self.ext:
-            cached_filename = get_cached_filename('examples', self.config)
-        else:
             cached_filename = get_cached_filename('ext_examples', self.config)
+        else:
+            cached_filename = get_cached_filename('examples', self.config)
 
         return join(self.data_dir, tag, cached_filename)
 
     def get_graph_file(self, tag):
         if self.ext:
-            cached_filename = get_cached_filename('examples', self.config)
+            cached_filename = get_cached_filename('ext_graphs', self.config)
         else:
             cached_filename = get_cached_filename('graphs', self.config)
         return join(self.data_dir, tag, cached_filename)
