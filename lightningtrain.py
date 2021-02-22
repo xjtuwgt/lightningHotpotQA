@@ -92,10 +92,10 @@ def main(args):
     model.prepare_data()
     model.setup()
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # logging.info('Model Parameter Configuration:')
-    # for name, param in model.named_parameters():
-    #     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-    # logging.info('*' * 75)
+    logging.info('Model Parameter Configuration:')
+    for name, param in model.named_parameters():
+        logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+    logging.info('*' * 75)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     trainer = trainer_builder(args=args)
     return trainer, model
