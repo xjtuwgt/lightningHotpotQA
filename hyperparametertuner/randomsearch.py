@@ -50,7 +50,7 @@ def HypeParameterSpace():
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
     gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.2, 0.3]}
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.2, 0.3]}
-    trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.2, 0.3]}
+    trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [10]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
