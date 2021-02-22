@@ -158,7 +158,7 @@ for epoch in train_iterator:
         print('here')
         for key, value in batch.items():
             if key not in {'ids'}:
-                print(key, value.shape, value.device)
+                print(key, value.shape, value.device, value.dtype)
 
         inputs = {'input_ids':      batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
