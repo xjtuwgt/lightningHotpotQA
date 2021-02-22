@@ -5,7 +5,8 @@ import sys
 from os.path import join
 
 from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
+# from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
+from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import *
 
 from models.HGN import *
@@ -46,7 +47,8 @@ helper = DataHelper(gz=True, config=args)
 # Set datasets
 dev_example_dict = helper.dev_example_dict
 dev_feature_dict = helper.dev_feature_dict
-dev_dataloader = helper.dev_loader
+# dev_dataloader = helper.dev_loader
+dev_dataloader = helper.hotpot_val_dataloader
 
 #########################################################################
 # Initialize Model
