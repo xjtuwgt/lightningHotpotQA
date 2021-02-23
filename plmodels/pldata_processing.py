@@ -13,9 +13,9 @@ IGNORE_INDEX = -100
 
 def get_cached_filename(f_type, config):
     f_type_set = {'examples', 'features', 'graphs', 'hgn_examples',
-                  'hgn_features', 'hgn_graphs', 'hgn_reverse_example', 'hgn_reverse_features',
+                  'hgn_features', 'hgn_graphs', 'hgn_reverse_examples', 'hgn_reverse_features',
                   'hgn_reverse_graphs', 'long_examples',
-                  'long_features', 'long_graphs', 'long_reverse_example', 'long_reverse_features',
+                  'long_features', 'long_graphs', 'long_reverse_examples', 'long_reverse_features',
                   'long_reverse_graphs'}
     assert f_type in f_type_set
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
