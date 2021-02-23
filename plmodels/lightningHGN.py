@@ -61,7 +61,7 @@ class lightningHGN(pl.LightningModule):
         logging.info('Loading encoder and model completed')
 
     def prepare_data(self):
-        helper = DataHelper(gz=True, config=self.args)
+        helper = DataHelper(gz=True, config=self.args, f_type=self.args.daug_type)
         self.train_data = helper.train_loader
         self.dev_example_dict = helper.dev_example_dict
         self.dev_feature_dict = helper.dev_feature_dict
