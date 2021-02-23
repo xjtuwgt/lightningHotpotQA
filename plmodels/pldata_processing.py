@@ -12,8 +12,7 @@ from envs import DATASET_FOLDER
 IGNORE_INDEX = -100
 
 def get_cached_filename(f_type, config):
-    assert f_type in ['examples', 'features', 'graphs', 'ext_examples', 'ext_features',
-                      'ext_graphs', 'reserve_example', 'reserve_features', 'reserve_graphs']
+    assert f_type in ['examples', 'features', 'graphs', 'ext_examples', 'ext_features', 'ext_graphs', 'reserve_example', 'reserve_features', 'reserve_graphs']
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
 
 class Example(object):
