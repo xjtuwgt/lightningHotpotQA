@@ -12,7 +12,7 @@ from plmodels.pldata_processing import HotpotDataset, get_cached_filename
 IGNORE_INDEX = -100
 
 class DataHelper:
-    def __init__(self, gz=True, config=None, trf_type_list=None):
+    def __init__(self, gz=True, config=None):
         self.Dataset = HotpotDataset
         self.gz = gz
         self.suffix = '.pkl.gz' if gz else '.pkl'

@@ -131,8 +131,9 @@ def default_train_parser():
     parser.add_argument("--frozen_layer_number", default=0, type=int)
     parser.add_argument("--fine_tuned_encoder", default='roberta', type=str)
 
-    # data type
-    parser.add_argument("--daug_type", default='long', type=str, help="Data augumentation type.")
+    # train-dev data type
+    parser.add_argument("--daug_type", default='long', type=str, help="Train Data augumentation type.")
+    parser.add_argument("--devf_type", default='hgn', type=str, help="Dev data type")
 
     # eval
     parser.add_argument("--encoder_ckpt", default=None, type=str)
@@ -218,6 +219,5 @@ def default_train_parser():
     parser.add_argument("--sent_lambda", type=float, default=5)
     parser.add_argument("--ent_lambda", type=float, default=1)
     parser.add_argument("--sp_threshold", type=float, default=0.5)
-
 
     return parser
