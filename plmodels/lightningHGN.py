@@ -148,7 +148,7 @@ class lightningHGN(pl.LightningModule):
 
     def validation_epoch_end(self, validation_step_outputs):
         avg_loss = torch.stack([x['valid_loss'] for x in validation_step_outputs]).mean()
-        self.log('valid_loss', avg_loss, on_epoch=True, prog_bar=True, sync_dist=True)
+        # self.log('valid_loss', avg_loss, on_epoch=True, prog_bar=True, sync_dist=True)
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         answer_dict = {}
         answer_type_dict = {}
@@ -214,6 +214,9 @@ class lightningHGN(pl.LightningModule):
         log_metrics(mode='Evaluation epoch {} gpu {}'.format(self.current_epoch, self.trainer.root_gpu), metrics=best_metrics)
         logging.info('*' * 75)
         json.dump(best_metrics, open(output_eval_file, 'w'))
+        #############################################################################
+        self.log('valid_loss', avg_loss, 'joint_f1', best_metrics['joint_f1'], on_epoch=True, prog_bar=True, sync_dist=True)
+        #############################################################################
         return best_metrics, best_threshold
 
     def configure_optimizers(self):
