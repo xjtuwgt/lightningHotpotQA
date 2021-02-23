@@ -29,6 +29,7 @@ class Example(object):
                  doc_tokens,
                  sent_num,
                  sent_names,
+                 para_names,
                  sup_fact_id,
                  sup_para_id,
                  ques_entities_text,
@@ -55,6 +56,7 @@ class Example(object):
         self.question_text = question_text
         self.sent_num = sent_num
         self.sent_names = sent_names
+        self.para_names = para_names
         self.sup_fact_id = sup_fact_id
         self.sup_para_id = sup_para_id
         self.ques_entities_text = ques_entities_text

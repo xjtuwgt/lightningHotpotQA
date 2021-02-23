@@ -122,9 +122,16 @@ def read_hotpot_examples(para_file,
         sel_paras = para_data[key]
         ner_context = dict(ner_data[key]['context'])
 
+        ####++++++++++++++++++++
+        para_names = []  ## for paragraph evaluation and checking
+        ####++++++++++++++++++++
+
         for title in itertools.chain.from_iterable(sel_paras):
             stripped_title = re.sub(r' \(.*?\)$', '', title)
             stripped_title_norm = normalize_answer(stripped_title)
+            ####+++++++++++++++++++++++++
+            para_names.append(title)
+            ####+++++++++++++++++++++++++
 
             sents = context[title]
             sents_ner = ner_context[title]
@@ -254,6 +261,7 @@ def read_hotpot_examples(para_file,
             question_tokens=question_tokens,
             doc_tokens=doc_tokens,
             sent_num=sent_id + 1,
+            para_names=para_names,
             sent_names=sent_names,
             sup_fact_id=sup_facts_sent_id,
             sup_para_id=list(sup_para_id),
