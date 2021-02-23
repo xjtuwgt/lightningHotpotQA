@@ -2,6 +2,7 @@ import subprocess
 from io import StringIO
 import torch
 import pandas as pd
+### pip install pandas==1.1.5
 
 def get_single_free_gpu():
     gpu_stats = subprocess.check_output(["nvidia-smi", "--format=csv", "--query-gpu=memory.used,memory.free"])
