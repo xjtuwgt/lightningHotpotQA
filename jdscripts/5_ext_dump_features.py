@@ -665,6 +665,8 @@ if __name__ == '__main__':
                              "than this will be truncated, and sequences shorter than this will be padded.")
     parser.add_argument("--filter_no_ans", action='store_true',
                         help="Set this flag if you are using an uncased model.")
+    parser.add_argument("--ranker", default=None, type=str, required=True,
+                        help="The ranker for paragraph ranking")
     parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
 
@@ -682,12 +684,14 @@ if __name__ == '__main__':
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
                                     doc_link_file=args.doc_link_ner)
+    ranker = args.ranker
+
     if args.reverse:
         cached_examples_file = os.path.join(args.output_dir,
-                                            get_cached_filename('reverse_examples', args))
+                                            get_cached_filename('{}_reverse_examples'.format(ranker), args))
     else:
         cached_examples_file = os.path.join(args.output_dir,
-                                            get_cached_filename('ext_examples', args))
+                                            get_cached_filename('{}_examples'.format(ranker), args))
 
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
@@ -702,10 +706,10 @@ if __name__ == '__main__':
                                             filter_no_ans=args.filter_no_ans)
     if args.reverse:
         cached_features_file = os.path.join(args.output_dir,
-                                            get_cached_filename('reverse_features', args))
+                                            get_cached_filename('{}_reverse_features'.format(ranker), args))
     else:
         cached_features_file = os.path.join(args.output_dir,
-                                            get_cached_filename('ext_features', args))
+                                            get_cached_filename('{}_features'.format(ranker), args))
 
     with gzip.open(cached_features_file, 'wb') as fout:
         pickle.dump(features, fout)
@@ -713,10 +717,10 @@ if __name__ == '__main__':
     # build graphs
     if args.reverse:
         cached_graph_file = os.path.join(args.output_dir,
-                                         get_cached_filename('reverse_graphs', args))
+                                         get_cached_filename('{}_reverse_graphs'.format(ranker), args))
     else:
         cached_graph_file = os.path.join(args.output_dir,
-                                         get_cached_filename('ext_graphs', args))
+                                         get_cached_filename('{}_graphs'.format(ranker), args))
 
     graphs = build_graph(args, examples, features, args.max_entity_num)
     with gzip.open(cached_graph_file, 'wb') as fout:
