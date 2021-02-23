@@ -154,22 +154,22 @@ class DataHelper:
 
         self.f_type = f_type
 
-    def get_feature_file(self, tag):
-        if self.f_type is None:
+    def get_feature_file(self, tag, f_type=None):
+        if f_type is None:
             cached_filename = get_cached_filename('features', self.config)
         else:
             cached_filename = get_cached_filename('{}_features'.format(self.f_type), self.config)
         return join(self.data_dir, tag, cached_filename)
 
-    def get_example_file(self, tag):
-        if self.f_type is None:
+    def get_example_file(self, tag, f_type=None):
+        if f_type is None:
             cached_filename = get_cached_filename('examples', self.config)
         else:
             cached_filename = get_cached_filename('{}_examples'.format(self.f_type), self.config)
         return join(self.data_dir, tag, cached_filename)
 
-    def get_graph_file(self, tag):
-        if self.f_type is None:
+    def get_graph_file(self, tag, f_type=None):
+        if f_type is None:
             cached_filename = get_cached_filename('graphs', self.config)
         else:
             cached_filename = get_cached_filename('{}_graphs'.format(self.f_type), self.config)
@@ -177,7 +177,7 @@ class DataHelper:
 
     @property
     def train_feature_file(self):
-        return self.get_feature_file('train')
+        return self.get_feature_file('train', self.f_type)
 
     @property
     def dev_feature_file(self):
@@ -185,7 +185,7 @@ class DataHelper:
 
     @property
     def train_example_file(self):
-        return self.get_example_file('train')
+        return self.get_example_file('train', self.f_type)
 
     @property
     def dev_example_file(self):
@@ -193,7 +193,7 @@ class DataHelper:
 
     @property
     def train_graph_file(self):
-        return self.get_graph_file('train')
+        return self.get_graph_file('train', self.f_type)
 
     @property
     def dev_graph_file(self):
@@ -327,7 +327,6 @@ class HotpotDataset(Dataset):
         self.features = features
         self.example_dict = example_dict
         self.graph_dict = graph_dict
-        # print(len(self.features), type(self.features), len(self.example_dict), type(self.example_dict), len(self.graph_dict), type(self.graph_dict))
         self.para_limit = para_limit
         self.sent_limit = sent_limit
         self.ent_limit = ent_limit
