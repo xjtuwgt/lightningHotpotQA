@@ -25,7 +25,6 @@ def normalize_question(question: str) -> str:
     if question[-1] == '?':
         question = question[:-1]
     return question
-
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def supp_doc_prediction(predict_para_support_np_ith, example_dict, batch_ids_ith):
     arg_order_ids = np.argsort(predict_para_support_np_ith)[::-1].tolist()
@@ -33,7 +32,6 @@ def supp_doc_prediction(predict_para_support_np_ith, example_dict, batch_ids_ith
     assert len(cand_para_names) >=2
     cur_sp_para_pred = [cand_para_names[arg_order_ids[0]], cand_para_names[arg_order_ids[1]]]
     return cur_sp_para_pred
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def supp_sent_prediction(predict_support_np_ith, example_dict, batch_ids_ith, thresholds):
     N_thresh = len(thresholds)
@@ -53,7 +51,6 @@ def supp_sent_prediction(predict_support_np_ith, example_dict, batch_ids_ith, th
                 cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[jth_idx])
     return cur_sp_pred
 
-
 def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file):
     encoder.eval()
     model.eval()
@@ -71,7 +68,6 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     total_para_sp_dict = {}
     ##++++++++++++++++++++++++++++++++++
     best_sp_dict = {}
-    best_sp_threshold = {}
     threshold_inter_count = 0
     ##++++++++++++++++++++++++++++++++++
 
