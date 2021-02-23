@@ -327,6 +327,7 @@ class HotpotDataset(Dataset):
         self.features = features
         self.example_dict = example_dict
         self.graph_dict = graph_dict
+        print(len(self.features), type(self.features), len(self.example_dict), type(self.example_dict), len(self.graph_dict), type(self.graph_dict))
         self.para_limit = para_limit
         self.sent_limit = sent_limit
         self.ent_limit = ent_limit

@@ -51,17 +51,6 @@ _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
                                             do_lower_case=args.do_lower_case)
 
-# def get_data_loader(dataset):
-#     dataloader = DataLoader(
-#         dataset=dataset,
-#         batch_size=4,
-#         shuffle=False,
-#         num_workers=max(1, 6),
-#         collate_fn=HotpotDataset.collate_fn
-#     )
-#     return dataloader
-#
-# dev_loader = get_data_loader(dataset=dev_dataloader)
 for batch_idx, batch in enumerate(dev_loader):
     ids = batch['ids']
     for key, value in batch.items():
