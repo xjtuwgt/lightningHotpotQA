@@ -131,7 +131,7 @@ class InputFeatures(object):
         self.end_position = end_position
 
 class DataHelper:
-    def __init__(self, gz=True, config=None, ext=False):
+    def __init__(self, gz=True, config=None, reverse=False, ranker='hgn'):
         self.Dataset = HotpotDataset
         self.gz = gz
         self.suffix = '.pkl.gz' if gz else '.pkl'
@@ -152,28 +152,29 @@ class DataHelper:
 
         self.config = config
 
-        self.ext = ext
+        self.reverse = reverse
+        self.ranker = ranker
 
     def get_feature_file(self, tag):
-        if self.ext:
-            cached_filename = get_cached_filename('ext_features', self.config)
+        if self.reverse:
+            cached_filename = get_cached_filename('{}_reverse_features'.format(self.ranker), self.config)
         else:
-            cached_filename = get_cached_filename('features', self.config)
+            cached_filename = get_cached_filename('{}_features'.format(self.ranker), self.config)
         return join(self.data_dir, tag, cached_filename)
 
     def get_example_file(self, tag):
-        if self.ext:
-            cached_filename = get_cached_filename('ext_examples', self.config)
+        if self.reverse:
+            cached_filename = get_cached_filename('{}_reverse_examples'.format(self.ranker), self.config)
         else:
-            cached_filename = get_cached_filename('examples', self.config)
+            cached_filename = get_cached_filename('{}_examples'.format(self.ranker), self.config)
 
         return join(self.data_dir, tag, cached_filename)
 
     def get_graph_file(self, tag):
-        if self.ext:
-            cached_filename = get_cached_filename('ext_graphs', self.config)
+        if self.reverse:
+            cached_filename = get_cached_filename('{}_reverse_graphs'.format(self.ranker), self.config)
         else:
-            cached_filename = get_cached_filename('graphs', self.config)
+            cached_filename = get_cached_filename('{}_graphs'.format(self.ranker), self.config)
         return join(self.data_dir, tag, cached_filename)
 
     @property
