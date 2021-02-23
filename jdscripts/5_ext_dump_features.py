@@ -19,7 +19,8 @@ from tqdm import tqdm
 
 from model_envs import MODEL_CLASSES
 from envs import DATASET_FOLDER
-from csr_mhqa.data_processing import Example, InputFeatures, get_cached_filename
+# from csr_mhqa.data_processing import Example, InputFeatures, get_cached_filename
+from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
 from eval.hotpot_evaluate_v1 import normalize_answer
 
 infix_re = re.compile(r'''[-—–~]''')
@@ -664,6 +665,8 @@ if __name__ == '__main__':
                              "than this will be truncated, and sequences shorter than this will be padded.")
     parser.add_argument("--filter_no_ans", action='store_true',
                         help="Set this flag if you are using an uncased model.")
+    parser.add_argument("--reverse", action='store_true', default=False,
+                        help="Set this flag if you are using reverse data.")
     args = parser.parse_args()
     print('*' * 75)
     for key, value in vars(args).items():
@@ -678,8 +681,13 @@ if __name__ == '__main__':
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
                                     doc_link_file=args.doc_link_ner)
-    cached_examples_file = os.path.join(args.output_dir,
-                                        get_cached_filename('ext_examples', args))
+    if args.reverse:
+        cached_examples_file = os.path.join(args.output_dir,
+                                            get_cached_filename('reverse_examples', args))
+    else:
+        cached_examples_file = os.path.join(args.output_dir,
+                                            get_cached_filename('ext_examples', args))
+
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
 
@@ -691,15 +699,23 @@ if __name__ == '__main__':
                                             sep_token=tokenizer.sep_token,
                                             is_roberta=bool(args.model_type in ['roberta']),
                                             filter_no_ans=args.filter_no_ans)
-    cached_features_file = os.path.join(args.output_dir,
-                                        get_cached_filename('ext_features', args))
+    if args.reverse:
+        cached_features_file = os.path.join(args.output_dir,
+                                            get_cached_filename('reverse_features', args))
+    else:
+        cached_features_file = os.path.join(args.output_dir,
+                                            get_cached_filename('ext_features', args))
 
     with gzip.open(cached_features_file, 'wb') as fout:
         pickle.dump(features, fout)
 
     # build graphs
-    cached_graph_file = os.path.join(args.output_dir,
-                                     get_cached_filename('ext_graphs', args))
+    if args.reverse:
+        cached_graph_file = os.path.join(args.output_dir,
+                                         get_cached_filename('reverse_graphs', args))
+    else:
+        cached_graph_file = os.path.join(args.output_dir,
+                                         get_cached_filename('ext_graphs', args))
 
     graphs = build_graph(args, examples, features, args.max_entity_num)
     with gzip.open(cached_graph_file, 'wb') as fout:
