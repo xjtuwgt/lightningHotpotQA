@@ -44,7 +44,7 @@ def rand_search_parameter(space: dict):
 
 def HypeParameterSpace():
     learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [1e-5, 3e-5]}
-    per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
+    per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2, 4]}
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1, 2]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 10, 15]}
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
