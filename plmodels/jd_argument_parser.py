@@ -125,11 +125,11 @@ def default_train_parser():
                         type=int,
                         help="Batch size per GPU/CPU for training.")
     parser.add_argument("--eval_batch_size", default=16, type=int)
-    parser.add_argument("--fine_tuned_model", default=None, type=str)
+    parser.add_argument("--fine_tuned_model", default='roberta', type=str)
 
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)
-    parser.add_argument("--fine_tuned_encoder", default=None, type=str)
+    parser.add_argument("--fine_tuned_encoder", default='roberta', type=str)
 
     # eval
     parser.add_argument("--encoder_ckpt", default=None, type=str)
