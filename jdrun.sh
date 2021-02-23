@@ -75,6 +75,7 @@ preprocess() {
 
         echo "5. Dump features"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json
+        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse
 #        python scripts/5_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json
 
 #        echo "6. Test dumped features"
