@@ -667,6 +667,7 @@ if __name__ == '__main__':
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
+
     args = parser.parse_args()
     print('*' * 75)
     for key, value in vars(args).items():
