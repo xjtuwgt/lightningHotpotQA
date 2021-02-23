@@ -665,7 +665,7 @@ if __name__ == '__main__':
                              "than this will be truncated, and sequences shorter than this will be padded.")
     parser.add_argument("--filter_no_ans", action='store_true',
                         help="Set this flag if you are using an uncased model.")
-    parser.add_argument("--reverse", action='store_true', default=False,
+    parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
     args = parser.parse_args()
     print('*' * 75)
