@@ -33,11 +33,11 @@ def trainer_builder(args):
     tb_logger = pl_loggers.TensorBoardLogger(save_dir=args.exp_name)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     check_point_dir = args.exp_name
-    checkpoint_callback = ModelCheckpoint(monitor='valid_loss',
-                                          mode='min',
+    checkpoint_callback = ModelCheckpoint(monitor='joint_f1',
+                                          mode='max',
                                           save_top_k=-1,
                                           dirpath=check_point_dir,
-                                          filename='HGN_hotpotQA-{epoch:02d}-{valid_loss:.4f}')
+                                          filename='HGN_hotpotQA-{epoch:02d}-{joint_f1:.4f}')
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if args.gpus > 0:
         gpu_list_str = args.gpu_list
