@@ -32,28 +32,28 @@ class DataHelper:
         self.devf_type = self.config.devf_type
 
 
-    # def get_feature_file(self, tag, f_type):
-    #     cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
-    #     return join(self.data_dir, tag, cached_filename)
-    #
-    # def get_example_file(self, tag, f_type):
-    #     cached_filename = get_cached_filename('{}_examples'.format(f_type), self.config)
-    #     return join(self.data_dir, tag, cached_filename)
-    #
-    # def get_graph_file(self, tag, f_type):
-    #     cached_filename = get_cached_filename('{}_graphs'.format(f_type), self.config)
-    #     return join(self.data_dir, tag, cached_filename)
-    #
+    def get_feature_file(self, tag, f_type):
+        cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
+        return join(self.data_dir, tag, cached_filename)
+
+    def get_example_file(self, tag, f_type):
+        cached_filename = get_cached_filename('{}_examples'.format(f_type), self.config)
+        return join(self.data_dir, tag, cached_filename)
+
+    def get_graph_file(self, tag, f_type):
+        cached_filename = get_cached_filename('{}_graphs'.format(f_type), self.config)
+        return join(self.data_dir, tag, cached_filename)
+
     # #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # def get_feature_files(self, tag, f_types):
-    #     cached_filenames = [self.get_feature_file(tag=tag, f_type=x) for x in f_types]
-    #     return cached_filenames
-    # def get_example_files(self, tag, f_types):
-    #     cached_filenames = [self.get_example_file(tag=tag, f_type=x) for x in f_types]
-    #     return cached_filenames
-    # def get_graph_files(self, tag, f_types):
-    #     cached_filenames = [self.get_graph_file(tag=tag, f_type=x) for x in f_types]
-    #     return cached_filenames
+    def get_feature_files(self, tag, f_types):
+        cached_filenames = [(x, self.get_feature_file(tag=tag, f_type=x)) for x in f_types]
+        return cached_filenames
+    def get_example_files(self, tag, f_types):
+        cached_filenames = [(x, self.get_example_file(tag=tag, f_type=x)) for x in f_types]
+        return cached_filenames
+    def get_graph_files(self, tag, f_types):
+        cached_filenames = [(x, self.get_graph_file(tag=tag, f_type=x)) for x in f_types]
+        return cached_filenames
     # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
     # def train_feature_files(self):
@@ -80,22 +80,23 @@ class DataHelper:
         else:
             return open(file_name, 'rb')
 
-    def __get_or_load__(self, name, file):
-        if getattr(self, name) is None:
-            with self.get_pickle_file(file) as fin:
-                print('loading', file)
-                setattr(self, name, pickle.load(fin))
-        return getattr(self, name)
+    def get_or_load(self, file):
+        with self.get_pickle_file(file) as fin:
+            print('loading', file)
+            return pickle.load(fin)
     ###################################################################################################
     # Features
     def get_train_features(self):
+        cached_features_names = self.get_feature_files(tag='train', f_types=self.train_augf_types)
 
         return
 
     def get_train_examples(self):
+        cached_examples_names = self.get_example_files(tag='train', f_types=self.train_augf_types)
         return
 
     def get_train_graphs(self):
+        cached_graph_names = self.get_graph_files(tag='train')
         return
 
     def get_dev_features(self):
