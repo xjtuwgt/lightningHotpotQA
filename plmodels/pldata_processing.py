@@ -7,8 +7,6 @@ from os.path import join
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
-from dataugmentation.concat_data_processing import AUG_MODULE_DICT
-
 from envs import DATASET_FOLDER
 
 IGNORE_INDEX = -100
@@ -156,7 +154,7 @@ class DataHelper:
 
         self.config = config
 
-        self.train_f_type = AUG_MODULE_DICT[self.config.daug_type][0]
+        self.train_f_type = self.config.daug_type
 
     def get_feature_file(self, tag, f_type=None):
         cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
