@@ -46,13 +46,13 @@ class DataHelper:
 
     # #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     def get_feature_files(self, tag, f_types):
-        cached_filenames = [(x, self.get_feature_file(tag=tag, f_type=x)) for x in f_types]
+        cached_filenames = [self.get_feature_file(tag=tag, f_type=x) for x in f_types]
         return cached_filenames
     def get_example_files(self, tag, f_types):
-        cached_filenames = [(x, self.get_example_file(tag=tag, f_type=x)) for x in f_types]
+        cached_filenames = [self.get_example_file(tag=tag, f_type=x) for x in f_types]
         return cached_filenames
     def get_graph_files(self, tag, f_types):
-        cached_filenames = [(x, self.get_graph_file(tag=tag, f_type=x)) for x in f_types]
+        cached_filenames = [self.get_graph_file(tag=tag, f_type=x) for x in f_types]
         return cached_filenames
     ###################################################################################################
     def get_pickle_file(self, file_name):
