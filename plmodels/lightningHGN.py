@@ -223,32 +223,6 @@ class lightningHGN(pl.LightningModule):
         #############################################################################
         return best_metrics, best_threshold
 
-    # def configure_optimizers(self):
-    #     "Prepare optimizer and schedule (linear warmup and decay)"
-    #     no_decay = ["bias", "LayerNorm.weight"]
-    #     optimizer_grouped_parameters = [
-    #         {
-    #             "params": [p for n, p in self.named_parameters() if
-    #                        (p.requires_grad) and (not any(nd in n for nd in no_decay))],
-    #             "weight_decay": self.args.weight_decay,
-    #         },
-    #         {
-    #             "params": [p for n, p in self.named_parameters() if
-    #                        (p.requires_grad) and (any(nd in n for nd in no_decay))],
-    #             "weight_decay": 0.0,
-    #         }
-    #     ]
-    #     optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
-    #     scheduler = get_linear_schedule_with_warmup(
-    #         optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
-    #     )
-    #     scheduler = {
-    #         'scheduler': scheduler,
-    #         'interval': 'step',
-    #         'frequency': 1
-    #     }
-    #     return [optimizer], [scheduler]
-
     def configure_optimizers(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
         encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
@@ -294,7 +268,7 @@ class lightningHGN(pl.LightningModule):
         for idx, module_group in enumerate(module_groups):
             grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                           weight_decay=self.args.weight_decay,
-                                                          lr=self.args.learning_rate * 10 * (1 + idx))
+                                                          lr=self.args.learning_rate * (10.0**idx))
             optimizer_grouped_parameters += grouped_parameters
 
         optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
@@ -307,3 +281,29 @@ class lightningHGN(pl.LightningModule):
             'frequency': 1
         }
         return [optimizer], [scheduler]
+
+    # def configure_optimizers(self):
+    #     "Prepare optimizer and schedule (linear warmup and decay)"
+    #     no_decay = ["bias", "LayerNorm.weight"]
+    #     optimizer_grouped_parameters = [
+    #         {
+    #             "params": [p for n, p in self.named_parameters() if
+    #                        (p.requires_grad) and (not any(nd in n for nd in no_decay))],
+    #             "weight_decay": self.args.weight_decay,
+    #         },
+    #         {
+    #             "params": [p for n, p in self.named_parameters() if
+    #                        (p.requires_grad) and (any(nd in n for nd in no_decay))],
+    #             "weight_decay": 0.0,
+    #         }
+    #     ]
+    #     optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
+    #     scheduler = get_linear_schedule_with_warmup(
+    #         optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
+    #     )
+    #     scheduler = {
+    #         'scheduler': scheduler,
+    #         'interval': 'step',
+    #         'frequency': 1
+    #     }
+    #     return [optimizer], [scheduler]
