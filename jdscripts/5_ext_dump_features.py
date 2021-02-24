@@ -703,6 +703,7 @@ if __name__ == '__main__':
         data_source_type = data_source_name
     else:
         data_source_type = None
+    print('data type = {} and data source type = {}'.format(data_type, data_source_type))
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
