@@ -50,7 +50,7 @@ def trainer_builder(args):
                              callbacks=[checkpoint_callback],
                              accelerator=args.accelerator,
                              precision=args.precision,
-                             # plugins=args.plugins,
+                             plugins=args.plugins,
                              log_every_n_steps=args.logging_steps,
                              max_epochs=int(args.num_train_epochs))
     else:
