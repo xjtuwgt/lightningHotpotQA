@@ -25,7 +25,10 @@ class DataHelper:
 
         self.data_dir = join(DATASET_FOLDER, 'data_feat')
         self.config = config
-        self.train_augf_types = AUG_MODULE_DICT[self.config.daug_type]
+        if self.config.daug_type not in AUG_MODULE_DICT:
+            self.train_augf_types = AUG_MODULE_DICT['0']
+        else:
+            self.train_augf_types = AUG_MODULE_DICT[self.config.daug_type]
         self.devf_type = self.config.devf_type
 
 
