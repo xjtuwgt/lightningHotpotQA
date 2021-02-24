@@ -125,12 +125,12 @@ class lightningHGN(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         start, end, q_type, paras, sents, ents, yp1, yp2 = self.forward(batch=batch)
-        # loss_list = compute_loss(self.args, batch, start, end, paras, sents, ents, q_type)
-        # loss, loss_span, loss_type, loss_sup, loss_ent, loss_para = loss_list
-        # dict_for_log = {'span_loss': loss_span, 'type_loss': loss_type,
-        #                          'sent_loss': loss_sup, 'ent_loss': loss_ent,
-        #                          'para_loss': loss_para,
-        #                 'step': batch_idx + 1}
+        loss_list = compute_loss(self.args, batch, start, end, paras, sents, ents, q_type)
+        loss, loss_span, loss_type, loss_sup, loss_ent, loss_para = loss_list
+        dict_for_log = {'span_loss': loss_span, 'type_loss': loss_type,
+                                 'sent_loss': loss_sup, 'ent_loss': loss_ent,
+                                 'para_loss': loss_para,
+                        'step': batch_idx + 1}
         #######################################################################
         type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
         answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(self.dev_example_dict,
@@ -143,12 +143,12 @@ class lightningHGN(pl.LightningModule):
         valid_dict = {'answer': answer_dict_, 'ans_type': answer_type_dict_, 'ids': batch['ids'],
                       'ans_type_pro': answer_type_prob_dict_, 'supp_np': predict_support_np}
         #######################################################################
-        # output = {'valid_loss': loss, 'log': dict_for_log, 'valid_dict_output': valid_dict}
-        output = {'valid_dict_output': valid_dict}
+        output = {'valid_loss': loss, 'log': dict_for_log, 'valid_dict_output': valid_dict}
+        # output = {'valid_dict_output': valid_dict}
         return output
 
     def validation_epoch_end(self, validation_step_outputs):
-        # avg_loss = torch.stack([x['valid_loss'] for x in validation_step_outputs]).mean()
+        avg_loss = torch.stack([x['valid_loss'] for x in validation_step_outputs]).mean()
         # self.log('valid_loss', avg_loss, on_epoch=True, prog_bar=True, sync_dist=True)
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         answer_dict = {}
@@ -217,7 +217,7 @@ class lightningHGN(pl.LightningModule):
         json.dump(best_metrics, open(output_eval_file, 'w'))
         #############################################################################
         # self.log('valid_loss', avg_loss, 'joint_f1', best_metrics['joint_f1'], on_epoch=True, prog_bar=True, sync_dist=True)
-        joint_f1 = torch.FloatTensor([best_metrics['joint_f1']])
+        joint_f1 = torch.FloatTensor([best_metrics['joint_f1']], device=avg_loss.device)
         self.log('joint_f1', joint_f1, on_epoch=True, prog_bar=True, sync_dist=True)
         #############################################################################
         return best_metrics, best_threshold
