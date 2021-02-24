@@ -149,6 +149,7 @@ class lightningHGN(pl.LightningModule):
 
     def validation_epoch_end(self, validation_step_outputs):
         avg_loss = torch.stack([x['valid_loss'] for x in validation_step_outputs]).mean()
+        print(avg_loss, type(avg_loss), avg_loss.device)
         # self.log('valid_loss', avg_loss, on_epoch=True, prog_bar=True, sync_dist=True)
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         answer_dict = {}
