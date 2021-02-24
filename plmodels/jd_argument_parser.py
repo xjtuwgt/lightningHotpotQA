@@ -133,7 +133,7 @@ def default_train_parser():
 
     # train-dev data type
     parser.add_argument("--daug_type", default='long', type=str, help="Train Data augumentation type.")
-    parser.add_argument("--devf_type", default='hgn', type=str, help="Dev data type")
+    parser.add_argument("--devf_type", default='long', type=str, help="Dev data type")
 
     # eval
     parser.add_argument("--encoder_ckpt", default=None, type=str)
