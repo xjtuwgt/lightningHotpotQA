@@ -11,6 +11,12 @@ from plmodels.pldata_processing import HotpotDataset, get_cached_filename
 
 IGNORE_INDEX = -100
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+AUG_MODULE_DICT = {'0': ('hgn'), '1': ('long'), '2': ('hgn', 'long'),
+                   '3': ('hgn', 'hgn_reverse'), '4': ('long', 'long_reverse'),
+                   '5': ('hgn', 'hgn_reverse', 'long', 'long_reverse')}
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 class DataHelper:
     def __init__(self, gz=True, config=None):
         self.Dataset = HotpotDataset
@@ -18,71 +24,53 @@ class DataHelper:
         self.suffix = '.pkl.gz' if gz else '.pkl'
 
         self.data_dir = join(DATASET_FOLDER, 'data_feat')
-
-        self.__train_features__ = None
-        self.__dev_features__ = None
-
-        self.__train_examples__ = None
-        self.__dev_examples__ = None
-
-        self.__train_graphs__ = None
-        self.__dev_graphs__ = None
-
-        self.__train_example_dict__ = None
-        self.__dev_example_dict__ = None
-
         self.config = config
+        self.train_augf_types = AUG_MODULE_DICT[self.config.daug_type]
+        self.devf_type = self.config.devf_type
 
 
-    def get_feature_file(self, tag, f_type=None):
-        if f_type is None:
-            cached_filename = get_cached_filename('features', self.config)
-        else:
-            cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
-        return join(self.data_dir, tag, cached_filename)
-
-    def get_example_file(self, tag, f_type=None):
-        if f_type is None:
-            cached_filename = get_cached_filename('examples', self.config)
-        else:
-            cached_filename = get_cached_filename('{}_examples'.format(f_type), self.config)
-        return join(self.data_dir, tag, cached_filename)
-
-    def get_graph_file(self, tag, f_type=None):
-        if f_type is None:
-            cached_filename = get_cached_filename('graphs', self.config)
-        else:
-            cached_filename = get_cached_filename('{}_graphs'.format(f_type), self.config)
-        return join(self.data_dir, tag, cached_filename)
-
-    @property
-    def train_feature_file(self):
-        return self.get_feature_file('train')
-
-    @property
-    def train_feature_files(self):
-        return self.get_feature_file('train')
-
-    @property
-    def dev_feature_file(self):
-        return self.get_feature_file('dev_distractor')
-
-    @property
-    def train_example_file(self):
-        return self.get_example_file('train')
-
-    @property
-    def dev_example_file(self):
-        return self.get_example_file('dev_distractor')
-
-    @property
-    def train_graph_file(self):
-        return self.get_graph_file('train')
-
-    @property
-    def dev_graph_file(self):
-        return self.get_graph_file('dev_distractor')
-
+    # def get_feature_file(self, tag, f_type):
+    #     cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
+    #     return join(self.data_dir, tag, cached_filename)
+    #
+    # def get_example_file(self, tag, f_type):
+    #     cached_filename = get_cached_filename('{}_examples'.format(f_type), self.config)
+    #     return join(self.data_dir, tag, cached_filename)
+    #
+    # def get_graph_file(self, tag, f_type):
+    #     cached_filename = get_cached_filename('{}_graphs'.format(f_type), self.config)
+    #     return join(self.data_dir, tag, cached_filename)
+    #
+    # #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # def get_feature_files(self, tag, f_types):
+    #     cached_filenames = [self.get_feature_file(tag=tag, f_type=x) for x in f_types]
+    #     return cached_filenames
+    # def get_example_files(self, tag, f_types):
+    #     cached_filenames = [self.get_example_file(tag=tag, f_type=x) for x in f_types]
+    #     return cached_filenames
+    # def get_graph_files(self, tag, f_types):
+    #     cached_filenames = [self.get_graph_file(tag=tag, f_type=x) for x in f_types]
+    #     return cached_filenames
+    # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    #
+    # def train_feature_files(self):
+    #     return self.get_feature_files('train', self.train_augf_types)
+    #
+    # def train_example_files(self):
+    #     return self.get_example_files('train', self.train_augf_types)
+    #
+    # def train_graph_files(self):
+    #     return self.get_graph_files('train', self.train_augf_types)
+    #
+    # def dev_feature_file(self):
+    #     return self.get_feature_file('dev_distractor', self.config.devf_type)
+    #
+    # def dev_example_file(self):
+    #     return self.get_example_file('dev_distractor', self.config.devf_type)
+    #
+    # def dev_graph_file(self):
+    #     return self.get_graph_file('dev_distractor', self.config.devf_type)
+    ###################################################################################################
     def get_pickle_file(self, file_name):
         if self.gz:
             return gzip.open(file_name, 'rb')
@@ -95,15 +83,26 @@ class DataHelper:
                 print('loading', file)
                 setattr(self, name, pickle.load(fin))
         return getattr(self, name)
-
+    ###################################################################################################
     # Features
-    @property
-    def train_features(self):
-        return self.__get_or_load__('__train_features__', self.train_feature_file)
+    def get_train_features(self):
 
-    @property
-    def dev_features(self):
-        return self.__get_or_load__('__dev_features__', self.dev_feature_file)
+        return
+
+    def get_train_examples(self):
+        return
+
+    def get_train_graphs(self):
+        return
+
+    def get_dev_features(self):
+        return
+
+    def get_dev_examples(self):
+        return
+
+    def get_dev_graphs(self):
+        return
 
     # Examples
     @property
