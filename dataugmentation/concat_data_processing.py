@@ -54,25 +54,6 @@ class DataHelper:
     def get_graph_files(self, tag, f_types):
         cached_filenames = [(x, self.get_graph_file(tag=tag, f_type=x)) for x in f_types]
         return cached_filenames
-    # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #
-    # def train_feature_files(self):
-    #     return self.get_feature_files('train', self.train_augf_types)
-    #
-    # def train_example_files(self):
-    #     return self.get_example_files('train', self.train_augf_types)
-    #
-    # def train_graph_files(self):
-    #     return self.get_graph_files('train', self.train_augf_types)
-    #
-    # def dev_feature_file(self):
-    #     return self.get_feature_file('dev_distractor', self.config.devf_type)
-    #
-    # def dev_example_file(self):
-    #     return self.get_example_file('dev_distractor', self.config.devf_type)
-    #
-    # def dev_graph_file(self):
-    #     return self.get_graph_file('dev_distractor', self.config.devf_type)
     ###################################################################################################
     def get_pickle_file(self, file_name):
         if self.gz:
@@ -88,6 +69,7 @@ class DataHelper:
     # Features
     def get_train_features(self):
         cached_features_names = self.get_feature_files(tag='train', f_types=self.train_augf_types)
+        train_features = []
 
         return
 
@@ -96,55 +78,37 @@ class DataHelper:
         return
 
     def get_train_graphs(self):
-        cached_graph_names = self.get_graph_files(tag='train')
+        cached_graph_names = self.get_graph_files(tag='train', f_types=self.train_augf_types)
         return
 
     def get_dev_features(self):
+        cached_features_name = self.get_feature_file(tag='dev_distractor', f_type=self.devf_type)
         return
 
     def get_dev_examples(self):
+        cached_examples_name = self.get_example_file(tag='dev_distractor', f_type=self.devf_type)
         return
 
     def get_dev_graphs(self):
+        cached_graph_name = self.get_graph_file(tag='dev_distractor', f_type=self.devf_type)
+
         return
 
-    # Examples
-    @property
-    def train_examples(self):
-        return self.__get_or_load__('__train_examples__', self.train_example_file)
-
-    @property
-    def dev_examples(self):
-        return self.__get_or_load__('__dev_examples__', self.dev_example_file)
-
-    # Graphs
-    @property
-    def train_graphs(self):
-        return self.__get_or_load__('__train_graphs__', self.train_graph_file)
-
-    @property
-    def dev_graphs(self):
-        return self.__get_or_load__('__dev_graphs__', self.dev_graph_file)
-
     # Example dict
-    @property
     def train_example_dict(self):
         if self.__train_example_dict__ is None:
             self.__train_example_dict__ = {e.qas_id: e for e in self.train_examples}
         return self.__train_example_dict__
 
-    @property
     def dev_example_dict(self):
         if self.__dev_example_dict__ is None:
             self.__dev_example_dict__ = {e.qas_id: e for e in self.dev_examples}
         return self.__dev_example_dict__
 
     # Feature dict
-    @property
     def train_feature_dict(self):
         return {e.qas_id: e for e in self.train_features}
 
-    @property
     def dev_feature_dict(self):
         return {e.qas_id: e for e in self.dev_features}
 

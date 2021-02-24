@@ -39,7 +39,8 @@ nlp.tokenizer.infix_finditer = infix_re.finditer
 def read_hotpot_examples(para_file,
                          full_file,
                          ner_file,
-                         doc_link_file):
+                         doc_link_file,
+                         data_source_type=None):
     with open(para_file, 'r', encoding='utf-8') as reader:
         para_data = json.load(reader)
 
@@ -254,6 +255,9 @@ def read_hotpot_examples(para_file,
         else:
             start_position = ans_start_position
             end_position = ans_end_position
+
+        if data_source_type is not None:
+            key = key + "_" + data_source_type ## for data augmentation
 
         example = Example(
             qas_id=key,
@@ -651,6 +655,7 @@ if __name__ == '__main__':
     # Required parameters
     parser.add_argument("--para_path", type=str, required=True)
     parser.add_argument("--full_data", type=str, required=True)
+    parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--ner_path", type=str, required=True)
     parser.add_argument("--doc_link_ner", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
@@ -688,18 +693,24 @@ if __name__ == '__main__':
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)
 
+    ranker = args.ranker
+    data_type = args.data_type
+    if args.reverse:
+        data_source_name = "{}_reverse".format(ranker)
+    else:
+        data_source_name = "{}".format(ranker)
+    if "train" in data_type:
+        data_source_type = data_source_name
+    else:
+        data_source_type = None
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
-                                    doc_link_file=args.doc_link_ner)
-    ranker = args.ranker
+                                    doc_link_file=args.doc_link_ner,
+                                    data_source_type=data_source_type)
 
-    if args.reverse:
-        cached_examples_file = os.path.join(args.output_dir,
-                                            get_cached_filename('{}_reverse_examples'.format(ranker), args))
-    else:
-        cached_examples_file = os.path.join(args.output_dir,
-                                            get_cached_filename('{}_examples'.format(ranker), args))
+    cached_examples_file = os.path.join(args.output_dir,
+                                        get_cached_filename('{}_examples'.format(data_source_name), args))
 
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
@@ -712,23 +723,16 @@ if __name__ == '__main__':
                                             sep_token=tokenizer.sep_token,
                                             is_roberta=bool(args.model_type in ['roberta']),
                                             filter_no_ans=args.filter_no_ans)
-    if args.reverse:
-        cached_features_file = os.path.join(args.output_dir,
-                                            get_cached_filename('{}_reverse_features'.format(ranker), args))
-    else:
-        cached_features_file = os.path.join(args.output_dir,
-                                            get_cached_filename('{}_features'.format(ranker), args))
+
+    cached_features_file = os.path.join(args.output_dir,
+                                        get_cached_filename('{}_features'.format(data_source_name), args))
 
     with gzip.open(cached_features_file, 'wb') as fout:
         pickle.dump(features, fout)
 
     # build graphs
-    if args.reverse:
-        cached_graph_file = os.path.join(args.output_dir,
-                                         get_cached_filename('{}_reverse_graphs'.format(ranker), args))
-    else:
-        cached_graph_file = os.path.join(args.output_dir,
-                                         get_cached_filename('{}_graphs'.format(ranker), args))
+    cached_graph_file = os.path.join(args.output_dir,
+                                     get_cached_filename('{}_graphs'.format(data_source_name), args))
 
     graphs = build_graph(args, examples, features, args.max_entity_num)
     with gzip.open(cached_graph_file, 'wb') as fout:
