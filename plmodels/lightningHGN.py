@@ -217,8 +217,8 @@ class lightningHGN(pl.LightningModule):
         json.dump(best_metrics, open(output_eval_file, 'w'))
         #############################################################################
         # self.log('valid_loss', avg_loss, 'joint_f1', best_metrics['joint_f1'], on_epoch=True, prog_bar=True, sync_dist=True)
-        self.log('joint_f1', best_metrics['joint_f1'], on_epoch=True, prog_bar=True,
-                 sync_dist=True)
+        joint_f1 = torch.FloatTensor([best_metrics['joint_f1']])[0]
+        self.log('joint_f1', joint_f1, on_epoch=True, prog_bar=True, sync_dist=True)
         #############################################################################
         return best_metrics, best_threshold
 
