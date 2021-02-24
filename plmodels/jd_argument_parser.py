@@ -132,7 +132,7 @@ def default_train_parser():
     parser.add_argument("--fine_tuned_encoder", default='roberta', type=str)
 
     # train-dev data type
-    parser.add_argument("--daug_type", default='0', type=str, help="Train Data augumentation type.")
+    parser.add_argument("--daug_type", default='1', type=str, help="Train Data augumentation type.")
     parser.add_argument("--devf_type", default='hgn', type=str, help="Dev data type")
 
     # eval

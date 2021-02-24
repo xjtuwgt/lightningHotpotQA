@@ -7,6 +7,8 @@ from os.path import join
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
+from dataugmentation.concat_data_processing import AUG_MODULE_DICT
+
 from envs import DATASET_FOLDER
 
 IGNORE_INDEX = -100
@@ -154,6 +156,8 @@ class DataHelper:
 
         self.config = config
 
+        self.train_f_type = AUG_MODULE_DICT[self.config.daug_type][0]
+
     def get_feature_file(self, tag, f_type=None):
         cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
         return join(self.data_dir, tag, cached_filename)
@@ -168,7 +172,7 @@ class DataHelper:
 
     @property
     def train_feature_file(self):
-        return self.get_feature_file('train', self.config.daug_type)
+        return self.get_feature_file('train', self.train_f_type)
 
     @property
     def dev_feature_file(self):
@@ -176,7 +180,7 @@ class DataHelper:
 
     @property
     def train_example_file(self):
-        return self.get_example_file('train', self.config.daug_type)
+        return self.get_example_file('train', self.train_f_type)
 
     @property
     def dev_example_file(self):
@@ -184,7 +188,7 @@ class DataHelper:
 
     @property
     def train_graph_file(self):
-        return self.get_graph_file('train', self.config.daug_type)
+        return self.get_graph_file('train', self.train_f_type)
 
     @property
     def dev_graph_file(self):
