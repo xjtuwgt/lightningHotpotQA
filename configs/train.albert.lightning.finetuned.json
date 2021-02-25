@@ -7,7 +7,6 @@
     "gradient_accumulation_steps": 1,
     "q_update": "False",
     "q_attn": "True",
-    "graph_id": "0",
     "graphblock_share": "True",
     "graphblock_gat": "True",
     "gat_shareweight": "False",
