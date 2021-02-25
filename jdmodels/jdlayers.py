@@ -165,7 +165,6 @@ class ParaSentEntPredictionLayer(nn.Module):
         self.sent_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
         self.entity_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
 
-
     def forward(self, batch, graph_state_dict):
         para_state = graph_state_dict['para_state']
         sent_state = graph_state_dict['sent_state']
@@ -189,6 +188,7 @@ class ParaSentEntPredictionLayer(nn.Module):
 class PredictionLayer(nn.Module):
     """
     Identical to baseline prediction layer
+    for answer span prediction
     """
     def __init__(self, config):
         super(PredictionLayer, self).__init__()
