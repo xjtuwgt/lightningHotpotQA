@@ -129,7 +129,6 @@ class GATSelfAttention(nn.Module):
         h = torch.sum(h, dim=1)
         return h
 
-
 class AttentionLayer(nn.Module):
     def __init__(self, in_dim, hid_dim, n_head, q_attn, config):
         super(AttentionLayer, self).__init__()
@@ -162,44 +161,30 @@ class ParaSentEntPredictionLayer(nn.Module):
     def __init__(self, config, hidden_dim):
         super(ParaSentEntPredictionLayer, self).__init__()
         self.hidden_dim = hidden_dim
-
         self.para_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
         self.sent_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
         self.entity_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
 
-        self.para_query_pooler = LinearAttentionPooLayer(hidden_dim=self.hidden_dim)
-        self.sent_query_pooler = LinearAttentionPooLayer(hidden_dim=self.hidden_dim)
 
-
-    def forward(self, batch, graph_state_dict, query_vec):
-
+    def forward(self, batch, graph_state_dict):
         para_state = graph_state_dict['para_state']
         sent_state = graph_state_dict['sent_state']
         ent_state = graph_state_dict['ent_state']
 
-        N, max_para_num, _ = para_state.size()
-        _, max_sent_num, _ = sent_state.size()
-        _, max_ent_num, _ = ent_state.size()
-
-        N, max_para_num, _ = para_state.size()
-        _, max_sent_num, _ = sent_state.size()
-        _, max_ent_num, _ = ent_state.size()
-
-        query_sent_vec = self.sent_query_pooler.forward(query=query_vec, key=sent_state, value=sent_state, mask=batch['sent_mask'])
-        query_para_vec = self.para_query_pooler.forward(query=query_vec, key=para_state, value=para_state, mask=batch['para_mask'])
-
-        query_sent_state = torch.cat([query_sent_vec.unsqueeze(1), sent_state], dim=1)
-        query_para_state = torch.cat([query_para_vec.unsqueeze(1), para_state], dim=1)
-
-        # query_sent_state = torch.cat([query_vec.unsqueeze(1), sent_state], dim=1)
-        # query_para_state = torch.cat([query_vec.unsqueeze(1), para_state], dim=1)
+        N, _, _ = para_state.size()
 
         ent_logit = self.entity_mlp(ent_state).view(N, -1)
         ent_logit = ent_logit - 1e30 * (1 - batch['ans_cand_mask'])
 
-        sent_logit = self.sent_mlp(query_sent_state).squeeze(dim=-1)
-        para_logit = self.para_mlp(query_para_state).squeeze(dim=-1)
-        return para_logit, sent_logit, ent_logit
+        sent_logit = self.sent_mlp(sent_state).squeeze(dim=-1)
+        para_logit = self.para_mlp(para_state).squeeze(dim=-1)
+
+        para_logits_aux = Variable(para_logit.data.new(para_logit.size(0), para_logit.size(1), 1).zero_())
+        para_prediction = torch.cat([para_logits_aux, para_logit], dim=-1).contiguous()
+
+        sent_logits_aux = Variable(sent_logit.data.new(sent_logit.size(0), sent_logit.size(1), 1).zero_())
+        sent_prediction = torch.cat([sent_logits_aux, sent_logit], dim=-1).contiguous()
+        return para_prediction, sent_prediction, ent_logit
 
 class PredictionLayer(nn.Module):
     """
@@ -229,12 +214,16 @@ class PredictionLayer(nn.Module):
         self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
         return Variable(self.cache_mask, requires_grad=False)
 
-    def forward(self, batch, context_input, sent_logits, packing_mask=None, return_yp=False):
+    def forward(self, batch, context_input, packing_mask=None, return_yp=False):
         context_mask = batch['context_mask']
-        sent_mapping = batch['sent_mapping']
+        # context_lens = batch['context_lens']
+        # sent_mapping = batch['sent_mapping']
+
+        # sp_forward = torch.bmm(sent_mapping, sent_logits).contiguous()  # N x max_seq_len x 1
+
         start_prediction = self.start_linear(context_input).squeeze(2) - 1e30 * (1 - context_mask)  # N x L
         end_prediction = self.end_linear(context_input).squeeze(2) - 1e30 * (1 - context_mask)  # N x L
-        type_prediction = self.type_linear(context_input[:, 0, :])##cls based prediction
+        type_prediction = self.type_linear(context_input[:, 0, :])
 
         if not return_yp:
             return start_prediction, end_prediction, type_prediction
@@ -249,36 +238,3 @@ class PredictionLayer(nn.Module):
         yp1 = outer.max(dim=2)[0].max(dim=1)[1]
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
         return start_prediction, end_prediction, type_prediction, yp1, yp2
-
-class LinearAttentionPooLayer(nn.Module):
-    def __init__(self, hidden_dim):
-        super(LinearAttentionPooLayer, self).__init__()
-        self.query_score = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim*2),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(hidden_dim*2, 1),
-        )
-
-        self.key_score = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim*2),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(hidden_dim*2, 1),
-        )
-        self.value_linear = nn.Linear(hidden_dim, hidden_dim, bias=False)
-
-    def forward(self, query, key, value, mask=None):
-        query_score = self.key_score(query)
-        key_score = self.key_score(key).squeeze(-1)
-        # print(query_score.shape)
-        # print(key_score.shape)
-        attn_score = key_score + query_score
-        if mask is not None:
-            attn_score = attn_score - 1e30 * (1 - mask)
-        attn_prob = F.softmax(attn_score, dim=-1).unsqueeze(dim=1)
-        # print(attn_prob.shape)
-        # print(attn_prob)
-        value_map = self.value_linear(value)
-        res = torch.matmul(attn_prob, value_map).squeeze(dim=1)
-        return res

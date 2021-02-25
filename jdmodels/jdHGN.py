@@ -1,5 +1,5 @@
 from models.layers import mean_pooling, BiAttention, LSTMWrapper, GatedAttention
-from jdmodels.jdlayers import GraphBlock, init_encoder_graph_node_feature, PredictionLayer, ParaSentEntPredictionLayer
+from jdmodels.jdlayers import GraphBlock, init_encoder_graph_node_feature, ParaSentEntPredictionLayer, PredictionLayer
 from torch import nn
 
 class HierarchicalGraphNetwork(nn.Module):
@@ -61,14 +61,13 @@ class HierarchicalGraphNetwork(nn.Module):
                                                                                         graph_state_dict=graph_state_dict,
                                                                                         query_vec=query_vec)
         input_state, _ = self.ctx_attention(input_state, graph_state, graph_mask.squeeze(-1))
-        para_logit, sent_logit, ent_logit = self.para_sent_ent_predict_layer.forward(batch=batch,
-                                                                                     graph_state_dict=graph_state_dict,
-                                                                                     query_vec=query_vec)
-        predictions = self.predict_layer(batch, input_state, sent_logit, packing_mask=query_mapping,
+        para_predictions, sent_predictions, ent_predictions = self.para_sent_ent_predict_layer.forward(batch=batch,
+                                                                                     graph_state_dict=graph_state_dict)
+        predictions = self.predict_layer(batch, input_state, packing_mask=query_mapping,
                                          return_yp=return_yp)
         if return_yp:
             start, end, q_type, yp1, yp2 = predictions
-            return start, end, q_type, para_logit, sent_logit, ent_logit, yp1, yp2
+            return start, end, q_type, para_predictions, sent_predictions, ent_predictions, yp1, yp2
         else:
             start, end, q_type = predictions
-            return start, end, q_type, para_logit, sent_logit, ent_logit
+            return start, end, q_type, para_predictions, sent_predictions, ent_predictions
