@@ -290,8 +290,9 @@ def read_hotpot_examples(para_file,
         examples.append(example)
 
         print('key {}'.format(key))
-        for entity in ctx_entities_text:
-            print(entity)
+        print(len(ctx_entities_text), len(set(ctx_entities_text)))
+        # for entity in ctx_entities_text:
+        #     print(entity)
         print('*' * 75)
         break
 
