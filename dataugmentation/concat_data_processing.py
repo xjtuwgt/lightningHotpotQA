@@ -69,30 +69,34 @@ class DataHelper:
     # Features
     def get_train_features(self):
         cached_features_names = self.get_feature_files(tag='train', f_types=self.train_augf_types)
-        train_features = []
+        train_features_list = [self.get_or_load(_) for _ in cached_features_names]
 
         return
 
     def get_train_examples(self):
         cached_examples_names = self.get_example_files(tag='train', f_types=self.train_augf_types)
+        train_examples_list = [self.get_or_load(_) for _ in cached_examples_names]
         return
 
     def get_train_graphs(self):
         cached_graph_names = self.get_graph_files(tag='train', f_types=self.train_augf_types)
+        train_graphs_list = [self.get_or_load(_) for _ in cached_graph_names]
         return
 
     def get_dev_features(self):
         cached_features_name = self.get_feature_file(tag='dev_distractor', f_type=self.devf_type)
-        return
+        dev_features = self.get_or_load(cached_features_name)
+        return dev_features
 
     def get_dev_examples(self):
         cached_examples_name = self.get_example_file(tag='dev_distractor', f_type=self.devf_type)
-        return
+        dev_examples = self.get_or_load(cached_examples_name)
+        return dev_examples
 
     def get_dev_graphs(self):
         cached_graph_name = self.get_graph_file(tag='dev_distractor', f_type=self.devf_type)
-
-        return
+        dev_graphs = self.get_or_load(cached_graph_name)
+        return dev_graphs
 
     # Example dict
     def train_example_dict(self):
