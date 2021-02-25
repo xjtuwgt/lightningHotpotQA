@@ -52,7 +52,7 @@ def HypeParameterSpace():
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
-    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [10]}
+    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [6]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     gnn = {'name': 'gnn', type: 'choice', 'values': ['gat:1,2']}
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta']}
