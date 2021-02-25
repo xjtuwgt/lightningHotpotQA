@@ -259,10 +259,6 @@ def read_hotpot_examples(para_file,
         if data_source_type is not None:
             key = key + "_" + data_source_type ## for data augmentation
 
-        print('key {}'.format(key))
-        for entity in ctx_entities_text:
-            print(entity)
-        print('*' * 75)
 
         example = Example(
             qas_id=key,
@@ -292,6 +288,12 @@ def read_hotpot_examples(para_file,
             start_position=start_position,
             end_position=end_position)
         examples.append(example)
+
+        print('key {}'.format(key))
+        for entity in ctx_entities_text:
+            print(entity)
+        print('*' * 75)
+        break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
