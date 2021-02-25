@@ -294,7 +294,7 @@ def read_hotpot_examples(para_file,
         # for entity in ctx_entities_text:
         #     print(entity)
         print('*' * 75)
-        break
+        # break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
