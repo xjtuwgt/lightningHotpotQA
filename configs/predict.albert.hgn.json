@@ -1,5 +1,4 @@
 {
-    "output_dir": "/ssd/HGN/data/outputs/",
     "exp_name": "albert",
     "model_type": "albert",
     "devf_type": "hgn",
