@@ -11,7 +11,7 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 
 
 # 0. Download Roberta pretrained model: ahotrod/roberta_large_squad2
-ROBERTA_SQUAD2=https://huggingface.co/ahotrod/roberta_large_squad2/resolve/main/
+ROBERTA_SQUAD2=https://huggingface.co/ahotrod/roberta_large_squad2/resolve/main
 roberta() {
     [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/roberta-large/ahotrod
 
