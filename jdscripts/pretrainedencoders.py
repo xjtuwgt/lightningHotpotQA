@@ -1,8 +1,6 @@
 ###Roberta-large on squad2 --> ahotrod/roberta_large_squad2
 ###AL-BERT-large on squad2
 from os.path import join
-
-
 from envs import PRETRAINED_MODEL_FOLDER
 from model_envs import MODEL_CLASSES
 
