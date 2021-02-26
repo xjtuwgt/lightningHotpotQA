@@ -4,9 +4,9 @@ from os.path import join
 from envs import PRETRAINED_MODEL_FOLDER
 from model_envs import MODEL_CLASSES
 
-def load_model(model_type):
+def load_model(model_type, model_name):
     config_class, model_class, tokenizer_class = MODEL_CLASSES[model_type]
-    model_name = join(PRETRAINED_MODEL_FOLDER, 'ahotrod')
+    model_name = join(PRETRAINED_MODEL_FOLDER, model_name)
     model = model_class.from_pretrained(model_name)
     return model
 
