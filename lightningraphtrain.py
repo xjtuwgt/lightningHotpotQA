@@ -6,7 +6,7 @@ import torch
 import sys
 from utils.gpu_utils import gpu_setting
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from plmodels.lightningHGN import lightningHGN
+from plmodels.lightningGraphHGN import lightningHGN
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
