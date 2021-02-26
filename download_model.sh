@@ -21,7 +21,17 @@ roberta() {
     wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/pytorch_model.bin
 }
 
-for proc in "roberta"
+ALBERT_SQUAD2=https://huggingface.co/mfeb/albert-xxlarge-v2-squad2/resolve/main
+albert() {
+  [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb
+
+  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/config.json
+  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/tokenizer_config.json
+  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/pytorch_model.bin
+  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/special_tokens_map.json
+}
+
+for proc in "roberta" "albert"
 do
     $proc
 done
