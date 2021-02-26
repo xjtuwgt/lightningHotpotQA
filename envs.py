@@ -16,5 +16,6 @@ DATASET_FOLDER = join(HOME_DATA_FOLDER, 'dataset')
 MODEL_FOLDER = join(HOME_DATA_FOLDER, 'models')
 KNOWLEDGE_FOLDER = join(HOME_DATA_FOLDER, 'knowledge')
 OUTPUT_FOLDER = join(HOME_DATA_FOLDER, 'outputs')
+PRETRAINED_MODEL_FOLDER = join(HOME_DATA_FOLDER, 'models/pretrained/roberta-large')
 
 os.environ['PYTORCH_PRETRAINED_BERT_CACHE']  = join(HOME_DATA_FOLDER, 'models', 'pretrained_cache')
