@@ -13,22 +13,22 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 # 0. Download Roberta pretrained model: ahotrod/roberta_large_squad2
 ROBERTA_SQUAD2=https://huggingface.co/ahotrod/roberta_large_squad2/resolve/main
 roberta() {
-    [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/roberta-large/ahotrod
+    [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/ahotrod/roberta_large_squad2
 
-    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/config.json
-    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/vocab.json
-    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/tokenizer_config.json
-    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/pytorch_model.bin
+    wget -P $DATA_ROOT/models/pretrained/ahotrod/roberta_large_squad2 $ROBERTA_SQUAD2/config.json
+    wget -P $DATA_ROOT/models/pretrained/ahotrod/roberta_large_squad2 $ROBERTA_SQUAD2/vocab.json
+    wget -P $DATA_ROOT/models/pretrained/ahotrod/roberta_large_squad2 $ROBERTA_SQUAD2/tokenizer_config.json
+    wget -P $DATA_ROOT/models/pretrained/ahotrod/roberta_large_squad2 $ROBERTA_SQUAD2/pytorch_model.bin
 }
 
 ALBERT_SQUAD2=https://huggingface.co/mfeb/albert-xxlarge-v2-squad2/resolve/main
 albert() {
-  [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb
+  [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/mfeb/albert-xxlarge-v2-squad2
 
-  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/config.json
-  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/tokenizer_config.json
-  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/pytorch_model.bin
-  wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/special_tokens_map.json
+  wget -P $DATA_ROOT/models/pretrained/mfeb/albert-xxlarge-v2-squad2 $ALBERT_SQUAD2/config.json
+  wget -P $DATA_ROOT/models/pretrained/mfeb/albert-xxlarge-v2-squad2 $ALBERT_SQUAD2/tokenizer_config.json
+  wget -P $DATA_ROOT/models/pretrained/mfeb/albert-xxlarge-v2-squad2 $ALBERT_SQUAD2/pytorch_model.bin
+  wget -P $DATA_ROOT/models/pretrained/mfeb/albert-xxlarge-v2-squad2 $ALBERT_SQUAD2/special_tokens_map.json
 }
 
 for proc in "roberta" "albert"
