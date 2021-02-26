@@ -33,8 +33,5 @@ albert() {
 
 for proc in "roberta" "albert"
 do
-    if [[ ${PROCS:-"download"} =~ $proc ]]; then
-        $proc
-        echo "Download completed: ${proc}"
-    fi
+    $proc
 done
