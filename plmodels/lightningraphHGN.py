@@ -35,13 +35,11 @@ class lightningHGN(pl.LightningModule):
         if os.path.exists(cached_config_file):
             cached_config = torch.load(cached_config_file)
             encoder_path = join(self.args.exp_name, cached_config['encoder'])
-            model_path = join(self.args.exp_name, cached_config['model'])
         else:
-            if self.args.fine_tuned_model is not None:
-                model_path = join(self.args.output_dir, self.args.fine_tuned_model, 'model.pkl')
+            if self.args.fine_tuned_encoder is not None:
+                encoder_path = join(self.args.output_dir, self.args.fine_tuned_encoder, 'encoder.pkl')
             else:
-                model_path = None
-            encoder_path = None
+                encoder_path = None
 
         _, _, tokenizer_class = MODEL_CLASSES[self.args.model_type]
         self.tokenizer = tokenizer_class.from_pretrained(self.args.encoder_name_or_path,
@@ -51,8 +49,6 @@ class lightningHGN(pl.LightningModule):
         self.model = HierarchicalGraphNetwork(config=self.args)
         if encoder_path is not None:
             self.encoder.load_state_dict(torch.load(encoder_path))
-        if model_path is not None:
-            self.model.load_state_dict(torch.load(model_path))
         logging.info('Loading encoder and model completed')
 
     def prepare_data(self):
