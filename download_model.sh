@@ -31,10 +31,9 @@ albert() {
   wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/special_tokens_map.json
 }
 
-if proc="roberta"; then
-    $proc
-fi
-
-if proc="albert"; then
-  $proc
-fi
+for proc in "roberta" "albert"
+do
+    if [[ ${PROCS:-"download"} =~ $proc ]]; then
+        $proc
+    fi
+done
