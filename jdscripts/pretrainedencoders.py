@@ -5,14 +5,15 @@ from __future__ import division
 from __future__ import print_function
 
 from os.path import join
-from hgntransformers import RobertaTokenizer, RobertaConfig, RobertaModel, RobertaForQuestionAnswering
+
 
 from envs import PRETRAINED_MODEL_FOLDER
 from model_envs import MODEL_CLASSES
 
+config_class, model_class, tokenizer_class = MODEL_CLASSES['roberta']
 model_name = join(PRETRAINED_MODEL_FOLDER, 'ahotrod')
 
-model = RobertaForQuestionAnswering.from_pretrained(model_name)
+model = model_class.from_pretrained(model_name)
 
 # tokenizer
 #
