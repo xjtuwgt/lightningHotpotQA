@@ -31,7 +31,10 @@ albert() {
   wget -P $DATA_ROOT/models/pretrained/albert-xxlarge-v2/mfeb $ALBERT_SQUAD2/special_tokens_map.json
 }
 
-for proc in "roberta" "albert"
-do
+if proc="roberta"; then
     $proc
-done
+fi
+
+if proc="albert"; then
+  $proc
+fi
