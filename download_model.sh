@@ -16,6 +16,9 @@ roberta() {
     [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/models/pretrained/roberta-large/ahotrod
 
     wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/config.json
+    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/vocab.json
+    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/tokenizer_config.json
+    wget -P $DATA_ROOT/models/pretrained/roberta-large/ahotrod $ROBERTA_SQUAD2/pytorch_model.bin
 }
 
 for proc in "roberta"
