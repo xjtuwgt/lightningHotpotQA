@@ -1,0 +1,19 @@
+{
+    "exp_name": "roberta_large_pytorch_lightning_finetuned3_graph",
+    "model_type": "roberta",
+    "encoder_name_or_path": "roberta-large",
+    "num_train_epochs": 10,
+    "per_gpu_train_batch_size": 8,
+    "learning_rate": 1e-5,
+    "daug_type": "long",
+    "gradient_accumulation_steps": 1,
+    "ctx_attn_hidden_dim": 512,
+    "hidden_dim": 512,
+    "gpus": 4,
+    "gnn": "gat:2,8",
+    "fine_tuned_encoder": "roberta",
+    "gnn_drop": 0.3,
+    "bi_attn_drop": 0.3,
+    "trans_drop": 0.2,
+    "fp16": "False"
+}
