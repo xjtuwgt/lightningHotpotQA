@@ -10,7 +10,7 @@
     "ctx_attn_hidden_dim": 512,
     "hidden_dim": 512,
     "gpus": 4,
-    "gnn": "gat:2,8",
+    "gnn": "gat:2,4",
     "fine_tuned_encoder": "roberta",
     "gnn_drop": 0.3,
     "bi_attn_drop": 0.3,
