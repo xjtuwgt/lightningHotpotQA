@@ -21,6 +21,7 @@ def load_hotpotqa_model(model_type, model_name):
     config_class, model_class, tokenizer_class = MODEL_CLASSES[model_type]
     model = model_class.from_pretrained(model_name)
     encoder_pickle_name = join(OUTPUT_FOLDER, model_type, 'encoder.pkl')
+    print('loading ')
     model.load_state_dict(torch.load(encoder_pickle_name))
     return model
 

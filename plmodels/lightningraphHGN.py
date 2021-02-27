@@ -37,7 +37,7 @@ class lightningHGN(pl.LightningModule):
             encoder_path = join(self.args.exp_name, cached_config['encoder'])
         else:
             if self.args.fine_tuned_encoder is not None:
-                encoder_path = join(self.args.output_dir, self.args.fine_tuned_encoder, 'encoder.pkl')
+                encoder_path = join(self.args.fine_tuned_encoder_path, self.args.fine_tuned_encoder, 'encoder.pkl')
             else:
                 encoder_path = None
 

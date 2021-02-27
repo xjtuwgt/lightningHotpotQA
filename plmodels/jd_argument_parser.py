@@ -9,7 +9,7 @@ import random
 import numpy as np
 from os.path import join
 
-from envs import DATASET_FOLDER, OUTPUT_FOLDER
+from envs import DATASET_FOLDER, OUTPUT_FOLDER, PRETRAINED_MODEL_FOLDER
 
 logger = logging.getLogger(__name__)
 
@@ -129,8 +129,8 @@ def default_train_parser():
 
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)
-    parser.add_argument("--fine_tuned_encoder", default='roberta', type=str)
-    parser.add_argument("--fine_tuned_encoder_path", default=OUTPUT_FOLDER, type=str)
+    parser.add_argument("--fine_tuned_encoder", default='roberta/roberta-large_hotpotqa', type=str)
+    parser.add_argument("--fine_tuned_encoder_path", default=PRETRAINED_MODEL_FOLDER, type=str)
 
     # train-dev data type
     parser.add_argument("--daug_type", default='long', type=str, help="Train Data augumentation type.")
