@@ -22,3 +22,6 @@ def load_hotpotqa_model(model_type, model_name):
     encoder_pickle_name = join(OUTPUT_FOLDER, model_type, 'encoder.pkl')
     model.load_state_dict(torch.load(encoder_pickle_name))
     return model
+
+def save_hotpotqa_model(encoder, model_type, model_name):
+    join(PRETRAINED_MODEL_FOLDER, )
