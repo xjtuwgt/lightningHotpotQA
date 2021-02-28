@@ -8,7 +8,7 @@
     "daug_type": "long",
     "gradient_accumulation_steps": 1,
     "gpus": 4,
-    "fine_tuned_encoder": "roberta",
+    "fine_tuned_encoder": "roberta/roberta-large_hotpotqa",
     "gnn_drop": 0.3,
     "bi_attn_drop": 0.3,
     "trans_drop": 0.2,
