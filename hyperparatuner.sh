@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
-source /mnt/cephfs2/nlp/guangtao.wang/anaconda3/bin/activate hotpotqa
-JOBS_PATH=jdhgn_jobs
-LOGS_PATH=jdhgn_logs
-for ENTRY in "${JOBS_PATH}"/*.sh; do
-  chmod +x $ENTRY
-  FILE_NAME="$(basename "$ENTRY")"
-  echo $FILE_NAME
-  /mnt/cephfs2/asr/users/ming.tu/software/kaldi/egs/wsj/s5/utils/queue.pl -q g.q -l gpu=4 $LOGS_PATH/$FILE_NAME.log $ENTRY &
-  sleep 20
-done
+HOME=/mnt/cephfs2/nlp/guangtao.wang
+CONDA_ROOT=${HOME}/anaconda3
+PYTHON_VIRTUAL_ENVIRONMENT=hotpotqa
+
+source ${CONDA_ROOT}/etc/profile.d/conda.sh
+conda activate $PYTHON_VIRTUAL_ENVIRONMENT
+
+#JOBS_PATH=jdhgn_jobs
+#LOGS_PATH=jdhgn_logs
+#for ENTRY in "${JOBS_PATH}"/*.sh; do
+#  chmod +x $ENTRY
+#  FILE_NAME="$(basename "$ENTRY")"
+#  echo $FILE_NAME
+#  /mnt/cephfs2/asr/users/ming.tu/software/kaldi/egs/wsj/s5/utils/queue.pl -q g.q -l gpu=4 $LOGS_PATH/$FILE_NAME.log $ENTRY &
+#  sleep 20
+#done
