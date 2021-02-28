@@ -1,5 +1,5 @@
 {
-    "exp_name": "roberta_large_pytorch_lightning_finetuned2_graph",
+    "exp_name": "roberta_large_pytorch_lightning_finetuned22_graph",
     "model_type": "roberta",
     "encoder_name_or_path": "roberta-large",
     "num_train_epochs": 5,
