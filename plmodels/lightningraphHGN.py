@@ -49,6 +49,7 @@ class lightningHGN(pl.LightningModule):
         self.model = HierarchicalGraphNetwork(config=self.args)
         if encoder_path is not None:
             self.encoder.load_state_dict(torch.load(encoder_path))
+            logging.info('Initialize parameter with {}'.format(encoder_path))
         logging.info('Loading encoder and model completed')
 
     def prepare_data(self):
