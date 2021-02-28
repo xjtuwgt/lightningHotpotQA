@@ -26,5 +26,5 @@ from jdscripts.pretrainedencoders import load_model_with_enconder
 
 model_type = 'roberta'
 model_name = 'roberta-large'
-encoder_name = 'ahotrod/roberta_large_squad2'
+encoder_name = 'ahotrod/roberta_large_hotpotqa'
 model = load_model_with_enconder(model_type=model_type, model_name=model_name, encoder_model_name=encoder_name)
