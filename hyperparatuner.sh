@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+conda activate hotpotqa
 JOBS_PATH=jdhgn_jobs
 LOGS_PATH=jdhgn_logs
 for ENTRY in "${JOBS_PATH}"/*.sh; do
