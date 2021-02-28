@@ -6,6 +6,7 @@ PYTHON_VIRTUAL_ENVIRONMENT=hotpotqa
 source ${CONDA_ROOT}/etc/profile.d/conda.sh
 conda activate $PYTHON_VIRTUAL_ENVIRONMENT
 
+python pretrainedExample.py
 #JOBS_PATH=jdhgn_jobs
 #LOGS_PATH=jdhgn_logs
 #for ENTRY in "${JOBS_PATH}"/*.sh; do
