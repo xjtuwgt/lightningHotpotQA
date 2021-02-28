@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-conda activate hotpotqa
+source /mnt/cephfs2/nlp/guangtao.wang/anaconda3/bin/activate hotpotqa
 JOBS_PATH=jdhgn_jobs
 LOGS_PATH=jdhgn_logs
 for ENTRY in "${JOBS_PATH}"/*.sh; do
