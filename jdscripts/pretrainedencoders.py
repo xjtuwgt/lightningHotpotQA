@@ -35,3 +35,11 @@ def save_hotpotqa_model(encoder, model_type, model_name):
     pickle_model_name = join(model_type_name_folder, f'encoder.pkl')
     torch.save({k: v.cpu() for k, v in encoder.state_dict().items()}, pickle_model_name)
     print('Saved pickle name = {}'.format(pickle_model_name))
+
+def load_model_with_enconder(model_type, model_name, encoder_model_name):
+    config_class, model_class, tokenizer_class = MODEL_CLASSES[model_type]
+    model = model_class.from_pretrained(model_name)
+    encoder_pickle_name = join(PRETRAINED_MODEL_FOLDER, encoder_model_name, 'encoder.pkl')
+    print('loading ')
+    model.load_state_dict(torch.load(encoder_pickle_name))
+    return model
