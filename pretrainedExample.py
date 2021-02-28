@@ -17,14 +17,14 @@ from jdscripts.pretrainedencoders import load_model_with_enconder
 # #
 # # for name, param in model.named_parameters():
 # #     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-# model_type = 'roberta'
-# model_name = 'roberta-large'
-# model = load_hotpotqa_model(model_type=model_type, model_name=model_name)
-# for name, param in model.named_parameters():
-#     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-# save_hotpotqa_model(encoder=model, model_type=model_type, model_name=model_name)
+model_type = 'roberta'
+model_name = 'roberta-large'
+model = load_hotpotqa_model(model_type=model_type, model_name=model_name)
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+save_hotpotqa_model(encoder=model, model_type=model_type, model_name=model_name)
 
 model_type = 'roberta'
 model_name = 'roberta-large'
-encoder_name = 'roberta/roberta_large_hotpotqa'
+encoder_name = 'roberta/roberta-large_hotpotqa'
 model = load_model_with_enconder(model_type=model_type, model_name=model_name, encoder_model_name=encoder_name)
