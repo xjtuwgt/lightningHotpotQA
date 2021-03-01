@@ -309,7 +309,18 @@ def read_hotpot_examples(para_file,
                 for para_idx, para_name in enumerate(para_names):
                     print(para_name)
                     start_end_position = para_start_end_position[para_idx]
+                    print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
+                print('*' * 75)
+
+            if key == 'sent_start_end_position':
+                sent_names = example.sent_names
+                sent_start_end_position = example.sent_start_end_position
+                print(len(sent_names), len(sent_start_end_position))
+                for sent_idx, sent_name in enumerate(sent_names):
+                    print(sent_name)
+                    start_end_position = sent_start_end_position[sent_idx]
                     print(doc_tokens[start_end_position[0]:start_end_position[1]])
+                print('*' * 75)
 
         ############
         examples.append(example)
