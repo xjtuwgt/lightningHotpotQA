@@ -123,9 +123,9 @@ def read_hotpot_examples(para_file,
         sel_paras = para_data[key]
         ner_context = dict(ner_data[key]['context'])
 
-        ####++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        ####++++++++++++++++++++
         para_names = []  ## for paragraph evaluation and checking
-        ####++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        ####++++++++++++++++++++
 
         for title in itertools.chain.from_iterable(sel_paras):
             stripped_title = re.sub(r' \(.*?\)$', '', title)
@@ -259,7 +259,6 @@ def read_hotpot_examples(para_file,
         if data_source_type is not None:
             key = key + "_" + data_source_type ## for data augmentation
 
-
         example = Example(
             qas_id=key,
             qas_type=qas_type,
@@ -288,13 +287,6 @@ def read_hotpot_examples(para_file,
             start_position=start_position,
             end_position=end_position)
         examples.append(example)
-
-        print('key {}'.format(key))
-        print(len(ctx_entities_text), len(set(ctx_entities_text)))
-        # for entity in ctx_entities_text:
-        #     print(entity)
-        print('*' * 75)
-        # break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
@@ -675,6 +667,8 @@ if __name__ == '__main__':
     parser.add_argument("--doc_link_ner", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
     parser.add_argument("--graph_id", type=str, default="1", help='define output directory')
+    parser.add_argument("--sae_graph", action='store_true',
+                        help="Set this flag if you are using SAE graph.")
 
     # Other parameters
     parser.add_argument("--model_type", default=None, type=str, required=True,
@@ -710,6 +704,11 @@ if __name__ == '__main__':
 
     ranker = args.ranker
     data_type = args.data_type
+    if args.do_lower_case:
+        ranker = ranker + '_low'
+    if args.sae_graph:
+        ranker = ranker + '_sae'
+
     if args.reverse:
         data_source_name = "{}_reverse".format(ranker)
     else:
@@ -725,31 +724,31 @@ if __name__ == '__main__':
                                     doc_link_file=args.doc_link_ner,
                                     data_source_type=data_source_type)
 
-    # cached_examples_file = os.path.join(args.output_dir,
-    #                                     get_cached_filename('{}_sae_examples'.format(data_source_name), args))
-    #
-    # with gzip.open(cached_examples_file, 'wb') as fout:
-    #     pickle.dump(examples, fout)
-    #
-    # features = convert_examples_to_features(examples, tokenizer,
-    #                                         max_seq_length=args.max_seq_length,
-    #                                         max_query_length=args.max_query_length,
-    #                                         max_entity_num=args.max_entity_num,
-    #                                         cls_token=tokenizer.cls_token,
-    #                                         sep_token=tokenizer.sep_token,
-    #                                         is_roberta=bool(args.model_type in ['roberta']),
-    #                                         filter_no_ans=args.filter_no_ans)
-    #
-    # cached_features_file = os.path.join(args.output_dir,
-    #                                     get_cached_filename('{}_sae_features'.format(data_source_name), args))
-    #
-    # with gzip.open(cached_features_file, 'wb') as fout:
-    #     pickle.dump(features, fout)
-    #
-    # # build graphs
-    # cached_graph_file = os.path.join(args.output_dir,
-    #                                  get_cached_filename('{}_sae_graphs'.format(data_source_name), args))
-    #
-    # graphs = build_graph(args, examples, features, args.max_entity_num)
-    # with gzip.open(cached_graph_file, 'wb') as fout:
-    #     pickle.dump(graphs, fout)
+    cached_examples_file = os.path.join(args.output_dir,
+                                        get_cached_filename('{}_examples'.format(data_source_name), args))
+
+    with gzip.open(cached_examples_file, 'wb') as fout:
+        pickle.dump(examples, fout)
+
+    features = convert_examples_to_features(examples, tokenizer,
+                                            max_seq_length=args.max_seq_length,
+                                            max_query_length=args.max_query_length,
+                                            max_entity_num=args.max_entity_num,
+                                            cls_token=tokenizer.cls_token,
+                                            sep_token=tokenizer.sep_token,
+                                            is_roberta=bool(args.model_type in ['roberta']),
+                                            filter_no_ans=args.filter_no_ans)
+
+    cached_features_file = os.path.join(args.output_dir,
+                                        get_cached_filename('{}_features'.format(data_source_name), args))
+
+    with gzip.open(cached_features_file, 'wb') as fout:
+        pickle.dump(features, fout)
+
+    # build graphs
+    cached_graph_file = os.path.join(args.output_dir,
+                                     get_cached_filename('{}_graphs'.format(data_source_name), args))
+
+    graphs = build_graph(args, examples, features, args.max_entity_num)
+    with gzip.open(cached_graph_file, 'wb') as fout:
+        pickle.dump(graphs, fout)
