@@ -296,7 +296,7 @@ def read_hotpot_examples(para_file,
                 for ent_idx, entity in enumerate(example.ctx_entities_text):
                     start_end_position = example.ctx_entity_start_end_position[ent_idx]
                     print(entity)
-                    print(doc_tokens[start_end_position[0]:start_end_position[1]])
+                    print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
 
         ############
         examples.append(example)
