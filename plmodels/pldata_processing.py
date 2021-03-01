@@ -12,16 +12,28 @@ from envs import DATASET_FOLDER
 IGNORE_INDEX = -100
 
 def get_cached_filename(f_type, config):
-    f_type_set = {'examples', 'features', 'graphs', 'hgn_examples',
-                  'hgn_features', 'hgn_graphs', 'hgn_reverse_examples', 'hgn_reverse_features',
-                  'hgn_reverse_graphs', 'long_examples',
-                  'long_features', 'long_graphs', 'long_reverse_examples', 'long_reverse_features',
-                  'long_reverse_graphs', 'oracle_features', 'oracle_graphs', 'oracle_examples',
-                  'hgn_sae_features', 'hgn_sae_graphs', 'hgn_reverse_sae_examples', 'hgn_reverse_sae_features',
-                  'hgn_reverse_sae_graphs', 'long_sae_examples',
-                  'long_sae_features', 'long_sae_graphs', 'long_reverse_sae_examples', 'long_reverse_sae_features',
-                  'long_reverse_sae_graphs', 'oracle_sae_features', 'oracle_sae_graphs', 'oracle_sae_examples',
-                  }
+    f_type_set = {'examples', 'features', 'graphs',
+
+                  'hgn_examples', 'hgn_features', 'hgn_graphs',
+                  'hgn_reverse_examples', 'hgn_reverse_features', 'hgn_reverse_graphs',
+
+                  'hgn_low_examples', 'hgn_low_features', 'hgn_low_graphs',
+                  'hgn_low_reverse_examples', 'hgn_low_reverse_features', 'hgn_low_reverse_graphs',
+
+                  'hgn_low_sae_examples', 'hgn_low_sae_features', 'hgn_low_sae_graphs',
+                  'hgn_low_sae_reverse_examples', 'hgn_low_sae_reverse_features', 'hgn_low_sae_reverse_graphs',
+
+                  'long_examples', 'long_features', 'long_graphs',
+                  'long_reverse_examples', 'long_reverse_features', 'long_reverse_graphs',
+
+                  'long_low_examples', 'long_low_features', 'long_low_graphs',
+                  'long_low_reverse_examples', 'long_low_reverse_features', 'long_low_reverse_graphs',
+
+                  'long_low_sae_examples', 'long_low_sae_features', 'long_low_sae_graphs',
+                  'long_low_sae_reverse_examples', 'long_low_sae_reverse_features', 'long_low_sae_reverse_graphs',
+
+                  'oracle_features', 'oracle_graphs', 'oracle_examples'
+                  } #### ranker: hgn, longformer; case: lowercase, cased; graph: whether sae-graph
     assert f_type in f_type_set
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
 

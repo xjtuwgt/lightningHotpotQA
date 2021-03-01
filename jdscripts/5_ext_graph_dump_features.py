@@ -123,9 +123,9 @@ def read_hotpot_examples(para_file,
         sel_paras = para_data[key]
         ner_context = dict(ner_data[key]['context'])
 
-        ####++++++++++++++++++++
+        ####++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         para_names = []  ## for paragraph evaluation and checking
-        ####++++++++++++++++++++
+        ####++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         for title in itertools.chain.from_iterable(sel_paras):
             stripped_title = re.sub(r' \(.*?\)$', '', title)

@@ -667,6 +667,8 @@ if __name__ == '__main__':
     parser.add_argument("--doc_link_ner", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
     parser.add_argument("--graph_id", type=str, default="1", help='define output directory')
+    parser.add_argument("--sae_graph", action='store_true',
+                        help="Set this flag if you are using SAE graph.")
 
     # Other parameters
     parser.add_argument("--model_type", default=None, type=str, required=True,
@@ -702,6 +704,11 @@ if __name__ == '__main__':
 
     ranker = args.ranker
     data_type = args.data_type
+    if args.do_lower_case:
+        ranker = ranker + '_low'
+    if args.sae_graph:
+        ranker = ranker + '_sae'
+
     if args.reverse:
         data_source_name = "{}_reverse".format(ranker)
     else:
