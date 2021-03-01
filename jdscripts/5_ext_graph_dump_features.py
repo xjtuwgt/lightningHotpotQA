@@ -79,18 +79,18 @@ def read_hotpot_examples(para_file,
         sup_facts = set([(sp[0], sp[1]) for sp in case['supporting_facts']])
         context = dict(case['context'])
 
-        doc_tokens = []
-        sent_names = []
-        sup_facts_sent_id = []
-        sup_para_id = set()
-        sent_start_end_position = []
-        para_start_end_position = []
-        ques_entity_start_end_position = []
-        ques_entities_text = []
-        ctx_entity_start_end_position = []
-        ctx_entities_text = []
-        ctx_text = ""
-        ans_start_position, ans_end_position = [], []
+        doc_tokens = [] ## spacy tokenized results
+        sent_names = [] ## list of (title and local index)
+        sup_facts_sent_id = [] ## send_id (absolute sent index, index in the concat text)
+        sup_para_id = set() ## support paragraph ids --> for para ranking
+        sent_start_end_position = [] ## list of tuple (start and end) positions
+        para_start_end_position = [] ## list of tuple (start, end, title)
+        ques_entity_start_end_position = [] ## entity position pair (start, end) in the question
+        ques_entities_text = [] ## question entity
+        ctx_entity_start_end_position = [] ## entity position pair (start, end) in the context
+        ctx_entities_text = [] ## context entities
+        ctx_text = "" ## ctx text information
+        ans_start_position, ans_end_position = [], [] ## ans_start position, ans_end position
         ques_answer_ids, ctx_answer_ids = [], []
 
         title_to_id, title_id = {}, 0
