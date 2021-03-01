@@ -95,9 +95,9 @@ def read_hotpot_examples(para_file,
 
         title_to_id, title_id = {}, 0
         sent_to_id, sent_id = {}, 0
-        s_e_edges = []
-        s_s_edges = []
-        p_s_edges = []
+        s_e_edges = [] ### 1) sentence2entity edges
+        s_s_edges = [] ### 2) sentence2sentence edges (in single paragraph)
+        p_s_edges = [] ### 3) para2sentence
 
         ctx_answer_candidates = []
         ctx_char_to_word_offset = []  # Accumulated along all sentences
@@ -108,7 +108,7 @@ def read_hotpot_examples(para_file,
         question_tokens, ques_char_to_word_offset, ques_word_to_char_idx = split_sent(question_text)
         answer_norm = normalize_answer(case['answer'])
 
-        q_e_edges = []
+        q_e_edges = [] ### 4) question2entity edges
         for q_ent, q_start, q_end, q_type in ner_data[key]['question']:
             q_ent_text = question_text[q_start:q_end]
             if q_type != 'CONTEXT' and q_ent_text not in ques_entities_text:
@@ -220,8 +220,8 @@ def read_hotpot_examples(para_file,
 
             title_id += 1
 
-        p_p_edges = []
-        s_p_edges = []
+        p_p_edges = []  ## 5) paragraph2paragraph edges
+        s_p_edges = []  ## 6) sentence2paragraph edges
         for _l in sel_paras[0]:
             for _r in sel_paras[1]:
                 # edges: P -> P
@@ -232,7 +232,8 @@ def read_hotpot_examples(para_file,
                     inter_titles = set(link_titles) & set(title_to_id.keys())
                     if len(inter_titles) > 0 and _r in inter_titles:
                         s_p_edges.append((sent_to_id[(_l, local_sent_id)], title_to_id[_r]))
-        q_p_edges = [(0, title_to_id[para]) for para in sel_paras[0]]
+        print(sel_paras)
+        q_p_edges = [(0, title_to_id[para]) for para in sel_paras[0]] ### 7) question2paragraph edges
 
         edges = {'ques_para': q_p_edges,
                  'para_para': p_p_edges,
