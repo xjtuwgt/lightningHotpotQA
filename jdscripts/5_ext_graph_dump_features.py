@@ -290,9 +290,8 @@ def read_hotpot_examples(para_file,
         ############
         for key, value in example.__dict__.items():
             print('{}: {}'.format(key, value))
-
-        examples.append(example)
         break
+        examples.append(example)
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
