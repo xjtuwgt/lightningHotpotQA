@@ -1,5 +1,7 @@
 import gzip
 import pickle
+import itertools
+from collections import ChainMap
 import torch
 import numpy as np
 
@@ -30,7 +32,6 @@ class DataHelper:
         else:
             self.train_augf_types = AUG_MODULE_DICT[self.config.daug_type]
         self.devf_type = self.config.devf_type
-
 
     def get_feature_file(self, tag, f_type):
         cached_filename = get_cached_filename('{}_features'.format(f_type), self.config)
@@ -70,57 +71,57 @@ class DataHelper:
     def get_train_features(self):
         cached_features_names = self.get_feature_files(tag='train', f_types=self.train_augf_types)
         train_features_list = [self.get_or_load(_) for _ in cached_features_names]
-
-        return
+        self.train_features = list(itertools.chain(*train_features_list))
 
     def get_train_examples(self):
         cached_examples_names = self.get_example_files(tag='train', f_types=self.train_augf_types)
         train_examples_list = [self.get_or_load(_) for _ in cached_examples_names]
-        return
+        self.train_examples = list(itertools.chain(*train_examples_list))
 
     def get_train_graphs(self):
         cached_graph_names = self.get_graph_files(tag='train', f_types=self.train_augf_types)
-        train_graphs_list = [self.get_or_load(_) for _ in cached_graph_names]
-        return
+        train_graphs_dict_list = [self.get_or_load(_) for _ in cached_graph_names]
+        self.train_graphs = dict(ChainMap(*train_graphs_dict_list))
 
     def get_dev_features(self):
         cached_features_name = self.get_feature_file(tag='dev_distractor', f_type=self.devf_type)
-        dev_features = self.get_or_load(cached_features_name)
-        return dev_features
+        self.dev_features = self.get_or_load(cached_features_name)
 
     def get_dev_examples(self):
         cached_examples_name = self.get_example_file(tag='dev_distractor', f_type=self.devf_type)
-        dev_examples = self.get_or_load(cached_examples_name)
-        return dev_examples
+        self.dev_examples = self.get_or_load(cached_examples_name)
 
     def get_dev_graphs(self):
         cached_graph_name = self.get_graph_file(tag='dev_distractor', f_type=self.devf_type)
-        dev_graphs = self.get_or_load(cached_graph_name)
-        return dev_graphs
+        self.dev_graphs = self.get_or_load(cached_graph_name)
 
     # Example dict
-    def train_example_dict(self):
-        if self.__train_example_dict__ is None:
-            self.__train_example_dict__ = {e.qas_id: e for e in self.train_examples}
-        return self.__train_example_dict__
+    def get_train_example_dict(self):
+        self.train_example_dict = {e.qas_id: e for e in self.train_examples}
 
-    def dev_example_dict(self):
-        if self.__dev_example_dict__ is None:
-            self.__dev_example_dict__ = {e.qas_id: e for e in self.dev_examples}
-        return self.__dev_example_dict__
+    def get_dev_example_dict(self):
+        self.dev_example_dict = {e.qas_id: e for e in self.dev_examples}
 
     # Feature dict
-    def train_feature_dict(self):
-        return {e.qas_id: e for e in self.train_features}
+    def get_train_feature_dict(self):
+        self.train_feature_dict = {e.qas_id: e for e in self.train_features}
 
-    def dev_feature_dict(self):
-        return {e.qas_id: e for e in self.dev_features}
+    def get_dev_feature_dict(self):
+        self.dev_feature_dict =  {e.qas_id: e for e in self.dev_features}
 
     # Load
     def load_dev(self):
+        self.get_dev_features()
+        self.get_dev_examples()
+        self.get_dev_example_dict()
+        self.get_dev_graphs()
         return self.dev_features, self.dev_example_dict, self.dev_graphs
 
     def load_train(self):
+        self.get_train_features()
+        self.get_train_examples()
+        self.get_train_example_dict()
+        self.get_train_graphs()
         return self.train_features, self.train_example_dict, self.train_graphs
 
     @property
