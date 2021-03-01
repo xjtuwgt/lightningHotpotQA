@@ -191,6 +191,9 @@ class lightningHGN(pl.LightningModule):
             best_joint_f1 = 0
             best_metrics = None
             best_threshold = 0
+            #################
+            metric_dict = {}
+            #################
             for thresh_i in range(N_thresh):
                 prediction = {'answer': ans_dict,
                               'sp': total_sp_dict[thresh_i],
@@ -205,14 +208,23 @@ class lightningHGN(pl.LightningModule):
                     best_threshold = thresholds[thresh_i]
                     best_metrics = metrics
                     shutil.move(tmp_file, pred_file)
-            return best_metrics, best_threshold
+                #######
+                metric_dict[thresh_i] = (metrics['em'], metrics['f1'],  metrics['joint_em'], metrics['joint_f1'], metrics['sp_em'], metrics['sp_f1'])
+                #######
+            return best_metrics, best_threshold, metric_dict
 
         output_pred_file = os.path.join(self.args.exp_name, f'pred.epoch_{self.current_epoch + 1}.gpu_{self.trainer.root_gpu}.json')
         output_eval_file = os.path.join(self.args.exp_name, f'eval.epoch_{self.current_epoch + 1}.gpu_{self.trainer.root_gpu}.txt')
-        best_metrics, best_threshold = choose_best_threshold(answer_dict, output_pred_file)
+        ####+++++
+        best_metrics, best_threshold, metric_dict = choose_best_threshold(answer_dict, output_pred_file)
+        ####++++++
         logging.info('Leader board evaluation completed over {} records with threshold = {}'.format(total_record_num, best_threshold))
         log_metrics(mode='Evaluation epoch {} gpu {}'.format(self.current_epoch, self.trainer.root_gpu), metrics=best_metrics)
         logging.info('*' * 75)
+        ####++++++
+        for key, value in metric_dict.items():
+            logging.info('threshold {}: \t metrics: {}'.format(key, value))
+        ####++++++
         json.dump(best_metrics, open(output_eval_file, 'w'))
         #############################################################################
         # self.log('valid_loss', avg_loss, 'joint_f1', best_metrics['joint_f1'], on_epoch=True, prog_bar=True, sync_dist=True)
