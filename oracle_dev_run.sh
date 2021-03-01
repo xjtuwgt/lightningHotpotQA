@@ -38,7 +38,8 @@ preprocess() {
         python jdscripts/4_oracle_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/oracle_multihop_para.json
 
         echo "5. Dump features for roberta"
-        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/oracle_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker oracle --data_type $DATA_TYPE
+#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/oracle_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker oracle --data_type $DATA_TYPE
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/oracle_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker oracle --data_type $DATA_TYPE
 
 #        echo "5. Dump features for albert"
 #        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/oracle_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker oracle --data_type $DATA_TYPE
