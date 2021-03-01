@@ -286,7 +286,13 @@ def read_hotpot_examples(para_file,
             answer_candidates_in_ctx_entity_ids=ctx_answer_candidates,
             start_position=start_position,
             end_position=end_position)
+
+        ############
+        for key, value in example.__dict__.items():
+            print('{}: {}'.format(key, value))
+
         examples.append(example)
+        break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
