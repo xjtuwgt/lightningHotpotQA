@@ -13,6 +13,7 @@ import json
 import shutil
 from csr_mhqa.utils import convert_to_tokens
 import logging
+import string
 def log_metrics(mode, metrics):
     '''
     Print the evaluation logs
@@ -25,6 +26,15 @@ def normalize_question(question: str) -> str:
     if question[-1] == '?':
         question = question[:-1]
     return question
+
+def normalize_text(text: str) -> str:
+    def normalize_text(text: str) -> str:
+        text = text.lower().strip()
+        return text
+    def remove_punc(text):
+        return text.strip(string.punctuation)
+    return normalize_text(remove_punc(text=text))
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def supp_doc_prediction(predict_para_support_np_ith, example_dict, batch_ids_ith):
     arg_order_ids = np.argsort(predict_para_support_np_ith)[::-1].tolist()
