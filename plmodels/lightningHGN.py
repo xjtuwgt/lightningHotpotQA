@@ -222,6 +222,39 @@ class lightningHGN(pl.LightningModule):
         return best_metrics, best_threshold
 
     def configure_optimizers(self):
+        # "Prepare optimizer and schedule (linear warmup and decay)"
+        if self.args.learning_rate_schema == 'fixed':
+            return self.fixed_learning_rate_optimizers()
+        else:
+            return self.layer_wise_learning_rate_optimizer()
+
+    def fixed_learning_rate_optimizers(self):
+        "Prepare optimizer and schedule (linear warmup and decay)"
+        no_decay = ["bias", "LayerNorm.weight"]
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in self.named_parameters() if
+                           (p.requires_grad) and (not any(nd in n for nd in no_decay))],
+                "weight_decay": self.args.weight_decay,
+            },
+            {
+                "params": [p for n, p in self.named_parameters() if
+                           (p.requires_grad) and (any(nd in n for nd in no_decay))],
+                "weight_decay": 0.0,
+            }
+        ]
+        optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
+        scheduler = get_linear_schedule_with_warmup(
+            optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
+        )
+        scheduler = {
+            'scheduler': scheduler,
+            'interval': 'step',
+            'frequency': 1
+        }
+        return [optimizer], [scheduler]
+
+    def layer_wise_learning_rate_optimizer(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
         encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
         assert self.args.encoder_name_or_path in encoder_layer_number_dict
@@ -269,32 +302,6 @@ class lightningHGN(pl.LightningModule):
                                                           lr=self.args.learning_rate * (10.0**idx))
             optimizer_grouped_parameters += grouped_parameters
 
-        optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
-        scheduler = get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
-        )
-        scheduler = {
-            'scheduler': scheduler,
-            'interval': 'step',
-            'frequency': 1
-        }
-        return [optimizer], [scheduler]
-
-    def configure_optimizers(self):
-        "Prepare optimizer and schedule (linear warmup and decay)"
-        no_decay = ["bias", "LayerNorm.weight"]
-        optimizer_grouped_parameters = [
-            {
-                "params": [p for n, p in self.named_parameters() if
-                           (p.requires_grad) and (not any(nd in n for nd in no_decay))],
-                "weight_decay": self.args.weight_decay,
-            },
-            {
-                "params": [p for n, p in self.named_parameters() if
-                           (p.requires_grad) and (any(nd in n for nd in no_decay))],
-                "weight_decay": 0.0,
-            }
-        ]
         optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
         scheduler = get_linear_schedule_with_warmup(
             optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
