@@ -91,7 +91,7 @@ def read_hotpot_examples(para_file,
         ctx_entities_text = [] ## context entities
         ctx_text = "" ## ctx text information
         ans_start_position, ans_end_position = [], [] ## ans_start position, ans_end position
-        ques_answer_ids, ctx_answer_ids = [], []
+        ques_answer_ids, ctx_answer_ids = [], [] ##
 
         title_to_id, title_id = {}, 0
         sent_to_id, sent_id = {}, 0
@@ -301,9 +301,9 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                                  filter_no_ans=False):
     features = []
     failed = 0
-    #########
+    #########++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     no_two_support_sentences = 0
-    #########
+    #########++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for (example_index, example) in enumerate(tqdm(examples)):
         def relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, word_tokens, subword_tokens,
                               orig_start_position, orig_end_position, orig_text):
