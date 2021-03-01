@@ -727,28 +727,28 @@ if __name__ == '__main__':
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_examples'.format(data_source_name), args))
 
-    with gzip.open(cached_examples_file, 'wb') as fout:
-        pickle.dump(examples, fout)
-
-    features = convert_examples_to_features(examples, tokenizer,
-                                            max_seq_length=args.max_seq_length,
-                                            max_query_length=args.max_query_length,
-                                            max_entity_num=args.max_entity_num,
-                                            cls_token=tokenizer.cls_token,
-                                            sep_token=tokenizer.sep_token,
-                                            is_roberta=bool(args.model_type in ['roberta']),
-                                            filter_no_ans=args.filter_no_ans)
-
-    cached_features_file = os.path.join(args.output_dir,
-                                        get_cached_filename('{}_features'.format(data_source_name), args))
-
-    with gzip.open(cached_features_file, 'wb') as fout:
-        pickle.dump(features, fout)
-
-    # build graphs
-    cached_graph_file = os.path.join(args.output_dir,
-                                     get_cached_filename('{}_graphs'.format(data_source_name), args))
-
-    graphs = build_graph(args, examples, features, args.max_entity_num)
-    with gzip.open(cached_graph_file, 'wb') as fout:
-        pickle.dump(graphs, fout)
+    # with gzip.open(cached_examples_file, 'wb') as fout:
+    #     pickle.dump(examples, fout)
+    #
+    # features = convert_examples_to_features(examples, tokenizer,
+    #                                         max_seq_length=args.max_seq_length,
+    #                                         max_query_length=args.max_query_length,
+    #                                         max_entity_num=args.max_entity_num,
+    #                                         cls_token=tokenizer.cls_token,
+    #                                         sep_token=tokenizer.sep_token,
+    #                                         is_roberta=bool(args.model_type in ['roberta']),
+    #                                         filter_no_ans=args.filter_no_ans)
+    #
+    # cached_features_file = os.path.join(args.output_dir,
+    #                                     get_cached_filename('{}_features'.format(data_source_name), args))
+    #
+    # with gzip.open(cached_features_file, 'wb') as fout:
+    #     pickle.dump(features, fout)
+    #
+    # # build graphs
+    # cached_graph_file = os.path.join(args.output_dir,
+    #                                  get_cached_filename('{}_graphs'.format(data_source_name), args))
+    #
+    # graphs = build_graph(args, examples, features, args.max_entity_num)
+    # with gzip.open(cached_graph_file, 'wb') as fout:
+    #     pickle.dump(graphs, fout)
