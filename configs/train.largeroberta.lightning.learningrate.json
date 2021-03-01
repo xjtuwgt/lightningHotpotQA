@@ -9,7 +9,7 @@
     "gradient_accumulation_steps": 4,
     "gpus": 4,
     "fine_tuned_encoder": "ahotrod/roberta_large_squad2",
-    "learning_rate_schema": "diff",
+    "learning_rate_schema": "layerwised",
     "gnn_drop": 0.3,
     "bi_attn_drop": 0.3,
     "trans_drop": 0.2,
