@@ -1,8 +1,5 @@
 from jdscripts.pretrainedencoders import load_model, save_model_as_pkl, load_hotpotqa_model, save_hotpotqa_model
 from jdscripts.pretrainedencoders import load_model_with_enconder
-import torch
-
-print(torch.__version__)
 
 
 # roberta_model_name = 'ahotrod/roberta_large_squad2'
