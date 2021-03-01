@@ -319,7 +319,7 @@ def read_hotpot_examples(para_file,
                 for sent_idx, sent_name in enumerate(sent_names):
                     print(sent_name)
                     start_end_position = sent_start_end_position[sent_idx]
-                    print(doc_tokens[start_end_position[0]:start_end_position[1]])
+                    print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
                 print('*' * 75)
 
         ############
