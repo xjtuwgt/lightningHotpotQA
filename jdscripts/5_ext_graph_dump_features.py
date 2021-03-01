@@ -724,8 +724,8 @@ if __name__ == '__main__':
                                     doc_link_file=args.doc_link_ner,
                                     data_source_type=data_source_type)
 
-    cached_examples_file = os.path.join(args.output_dir,
-                                        get_cached_filename('{}_examples'.format(data_source_name), args))
+    # cached_examples_file = os.path.join(args.output_dir,
+    #                                     get_cached_filename('{}_examples'.format(data_source_name), args))
 
     # with gzip.open(cached_examples_file, 'wb') as fout:
     #     pickle.dump(examples, fout)
