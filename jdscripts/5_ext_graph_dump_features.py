@@ -291,6 +291,7 @@ def read_hotpot_examples(para_file,
         for key, value in example.__dict__.items():
             # print('{}: {}'.format(key, value))
             doc_tokens = example.doc_tokens
+            print('doc tokens: {}'.format(doc_tokens))
             if key == 'ctx_entities_text':
                 print(len(example.ctx_entities_text), len(example.ctx_entity_start_end_position))
                 for ent_idx, entity in enumerate(example.ctx_entities_text):
