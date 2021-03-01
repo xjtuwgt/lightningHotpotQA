@@ -289,19 +289,29 @@ def read_hotpot_examples(para_file,
 
         ############
         for key, value in example.__dict__.items():
-            print('{}: {}'.format(key, value))
+            # print('{}: {}'.format(key, value))
+            doc_tokens = example.doc_tokens
             if key == 'ctx_entities_text':
                 print(len(example.ctx_entities_text), len(example.ctx_entity_start_end_position))
-                doc_tokens = example.doc_tokens
                 for ent_idx, entity in enumerate(example.ctx_entities_text):
                     start_end_position = example.ctx_entity_start_end_position[ent_idx]
                     print(entity)
                     print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
                 print('*' * 75)
 
+            if key == 'para_start_end_position':
+                para_names = example.para_names
+                para_start_end_position = example.para_start_end_position
+                print(len(para_names), len(para_start_end_position))
+                for para_idx, para_name in enumerate(para_names):
+                    print(para_name)
+                    start_end_position = para_start_end_position[para_idx]
+                    print(doc_tokens[start_end_position[0]:start_end_position[1]])
+
         ############
         examples.append(example)
-        break
+        if len(examples) == 2:
+            break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
