@@ -277,10 +277,10 @@ def read_hotpot_examples(para_file,
             norm_ctx_entities_text = [normalize_text(_) for _ in ctx_entities_text]
             norm_ctx_ent_pair = [(w[0], w[1][0]) for w in zip(norm_ctx_entities_text, sent_ent_edges)]
             sents_for_norm_ent_dict = tuple_to_dict(tuple_list=norm_ctx_ent_pair)
-            print(sents_for_norm_ent_dict)
+            # print(sents_for_norm_ent_dict)
             for key in sents_for_norm_ent_dict.keys():
                 sents_for_norm_ent_dict[key] = sorted(list(set(sents_for_norm_ent_dict[key])))
-            print(sents_for_norm_ent_dict)
+            # print(sents_for_norm_ent_dict)
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             norm_ques_entities_text = [normalize_text(_) for _ in ques_entities_text]
             norm_ques_entities_text = list(set(norm_ques_entities_text))
@@ -313,8 +313,8 @@ def read_hotpot_examples(para_file,
                 return sent_to_sent_cross_edges
             sent_to_sent_para_cross_edges = doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges)
 
-            print(sent_to_sent_query_cross_edges)
-            print(sent_to_sent_para_cross_edges)
+            print('shared query {}'.format(sent_to_sent_query_cross_edges))
+            print('cross doc {}'.format(sent_to_sent_para_cross_edges))
             # print(ent_pairs_for_norm_ent)
             # print(para_sent_edges)
             # print(sent_ent_edges)
@@ -412,7 +412,7 @@ def read_hotpot_examples(para_file,
         #
         # ############
         examples.append(example)
-        if len(examples) == 2:
+        if len(examples) == 100:
             break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
