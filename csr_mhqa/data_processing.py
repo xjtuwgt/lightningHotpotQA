@@ -134,8 +134,9 @@ class DataIteratorPack(object):
                  features, example_dict, graph_dict,
                  bsz, device,
                  para_limit, sent_limit, ent_limit, ans_ent_limit,
-                 mask_edge_types,
+                 mask_edge_types, num_edge_type,
                  sequential=False):
+        ## addingnum_edge_type
         self.bsz = bsz
         self.device = device
         self.features = features
@@ -150,6 +151,7 @@ class DataIteratorPack(object):
         self.example_ptr = 0
         self.mask_edge_types = mask_edge_types
         self.max_seq_length = 512
+        self.num_edge_type = num_edge_type ###++++++++
         if not sequential:
             shuffle(self.features)
 
@@ -284,7 +286,7 @@ class DataIteratorPack(object):
                 tmp_graph = self.graph_dict[case.qas_id]
                 graph_adj = torch.from_numpy(tmp_graph['adj']).to(self.device)
                 for k in range(graph_adj.size(0)):
-                    graph_adj[k, k] = 8 ### self-loop
+                    graph_adj[k, k] = self.num_edge_type ### self-loop +++++++++
                 for edge_type in self.mask_edge_types:
                     graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
                 graphs[i] = graph_adj
@@ -468,6 +470,7 @@ class DataHelper:
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
                                  mask_edge_types=self.config.mask_edge_types,
+                                 num_edge_type=self.config.num_edge_type, ##+++++
                                  sequential=True)
 
     @property
@@ -480,4 +483,5 @@ class DataHelper:
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
                                  mask_edge_types=self.config.mask_edge_types,
+                                 num_edge_type=self.config.num_edge_type, ##+++++
                                  sequential=False)

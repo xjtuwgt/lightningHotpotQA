@@ -333,7 +333,7 @@ class DataHelper:
 
 class HotpotDataset(Dataset):
     def __init__(self, features, example_dict, graph_dict, para_limit, sent_limit, ent_limit, ans_ent_limit,
-                 mask_edge_types):
+                 mask_edge_types, num_edge_type):
         self.features = features
         self.example_dict = example_dict
         self.graph_dict = graph_dict
@@ -343,7 +343,7 @@ class HotpotDataset(Dataset):
         self.ans_ent_limit = ans_ent_limit
         self.graph_nodes_num = 1 + para_limit + sent_limit + ent_limit
         self.mask_edge_types = mask_edge_types
-        print(self.mask_edge_types)
+        self.num_edge_type = num_edge_type
         self.max_seq_length = 512
 
     def __len__(self):
@@ -456,10 +456,8 @@ class HotpotDataset(Dataset):
         tmp_graph = self.graph_dict[case.qas_id]
         graph_adj = torch.from_numpy(tmp_graph['adj'])
         for k in range(graph_adj.size(0)):
-            graph_adj[k, k] = 8 ## adding self-loop
+            graph_adj[k, k] = self.num_edge_type ## adding self-loop
         for edge_type in self.mask_edge_types:
-            print(type(edge_type))
-            print(graph_adj == edge_type)
             graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
         graphs[i] = graph_adj
 
