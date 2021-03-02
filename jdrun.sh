@@ -74,13 +74,21 @@ preprocess() {
         echo "4. MultiHop Paragraph Selection (reverse for more data)"
         python dataugmentation/reverse_para_order.py $INPUT_FILE $OUTPUT_PROCESSED/multihop_para.json $OUTPUT_PROCESSED/reverse_multihop_para.json
 
-        echo "5. Dump features for roberta"
+        echo "5. Dump features for roberta (for HGN roberta encoder)"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE
+
+        echo "5. Dump features for roberta (SAE graph) (for HGN roberta encoder)"
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE --sae_graph
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE --sae_graph
 
         echo "5. Dump features for roberta (do_lower_case)"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE
+
+        echo "5. Dump features for roberta (do_lower_case) (SAE graph)"
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE --sae_graph
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE --sae_graph
 
 #        echo "5. Dump features for albert"
 #        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE
