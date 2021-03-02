@@ -242,7 +242,26 @@ def read_hotpot_examples(para_file,
                  'sent_para': s_p_edges,
                  'ques_ent': q_e_edges,
                  'sent_ent': s_e_edges}
+        ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        def sae_graph_edges(edges, ctx_entities_text, ques_entities_text):
+            para_sent_edges = edges['para_sent']
+            sent_to_sent_edges = edges['sent_sent']
 
+            print(para_sent_edges)
+            print(sent_to_sent_edges)
+
+
+
+            query_ent_edges = edges['ques_ent']
+            print(query_ent_edges, len(ques_entities_text))
+            sent_ent_edges = edges['sent_ent']
+            print(sent_ent_edges, len(ctx_entities_text))
+
+            return
+
+        sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text, ques_entities_text=ques_entities_text)
+
+        ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         max_sent_cnt = max(max_sent_cnt, len(sent_start_end_position))
         max_entity_cnt = max(max_entity_cnt, len(ctx_entity_start_end_position))
 
@@ -322,6 +341,7 @@ def read_hotpot_examples(para_file,
                     start_end_position = sent_start_end_position[sent_idx]
                     print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
                 print('*' * 75)
+
 
         ############
         examples.append(example)
