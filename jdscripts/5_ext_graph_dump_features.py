@@ -415,8 +415,8 @@ def read_hotpot_examples(para_file,
         #
         # ############
         examples.append(example)
-        if len(examples) == 100:
-            break
+        # if len(examples) == 100:
+        #     break
 
     print("Maximum sentence cnt: {}".format(max_sent_cnt))
     print("Maximum entity cnt: {}".format(max_entity_cnt))
