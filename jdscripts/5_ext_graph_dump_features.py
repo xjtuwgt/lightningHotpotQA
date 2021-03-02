@@ -315,10 +315,10 @@ def read_hotpot_examples(para_file,
             #     print('shared query {}'.format(sent_to_sent_query_cross_edges))
 
             for x in sent_to_sent_query_cross_edges:
-                print(x, para_sent_edges[x[0]][0], para_sent_edges[1][0])
+                print(x, para_sent_edges[x[0]][0], para_sent_edges[x[1]][0])
 
             for x in sent_to_sent_para_cross_edges:
-                print(x, para_sent_edges[x[0]][0], para_sent_edges[1][0])
+                print(x, para_sent_edges[x[0]][0], para_sent_edges[x[1]][0])
 
 
             return sent_to_sent_in_doc_edges, sent_to_sent_query_cross_edges, sent_to_sent_para_cross_edges
