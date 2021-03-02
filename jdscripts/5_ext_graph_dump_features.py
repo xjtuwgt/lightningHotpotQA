@@ -265,12 +265,12 @@ def read_hotpot_examples(para_file,
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             print('all={}'.format(sent_to_sent_edges))
             print('seq={}'.format(edges['sent_sent']))
-
-
-
             query_ent_edges = edges['ques_ent']
-            print(query_ent_edges, len(ques_entities_text))
+            assert len(query_ent_edges) == len(ques_entities_text)
             sent_ent_edges = edges['sent_ent']
+            assert len(sent_ent_edges) == len(ctx_entities_text)
+
+            print(query_ent_edges, len(ques_entities_text))
             print(sent_ent_edges, len(ctx_entities_text))
 
             return
