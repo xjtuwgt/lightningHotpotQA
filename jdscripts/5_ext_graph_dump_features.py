@@ -255,6 +255,7 @@ def read_hotpot_examples(para_file,
             #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             para_sent_edges = edges['para_sent']
             sents_in_para_dict = tuple_to_dict(tuple_list=para_sent_edges)
+            print(sents_in_para_dict)
             sent_to_sent_edges = []
             for key, sent_list in sents_in_para_dict.items():
                 sent_list = sorted(sent_list)
