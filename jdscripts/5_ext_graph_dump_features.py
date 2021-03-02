@@ -751,7 +751,7 @@ if __name__ == '__main__':
     parser.add_argument("--doc_link_ner", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
     parser.add_argument("--graph_id", type=str, default="1", help='define output directory')
-    parser.add_argument("--sae_graph", action='store_true', default=True, type=bool,
+    parser.add_argument("--sae_graph", action='store_true',
                         help="Set this flag if you are using SAE graph.")
 
     # Other parameters
