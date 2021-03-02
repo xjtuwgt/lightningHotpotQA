@@ -295,8 +295,8 @@ def read_hotpot_examples(para_file,
                         for l, r in zip(sent_list_i, sent_list_j):
                             if para_sent_edges[l][0] != para_sent_edges[r][0]:
                                 sent_pair = (l, r) if l < r else (r, l)
-                                ents_l = set(ents_in_sent_dict[l])
-                                ents_r = set(ents_in_sent_dict[r])
+                                ents_l = set(ents_in_sent_dict[sent_pair[0]])
+                                ents_r = set(ents_in_sent_dict[sent_pair[1]])
                                 if (sent_pair not in sent_to_sent_shared_edges) and (len(ents_l.intersection(ents_r)) == 0):
                                     sent_to_sent_shared_edges.append(sent_pair)
                 return sent_to_sent_shared_edges
