@@ -14,6 +14,7 @@ import shutil
 from csr_mhqa.utils import convert_to_tokens
 import logging
 import string
+import re
 def log_metrics(mode, metrics):
     '''
     Print the evaluation logs
@@ -27,13 +28,22 @@ def normalize_question(question: str) -> str:
         question = question[:-1]
     return question
 
-def normalize_text(text: str) -> str:
-    def normalize_text(text: str) -> str:
-        text = text.lower().strip()
-        return text
+
+def normalize_text(s: str) -> str:
+    def remove_articles(text):
+        return re.sub(r'\b(a|an|the)\b', ' ', text)
+
+    def white_space_fix(text):
+        return ' '.join(text.split())
+
     def remove_punc(text):
-        return text.strip(string.punctuation)
-    return normalize_text(remove_punc(text=text))
+        exclude = set(string.punctuation)
+        return ''.join(ch for ch in text if ch not in exclude)
+
+    def lower(text):
+        return text.lower()
+    return white_space_fix(remove_articles(remove_punc(lower(s))))
+
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def supp_doc_prediction(predict_para_support_np_ith, example_dict, batch_ids_ith):

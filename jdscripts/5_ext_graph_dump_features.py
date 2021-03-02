@@ -16,6 +16,7 @@ import spacy
 from spacy.tokenizer import Tokenizer
 from collections import Counter
 from tqdm import tqdm
+from utils.jdutils import normalize_text
 
 from model_envs import MODEL_CLASSES
 from envs import DATASET_FOLDER
@@ -243,7 +244,7 @@ def read_hotpot_examples(para_file,
                  'ques_ent': q_e_edges,
                  'sent_ent': s_e_edges}
         ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        def sae_graph_edges(edges, ctx_entities_text, ques_entities_text):
+        def sae_graph_edges(edges, ques_entities_text, ctx_entities_text):
             def tuple_to_dict(tuple_list):
                 res = {}
                 for tup in tuple_list:
@@ -267,14 +268,27 @@ def read_hotpot_examples(para_file,
             print('seq={}'.format(edges['sent_sent']))
             query_ent_edges = edges['ques_ent']
             assert len(query_ent_edges) == len(ques_entities_text)
+            para_ids = sorted(list(sents_in_para_dict.keys()))
+            assert len(para_ids) >= 2
+            norm_ques_entities_text = [normalize_text(_) for _ in ques_entities_text]
+            norm_ctx_entities_text = [normalize_text(_) for _ in ctx_entities_text]
+
+            print(len(norm_ques_entities_text), len(set(norm_ques_entities_text)), len(set(ques_entities_text)))
+            print(len(norm_ctx_entities_text), len(set(norm_ctx_entities_text)), len(set(ctx_entities_text)))
+
+
+
+
+            sent_to_sent_query_cross_edges = []
             sent_ent_edges = edges['sent_ent']
             assert len(sent_ent_edges) == len(ctx_entities_text)
 
-            ents_in_sent_dict = tuple_to_dict(tuple_list=sent_ent_edges)
-            print('entInsent = {}'.format(ents_in_sent_dict))
+            sent_to_sent_para_cross_edges = []
+            ents_in_sent_dict = tuple_to_dict(tuple_list=sent_ent_edges) ## sent_id as the
+            # print('entInsent = {}'.format(ents_in_sent_dict))
 
-            print(query_ent_edges, len(ques_entities_text))
-            print(sent_ent_edges, len(ctx_entities_text))
+            # print(query_ent_edges, len(ques_entities_text))
+            # print(sent_ent_edges, len(ctx_entities_text))
 
             return
 
