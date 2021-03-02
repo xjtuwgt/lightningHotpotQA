@@ -33,6 +33,7 @@ def get_cached_filename(f_type, config):
                   'long_low_sae_reverse_examples', 'long_low_sae_reverse_features', 'long_low_sae_reverse_graphs',
 
                   'oracle_features', 'oracle_graphs', 'oracle_examples'
+                  'oracle_sae_features', 'oracle_sae_graphs', 'oracle_sae_examples'
                   } #### ranker: hgn, longformer; case: lowercase, cased; graph: whether sae-graph
     assert f_type in f_type_set
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
