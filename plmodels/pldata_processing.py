@@ -343,6 +343,7 @@ class HotpotDataset(Dataset):
         self.ans_ent_limit = ans_ent_limit
         self.graph_nodes_num = 1 + para_limit + sent_limit + ent_limit
         self.mask_edge_types = mask_edge_types
+        print(self.mask_edge_types)
         self.max_seq_length = 512
 
     def __len__(self):
