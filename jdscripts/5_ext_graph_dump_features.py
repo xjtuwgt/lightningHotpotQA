@@ -255,7 +255,6 @@ def read_hotpot_examples(para_file,
                 return res
             #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             para_sent_edges = edges['para_sent']
-            assert len(para_sent_edges) == len(ctx_entities_text)
             sents_in_para_dict = tuple_to_dict(tuple_list=para_sent_edges)
             sent_to_sent_edges = []
             for key, sent_list in sents_in_para_dict.items():
