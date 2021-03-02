@@ -294,7 +294,7 @@ def read_hotpot_examples(para_file,
                         sent_list_j = sents_for_norm_ent_dict[norm_ques_entities_text_filter[j]]
                         for l, r in zip(sent_list_i, sent_list_j):
                             if para_sent_edges[l][0] != para_sent_edges[r][0]:
-                                sent_pair = (l, r)
+                                sent_pair = (l, r) if l < r else (r, l)
                                 ents_l = set(ents_in_sent_dict[l])
                                 ents_r = set(ents_in_sent_dict[r])
                                 if (sent_pair not in sent_to_sent_shared_edges) and (len(ents_l.intersection(ents_r)) == 0):
