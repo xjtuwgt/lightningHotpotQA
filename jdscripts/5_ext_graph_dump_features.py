@@ -293,7 +293,9 @@ def read_hotpot_examples(para_file,
                         sent_list_j = sents_for_norm_ent_dict[norm_ques_entities_text_filter[j]]
                         for l, r in zip(sent_list_i, sent_list_j):
                             if para_sent_edges[l][0] != para_sent_edges[r][0]:
-                                sent_to_sent_shared_edges.append((l, r))
+                                sent_pair = (l, r)
+                                if sent_pair not in sent_to_sent_shared_edges:
+                                    sent_to_sent_shared_edges.append(sent_pair)
                 return sent_to_sent_shared_edges
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             sent_to_sent_query_cross_edges = shared_query_entity_sent_edges(norm_ques_entities_text, sents_for_norm_ent_dict, para_sent_edges)
@@ -305,7 +307,9 @@ def read_hotpot_examples(para_file,
                     for i in range(len(sent_list) - 1):
                         for j in range(i+1, len(sent_list)):
                             if para_sent_edges[sent_list[i]][0] != para_sent_edges[sent_list[j]][0]:
-                                sent_to_sent_cross_edges.append((sent_list[i], sent_list[j]))
+                                sent_pair = (sent_list[i], sent_list[j])
+                                if sent_pair not in sent_to_sent_cross_edges:
+                                    sent_to_sent_cross_edges.append((sent_list[i], sent_list[j]))
                 return sent_to_sent_cross_edges
             sent_to_sent_para_cross_edges = doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges)
 
