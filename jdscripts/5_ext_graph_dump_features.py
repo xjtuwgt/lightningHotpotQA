@@ -301,7 +301,7 @@ def read_hotpot_examples(para_file,
                                     sent_to_sent_shared_edges.append(sent_pair)
                 return sent_to_sent_shared_edges
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            sent_to_sent_query_cross_edges = shared_query_entity_sent_edges(norm_ques_entities_text, sents_for_norm_ent_dict, para_sent_edges)
+            sent_to_sent_query_cross_edges = shared_query_entity_sent_edges(norm_ques_entities_text, ents_in_sent_dict, sents_for_norm_ent_dict, para_sent_edges)
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             def doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges):
                 sent_to_sent_cross_edges = []
