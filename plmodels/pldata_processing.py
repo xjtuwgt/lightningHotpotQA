@@ -456,8 +456,10 @@ class HotpotDataset(Dataset):
         tmp_graph = self.graph_dict[case.qas_id]
         graph_adj = torch.from_numpy(tmp_graph['adj'])
         for k in range(graph_adj.size(0)):
-            graph_adj[k, k] = 8
+            graph_adj[k, k] = 8 ## adding self-loop
         for edge_type in self.mask_edge_types:
+            print(type(edge_type))
+            print(graph_adj == edge_type)
             graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
         graphs[i] = graph_adj
 
