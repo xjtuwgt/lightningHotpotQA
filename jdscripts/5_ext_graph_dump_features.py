@@ -271,25 +271,26 @@ def read_hotpot_examples(para_file,
             para_ids = sorted(list(sents_in_para_dict.keys()))
             assert len(para_ids) >= 2
             norm_ques_entities_text = [normalize_text(_) for _ in ques_entities_text]
-            norm_ctx_entities_text = [normalize_text(_) for _ in ctx_entities_text]
-
-            print(len(norm_ques_entities_text), len(set(norm_ques_entities_text)), len(set(ques_entities_text)))
-            print(len(norm_ctx_entities_text), len(set(norm_ctx_entities_text)), len(set(ctx_entities_text)))
-
-
-
-
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             sent_to_sent_query_cross_edges = []
+            sent_to_sent_para_cross_edges = []
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            # print(len(norm_ques_entities_text), len(set(norm_ques_entities_text)), len(set(ques_entities_text)))
+            # print(len(norm_ctx_entities_text), len(set(norm_ctx_entities_text)), len(set(ctx_entities_text)))
             sent_ent_edges = edges['sent_ent']
             assert len(sent_ent_edges) == len(ctx_entities_text)
+            ents_in_sent_dict = tuple_to_dict(tuple_list=sent_ent_edges) ## sent_id as the key
+            norm_ctx_entities_text = [normalize_text(_) for _ in ctx_entities_text]
+            norm_ctx_ent_pair = [(w[0], w[1]) for w in zip(norm_ctx_entities_text, sent_ent_edges)]
+            ent_pairs_for_norm_ent = tuple_to_dict(tuple_list=norm_ctx_ent_pair)
+            print(ent_pairs_for_norm_ent)
 
-            sent_to_sent_para_cross_edges = []
-            ents_in_sent_dict = tuple_to_dict(tuple_list=sent_ent_edges) ## sent_id as the
-            # print('entInsent = {}'.format(ents_in_sent_dict))
+            # for i in range(len(para_ids) - 1):
+            #     left_sent_list = sorted(sents_in_para_dict[para_ids[i]])
+            #     for j in range(i+1, len(para_ids)):
+            #         right_sent_list = sorted(sents_in_para_dict[para_ids[j]])
 
-            # print(query_ent_edges, len(ques_entities_text))
-            # print(sent_ent_edges, len(ctx_entities_text))
-            print('*' * 75)
+
             return
 
         sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text, ques_entities_text=ques_entities_text)
