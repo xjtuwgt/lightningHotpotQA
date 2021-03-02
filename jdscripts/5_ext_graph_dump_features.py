@@ -232,7 +232,7 @@ def read_hotpot_examples(para_file,
                     inter_titles = set(link_titles) & set(title_to_id.keys())
                     if len(inter_titles) > 0 and _r in inter_titles:
                         s_p_edges.append((sent_to_id[(_l, local_sent_id)], title_to_id[_r]))
-        print(sel_paras)
+        print('selected paragraphs {}'.format(sel_paras))
         q_p_edges = [(0, title_to_id[para]) for para in sel_paras[0]] ### 7) question2paragraph edges
 
         edges = {'ques_para': q_p_edges,
