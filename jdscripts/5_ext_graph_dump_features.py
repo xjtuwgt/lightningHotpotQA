@@ -286,10 +286,11 @@ def read_hotpot_examples(para_file,
             norm_ques_entities_text = list(set(norm_ques_entities_text))
             def shared_query_entity_sent_edges(norm_ques_entities_text, sents_for_norm_ent_dict, para_sent_edges):
                 sent_to_sent_shared_edges = []
-                for i in range(len(norm_ques_entities_text)-1):
-                    sent_list_i = sents_for_norm_ent_dict[norm_ques_entities_text[i]]
-                    for j in range(i+1, len(norm_ques_entities_text)):
-                        sent_list_j = sents_for_norm_ent_dict[norm_ques_entities_text[j]]
+                norm_ques_entities_text_filter = [_ for _ in norm_ques_entities_text if _ in sents_for_norm_ent_dict]
+                for i in range(len(norm_ques_entities_text_filter)-1):
+                    sent_list_i = sents_for_norm_ent_dict[norm_ques_entities_text_filter[i]]
+                    for j in range(i+1, len(norm_ques_entities_text_filter)):
+                        sent_list_j = sents_for_norm_ent_dict[norm_ques_entities_text_filter[j]]
                         for l, r in zip(sent_list_i, sent_list_j):
                             if para_sent_edges[l][0] != para_sent_edges[r][0]:
                                 sent_to_sent_shared_edges.append((l, r))
