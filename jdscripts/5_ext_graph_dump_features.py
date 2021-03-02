@@ -289,7 +289,7 @@ def read_hotpot_examples(para_file,
 
             # print(query_ent_edges, len(ques_entities_text))
             # print(sent_ent_edges, len(ctx_entities_text))
-
+            print('*' * 75)
             return
 
         sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text, ques_entities_text=ques_entities_text)
