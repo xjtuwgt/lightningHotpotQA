@@ -124,9 +124,9 @@ def read_hotpot_examples(para_file,
         sel_paras = para_data[key]
         ner_context = dict(ner_data[key]['context'])
 
-        ####++++++++++++++++++++
+        ####+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         para_names = []  ## for paragraph evaluation and checking
-        ####++++++++++++++++++++
+        ####+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         for title in itertools.chain.from_iterable(sel_paras):
             stripped_title = re.sub(r' \(.*?\)$', '', title)
@@ -233,7 +233,7 @@ def read_hotpot_examples(para_file,
                     inter_titles = set(link_titles) & set(title_to_id.keys())
                     if len(inter_titles) > 0 and _r in inter_titles:
                         s_p_edges.append((sent_to_id[(_l, local_sent_id)], title_to_id[_r]))
-        print('selected paragraphs {}'.format(sel_paras))
+        # print('selected paragraphs {}'.format(sel_paras))
         q_p_edges = [(0, title_to_id[para]) for para in sel_paras[0]] ### 7) question2paragraph edges
 
         edges = {'ques_para': q_p_edges,
@@ -293,10 +293,10 @@ def read_hotpot_examples(para_file,
                                 if (sent_pair not in sent_to_sent_shared_edges) and (len(ents_l.intersection(ents_r)) == 0):
                                     sent_to_sent_shared_edges.append(sent_pair)
                 return sent_to_sent_shared_edges
-            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             sent_to_sent_query_cross_edges = shared_query_entity_sent_edges(norm_ques_entities_text, ents_in_sent_dict,
                                                                             sents_for_norm_ent_dict, para_sent_edges)
-            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             def doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges):
                 sent_to_sent_cross_edges = []
                 sents_for_norm_ent_filter = [(key, value) for key, value in sents_for_norm_ent_dict.items() if len(value) > 1]
@@ -318,7 +318,6 @@ def read_hotpot_examples(para_file,
             return sent_to_sent_in_doc_edges, sent_to_sent_query_cross_edges, sent_to_sent_para_cross_edges
 
         sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text, ques_entities_text=ques_entities_text)
-
         ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         max_sent_cnt = max(max_sent_cnt, len(sent_start_end_position))
         max_entity_cnt = max(max_entity_cnt, len(ctx_entity_start_end_position))
