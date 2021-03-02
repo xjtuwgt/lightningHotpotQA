@@ -38,7 +38,7 @@ for a in args_dict:
 #########################################################################
 # Read Data
 ##########################################################################
-helper = DataHelper(gz=True, config=args, f_type='long')
+helper = DataHelper(gz=True, config=args)
 
 # Set datasets
 # train_dataloader = helper.train_loader
