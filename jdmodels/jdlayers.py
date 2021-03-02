@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.autograd import Variable
-from models.layers import OutputLayer
+from models.layers import OutputLayer, GATSelfAttention, AttentionLayer
 from csr_mhqa.utils import get_weights, get_act
 import torch.nn.functional as F
 import numpy as np
@@ -65,97 +65,6 @@ class GraphBlock(nn.Module):
         ##############################################
         return graph_state, graph_state_dict, node_mask, query_vec
 
-class GATSelfAttention(nn.Module):
-    def __init__(self, in_dim, out_dim, config, q_attn=False, head_id=0):
-        """ One head GAT """
-        super(GATSelfAttention, self).__init__()
-        self.config = config
-        self.in_dim = in_dim
-        self.out_dim = out_dim
-        self.dropout = self.config.gnn_drop
-        self.q_attn = q_attn
-        self.query_dim = in_dim
-        self.n_type = self.config.num_edge_type
-
-        self.head_id = head_id
-        self.step = 0
-
-        self.W_type = nn.ParameterList()
-        self.a_type = nn.ParameterList()
-        self.qattn_W1 = nn.ParameterList()
-        self.qattn_W2 = nn.ParameterList()
-        for i in range(self.n_type):
-            self.W_type.append(get_weights((in_dim, out_dim)))
-            self.a_type.append(get_weights((out_dim * 2, 1)))
-            if self.q_attn:
-                self.qattn_W1.append(get_weights((in_dim, out_dim * 2)))
-                self.qattn_W2.append(get_weights((out_dim * 2, out_dim * 2)))
-
-        self.act = get_act('lrelu:0.2')
-
-    def forward(self, input_state, adj, node_mask=None, query_vec=None):
-        zero_vec = torch.zeros_like(adj)
-        scores = torch.zeros_like(adj)
-
-        for i in range(self.n_type):
-            h = torch.matmul(input_state, self.W_type[i])
-            h = F.dropout(h, self.dropout, self.training)
-            N, E, d = h.shape
-
-            a_input = torch.cat([h.repeat(1, 1, E).view(N, E * E, -1), h.repeat(1, E, 1)], dim=-1)
-            a_input = a_input.view(-1, E, E, 2*d)
-
-            # print(a_input.shape)
-
-            if self.q_attn:
-                q_gate = F.relu(torch.matmul(query_vec, self.qattn_W1[i]))
-                q_gate = torch.sigmoid(torch.matmul(q_gate, self.qattn_W2[i]))
-                a_input = a_input * q_gate[:, None, None, :]
-                score = self.act(torch.matmul(a_input, self.a_type[i]).squeeze(3))
-            else:
-                score = self.act(torch.matmul(a_input, self.a_type[i]).squeeze(3))
-            # print(i, input_state.shape, scores.shape, adj.shape, score.shape)
-            scores += torch.where(adj == i+1, score, zero_vec.to(score.dtype)) ## i + 1 IS VERY IMPORTANT
-
-        zero_vec = -1e30 * torch.ones_like(scores)
-        scores = torch.where(adj > 0, scores, zero_vec.to(scores.dtype))
-
-        # Ahead Alloc
-        if node_mask is not None:
-            h = h * node_mask
-
-        coefs = F.softmax(scores, dim=2)  # N * E * E
-        h = coefs.unsqueeze(3) * h.unsqueeze(2)  # N * E * E * d
-        h = torch.sum(h, dim=1)
-        return h
-
-class AttentionLayer(nn.Module):
-    def __init__(self, in_dim, hid_dim, n_head, q_attn, config):
-        super(AttentionLayer, self).__init__()
-        assert hid_dim % n_head == 0
-        self.dropout = config.gnn_drop
-
-        self.attn_funcs = nn.ModuleList()
-        for i in range(n_head):
-            self.attn_funcs.append(
-                GATSelfAttention(in_dim=in_dim, out_dim=hid_dim // n_head, config=config, q_attn=q_attn, head_id=i))
-
-        if in_dim != hid_dim:
-            self.align_dim = nn.Linear(in_dim, hid_dim)
-            nn.init.xavier_uniform_(self.align_dim.weight, gain=1.414)
-        else:
-            self.align_dim = lambda x: x
-
-    def forward(self, input, adj, node_mask=None, query_vec=None):
-        hidden_list = []
-        for attn in self.attn_funcs:
-            h = attn(input, adj, node_mask=node_mask, query_vec=query_vec)
-            hidden_list.append(h)
-
-        h = torch.cat(hidden_list, dim=-1)
-        h = F.dropout(h, self.dropout, training=self.training)
-        h = F.relu(h)
-        return h
 
 class ParaSentEntPredictionLayer(nn.Module):
     def __init__(self, config, hidden_dim):

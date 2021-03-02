@@ -149,7 +149,6 @@ class GATSelfAttention(nn.Module):
         h = torch.sum(h, dim=1)
         return h
 
-
 class AttentionLayer(nn.Module):
     def __init__(self, in_dim, hid_dim, n_head, q_attn, config):
         super(AttentionLayer, self).__init__()
