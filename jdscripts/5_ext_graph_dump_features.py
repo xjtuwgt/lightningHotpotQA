@@ -324,42 +324,42 @@ def read_hotpot_examples(para_file,
             end_position=end_position)
 
         ############
-        doc_tokens = example.doc_tokens
-        print('doc tokens: {}'.format(doc_tokens))
-        print('doc query: {}'.format(example.question_tokens))
-        for key, value in example.__dict__.items():
-            # print('{}: {}'.format(key, value))
-
-            if key == 'ctx_entities_text':
-                print(len(example.ctx_entities_text), len(example.ctx_entity_start_end_position))
-                for ent_idx, entity in enumerate(example.ctx_entities_text):
-                    start_end_position = example.ctx_entity_start_end_position[ent_idx]
-                    print(entity)
-                    print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
-                print('*' * 75)
-
-            if key == 'para_start_end_position':
-                para_names = example.para_names
-                para_start_end_position = example.para_start_end_position
-                print(len(para_names), len(para_start_end_position))
-                for para_idx, para_name in enumerate(para_names):
-                    print(para_name)
-                    start_end_position = para_start_end_position[para_idx]
-                    print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
-                print('*' * 75)
-
-            if key == 'sent_start_end_position':
-                sent_names = example.sent_names
-                sent_start_end_position = example.sent_start_end_position
-                print(len(sent_names), len(sent_start_end_position))
-                for sent_idx, sent_name in enumerate(sent_names):
-                    print(sent_name)
-                    start_end_position = sent_start_end_position[sent_idx]
-                    print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
-                print('*' * 75)
-
-
-        ############
+        # doc_tokens = example.doc_tokens
+        # print('doc tokens: {}'.format(doc_tokens))
+        # print('doc query: {}'.format(example.question_tokens))
+        # for key, value in example.__dict__.items():
+        #     # print('{}: {}'.format(key, value))
+        #
+        #     if key == 'ctx_entities_text':
+        #         print(len(example.ctx_entities_text), len(example.ctx_entity_start_end_position))
+        #         for ent_idx, entity in enumerate(example.ctx_entities_text):
+        #             start_end_position = example.ctx_entity_start_end_position[ent_idx]
+        #             print(entity)
+        #             print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
+        #         print('*' * 75)
+        #
+        #     if key == 'para_start_end_position':
+        #         para_names = example.para_names
+        #         para_start_end_position = example.para_start_end_position
+        #         print(len(para_names), len(para_start_end_position))
+        #         for para_idx, para_name in enumerate(para_names):
+        #             print(para_name)
+        #             start_end_position = para_start_end_position[para_idx]
+        #             print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
+        #         print('*' * 75)
+        #
+        #     if key == 'sent_start_end_position':
+        #         sent_names = example.sent_names
+        #         sent_start_end_position = example.sent_start_end_position
+        #         print(len(sent_names), len(sent_start_end_position))
+        #         for sent_idx, sent_name in enumerate(sent_names):
+        #             print(sent_name)
+        #             start_end_position = sent_start_end_position[sent_idx]
+        #             print(doc_tokens[start_end_position[0]:start_end_position[1] + 1])
+        #         print('*' * 75)
+        #
+        #
+        # ############
         examples.append(example)
         if len(examples) == 1:
             break
