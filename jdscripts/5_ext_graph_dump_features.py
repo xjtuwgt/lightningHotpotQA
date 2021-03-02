@@ -310,20 +310,14 @@ def read_hotpot_examples(para_file,
                                     sent_to_sent_cross_edges.append(sent_pair)
                 return sent_to_sent_cross_edges
             sent_to_sent_para_cross_edges = doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges)
-
-            # if len(sent_to_sent_query_cross_edges) > 0:
-            #     print('shared query {}'.format(sent_to_sent_query_cross_edges))
-
-            for x in sent_to_sent_query_cross_edges:
-                print(x, para_sent_edges[x[0]][0], para_sent_edges[x[1]][0])
-
-            for x in sent_to_sent_para_cross_edges:
-                print(x, para_sent_edges[x[0]][0], para_sent_edges[x[1]][0])
-
-
             return sent_to_sent_in_doc_edges, sent_to_sent_query_cross_edges, sent_to_sent_para_cross_edges
+        s_s_edges, s_s_q_edges, s_s_p_edges = sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text,
+                                                              ques_entities_text=ques_entities_text)
+        for x in s_s_q_edges:
+            print(x, p_s_edges[x[0]][0], p_s_edges[x[1]][0])
 
-        sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text, ques_entities_text=ques_entities_text)
+        for x in s_s_p_edges:
+            print(x, p_s_edges[x[0]][0], p_s_edges[x[1]][0])
         ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         max_sent_cnt = max(max_sent_cnt, len(sent_start_end_position))
         max_entity_cnt = max(max_entity_cnt, len(ctx_entity_start_end_position))
