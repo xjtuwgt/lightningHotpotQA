@@ -271,7 +271,7 @@ def read_hotpot_examples(para_file,
             assert len(sent_ent_edges) == len(ctx_entities_text)
 
             ents_in_sent_dict = tuple_to_dict(tuple_list=sent_ent_edges)
-            print(ents_in_sent_dict)
+            print('entInsent = {}'.format(ents_in_sent_dict))
 
             print(query_ent_edges, len(ques_entities_text))
             print(sent_ent_edges, len(ctx_entities_text))
