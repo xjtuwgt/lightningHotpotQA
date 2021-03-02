@@ -264,8 +264,8 @@ def read_hotpot_examples(para_file,
                         for j in range(i+1, len(sent_list)):
                             sent_to_sent_edges.append((sent_list[i], sent_list[j]))
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            print('all={}'.format(sent_to_sent_edges))
-            print('seq={}'.format(edges['sent_sent']))
+            # print('all={}'.format(sent_to_sent_edges))
+            # print('seq={}'.format(edges['sent_sent']))
             query_ent_edges = edges['ques_ent']
             assert len(query_ent_edges) == len(ques_entities_text)
             para_ids = sorted(list(sents_in_para_dict.keys()))
