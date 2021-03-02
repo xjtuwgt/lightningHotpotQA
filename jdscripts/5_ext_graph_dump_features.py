@@ -255,6 +255,7 @@ def read_hotpot_examples(para_file,
                 return res
             #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             para_sent_edges = edges['para_sent']
+            assert len(para_sent_edges) == len(ctx_entities_text)
             sents_in_para_dict = tuple_to_dict(tuple_list=para_sent_edges)
             sent_to_sent_edges = []
             for key, sent_list in sents_in_para_dict.items():
@@ -285,6 +286,8 @@ def read_hotpot_examples(para_file,
             ent_pairs_for_norm_ent = tuple_to_dict(tuple_list=norm_ctx_ent_pair)
             print(ent_pairs_for_norm_ent)
 
+            print(para_sent_edges)
+            print(sent_ent_edges)
             # for i in range(len(para_ids) - 1):
             #     left_sent_list = sorted(sents_in_para_dict[para_ids[i]])
             #     for j in range(i+1, len(para_ids)):
