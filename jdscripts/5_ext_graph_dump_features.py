@@ -244,11 +244,27 @@ def read_hotpot_examples(para_file,
                  'sent_ent': s_e_edges}
         ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         def sae_graph_edges(edges, ctx_entities_text, ques_entities_text):
+            def tuple_to_dict(tuple_list):
+                res = {}
+                for tup in tuple_list:
+                    if tup[0] not in res:
+                        res[tup[0]] = [tup[1]]
+                    else:
+                        res[tup[0]].append(tup[1])
+                return res
+            #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             para_sent_edges = edges['para_sent']
-            sent_to_sent_edges = edges['sent_sent']
-
-            print(para_sent_edges)
+            sents_in_para_dict = tuple_to_dict(tuple_list=para_sent_edges)
+            sent_to_sent_edges = []
+            for key, sent_list in sents_in_para_dict.items():
+                sent_list = sorted(sent_list)
+                if len(sent_list) > 1:
+                    for i in range(len(sent_list) - 1):
+                        for j in range(i+1, len(sent_list)):
+                            sent_to_sent_edges.append((sent_list[i], sent_list[j]))
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             print(sent_to_sent_edges)
+            print(edges['sent_sent'])
 
 
 
