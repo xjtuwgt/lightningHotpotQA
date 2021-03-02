@@ -270,16 +270,10 @@ def read_hotpot_examples(para_file,
             assert len(query_ent_edges) == len(ques_entities_text)
             para_ids = sorted(list(sents_in_para_dict.keys()))
             assert len(para_ids) >= 2
-            norm_ques_entities_text = [normalize_text(_) for _ in ques_entities_text]
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            sent_to_sent_query_cross_edges = []
-            sent_to_sent_para_cross_edges = []
             # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            # print(len(norm_ques_entities_text), len(set(norm_ques_entities_text)), len(set(ques_entities_text)))
-            # print(len(norm_ctx_entities_text), len(set(norm_ctx_entities_text)), len(set(ctx_entities_text)))
             sent_ent_edges = edges['sent_ent']
             assert len(sent_ent_edges) == len(ctx_entities_text)
-            ents_in_sent_dict = tuple_to_dict(tuple_list=sent_ent_edges) ## sent_id as the key
             norm_ctx_entities_text = [normalize_text(_) for _ in ctx_entities_text]
             norm_ctx_ent_pair = [(w[0], w[1][0]) for w in zip(norm_ctx_entities_text, sent_ent_edges)]
             sents_for_norm_ent_dict = tuple_to_dict(tuple_list=norm_ctx_ent_pair)
@@ -287,8 +281,35 @@ def read_hotpot_examples(para_file,
             for key in sents_for_norm_ent_dict.keys():
                 sents_for_norm_ent_dict[key] = sorted(list(set(sents_for_norm_ent_dict[key])))
             print(sents_for_norm_ent_dict)
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            norm_ques_entities_text = [normalize_text(_) for _ in ques_entities_text]
+            norm_ques_entities_text = list(set(norm_ques_entities_text))
+            def shared_query_entity_sent_edges(norm_ques_entities_text, sents_for_norm_ent_dict, para_sent_edges):
+                sent_to_sent_shared_edges = []
+                for i in range(len(norm_ques_entities_text)-1):
+                    sent_list_i = sents_for_norm_ent_dict[norm_ques_entities_text[i]]
+                    for j in range(i+1, len(norm_ques_entities_text)):
+                        sent_list_j = sents_for_norm_ent_dict[norm_ques_entities_text[j]]
+                        for l, r in zip(sent_list_i, sent_list_j):
+                            if para_sent_edges[l][0] != para_sent_edges[r][0]:
+                                sent_to_sent_shared_edges.append((l, r))
+                return sent_to_sent_shared_edges
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            sent_to_sent_query_cross_edges = shared_query_entity_sent_edges(norm_ques_entities_text, sents_for_norm_ent_dict, para_sent_edges)
+            # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            def doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges):
+                sent_to_sent_cross_edges = []
+                sents_for_norm_ent_filter = [(key, value) for key, value in sents_for_norm_ent_dict.items() if len(value) > 1]
+                for key, sent_list in sents_for_norm_ent_filter:
+                    for i in range(len(sent_list) - 1):
+                        for j in range(i+1, len(sent_list)):
+                            if para_sent_edges[sent_list[i]][0] != para_sent_edges[sent_list[j]][0]:
+                                sent_to_sent_cross_edges.append((sent_list[i], sent_list[j]))
+                return sent_to_sent_cross_edges
+            sent_to_sent_para_cross_edges = doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges)
 
-
+            print(sent_to_sent_query_cross_edges)
+            print(sent_to_sent_para_cross_edges)
             # print(ent_pairs_for_norm_ent)
             # print(para_sent_edges)
             # print(sent_ent_edges)
