@@ -135,7 +135,7 @@ class GATSelfAttention(nn.Module):
             else:
                 score = self.act(torch.matmul(a_input, self.a_type[i]).squeeze(3))
 
-            scores += torch.where(adj == i+1, score, zero_vec.to(score.dtype))
+            scores += torch.where(adj == i+1, score, zero_vec.to(score.dtype)) ## i + 1 IS VERY IMPORTANT
 
         zero_vec = -1e30 * torch.ones_like(scores)
         scores = torch.where(adj > 0, scores, zero_vec.to(scores.dtype))

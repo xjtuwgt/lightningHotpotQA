@@ -151,7 +151,7 @@ def read_hotpot_examples(para_file,
                 sent_names.append(local_sent_name)
 
                 # P -> S
-                p_s_edges.append((title_id, sent_id))
+                p_s_edges.append((title_id, sent_id)) ###
                 if prev_sent_id is not None:
                     # S -> S
                     s_s_edges.append((prev_sent_id, sent_id))
