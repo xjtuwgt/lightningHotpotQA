@@ -311,8 +311,14 @@ def read_hotpot_examples(para_file,
                 return sent_to_sent_cross_edges
             sent_to_sent_para_cross_edges = doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges)
 
-            if len(sent_to_sent_query_cross_edges) > 0:
-                print('shared query {}'.format(sent_to_sent_query_cross_edges))
+            # if len(sent_to_sent_query_cross_edges) > 0:
+            #     print('shared query {}'.format(sent_to_sent_query_cross_edges))
+
+            for x in sent_to_sent_query_cross_edges:
+                print(para_sent_edges[x[0]], para_sent_edges[1])
+
+            for x in sent_to_sent_para_cross_edges:
+                print(para_sent_edges[x[0]], para_sent_edges[1])
 
 
             return sent_to_sent_in_doc_edges, sent_to_sent_query_cross_edges, sent_to_sent_para_cross_edges
