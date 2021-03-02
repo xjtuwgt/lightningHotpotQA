@@ -311,13 +311,12 @@ def read_hotpot_examples(para_file,
                 return sent_to_sent_cross_edges
             sent_to_sent_para_cross_edges = doc_cross_entity_sent_edges(sents_for_norm_ent_dict, para_sent_edges)
             return sent_to_sent_in_doc_edges, sent_to_sent_query_cross_edges, sent_to_sent_para_cross_edges
+        ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         s_s_edges, s_s_q_edges, s_s_p_edges = sae_graph_edges(edges=edges, ctx_entities_text=ctx_entities_text,
                                                               ques_entities_text=ques_entities_text)
-        for x in s_s_q_edges:
-            print(x, p_s_edges[x[0]][0], p_s_edges[x[1]][0])
+        ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        edges['sent_sent'] = s_s_p_edges
 
-        for x in s_s_p_edges:
-            print(x, p_s_edges[x[0]][0], p_s_edges[x[1]][0])
         ###########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         max_sent_cnt = max(max_sent_cnt, len(sent_start_end_position))
         max_entity_cnt = max(max_entity_cnt, len(ctx_entity_start_end_position))
