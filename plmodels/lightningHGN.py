@@ -29,9 +29,10 @@ MODEL_CLASSES = {
 }
 
 class lightningHGN(pl.LightningModule):
-    def __init__(self, args: Namespace):
+    def __init__(self, hparams: Namespace):
         super().__init__()
-        self.hparams = args
+        self.hparams = hparams
+        self.save_hyperparameters()
         cached_config_file = join(self.hparams.exp_name, 'cached_config.bin')
         if os.path.exists(cached_config_file):
             cached_config = torch.load(cached_config_file)
@@ -56,8 +57,6 @@ class lightningHGN(pl.LightningModule):
         if model_path is not None:
             self.model.load_state_dict(torch.load(model_path))
         logging.info('Loading encoder and model completed')
-        ##########
-        self.save_hyperparameters(self.hparams)
         ##########
 
     def prepare_data(self):

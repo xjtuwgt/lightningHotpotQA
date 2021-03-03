@@ -28,9 +28,9 @@ MODEL_CLASSES = {
 }
 
 class lightningHGN(pl.LightningModule):
-    def __init__(self, args: Namespace):
+    def __init__(self, hparams: Namespace):
         super().__init__()
-        self.hparams = args
+        self.hparams = hparams
         cached_config_file = join(self.hparams.exp_name, 'cached_config.bin')
         if os.path.exists(cached_config_file):
             cached_config = torch.load(cached_config_file)
@@ -199,7 +199,7 @@ class lightningHGN(pl.LightningModule):
                 tmp_file = os.path.join(os.path.dirname(pred_file), 'tmp_{}.json'.format(self.trainer.root_gpu))
                 with open(tmp_file, 'w') as f:
                     json.dump(prediction, f)
-                metrics = hotpot_eval(tmp_file, self.args.dev_gold_file)
+                metrics = hotpot_eval(tmp_file, self.hparams.dev_gold_file)
                 if metrics['joint_f1'] >= best_joint_f1:
                     best_joint_f1 = metrics['joint_f1']
                     best_threshold = thresholds[thresh_i]
