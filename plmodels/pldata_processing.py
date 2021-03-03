@@ -287,6 +287,7 @@ class DataHelper:
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
+                                num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
 
     @property
@@ -296,6 +297,7 @@ class DataHelper:
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
+                                 num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
 
     @property
@@ -305,6 +307,7 @@ class DataHelper:
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
+                                 num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
         dataloader = DataLoader(dataset=train_data, batch_size=self.config.batch_size,
             shuffle=True,
@@ -321,6 +324,7 @@ class DataHelper:
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  ans_ent_limit=self.config.max_ans_ent_num,
+                                 num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
         dataloader = DataLoader(
             dataset=dev_data,
