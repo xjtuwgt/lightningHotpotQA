@@ -73,11 +73,6 @@ if os.path.exists(cached_config_file):
     logger.info("Loading encoder from: {}".format(encoder_path))
     logger.info("Loading model from: {}".format(model_path))
 else:
-    # if args.fine_tuned_model is not None:
-    #     model_path = join(args.output_dir, args.fine_tuned_model, 'model.pkl')
-    #     logger.info("Loading encoder from: {}".format(model_path))
-    # else:
-    #     model_path = None
     model_path = None
     if args.fine_tuned_encoder is not None:
         # encoder_path = join(args.output_dir, args.fine_tuned_encoder, 'encoder.pkl')

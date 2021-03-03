@@ -45,7 +45,7 @@ def rand_search_parameter(space: dict):
 def HypeParameterSpace():
     learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [1e-6, 2e-6]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
-    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1, 2]}
+    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1, 2, 4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 10, 15]}
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
     gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.3]}
@@ -55,7 +55,7 @@ def HypeParameterSpace():
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [6]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']}
-    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta/roberta-large_hotpotqa', 'ahotrod/roberta_large_squad2']}
+    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['ahotrod/roberta_large_squad2']}
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
@@ -88,13 +88,18 @@ def generate_random_search_bash(task_num, seed=42):
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
             json.dump(rand_hype_dict, fp)
         print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
-        with open(jobs_path + 'jdlighthgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
-            # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
-            #             json_file_path + config_json_file_name
-            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python lightningtrain.py --config_file " + \
+        with open(jobs_path + 'jdhgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
+            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
                         json_file_path + config_json_file_name
             rsh_i.write(command_i)
+
+        # with open(jobs_path + 'jdlighthgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
+        #     # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
+        #     #             json_file_path + config_json_file_name
+        #     command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python lightningtrain.py --config_file " + \
+        #                 json_file_path + config_json_file_name
+        #     rsh_i.write(command_i)
     print('{} jobs have been generated'.format(task_num))
 
 if __name__ == '__main__':
-    generate_random_search_bash(task_num=1, seed=420)
+    generate_random_search_bash(task_num=1, seed=4200)
