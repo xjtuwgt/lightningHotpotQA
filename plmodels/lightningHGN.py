@@ -30,7 +30,7 @@ MODEL_CLASSES = {
 
 class lightningHGN(pl.LightningModule):
     def __init__(self, args: Namespace):
-        super(lightningHGN, self).__init__()
+        super().__init__()
         self.args = args
         cached_config_file = join(self.args.exp_name, 'cached_config.bin')
         if os.path.exists(cached_config_file):
