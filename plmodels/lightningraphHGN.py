@@ -51,6 +51,9 @@ class lightningHGN(pl.LightningModule):
             self.encoder.load_state_dict(torch.load(encoder_path))
             logging.info('Initialize parameter with {}'.format(encoder_path))
         logging.info('Loading encoder and model completed')
+        ##########
+        self.save_hyperparameters(self.args)
+        ##########
 
     def prepare_data(self):
         helper = DataHelper(gz=True, config=self.args)

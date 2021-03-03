@@ -56,20 +56,24 @@ def dev_data_loader(args):
 ########################################################################################################################
 def main(args):
     device = device_setting(args=args)
-    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, args.model_ckpt)
-    # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
-    print('model checkpoint {}'.format(model_ckpt))
+    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'test.ckpt')
+    train_model = lightningHGN(args=args)
+    train_model.to(device)
+    train_model.save_checkpoint(model_ckpt)
+
+    # # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
+    # print('model checkpoint {}'.format(model_ckpt))
     lighthgn_model = lightningHGN.load_from_checkpoint(checkpoint_path=model_ckpt)
     lighthgn_model = lighthgn_model.to(device)
     print('Model Parameter Configuration:')
     for name, param in lighthgn_model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     print('*' * 75)
-    print("Model hype-parameter information...")
-    for key, value in vars(args).items():
-        print('Hype-parameter\t{} = {}'.format(key, value))
-    print('*' * 75)
-    dev_data = dev_data_loader(args=args)
+    # print("Model hype-parameter information...")
+    # for key, value in vars(args).items():
+    #     print('Hype-parameter\t{} = {}'.format(key, value))
+    # print('*' * 75)
+    # dev_data = dev_data_loader(args=args)
 
 if __name__ == '__main__':
     args = parse_args()
