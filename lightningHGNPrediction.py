@@ -181,7 +181,6 @@ def main(args):
     for name, param in lighthgn_model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     print('*' * 75)
-
     dev_data, dev_feature_dict, dev_example_dict = dev_data_loader(args=args)
 
     lightnHGN_test_procedure(model=lighthgn_model, test_data_loader=dev_data, dev_feature_dict=dev_feature_dict,
