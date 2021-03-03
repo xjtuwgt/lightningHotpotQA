@@ -70,7 +70,6 @@ if torch.cuda.is_available():
 else:
     device = torch.device('cpu')
 
-
 encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = HierarchicalGraphNetwork(config=args)
 
