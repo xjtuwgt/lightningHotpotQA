@@ -3,7 +3,6 @@ HOME=/mnt/cephfs2/nlp/guangtao.wang
 CONDA_ROOT=${HOME}/anaconda3
 PYTHON_VIRTUAL_ENVIRONMENT=hotpotqa
 
-source ${CONDA_ROOT}/etc/profile.d/conda.sh
 conda activate $PYTHON_VIRTUAL_ENVIRONMENT
 
 JOBS_PATH=jdhgn_jobs
