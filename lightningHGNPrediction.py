@@ -76,6 +76,8 @@ def batch2device(batch, device):
 def lightnHGN_test_procedure(model, test_data_loader, dev_feature_dict, dev_example_dict, args, device):
     model.freeze()
     out_puts = []
+    start_time = time()
+    total_steps = len(test_data_loader)
     with torch.no_grad():
         for batch_idx, batch in tqdm(enumerate(test_data_loader)):
             batch = batch2device(batch=batch, device=device)
@@ -92,6 +94,8 @@ def lightnHGN_test_procedure(model, test_data_loader, dev_feature_dict, dev_exam
             valid_dict = {'answer': answer_dict_, 'ans_type': answer_type_dict_, 'ids': batch['ids'],
                           'ans_type_pro': answer_type_prob_dict_, 'supp_np': predict_support_np}
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            if (batch_idx + 1) % args.eval_batch_size == 0:
+                print('Evaluating the model... {}/{} in {:.4f} seconds'.format(batch_idx + 1, total_steps, time()-start_time))
             out_puts.append(valid_dict)
             del batch
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
