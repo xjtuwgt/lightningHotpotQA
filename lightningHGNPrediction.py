@@ -57,9 +57,9 @@ def dev_data_loader(args):
 def main(args):
     device = device_setting(args=args)
     model_ckpt = join(OUTPUT_FOLDER, args.exp_name, args.model_ckpt)
-    hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
+    # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
     print('model checkpoint {}'.format(model_ckpt))
-    lighthgn_model = lightningHGN.load_from_checkpoint(checkpoint_path=model_ckpt, hparams_file=hyper_parameters)
+    lighthgn_model = lightningHGN.load_from_checkpoint(checkpoint_path=model_ckpt)
     lighthgn_model = lighthgn_model.to(device)
     print('Model Parameter Configuration:')
     for name, param in lighthgn_model.named_parameters():
