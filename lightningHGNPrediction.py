@@ -61,7 +61,7 @@ def main(args):
     train_model = lightningHGN(args=args)
 
     trainer = pl.Trainer(checkpoint_callback=False)
-    trainer.fit(train_model)
+    trainer.setup(train_model, stage='predict')
     trainer.save_checkpoint(model_ckpt)
 
 
