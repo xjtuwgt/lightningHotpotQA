@@ -219,7 +219,7 @@ class lightningHGN(pl.LightningModule):
         ####+++++
         best_metrics, best_threshold, metric_dict = choose_best_threshold(answer_dict, output_pred_file)
         ####++++++
-        logging.info('Leader board evaluation completed over {} records with threshold = {}'.format(total_record_num, best_threshold))
+        logging.info('Leader board evaluation completed over {} records with threshold = {:.4f}'.format(total_record_num, best_threshold))
         log_metrics(mode='Evaluation epoch {} gpu {}'.format(self.current_epoch, self.trainer.root_gpu), metrics=best_metrics)
         logging.info('*' * 75)
         ####++++++
