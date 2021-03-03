@@ -48,7 +48,7 @@ class GraphBlock(nn.Module):
         _, max_sent_num, _ = sent_state.size()
         _, max_ent_num, _ = ent_state.size()
         graph_state = torch.cat([query_vec.unsqueeze(1), para_state, sent_state, ent_state], dim=1)
-        node_mask = torch.cat([torch.ones(N, 1).to(self.config.device), batch['para_mask'], batch['sent_mask'], batch['ent_mask']], dim=-1).unsqueeze(-1)
+        node_mask = torch.cat([torch.ones(N, 1).to(batch['para_mask'].device), batch['para_mask'], batch['sent_mask'], batch['ent_mask']], dim=-1).unsqueeze(-1)
         graph_adj = batch['graphs']
         assert graph_adj.size(1) == node_mask.size(1)
         graph_state = self.gat(graph_state, graph_adj, node_mask=node_mask, query_vec=query_vec) # N x (1+max_para+max_sent) x d
