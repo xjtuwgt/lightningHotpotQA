@@ -59,7 +59,7 @@ def main(args):
     model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'test.ckpt')
     train_model = lightningHGN(args=args)
     train_model.to(device)
-    train_model.save_checkpoint(model_ckpt)
+    train_model.on_save_checkpoint(model_ckpt)
 
     # # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
     # print('model checkpoint {}'.format(model_ckpt))
