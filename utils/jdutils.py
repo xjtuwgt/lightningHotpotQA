@@ -15,6 +15,8 @@ from csr_mhqa.utils import convert_to_tokens
 import logging
 import string
 import re
+from hgntransformers import AdamW
+
 def log_metrics(mode, metrics):
     '''
     Print the evaluation logs
@@ -187,3 +189,57 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
         print("{} = {}".format(key, val))
     # -------------------------------------
     return best_metrics, best_threshold, doc_recall_metric
+
+
+def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
+    encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
+    assert args.encoder_name_or_path in encoder_layer_number_dict
+    encoder_layer_number = encoder_layer_number_dict[args.encoder_name_or_path]
+    encoder_group_number = 4
+
+    def achieve_module_groups(encoder, number_of_layer, number_of_groups):
+        layer_num_each_group = number_of_layer // number_of_groups
+        number_of_divided_groups = number_of_groups + 1 if number_of_layer % number_of_groups > 0 else number_of_groups
+        groups = []
+        groups.append([encoder.embeddings, *encoder.encoder.layer[:layer_num_each_group]])
+        for group_id in range(1, number_of_divided_groups):
+            groups.append(
+                [*encoder.encoder.layer[(group_id * layer_num_each_group):((group_id + 1) * layer_num_each_group)]])
+        return groups, number_of_divided_groups
+
+    module_groups, encoder_group_number = achieve_module_groups(encoder=hgn_encoder,
+                                                                number_of_layer=encoder_layer_number,
+                                                                number_of_groups=encoder_group_number)
+    module_groups.append([hgn_model])
+    assert len(module_groups) == 5
+
+    def achieve_parameter_groups(module_group, weight_decay, lr):
+        named_parameters = []
+        no_decay = ["bias", "LayerNorm.weight"]
+        for module in module_group:
+            named_parameters += module.named_parameters()
+        grouped_parameters = [
+            {
+                "params": [p for n, p in named_parameters if
+                           (p.requires_grad) and (not any(nd in n for nd in no_decay))],
+                "weight_decay": weight_decay, 'lr': lr
+            },
+            {
+                "params": [p for n, p in named_parameters if
+                           (p.requires_grad) and (any(nd in n for nd in no_decay))],
+                "weight_decay": 0.0, 'lr': lr
+            }
+        ]
+        return grouped_parameters
+
+    optimizer_grouped_parameters = []
+    for idx, module_group in enumerate(module_groups):
+        grouped_parameters = achieve_parameter_groups(module_group=module_group,
+                                                      weight_decay=args.weight_decay,
+                                                      lr=learning_rate * (10.0 ** idx))
+        optimizer_grouped_parameters += grouped_parameters
+
+    optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate,
+                      eps=args.adam_epsilon)
+
+    return optimizer
