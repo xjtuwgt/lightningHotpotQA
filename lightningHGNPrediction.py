@@ -57,7 +57,7 @@ def dev_data_loader(args):
 ########################################################################################################################
 def main(args):
     device = device_setting(args=args)
-    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'HGN_hotpotQA-epoch=00-joint_f1=0.5948.ckpt')
+    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'HGN_hotpotQA-epoch=00-joint_f1=0.4028.ckpt')
     # train_model = lightningHGN(args=args)
     #
     # trainer = pl.Trainer(checkpoint_callback=False)
