@@ -225,7 +225,8 @@ class lightningHGN(pl.LightningModule):
         logging.info('*' * 75)
         ####++++++
         for key, value in metric_dict.items():
-            logging.info('threshold {}: \t metrics: {}'.format(thresholds[key], value))
+            str_value = ['{:.4f}'.format(_) for _ in value]
+            logging.info('threshold {:.4f}: \t metrics: {}'.format(thresholds[key], str_value))
         ####++++++
         json.dump(best_metrics, open(output_eval_file, 'w'))
         #############################################################################
