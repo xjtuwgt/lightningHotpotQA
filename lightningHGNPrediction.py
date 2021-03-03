@@ -166,7 +166,7 @@ def lightnHGN_test_procedure(model, test_data_loader, dev_feature_dict, dev_exam
     ####+++++
     best_metrics, best_threshold, metric_dict = choose_best_threshold(answer_dict, output_pred_file)
     ####++++++
-    logging.info('Leader board evaluation completed with threshold = {}'.format(best_threshold))
+    logging.info('Leader board evaluation completed with threshold = {:.4f}'.format(best_threshold))
     log_metrics(mode='Evaluation', metrics=best_metrics)
     logging.info('*' * 75)
     ####++++++
