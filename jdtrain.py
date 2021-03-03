@@ -12,7 +12,8 @@ from plmodels.jd_argument_parser import default_train_parser, complete_default_t
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import *
 
-from jdmodels.jdHGN import HierarchicalGraphNetwork
+# from jdmodels.jdHGN import HierarchicalGraphNetwork
+from models.HGN import HierarchicalGraphNetwork
 from hgntransformers import get_linear_schedule_with_warmup
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
