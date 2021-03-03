@@ -8,6 +8,7 @@
 eval "$(conda shell.bash hook)"
 conda activate hotpotqa
 
+python3 pretrainedModelSaver.py
 
 
 #JOBS_PATH=jdhgn_jobs
