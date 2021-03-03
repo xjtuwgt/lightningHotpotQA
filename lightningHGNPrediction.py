@@ -178,7 +178,7 @@ def lightnHGN_test_procedure(model, test_data_loader, dev_feature_dict, dev_exam
 ########################################################################################################################
 def main(args):
     device = device_setting(args=args)
-    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'HGN_hotpotQA-epoch=00-joint_f1=0.6507.ckpt')
+    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'HGN_hotpotQA-epoch=00-joint_f1=0.4551.ckpt')
     lighthgn_model = lightningHGN.load_from_checkpoint(checkpoint_path=model_ckpt)
     lighthgn_model = lighthgn_model.to(device)
     print('Model Parameter Configuration:')
