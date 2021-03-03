@@ -30,33 +30,33 @@ MODEL_CLASSES = {
 class lightningHGN(pl.LightningModule):
     def __init__(self, args: Namespace):
         super().__init__()
-        self.args = args
-        cached_config_file = join(self.args.exp_name, 'cached_config.bin')
+        self.hparams = args
+        cached_config_file = join(self.hparams.exp_name, 'cached_config.bin')
         if os.path.exists(cached_config_file):
             cached_config = torch.load(cached_config_file)
-            encoder_path = join(self.args.exp_name, cached_config['encoder'])
+            encoder_path = join(self.hparams.exp_name, cached_config['encoder'])
         else:
-            if self.args.fine_tuned_encoder is not None:
-                encoder_path = join(self.args.fine_tuned_encoder_path, self.args.fine_tuned_encoder, 'encoder.pkl')
+            if self.hparams.fine_tuned_encoder is not None:
+                encoder_path = join(self.hparams.fine_tuned_encoder_path, self.hparams.fine_tuned_encoder, 'encoder.pkl')
             else:
                 encoder_path = None
 
-        _, _, tokenizer_class = MODEL_CLASSES[self.args.model_type]
-        self.tokenizer = tokenizer_class.from_pretrained(self.args.encoder_name_or_path,
-                                                    do_lower_case=self.args.do_lower_case)
+        _, _, tokenizer_class = MODEL_CLASSES[self.hparams.model_type]
+        self.tokenizer = tokenizer_class.from_pretrained(self.hparams.encoder_name_or_path,
+                                                    do_lower_case=self.hparams.do_lower_case)
         # Set Encoder and Model
-        self.encoder, _ = load_encoder_model(self.args.encoder_name_or_path, self.args.model_type)
-        self.model = HierarchicalGraphNetwork(config=self.args)
+        self.encoder, _ = load_encoder_model(self.hparams.encoder_name_or_path, self.hparams.model_type)
+        self.model = HierarchicalGraphNetwork(config=self.hparams)
         if encoder_path is not None:
             self.encoder.load_state_dict(torch.load(encoder_path))
             logging.info('Initialize parameter with {}'.format(encoder_path))
         logging.info('Loading encoder and model completed')
         ##########
-        self.save_hyperparameters(self.args)
+        self.save_hyperparameters(self.hparams)
         ##########
 
     def prepare_data(self):
-        helper = DataHelper(gz=True, config=self.args)
+        helper = DataHelper(gz=True, config=self.hparams)
         self.train_data = helper.train_loader
         self.dev_example_dict = helper.dev_example_dict
         self.dev_feature_dict = helper.dev_feature_dict
@@ -67,38 +67,38 @@ class lightningHGN(pl.LightningModule):
             # Get dataloader by calling it - train_dataloader() is called after setup() by default
             train_loader = self.train_dataloader()
             # Calculate total steps
-            if self.args.max_steps > 0:
-                self.total_steps = self.args.max_steps
-                self.args.num_train_epochs = self.args.max_steps // (
-                            len(train_loader) // self.args.gradient_accumulation_steps) + 1
+            if self.hparams.max_steps > 0:
+                self.total_steps = self.hparams.max_steps
+                self.hparams.num_train_epochs = self.hparams.max_steps // (
+                            len(train_loader) // self.hparams.gradient_accumulation_steps) + 1
             else:
-                self.total_steps = len(train_loader) // self.args.gradient_accumulation_steps * self.args.num_train_epochs
+                self.total_steps = len(train_loader) // self.hparams.gradient_accumulation_steps * self.hparams.num_train_epochs
             print('total steps = {}'.format(self.total_steps))
 
     def train_dataloader(self):
         dataloader = DataLoader(dataset=self.train_data,
-                                batch_size=self.args.per_gpu_train_batch_size,
+                                batch_size=self.hparams.per_gpu_train_batch_size,
                                 shuffle=True,
                                 drop_last=True,
                                 pin_memory=True,
-                                num_workers=max(1, self.args.cpu_num // 2),
+                                num_workers=max(1, self.hparams.cpu_num // 2),
                                 collate_fn=HotpotDataset.collate_fn)
         return dataloader
 
     def val_dataloader(self):
         dataloader = DataLoader(dataset=self.dev_data,
-                                batch_size=self.args.eval_batch_size,
+                                batch_size=self.hparams.eval_batch_size,
                                 shuffle=False,
                                 drop_last=False,
                                 pin_memory=True,
-                                num_workers=max(1, self.args.cpu_num // 2),
+                                num_workers=max(1, self.hparams.cpu_num // 2),
                                 collate_fn=HotpotDataset.collate_fn)
         return dataloader
 
     def forward(self, batch):
         inputs = {'input_ids':      batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
-                  'token_type_ids': batch['segment_idxs'] if self.args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
+                  'token_type_ids': batch['segment_idxs'] if self.hparams.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
         batch['context_encoding'] = self.encoder(**inputs)[0]
         batch['context_mask'] = batch['context_mask'].float().to(batch['context_encoding'].device)
         start, end, q_type, paras, sents, ents, yp1, yp2 = self.model(batch, return_yp=True)
@@ -106,7 +106,7 @@ class lightningHGN(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         start, end, q_type, paras, sents, ents, _, _ = self.forward(batch=batch)
-        loss_list = compute_loss(self.args, batch, start, end, paras, sents, ents, q_type)
+        loss_list = compute_loss(self.hparams, batch, start, end, paras, sents, ents, q_type)
         ##################################################################################
         loss, loss_span, loss_type, loss_sup, loss_ent, loss_para = loss_list
         dict_for_progress_bar = {'span_loss': loss_span, 'type_loss': loss_type,
@@ -120,7 +120,7 @@ class lightningHGN(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         start, end, q_type, paras, sents, ents, yp1, yp2 = self.forward(batch=batch)
-        loss_list = compute_loss(self.args, batch, start, end, paras, sents, ents, q_type)
+        loss_list = compute_loss(self.hparams, batch, start, end, paras, sents, ents, q_type)
         loss, loss_span, loss_type, loss_sup, loss_ent, loss_para = loss_list
         dict_for_log = {'span_loss': loss_span, 'type_loss': loss_type,
                                  'sent_loss': loss_sup, 'ent_loss': loss_ent,
@@ -212,9 +212,9 @@ class lightningHGN(pl.LightningModule):
                 #######
             return best_metrics, best_threshold, metric_dict
 
-        output_pred_file = os.path.join(self.args.exp_name,
+        output_pred_file = os.path.join(self.hparams.exp_name,
                                         f'pred.epoch_{self.current_epoch + 1}.gpu_{self.trainer.root_gpu}.json')
-        output_eval_file = os.path.join(self.args.exp_name,
+        output_eval_file = os.path.join(self.hparams.exp_name,
                                         f'eval.epoch_{self.current_epoch + 1}.gpu_{self.trainer.root_gpu}.txt')
         ####+++++
         best_metrics, best_threshold, metric_dict = choose_best_threshold(answer_dict, output_pred_file)
@@ -238,7 +238,7 @@ class lightningHGN(pl.LightningModule):
 
     def configure_optimizers(self):
         # "Prepare optimizer and schedule (linear warmup and decay)"
-        if self.args.learning_rate_schema == 'fixed':
+        if self.hparams.learning_rate_schema == 'fixed':
             return self.fixed_learning_rate_optimizers()
         else:
             return self.layer_wise_learning_rate_optimizer()
@@ -250,7 +250,7 @@ class lightningHGN(pl.LightningModule):
             {
                 "params": [p for n, p in self.named_parameters() if
                            (p.requires_grad) and (not any(nd in n for nd in no_decay))],
-                "weight_decay": self.args.weight_decay,
+                "weight_decay": self.hparams.weight_decay,
             },
             {
                 "params": [p for n, p in self.named_parameters() if
@@ -258,9 +258,9 @@ class lightningHGN(pl.LightningModule):
                 "weight_decay": 0.0,
             }
         ]
-        optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
+        optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
         scheduler = get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
+            optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
         )
         scheduler = {
             'scheduler': scheduler,
@@ -272,8 +272,8 @@ class lightningHGN(pl.LightningModule):
     def layer_wise_learning_rate_optimizer(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
         encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
-        assert self.args.encoder_name_or_path in encoder_layer_number_dict
-        encoder_layer_number = encoder_layer_number_dict[self.args.encoder_name_or_path]
+        assert self.hparams.encoder_name_or_path in encoder_layer_number_dict
+        encoder_layer_number = encoder_layer_number_dict[self.hparams.encoder_name_or_path]
         encoder_group_number = 4
 
         def achieve_module_groups(encoder, number_of_layer, number_of_groups):
@@ -313,13 +313,13 @@ class lightningHGN(pl.LightningModule):
         optimizer_grouped_parameters = []
         for idx, module_group in enumerate(module_groups):
             grouped_parameters = achieve_parameter_groups(module_group=module_group,
-                                                          weight_decay=self.args.weight_decay,
-                                                          lr=self.args.learning_rate * (10.0**idx))
+                                                          weight_decay=self.hparams.weight_decay,
+                                                          lr=self.hparams.learning_rate * (10.0**idx))
             optimizer_grouped_parameters += grouped_parameters
 
-        optimizer = AdamW(optimizer_grouped_parameters, lr=self.args.learning_rate, eps=self.args.adam_epsilon)
+        optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
         scheduler = get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=self.args.warmup_steps, num_training_steps=self.total_steps
+            optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
         )
         scheduler = {
             'scheduler': scheduler,
