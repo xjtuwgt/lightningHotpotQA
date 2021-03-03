@@ -5,7 +5,9 @@ from utils.gpu_utils import gpu_setting
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.lightningHGN import lightningHGN
 import torch
+from os.path import join
 from jdevaluation.devdataHelper import DataHelper as DevDataHelper
+from envs import OUTPUT_FOLDER
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -47,15 +49,25 @@ def device_setting(args):
         print('Single cpu setting')
     return device
 ########################################################################################################################
-
+def dev_data_loader(args):
+    dev_helper = DevDataHelper(gz=True, config=args)
+    dev_data_loader = dev_helper.hotpot_val_dataloader
+    return dev_data_loader
 ########################################################################################################################
 def main(args):
     device = device_setting(args=args)
-    dev_helper = DevDataHelper(gz=True, config=args)
-    dev_data_loader = DevDataHelper.hotpot_val_dataloader
-    lighthgn = lightningHGN.load_from_checkpoint()
-
-
+    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, args.model_ckpt)
+    lighthgn_model = lightningHGN.load_from_checkpoint(model_ckpt)
+    lighthgn_model = lighthgn_model.to(device)
+    print('Model Parameter Configuration:')
+    for name, param in lighthgn_model.named_parameters():
+        print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+    print('*' * 75)
+    print("Model hype-parameter information...")
+    for key, value in vars(args).items():
+        print('Hype-parameter\t{} = {}'.format(key, value))
+    print('*' * 75)
+    dev_data = dev_data_loader(args=args)
 
 if __name__ == '__main__':
     args = parse_args()

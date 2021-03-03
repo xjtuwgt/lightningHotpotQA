@@ -1,0 +1,11 @@
+{
+    "exp_name": "roberta_large_pytorch_lightning_finetuned_long",
+    "model_type": "roberta",
+    "encoder_name_or_path": "roberta-large",
+    "fp16": "False",
+    "model_ckpt": "HGN_hotpotQA-epoch=04-joint_f1=0.7396.ckpt",
+    "devf_type": "long",
+    "bi_attn_drop": 0.3,
+    "trans_drop": 0.2,
+    "gnn_drop": 0.3
+}
