@@ -61,8 +61,7 @@ class lightningHGN(pl.LightningModule):
 
     def prepare_data(self):
         helper = DataHelper(gz=True, config=self.hparams)
-        # self.train_data = helper.train_loader
-        self.train_data = helper.dev_loader
+        self.train_data = helper.train_loader
         self.dev_example_dict = helper.dev_example_dict
         self.dev_feature_dict = helper.dev_feature_dict
         self.dev_data = helper.dev_loader
