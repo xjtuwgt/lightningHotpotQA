@@ -2,6 +2,7 @@ import argparse
 import numpy as np
 import logging
 import sys
+import torch
 
 from os.path import join
 from tqdm import tqdm, trange
@@ -21,12 +22,14 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 #########################################################################
 # Initialize arguments
 ##########################################################################
 parser = default_train_parser()
 
 logger.info("IN CMD MODE")
+logger.info("Pytorch version = {}".format(torch.__version__))
 args_config_provided = parser.parse_args(sys.argv[1:])
 if args_config_provided.config_file is not None:
     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
