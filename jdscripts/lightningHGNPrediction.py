@@ -1,13 +1,11 @@
 from __future__ import absolute_import, division, print_function
-import argparse
-from os.path import join
-from torch.utils.data import DataLoader
-import torch
 import logging
 import sys
 from utils.gpu_utils import gpu_setting
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.lightningHGN import lightningHGN
+import torch
+from jdevaluation.devdataHelper import DataHelper as DevDataHelper
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -49,17 +47,14 @@ def device_setting(args):
         print('Single cpu setting')
     return device
 ########################################################################################################################
-def test_data_loader(args):
-
-    feature_file_name = ''
-    example_file_name = ''
-    graph_file_name = ''
-
 
 ########################################################################################################################
 def main(args):
     device = device_setting(args=args)
-    lightningHGN.load_from_checkpoint()
+    dev_helper = DevDataHelper(gz=True, config=args)
+    dev_data_loader = DevDataHelper.hotpot_val_dataloader
+    lighthgn = lightningHGN.load_from_checkpoint()
+
 
 
 if __name__ == '__main__':
