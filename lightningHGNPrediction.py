@@ -57,16 +57,16 @@ def dev_data_loader(args):
 ########################################################################################################################
 def main(args):
     device = device_setting(args=args)
-    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'test.ckpt')
-    train_model = lightningHGN(args=args)
-
-    trainer = pl.Trainer(checkpoint_callback=False)
-    trainer.setup(train_model, stage='predict')
-    trainer.save_checkpoint(model_ckpt)
-
-
-    # # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
-    # print('model checkpoint {}'.format(model_ckpt))
+    model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'HGN_hotpotQA-epoch=00-joint_f1=0.6119.ckpt')
+    # train_model = lightningHGN(args=args)
+    #
+    # trainer = pl.Trainer(checkpoint_callback=False)
+    # trainer.
+    # trainer.save_checkpoint(model_ckpt)
+    #
+    #
+    # # # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
+    # # print('model checkpoint {}'.format(model_ckpt))
     lighthgn_model = lightningHGN.load_from_checkpoint(checkpoint_path=model_ckpt)
     lighthgn_model = lighthgn_model.to(device)
     print('Model Parameter Configuration:')
