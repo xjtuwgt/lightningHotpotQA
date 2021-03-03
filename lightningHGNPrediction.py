@@ -4,6 +4,7 @@ import sys
 from utils.gpu_utils import gpu_setting
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.lightningHGN import lightningHGN
+import pytorch_lightning as pl
 import torch
 from os.path import join
 from jdevaluation.devdataHelper import DataHelper as DevDataHelper
@@ -58,8 +59,11 @@ def main(args):
     device = device_setting(args=args)
     model_ckpt = join(OUTPUT_FOLDER, args.exp_name, 'test.ckpt')
     train_model = lightningHGN(args=args)
-    train_model.to(device)
-    train_model.on_save_checkpoint(model_ckpt)
+
+    trainer = pl.Trainer(checkpoint_callback=False)
+    trainer.fit(train_model)
+    trainer.save_checkpoint(model_ckpt)
+
 
     # # hyper_parameters = join(OUTPUT_FOLDER, args.exp_name, 'default/version_4/hparams.yaml')
     # print('model checkpoint {}'.format(model_ckpt))
