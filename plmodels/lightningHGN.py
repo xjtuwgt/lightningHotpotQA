@@ -59,7 +59,8 @@ class lightningHGN(pl.LightningModule):
 
     def prepare_data(self):
         helper = DataHelper(gz=True, config=self.args)
-        self.train_data = helper.train_loader
+        # self.train_data = helper.train_loader
+        self.train_data = helper.dev_loader
         self.dev_example_dict = helper.dev_example_dict
         self.dev_feature_dict = helper.dev_feature_dict
         self.dev_data = helper.dev_loader
@@ -78,14 +79,7 @@ class lightningHGN(pl.LightningModule):
             print('total steps = {}'.format(self.total_steps))
 
     def train_dataloader(self):
-        # dataloader = DataLoader(dataset=self.train_data,
-        #                         batch_size=self.args.per_gpu_train_batch_size,
-        #                         shuffle=True,
-        #                         drop_last=True,
-        #                         pin_memory=True,
-        #                         num_workers=max(1, self.args.cpu_num // 2),
-        #                         collate_fn=HotpotDataset.collate_fn)
-        dataloader = DataLoader(dataset=self.dev_data,
+        dataloader = DataLoader(dataset=self.train_data,
                                 batch_size=self.args.per_gpu_train_batch_size,
                                 shuffle=True,
                                 drop_last=True,
