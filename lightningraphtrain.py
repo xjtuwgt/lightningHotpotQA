@@ -88,7 +88,7 @@ def set_args(cmd_argv):
 def main(args):
     pl.seed_everything(args.seed)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    model = lightningHGN(args=args)
+    model = lightningHGN(hparams=args)
     model.prepare_data()
     model.setup()
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
