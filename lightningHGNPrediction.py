@@ -57,6 +57,7 @@ def dev_data_loader(args):
 def main(args):
     device = device_setting(args=args)
     model_ckpt = join(OUTPUT_FOLDER, args.exp_name, args.model_ckpt)
+    print('model checkpoint {}'.format(model_ckpt))
     lighthgn_model = lightningHGN.load_from_checkpoint(model_ckpt)
     lighthgn_model = lighthgn_model.to(device)
     print('Model Parameter Configuration:')
