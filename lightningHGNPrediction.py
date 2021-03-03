@@ -155,8 +155,9 @@ def lightnHGN_test_procedure(model, test_data_loader, dev_feature_dict, dev_exam
                 shutil.move(tmp_file, pred_file)
             #######
             metric_dict[thresh_i] = (
-                metrics['em'], metrics['f1'], metrics['joint_em'], metrics['joint_f1'], metrics['sp_em'],
-                metrics['sp_f1'])
+                metrics['em'], metrics['f1'],
+                metrics['sp_em'], metrics['sp_f1'],
+                metrics['joint_em'], metrics['joint_f1'])
             #######
         return best_metrics, best_threshold, metric_dict
 
@@ -170,7 +171,8 @@ def lightnHGN_test_procedure(model, test_data_loader, dev_feature_dict, dev_exam
     logging.info('*' * 75)
     ####++++++
     for key, value in metric_dict.items():
-        logging.info('threshold {}: \t metrics: {}'.format(key, value))
+        str_value = ['{:.4f}'.format(_) for _ in value]
+        logging.info('threshold {:.4f}: \t metrics: {}'.format(thresholds[key], str_value))
     ####++++++
     json.dump(best_metrics, open(output_eval_file, 'w'))
     #############################################################################

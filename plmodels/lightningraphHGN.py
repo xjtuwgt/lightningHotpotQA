@@ -207,8 +207,8 @@ class lightningHGN(pl.LightningModule):
                     shutil.move(tmp_file, pred_file)
                 #######
                 metric_dict[thresh_i] = (
-                metrics['em'], metrics['f1'], metrics['joint_em'], metrics['joint_f1'], metrics['sp_em'],
-                metrics['sp_f1'])
+                metrics['em'], metrics['f1'], metrics['sp_em'],
+                metrics['sp_f1'], metrics['joint_em'], metrics['joint_f1'])
                 #######
             return best_metrics, best_threshold, metric_dict
 
