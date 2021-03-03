@@ -53,13 +53,15 @@ def HypeParameterSpace():
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [6]}
+    devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low']}
+    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_low']}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']}
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['ahotrod/roberta_large_squad2']}
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
-                    gnn, fine_tuned_encoder,
+                    gnn, fine_tuned_encoder, daug_type, devf_type,
                     gnn_drop, bi_attn_drop, trans_drop, lstm_drop, num_train_epochs, model_type, encoder_name_or_path]
     search_space = dict((x['name'], x) for x in search_space)
     return search_space
