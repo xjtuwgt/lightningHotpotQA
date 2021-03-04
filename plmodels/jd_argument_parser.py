@@ -205,7 +205,7 @@ def default_train_parser():
     parser.add_argument('--q_attn', type=boolean_string, default='True', help='whether use query attention in GAT')
     parser.add_argument("--lstm_drop", type=float, default=0.3)
     parser.add_argument("--lstm_layer", type=int, default=1) ###++++++
-    parser.add_argument('--graph_residual', type=boolean_string, default='False', help='whether use residual connection in GAT') ##+++++++++
+    parser.add_argument('--graph_residual', type=boolean_string, default='True', help='whether use residual connection in GAT') ##+++++++++
 
     parser.add_argument("--max_para_num", default=4, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
