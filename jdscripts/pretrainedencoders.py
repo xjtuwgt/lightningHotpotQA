@@ -49,6 +49,8 @@ def load_hgn_hotpotqa_model(model_type, model_name, exp_name, encoder_pkl_name):
     model = model_class.from_pretrained(model_name)
     encoder_pickle_name = join(OUTPUT_FOLDER, exp_name, encoder_pkl_name)
     print('loading parameter from {}'.format(encoder_pickle_name))
+    x = torch.load(encoder_pickle_name)
+    print(x)
     model.load_state_dict(torch.load(encoder_pickle_name))
     return model
 
