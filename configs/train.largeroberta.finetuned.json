@@ -5,7 +5,7 @@
     "num_train_epochs": 5,
     "per_gpu_train_batch_size": 2,
     "learning_rate": 1e-5,
-    "daug_type": "hgn",
+    "daug_type": "hgn_low",
     "gradient_accumulation_steps": 1,
     "gpus": 4,
     "fine_tuned_encoder": "ahotrod/roberta_large_squad2",
