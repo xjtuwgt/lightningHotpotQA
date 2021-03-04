@@ -72,6 +72,6 @@ def save_hgn_hotpotqa_model(encoder, model_type, model_name):
 def model_intialization_test(model_type, model_name, petrained_name):
     config_class, model_class, tokenizer_class = MODEL_CLASSES[model_type]
     model = model_class.from_pretrained(model_name)
-    pickle_model_name = join(PRETRAINED_MODEL_FOLDER, model_type, petrained_name, f'encoder.pkl')
-    model = model.load_state_dict(torch.load(pickle_model_name))
+    # pickle_model_name = join(PRETRAINED_MODEL_FOLDER, model_type, petrained_name, f'encoder.pkl')
+    # model = model.load_state_dict(torch.load(pickle_model_name))
     return model
