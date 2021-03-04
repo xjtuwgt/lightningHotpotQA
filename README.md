@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 The project is based on based on https://github.com/yuwfan/HGN
 <!-- The project can be directly downloaded via https://github.com/xjtuwgt/lightningHotpotQA -->
 <!-- which is based on https://github.com/yuwfan/HGN -->
@@ -53,6 +54,10 @@ The project is based on based on https://github.com/yuwfan/HGN
 <!-- python lightningraphtrain.py --config_file configs/train.largeroberta.lightning.graph.finetuned2.json -->
 <!-- python lightningraphtrain.py --config_file configs/train.largeroberta.lightning.graph.finetuned3.json -->
 
-python lightningHGNPrediction.py --config_file configs/predict.roberta.lightning.long.json
+<!-- python lightningHGNPrediction.py --config_file configs/predict.roberta.lightning.long.json -->
 
-python lightningtrain.py --config_file configs/train.largeroberta.lightning.finetuned.json
+<!-- python lightningtrain.py --config_file configs/train.largeroberta.lightning.finetuned.json -->
+<!-- ======= -->
+
+<!-- The project is based on https://github.com/yuwfan/HGN -->
+<!-- >>>>>>> b5261a9873fb53ad877bc45ba63924d5c9c6c8f6 -->
