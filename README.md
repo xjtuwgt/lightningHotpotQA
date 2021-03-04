@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-The project is based on based on https://github.com/yuwfan/HGN
+The project is based on https://github.com/yuwfan/HGN
 <!-- The project can be directly downloaded via https://github.com/xjtuwgt/lightningHotpotQA -->
 <!-- which is based on https://github.com/yuwfan/HGN -->
 
