@@ -171,9 +171,6 @@ encoder.zero_grad()
 model.zero_grad()
 
 ###++++++++++++++++++++++++++++++++++++++++++
-for name, param in model.named_parameters():
-    logger.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-
 total_batch_num = len(train_dataloader)
 logger.info('Total number of batches = {}'.format(total_batch_num))
 eval_interval_ratio = 0.25
