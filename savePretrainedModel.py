@@ -44,7 +44,8 @@ from jdscripts.pretrainedencoders import model_intialization_test
 # save_hgn_hotpotqa_model(encoder=model, model_type=model_type, model_name=model_name)
 
 model_type = 'roberta'
-model_name = 'roberta-large_hgn'
-model = model_intialization_test(model_type=model_type, model_name=model_name)
+model_name = 'roberta-large'
+prtrained_name = 'roberta-large_hgn'
+model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=prtrained_name)
 for name, param in model.named_parameters():
     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
