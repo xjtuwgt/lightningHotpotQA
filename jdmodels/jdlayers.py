@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.autograd import Variable
-from models.layers import OutputLayer, GATSelfAttention
+from models.layers import OutputLayer, GATSelfAttention, AttentionLayer
 from csr_mhqa.utils import get_weights, get_act
 import torch.nn.functional as F
 import numpy as np
@@ -29,46 +29,46 @@ def init_encoder_graph_node_feature(batch, input_state, hidden_dim):
     graph_state_dict = {'para_state': para_state, 'sent_state': sent_state, 'ent_state': ent_state}
     return graph_state_dict
 
-class AttentionLayer(nn.Module):
-    def __init__(self, in_dim, hid_dim, n_head, q_attn, config):
-        super(AttentionLayer, self).__init__()
-        assert hid_dim % n_head == 0
-        self.dropout = config.gnn_drop
-
-        self.attn_funcs = nn.ModuleList()
-        for i in range(n_head):
-            self.attn_funcs.append(
-                GATSelfAttention(in_dim=in_dim, out_dim=hid_dim // n_head, config=config, q_attn=q_attn, head_id=i))
-
-        if in_dim != hid_dim:
-            self.align_dim = nn.Linear(in_dim, hid_dim)
-            nn.init.xavier_uniform_(self.align_dim.weight, gain=1.414)
-        else:
-            self.align_dim = lambda x: x
-        ######################
-        if config.graph_residual:
-            if in_dim != hid_dim:
-                self.res_align_dim = nn.Linear(in_dim, hid_dim)
-                nn.init.xavier_uniform_(self.align_dim.weight, gain=1.414)
-            else:
-                self.res_align_dim = lambda x: x
-        else:
-            self.res_align_dim = None
-        ######################
-    def forward(self, input, adj, node_mask=None, query_vec=None):
-        hidden_list = []
-        for attn in self.attn_funcs:
-            h = attn(input, adj, node_mask=node_mask, query_vec=query_vec)
-            hidden_list.append(h)
-
-        h = torch.cat(hidden_list, dim=-1)
-        h = F.dropout(h, self.dropout, training=self.training)
-        h = F.relu(h)
-        ######################
-        if self.res_align_dim is not None:
-            h = h + self.res_align_dim(input)
-        ######################
-        return h
+# class AttentionLayer(nn.Module):
+#     def __init__(self, in_dim, hid_dim, n_head, q_attn, config):
+#         super(AttentionLayer, self).__init__()
+#         assert hid_dim % n_head == 0
+#         self.dropout = config.gnn_drop
+#
+#         self.attn_funcs = nn.ModuleList()
+#         for i in range(n_head):
+#             self.attn_funcs.append(
+#                 GATSelfAttention(in_dim=in_dim, out_dim=hid_dim // n_head, config=config, q_attn=q_attn, head_id=i))
+#
+#         if in_dim != hid_dim:
+#             self.align_dim = nn.Linear(in_dim, hid_dim)
+#             nn.init.xavier_uniform_(self.align_dim.weight, gain=1.414)
+#         else:
+#             self.align_dim = lambda x: x
+#         ######################
+#         if config.graph_residual:
+#             if in_dim != hid_dim:
+#                 self.res_align_dim = nn.Linear(in_dim, hid_dim)
+#                 nn.init.xavier_uniform_(self.align_dim.weight, gain=1.414)
+#             else:
+#                 self.res_align_dim = lambda x: x
+#         else:
+#             self.res_align_dim = None
+#         ######################
+#     def forward(self, input, adj, node_mask=None, query_vec=None):
+#         hidden_list = []
+#         for attn in self.attn_funcs:
+#             h = attn(input, adj, node_mask=node_mask, query_vec=query_vec)
+#             hidden_list.append(h)
+#
+#         h = torch.cat(hidden_list, dim=-1)
+#         h = F.dropout(h, self.dropout, training=self.training)
+#         h = F.relu(h)
+#         ######################
+#         if self.res_align_dim is not None:
+#             h = h + self.res_align_dim(input)
+#         ######################
+#         return h
 
 
 class GraphBlock(nn.Module):

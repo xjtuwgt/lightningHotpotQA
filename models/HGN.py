@@ -21,7 +21,7 @@ class HierarchicalGraphNetwork(nn.Module):
 
         self.sent_lstm = LSTMWrapper(input_dim=config.hidden_dim,
                                      hidden_dim=config.hidden_dim,
-                                     n_layer=1,
+                                     n_layer=config.lstm_layer, ##modified
                                      dropout=config.lstm_drop)
 
         self.graph_blocks = nn.ModuleList()

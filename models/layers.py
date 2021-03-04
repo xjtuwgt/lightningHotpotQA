@@ -166,6 +166,17 @@ class AttentionLayer(nn.Module):
         else:
             self.align_dim = lambda x: x
 
+        ######################+++++++
+        if config.graph_residual:
+            if in_dim != hid_dim:
+                self.res_align_dim = nn.Linear(in_dim, hid_dim)
+                nn.init.xavier_uniform_(self.align_dim.weight, gain=1.414)
+            else:
+                self.res_align_dim = lambda x: x
+        else:
+            self.res_align_dim = None
+        ######################++++++++
+
     def forward(self, input, adj, node_mask=None, query_vec=None):
         hidden_list = []
         for attn in self.attn_funcs:
@@ -175,6 +186,10 @@ class AttentionLayer(nn.Module):
         h = torch.cat(hidden_list, dim=-1)
         h = F.dropout(h, self.dropout, training=self.training)
         h = F.relu(h)
+        ######################
+        if self.res_align_dim is not None:
+            h = h + self.res_align_dim(input)
+        ######################
         return h
 
 
