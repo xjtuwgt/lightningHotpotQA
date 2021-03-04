@@ -18,8 +18,9 @@ class HierarchicalGraphNetwork(nn.Module):
         self.hidden_dim = config.hidden_dim
         self.sent_lstm = LSTMWrapper(input_dim=config.hidden_dim,
                                      hidden_dim=config.hidden_dim,
-                                     n_layer=1,
+                                     n_layer=config.lstm_layer,
                                      dropout=config.lstm_drop) ### output: 2 * self.hidden_dim
+        #####the output of lstm is 2 * self.hidden_dim, the dimension is same as hidden in GAT
 
         self.q_map = nn.Linear(in_features=config.input_dim, out_features=self.hidden_dim * 2)
         if self.q_map:
