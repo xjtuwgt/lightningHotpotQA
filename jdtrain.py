@@ -170,6 +170,11 @@ if args.local_rank in [-1, 0]:
 encoder.zero_grad()
 model.zero_grad()
 
+###++++++++++++++++++++++++++++++++++++++++++
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+###++++++++++++++++++++++++++++++++++++++++++
+
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
     epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
