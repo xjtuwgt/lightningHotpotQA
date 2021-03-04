@@ -1,6 +1,6 @@
 import torch
 from jdscripts.pretrainedencoders import load_model, save_model_as_pkl, load_hotpotqa_model, save_hotpotqa_model
-from jdscripts.pretrainedencoders import load_model_with_enconder, load_hgn_hotpotqa_model
+from jdscripts.pretrainedencoders import load_model_with_enconder, load_hgn_hotpotqa_model, save_hgn_hotpotqa_model
 
 # roberta_model_name = 'ahotrod/roberta_large_squad2'
 # albert_model_name = 'mfeb/albert-xxlarge-v2-squad2'
