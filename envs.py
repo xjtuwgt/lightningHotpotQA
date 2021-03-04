@@ -12,15 +12,10 @@ sys.path.append(join(PROJECT_FOLDER))
 # Define the dataset folder and model folder based on environment
 # HOME_DATA_FOLDER = '/ssd/HGN/data'
 HOME_DATA_FOLDER = join(PROJECT_FOLDER, 'data')
-
 DATASET_FOLDER = join(HOME_DATA_FOLDER, 'dataset')
-
 MODEL_FOLDER = join(HOME_DATA_FOLDER, 'models')
-
 KNOWLEDGE_FOLDER = join(HOME_DATA_FOLDER, 'knowledge')
-
 OUTPUT_FOLDER = join(HOME_DATA_FOLDER, 'outputs')
-
 PRETRAINED_MODEL_FOLDER = join(HOME_DATA_FOLDER, 'models/pretrained')
 print('*' * 75)
 print('For path debug')
