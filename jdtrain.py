@@ -173,8 +173,7 @@ model.zero_grad()
 ###++++++++++++++++++++++++++++++++++++++++++
 total_batch_num = len(train_dataloader)
 logger.info('Total number of batches = {}'.format(total_batch_num))
-eval_interval_ratio = 0.25
-eval_batch_interval_num = int(total_batch_num * eval_interval_ratio) + 1
+eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
 logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
 ###++++++++++++++++++++++++++++++++++++++++++
 
