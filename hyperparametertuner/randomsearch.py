@@ -37,7 +37,7 @@ def rand_search_parameter(space: dict):
             value = random.uniform(low=np.log(low), high=np.log(high), size=1)[0]
             value = np.exp(value)
         else:
-            value = random.uniform(low=low, high=high,size=1)[0]
+            value = random.uniform(low=low, high=high, size=1)[0]
         return value
     else:
         raise ValueError('Training batch mode %s not supported' % para_type)
@@ -45,7 +45,7 @@ def rand_search_parameter(space: dict):
 def HypeParameterSpace():
     learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [1e-5, 2e-5]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
-    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [4, 8]}
+    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [2, 4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 10, 15]}
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
     gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.3]}
