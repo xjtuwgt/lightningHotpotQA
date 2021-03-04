@@ -18,7 +18,7 @@ def single_task_trial(search_space: dict, rand_seed=42):
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + \
-               'lr' + str(parameter_dict['learning_rate']) + '.seed' +str(rand_seed)
+               '.lr' + str(parameter_dict['learning_rate']) + '.data' +str(parameter_dict['daug_type']) + '.seed' +str(rand_seed)
     parameter_dict['exp_name'] = exp_name
     return parameter_dict
 
@@ -104,4 +104,4 @@ def generate_random_search_bash(task_num, seed=42, lightning=False):
     print('{} jobs have been generated'.format(task_num))
 
 if __name__ == '__main__':
-    generate_random_search_bash(task_num=1, seed=20000)
+    generate_random_search_bash(task_num=1, seed=42)
