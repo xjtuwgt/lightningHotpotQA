@@ -50,13 +50,13 @@ def load_hgn_hotpotqa_model(model_type, model_name, exp_name, encoder_pkl_name):
     for name, _ in model.named_parameters():
         print('Parameter {}'.format(name))
     encoder_pickle_name = join(OUTPUT_FOLDER, exp_name, encoder_pkl_name)
-    # print('loading parameter from {}'.format(encoder_pickle_name))
-    x = torch.load(encoder_pickle_name)
-    print(type(x))
-    for x_key in x.keys():
-        print('key', x_key)
-    # print(type(x))
-    # model.load_state_dict(torch.load(encoder_pickle_name))
+    print('loading parameter from {}'.format(encoder_pickle_name))
+    state_dict = torch.load(encoder_pickle_name)
+    for key in list(state_dict.keys()):
+        if 'module.' in key:
+            state_dict[key.replace('module.', '')] = state_dict[key]
+            del state_dict[key]
+    model.load_state_dict(state_dict)
     return model
 
 def save_hgn_hotpotqa_model(encoder, model_type, model_name):
