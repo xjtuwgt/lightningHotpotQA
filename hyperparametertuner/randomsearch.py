@@ -48,7 +48,7 @@ def HypeParameterSpace():
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1, 2]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [4, 5, 8]}
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
-    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.3]}
+    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.25]} #0.3
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
@@ -56,12 +56,14 @@ def HypeParameterSpace():
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_low']}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
-    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2'
+    ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [150]} # 300
+    hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [150]} # 300
+    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,4']} ##'gat:1,2'
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['ahotrod/roberta_large_squad2']}
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
-                    gnn, fine_tuned_encoder, daug_type, devf_type,
+                    gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim,
                     gnn_drop, bi_attn_drop, trans_drop, lstm_drop, num_train_epochs, model_type, encoder_name_or_path]
     search_space = dict((x['name'], x) for x in search_space)
     return search_space
@@ -104,4 +106,4 @@ def generate_random_search_bash(task_num, seed=42, lightning=False):
     print('{} jobs have been generated'.format(task_num))
 
 if __name__ == '__main__':
-    generate_random_search_bash(task_num=2, seed=60)
+    generate_random_search_bash(task_num=2, seed=70)
