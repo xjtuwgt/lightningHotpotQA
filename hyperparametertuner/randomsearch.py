@@ -58,7 +58,7 @@ def HypeParameterSpace():
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [150]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [150]} # 300
-    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,4']} ##'gat:1,2'
+    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2'
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['ahotrod/roberta_large_squad2']}
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
