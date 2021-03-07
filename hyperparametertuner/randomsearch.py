@@ -52,7 +52,7 @@ def HypeParameterSpace():
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
-    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [3]}
+    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [12]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_low']}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
