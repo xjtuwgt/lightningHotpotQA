@@ -19,7 +19,8 @@ def best_metric_collection():
         trim_folder_name = folder_name[(len(OUTPUT_FOLDER)+1):]
         for file_idx, file_name in enumerate(eval_file_names):
             print('{} | {} | {} | {}'.format(folder_idx, file_idx, trim_folder_name, file_name))
-            with open(file_name) as fp:
-                lines = fp.readlines()
-                for line in lines:
-                    print(line)
+            print(file_name)
+            # with open(file_name) as fp:
+            #     lines = fp.readlines()
+            #     for line in lines:
+            #         print(line)
