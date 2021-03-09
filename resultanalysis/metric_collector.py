@@ -14,5 +14,7 @@ def list_all_txt_files(path):
 
 def best_metric_collection():
     folder_names = list_all_folders(d=OUTPUT_FOLDER)
-    for x in folder_names:
-        print(x)
+    for folder_idx, folder_name in enumerate(folder_names):
+        eval_file_names = list_all_txt_files(path=folder_name)
+        for file_idx, file_name in enumerate(eval_file_names):
+            print('{} {} {}'.format(folder_idx, file_idx, file_name))
