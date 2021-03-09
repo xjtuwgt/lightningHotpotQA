@@ -133,7 +133,7 @@ def default_train_parser():
     parser.add_argument("--fine_tuned_encoder_path", default=PRETRAINED_MODEL_FOLDER, type=str)
 
     # train-dev data type
-    parser.add_argument("--daug_type", default='hgn', type=str, help="Train Data augumentation type.")
+    parser.add_argument("--daug_type", default='long', type=str, help="Train Data augumentation type.")
     parser.add_argument("--devf_type", default='hgn', type=str, help="Dev data type")
 
     # eval
