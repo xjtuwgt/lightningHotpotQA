@@ -43,7 +43,7 @@ def rand_search_parameter(space: dict):
         raise ValueError('Training batch mode %s not supported' % para_type)
 
 def HypeParameterSpace():
-    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [1e-5, 2e-6]}
+    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [1e-5, 5e-6]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1, 2]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [4, 5, 8]}
