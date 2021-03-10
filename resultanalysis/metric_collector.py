@@ -22,4 +22,4 @@ def best_metric_collection():
             with open(os.path.join(folder_name, file_name)) as fp:
                 lines = fp.readlines()
                 for line in lines:
-                    print(line)
+                    print(line[1:len(line) - 1])
