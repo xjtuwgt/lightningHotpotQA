@@ -1,5 +1,6 @@
 from envs import OUTPUT_FOLDER
 import os
+import json
 
 def list_all_folders(d):
     folder_names = [os.path.join(d, o) for o in os.listdir(d)
@@ -22,4 +23,8 @@ def best_metric_collection():
             with open(os.path.join(folder_name, file_name)) as fp:
                 lines = fp.readlines()
                 for line in lines:
-                    print(line[1:len(line) - 1])
+                    metric_dict = json.loads(line)
+                    print(metric_dict)
+                    # metric_line = line[1:len(line) - 1]
+                    # metrics_list = metric_line.split()
+                    # print(line[1:len(line) - 1])
