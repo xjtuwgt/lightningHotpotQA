@@ -12,6 +12,7 @@ def list_all_txt_files(path):
     files_txt = [i for i in files if i.endswith('.txt')]
     eval_file_names = [i for i in files_txt if i.startswith('eval.epoch')]
     eval_file_names = [i for i in eval_file_names if 'gpu' not in i]
+    eval_file_names = [i for i in eval_file_names if 'albert' not in i]
     return eval_file_names
 
 def best_metric_collection():
