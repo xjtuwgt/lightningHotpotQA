@@ -5,6 +5,7 @@ import json
 def list_all_folders(d):
     folder_names = [os.path.join(d, o) for o in os.listdir(d)
      if os.path.isdir(os.path.join(d, o))]
+    folder_names = [i for i in folder_names if 'albert' not in i]
     return folder_names
 
 def list_all_txt_files(path):
@@ -12,7 +13,6 @@ def list_all_txt_files(path):
     files_txt = [i for i in files if i.endswith('.txt')]
     eval_file_names = [i for i in files_txt if i.startswith('eval.epoch')]
     eval_file_names = [i for i in eval_file_names if 'gpu' not in i]
-    eval_file_names = [i for i in eval_file_names if 'albert' not in i]
     return eval_file_names
 
 def best_metric_collection():
