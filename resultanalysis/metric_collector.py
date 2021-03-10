@@ -45,4 +45,7 @@ def best_metric_collection():
 
     sorted_metrics = sorted(metric_list, key=lambda x: x[1])
     for idx, metric in enumerate(sorted_metrics):
-        print('{}: {}: {}: {}'.format(idx, metric[0], metric[1], metric[2]))
+        print('{}: {}: {}'.format(idx, metric[0], metric[1]))
+        for key, value in metric[2].items():
+            print('{}: {}'.format(key, value))
+        print('*' * 75)
