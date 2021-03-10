@@ -1,5 +1,5 @@
 {
-    "exp_name": "HGN_albert_xxlarge_v2_mfeb",
+    "exp_name": "HGN_albert_xxlarge_v2_mfeb_finetuned",
     "model_type": "albert",
     "num_train_epochs": 3,
     "encoder_name_or_path": "albert-xxlarge-v2",
