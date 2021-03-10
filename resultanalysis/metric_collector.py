@@ -31,6 +31,8 @@ def best_metric_collection():
                         best_joint_f1 = metric_dict['joint_f1']
                         best_setting = os.path.join(folder_name, file_name)
                         best_metric_dict = metric_dict
+    print('*' * 75)
     print('Best joint F1 = {}\nSetting = {}'.format(best_joint_f1, best_setting))
     for key, value in best_metric_dict.items():
         print('{}: {}'.format(key, value))
+    print('*' * 75)
