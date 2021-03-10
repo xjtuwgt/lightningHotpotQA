@@ -106,4 +106,4 @@ def generate_random_search_bash(task_num, seed=42, lightning=False):
     print('{} jobs have been generated'.format(task_num))
 
 if __name__ == '__main__':
-    generate_random_search_bash(task_num=2, seed=100)
+    generate_random_search_bash(task_num=5, seed=200)
