@@ -133,7 +133,7 @@ def default_train_parser():
     parser.add_argument("--fine_tuned_encoder_path", default=PRETRAINED_MODEL_FOLDER, type=str)
 
     # train-dev data type
-    parser.add_argument("--daug_type", default='long', type=str, help="Train Data augumentation type.")
+    parser.add_argument("--daug_type", default='hgn', type=str, help="Train Data augumentation type.")
     parser.add_argument("--devf_type", default='hgn', type=str, help="Dev data type")
 
     # eval
@@ -160,7 +160,7 @@ def default_train_parser():
     parser.add_argument('--gpus', default=4, type=int)
     parser.add_argument('--cpu_num', default=8, type=int)  ### for data_loader
     parser.add_argument('--accelerator', default='ddp', type=str)
-    parser.add_argument('--val_check_interval', default=0.5, type=float)
+    parser.add_argument('--val_check_interval', default=0.2, type=float)
     parser.add_argument('--precision', default=32, type=int) ## 32
     parser.add_argument('--plugins', default='ddp_shared', type=str) ## save memory
     parser.add_argument("--gpu_list", default=None, type=str, help="GPU id list")
