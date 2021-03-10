@@ -14,6 +14,9 @@ def list_all_txt_files(path):
     return eval_file_names
 
 def best_metric_collection():
+    best_metric_dict = None
+    best_joint_f1 = -1
+    best_setting = None
     folder_names = list_all_folders(d=OUTPUT_FOLDER)
     for folder_idx, folder_name in enumerate(folder_names):
         eval_file_names = list_all_txt_files(path=folder_name)
@@ -24,7 +27,10 @@ def best_metric_collection():
                 lines = fp.readlines()
                 for line in lines:
                     metric_dict = json.loads(line)
-                    print(metric_dict)
-                    # metric_line = line[1:len(line) - 1]
-                    # metrics_list = metric_line.split()
-                    # print(line[1:len(line) - 1])
+                    if metric_dict['joint_f1'] > best_joint_f1:
+                        best_joint_f1 = metric_dict['joint_f1']
+                        best_setting = os.path.join(folder_name, file_name)
+                        best_metric_dict = metric_dict
+    print('Best joint F1 = {}\nSetting = {}'.format(best_joint_f1, best_setting))
+    for key, value in best_metric_dict.items():
+        print('{}: {}'.format(key, value))
