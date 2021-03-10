@@ -27,6 +27,8 @@ def best_metric_collection():
                 lines = fp.readlines()
                 for line in lines:
                     metric_dict = json.loads(line)
+                    for key, value in metric_dict.items():
+                        metric_dict[key] = float(value)
                     if metric_dict['joint_f1'] > best_joint_f1:
                         best_joint_f1 = metric_dict['joint_f1']
                         best_setting = os.path.join(folder_name, file_name)
