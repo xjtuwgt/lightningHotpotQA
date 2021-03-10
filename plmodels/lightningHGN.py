@@ -155,7 +155,7 @@ class lightningHGN(pl.LightningModule):
         answer_type_dict = {}
         answer_type_prob_dict = {}
 
-        thresholds = np.arange(0.1, 1.0, 0.025)
+        thresholds = np.arange(0.1, 1.0, 0.02)
         N_thresh = len(thresholds)
         total_sp_dict = [{} for _ in range(N_thresh)]
         total_record_num = 0
