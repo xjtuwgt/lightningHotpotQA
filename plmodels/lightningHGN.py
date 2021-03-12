@@ -273,7 +273,7 @@ class lightningHGN(pl.LightningModule):
         encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
         assert self.hparams.encoder_name_or_path in encoder_layer_number_dict
         encoder_layer_number = encoder_layer_number_dict[self.hparams.encoder_name_or_path]
-        encoder_group_number = 4
+        encoder_group_number = 2
 
         def achieve_module_groups(encoder, number_of_layer, number_of_groups):
             layer_num_each_group = number_of_layer // number_of_groups
