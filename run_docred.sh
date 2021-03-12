@@ -4,22 +4,17 @@
 # DATA ROOT folder where you put data files
 DATA_ROOT=./data/
 
-PROCS=${1:-"preprocess"}
-
 # define precached BERT MODEL path
-ROBERTA_LARGE=$DATA_ROOT/models/pretrained/roberta-large
 
 # Add current pwd to PYTHONPATH
 export DIR_TMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PYTHONPATH=$PYTHONPATH:$DIR_TMP:$DIR_TMP/hgntransformers
 export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 
-mkdir -p $DATA_ROOT/models/pretrained_cache
-
 # 0. Build Database from Wikipedia
 
 preprocess() {
-    INPUTS=("converted_docred_total.json; docred")
+    INPUTS=("converted_docred_total.json;docred")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -54,7 +49,6 @@ preprocess() {
 #        echo "4. Test dumped features"
         #python scripts/6_test_features.py --full_data $INPUT_FILE --input_dir $OUTPUT_FEAT --output_dir $OUTPUT_FEAT --model_type roberta --model_name_or_path roberta-large
     done
-
 }
 
 for proc in "preprocess"
