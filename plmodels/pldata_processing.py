@@ -32,6 +32,9 @@ def get_cached_filename(f_type, config):
                   'long_low_sae_examples', 'long_low_sae_features', 'long_low_sae_graphs',
                   'long_low_sae_reverse_examples', 'long_low_sae_reverse_features', 'long_low_sae_reverse_graphs',
 
+                  'docred_low_examples', 'docred_low_features', 'docred_low_graphs',
+                  'docred_low_sae_examples', 'docred_low_sae_features', 'docred_low_sae_graphs',
+
                   'oracle_features', 'oracle_graphs', 'oracle_examples',
                   'oracle_sae_features', 'oracle_sae_graphs', 'oracle_sae_examples'
                   } #### ranker: hgn, longformer; case: lowercase, cased; graph: whether sae-graph
