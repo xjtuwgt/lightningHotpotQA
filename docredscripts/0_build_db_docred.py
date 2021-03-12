@@ -97,6 +97,9 @@ if __name__ == '__main__':
     parser.add_argument('save_path', type=str, help='/path/to/saved/db.db')
     args = parser.parse_args()
 
+    for key, value in vars(args).items():
+        print('{}: {}'.format(key, value))
+
     store_contents(
         args.data_path, args.save_path
     )
