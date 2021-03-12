@@ -216,8 +216,8 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
         assert len(module_groups) == encoder_group_number + 1
     elif args.encoder_name_or_path == 'albert-xxlarge-v2':
         module_groups = []
-        module_groups.append(hgn_encoder)
-        module_groups.append(hgn_model)
+        module_groups.append([hgn_encoder])
+        module_groups.append([hgn_model])
         assert len(module_groups) == 2
     else:
         raise 'Not supported {}'.format(args.encoder_name_or_path)

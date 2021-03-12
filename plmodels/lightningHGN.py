@@ -291,8 +291,8 @@ class lightningHGN(pl.LightningModule):
             assert len(module_groups) == encoder_group_number + 1
         elif self.hparams.encoder_name_or_path == 'albert-xxlarge-v2':
             module_groups = []
-            module_groups.append(self.encoder)
-            module_groups.append(self.model)
+            module_groups.append([self.encoder])
+            module_groups.append([self.model])
             assert len(module_groups) == 2
         else:
             raise 'Not supported {}'.format(self.hparams.encoder_name_or_path)
