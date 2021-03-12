@@ -33,15 +33,15 @@ preprocess() {
 #        # Output: enwiki_ner_docred.db
 #        python docredscripts/0_build_db_docred.py --data_path $INPUT_FILE --save_path $DATA_ROOT/knowledge/enwiki_ner_docred.db
 
-        echo "1. Extract Wiki Link & NER from DB"
-        # Input: INPUT_FILE, enwiki_ner_docred.db
-        # Output: doc_link_ner.json
-        python docredscripts/1_extract_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db $OUTPUT_PROCESSED/doc_link_ner.json
-
-        echo "2. Extract NER for Question and Context"
-        # Input: doc_link_ner.json
-        # Output: ner.json
-        python docredscripts/2_extract_ner_docred.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
+#        echo "1. Extract Wiki Link & NER from DB"
+#        # Input: INPUT_FILE, enwiki_ner_docred.db
+#        # Output: doc_link_ner.json
+#        python docredscripts/1_extract_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db $OUTPUT_PROCESSED/doc_link_ner.json
+#
+#        echo "2. Extract NER for Question and Context"
+#        # Input: doc_link_ner.json
+#        # Output: ner.json
+#        python docredscripts/2_extract_ner_docred.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
 
         echo "3. Dump features for roberta (do_lower_case)"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE
