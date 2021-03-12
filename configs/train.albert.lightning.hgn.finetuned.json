@@ -12,7 +12,7 @@
     "devf_type": "hgn",
     "trans_drop": 0.2,
     "sent_lambda": 5,
-    "learning_rate": 6e-6,
+    "learning_rate": 1e-5,
     "mask_edge_types": "0",
     "max_entity_num": 60,
     "max_sent_num": 40,
