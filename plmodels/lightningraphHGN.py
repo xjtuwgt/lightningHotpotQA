@@ -272,10 +272,8 @@ class lightningHGN(pl.LightningModule):
 
     def layer_wise_learning_rate_optimizer(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
-        encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
+        encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 1}
         assert self.hparams.encoder_name_or_path in encoder_layer_number_dict
-        encoder_layer_number = encoder_layer_number_dict[self.hparams.encoder_name_or_path]
-        encoder_group_number = 4
 
         def achieve_module_groups(encoder, number_of_layer, number_of_groups):
             layer_num_each_group = number_of_layer // number_of_groups
@@ -287,10 +285,21 @@ class lightningHGN(pl.LightningModule):
                     [*encoder.encoder.layer[(group_id * layer_num_each_group):((group_id + 1) * layer_num_each_group)]])
             return groups, number_of_divided_groups
 
-        module_groups, encoder_group_number = achieve_module_groups(encoder=self.encoder, number_of_layer=encoder_layer_number,
-                                              number_of_groups=encoder_group_number)
-        module_groups.append([self.model])
-        assert len(module_groups) == 5
+        if self.hparams.encoder_name_or_path == 'roberta-large':
+            encoder_layer_number = encoder_layer_number_dict[self.hparams.encoder_name_or_path]
+            encoder_group_number = 2
+            module_groups, encoder_group_number = achieve_module_groups(encoder=self.encoder,
+                                                                        number_of_layer=encoder_layer_number,
+                                                                        number_of_groups=encoder_group_number)
+            module_groups.append([self.model])
+            assert len(module_groups) == encoder_group_number + 1
+        elif self.hparams.encoder_name_or_path == 'albert-xxlarge-v2':
+            module_groups = []
+            module_groups.append(self.encoder)
+            module_groups.append(self.model)
+            assert len(module_groups) == 2
+        else:
+            raise 'Not supported {}'.format(self.hparams.encoder_name_or_path)
 
         def achieve_parameter_groups(module_group, weight_decay, lr):
             named_parameters = []
@@ -313,12 +322,15 @@ class lightningHGN(pl.LightningModule):
 
         optimizer_grouped_parameters = []
         for idx, module_group in enumerate(module_groups):
+            lr = self.hparams.learning_rate * (10.0 ** idx)
+            logging.info('group {} lr = {}'.format(idx, lr))
             grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                           weight_decay=self.hparams.weight_decay,
-                                                          lr=self.hparams.learning_rate * (10.0**idx))
+                                                          lr=lr)
             optimizer_grouped_parameters += grouped_parameters
 
-        optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
+        optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate,
+                          eps=self.hparams.adam_epsilon)
         scheduler = get_linear_schedule_with_warmup(
             optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
         )

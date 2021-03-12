@@ -192,10 +192,9 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
 
 
 def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
-    encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 24}
+    "Prepare optimizer and schedule (linear warmup and decay)"
+    encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 1}
     assert args.encoder_name_or_path in encoder_layer_number_dict
-    encoder_layer_number = encoder_layer_number_dict[args.encoder_name_or_path]
-    encoder_group_number = 4
 
     def achieve_module_groups(encoder, number_of_layer, number_of_groups):
         layer_num_each_group = number_of_layer // number_of_groups
@@ -207,11 +206,21 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
                 [*encoder.encoder.layer[(group_id * layer_num_each_group):((group_id + 1) * layer_num_each_group)]])
         return groups, number_of_divided_groups
 
-    module_groups, encoder_group_number = achieve_module_groups(encoder=hgn_encoder,
-                                                                number_of_layer=encoder_layer_number,
-                                                                number_of_groups=encoder_group_number)
-    module_groups.append([hgn_model])
-    assert len(module_groups) == 5
+    if args.encoder_name_or_path == 'roberta-large':
+        encoder_layer_number = encoder_layer_number_dict[args.encoder_name_or_path]
+        encoder_group_number = 2
+        module_groups, encoder_group_number = achieve_module_groups(encoder=hgn_encoder,
+                                                                    number_of_layer=encoder_layer_number,
+                                                                    number_of_groups=encoder_group_number)
+        module_groups.append([hgn_model])
+        assert len(module_groups) == encoder_group_number + 1
+    elif args.encoder_name_or_path == 'albert-xxlarge-v2':
+        module_groups = []
+        module_groups.append(hgn_encoder)
+        module_groups.append(hgn_model)
+        assert len(module_groups) == 2
+    else:
+        raise 'Not supported {}'.format(args.encoder_name_or_path)
 
     def achieve_parameter_groups(module_group, weight_decay, lr):
         named_parameters = []
@@ -234,12 +243,13 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
 
     optimizer_grouped_parameters = []
     for idx, module_group in enumerate(module_groups):
+        lr = args.learning_rate * (10.0 ** idx)
+        logging.info('group {} lr = {}'.format(idx, lr))
         grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                       weight_decay=args.weight_decay,
-                                                      lr=learning_rate * (10.0 ** idx))
+                                                      lr=lr)
         optimizer_grouped_parameters += grouped_parameters
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate,
                       eps=args.adam_epsilon)
-
     return optimizer
