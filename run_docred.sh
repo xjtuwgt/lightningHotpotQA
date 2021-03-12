@@ -36,7 +36,7 @@ preprocess() {
         echo "0. Build Database from DocRed"
         # Input: INPUT_FILE
         # Output: enwiki_ner_docred.db
-        python docredscripts/0_build_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db
+        python docredscripts/0_build_db_docred.py --data_path $INPUT_FILE --save_path $DATA_ROOT/knowledge/enwiki_ner_docred.db
 
 #        echo "1. Extract Wiki Link & NER from DB"
 #        # Input: INPUT_FILE, enwiki_ner_docred.db

@@ -93,8 +93,8 @@ def store_contents(data_path, save_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('data_path', type=str, help='/path/to/data')
-    parser.add_argument('save_path', type=str, help='/path/to/saved/db.db')
+    parser.add_argument('--data_path', required=True, type=str, help='/path/to/data')
+    parser.add_argument('--save_path', required=True, type=str, help='/path/to/saved/db.db')
     args = parser.parse_args()
 
     for key, value in vars(args).items():
