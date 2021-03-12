@@ -16,10 +16,10 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
+# 0. Build Database from Wikipedia
+
 preprocess() {
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
-#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
-    INPUTS=("converted_docred_total.json;docred")
+    INPUTS=("converted_docred_total.json; docred")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -36,7 +36,7 @@ preprocess() {
         echo "0. Build Database from DocRed"
         # Input: INPUT_FILE
         # Output: enwiki_ner_docred.db
-        python scripts/0_build_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db
+        python docredscripts/0_build_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db
 
 #        echo "1. Extract Wiki Link & NER from DB"
 #        # Input: INPUT_FILE, enwiki_ner_docred.db
