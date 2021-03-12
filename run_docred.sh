@@ -38,20 +38,20 @@ preprocess() {
         # Output: enwiki_ner_docred.db
         python docredscripts/0_build_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db
 
-#        echo "1. Extract Wiki Link & NER from DB"
-#        # Input: INPUT_FILE, enwiki_ner_docred.db
-#        # Output: doc_link_ner.json
-#        python scripts/1_extract_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db $OUTPUT_PROCESSED/doc_link_ner.json
-#
-#        echo "2. Extract NER for Question and Context"
-#        # Input: doc_link_ner.json
-#        # Output: ner.json
-#        python scripts/2_extract_ner_docred.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
+        echo "1. Extract Wiki Link & NER from DB"
+        # Input: INPUT_FILE, enwiki_ner_docred.db
+        # Output: doc_link_ner.json
+        python docredscripts/1_extract_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db $OUTPUT_PROCESSED/doc_link_ner.json
 
-#        echo "5. Dump features"
-#        python scripts/5_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json
+        echo "2. Extract NER for Question and Context"
+        # Input: doc_link_ner.json
+        # Output: ner.json
+        python docredscripts/2_extract_ner_docred.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
 
-#        echo "6. Test dumped features"
+        echo "3. Dump features"
+        python docredscripts/5_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json
+
+#        echo "4. Test dumped features"
         #python scripts/6_test_features.py --full_data $INPUT_FILE --input_dir $OUTPUT_FEAT --output_dir $OUTPUT_FEAT --model_type roberta --model_name_or_path roberta-large
     done
 

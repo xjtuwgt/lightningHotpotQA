@@ -91,7 +91,6 @@ def store_contents(data_path, save_path):
 # Main.
 # ------------------------------------------------------------------------------
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('data_path', type=str, help='/path/to/data')
