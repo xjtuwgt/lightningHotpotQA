@@ -120,3 +120,4 @@ for case in tqdm(data):
     output_data[guid]['context'] = context_ners
 
 json.dump(output_data, open(output_file, 'w'))
+print('Save the processed data into {}'.format(output_file))

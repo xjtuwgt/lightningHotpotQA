@@ -163,6 +163,7 @@ for data in tqdm(input_data):
 
 print("mismatch context ", len(mismatch_context))
 json.dump(output_data, open(output_file, 'w'))
+print('saving the preprocessed data into {}'.format(output_file))
 
 for title in miss_title:
     print(title)
