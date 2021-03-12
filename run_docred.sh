@@ -28,15 +28,15 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "0. Build Database from DocRed"
-        # Input: INPUT_FILE
-        # Output: enwiki_ner_docred.db
-        python docredscripts/0_build_db_docred.py --data_path $INPUT_FILE --save_path $DATA_ROOT/knowledge/enwiki_ner_docred.db
+#        echo "0. Build Database from DocRed"
+#        # Input: INPUT_FILE
+#        # Output: enwiki_ner_docred.db
+#        python docredscripts/0_build_db_docred.py --data_path $INPUT_FILE --save_path $DATA_ROOT/knowledge/enwiki_ner_docred.db
 
-#        echo "1. Extract Wiki Link & NER from DB"
-#        # Input: INPUT_FILE, enwiki_ner_docred.db
-#        # Output: doc_link_ner.json
-#        python docredscripts/1_extract_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db $OUTPUT_PROCESSED/doc_link_ner.json
+        echo "1. Extract Wiki Link & NER from DB"
+        # Input: INPUT_FILE, enwiki_ner_docred.db
+        # Output: doc_link_ner.json
+        python docredscripts/1_extract_db_docred.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner_docred.db $OUTPUT_PROCESSED/doc_link_ner.json
 #
 #        echo "2. Extract NER for Question and Context"
 #        # Input: doc_link_ner.json
