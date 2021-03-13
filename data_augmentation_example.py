@@ -1,11 +1,12 @@
 import argparse
+from os.path import join
 from envs import DATASET_FOLDER
 from dataugmentation.data_combined_processing import combine_data_graph_feat_examples, save_data_graph_feat
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Required parameters
-    parser.add_argument("--data_path", type=str, default=DATASET_FOLDER)
+    parser.add_argument("--data_path", type=str, default=join(DATASET_FOLDER, 'data_feat'))
     parser.add_argument("--model_type", default='roberta', type=str, help="Model type")
     parser.add_argument("--max_query_length", default=50, type=int)
     parser.add_argument("--max_seq_length", default=512, type=int,
