@@ -54,6 +54,8 @@ def combine_data_graph_feat_examples(data_folder, config, tag_f_type_list):
     example_data_array = list(itertools.chain(*example_data_list))
     graph_data_array = dict(ChainMap(*graph_data_list))
     assert len(feature_data_array) == len(example_data_array) and len(feature_data_array) == len(graph_data_array)
+    print('Combine data in {} by {}'.format(data_folder, tag_f_type_list))
+    print('Features {}, Examples {}, Graphs {}'.format(len(feature_data_array), len(example_data_array), len(graph_data_array)))
     return feature_data_array, example_data_array, graph_data_array
 
 def save_data_graph_feat(out_folder, features, examples, graphs, f_type, config):
