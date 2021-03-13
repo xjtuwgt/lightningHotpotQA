@@ -5,8 +5,8 @@ from dataugmentation.data_combined_processing import combine_data_graph_feat_exa
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Required parameters
-    parser.add_argument("--data_path", type=str, default=DATASET_FOLDER, required=True)
-    parser.add_argument("--model_type", default='roberta', type=str, required=True, help="Model type")
+    parser.add_argument("--data_path", type=str, default=DATASET_FOLDER)
+    parser.add_argument("--model_type", default='roberta', type=str, help="Model type")
     parser.add_argument("--max_query_length", default=50, type=int)
     parser.add_argument("--max_seq_length", default=512, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences longer "
