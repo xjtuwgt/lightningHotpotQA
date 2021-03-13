@@ -31,8 +31,8 @@ def get_graph_file(data_dir, tag, f_type, config):
 
 def load_data_graph_feat_examples(data_folder, tag, f_type, config):
     feature_data_file_name = get_feature_file(data_dir=data_folder, tag=tag, f_type=f_type, config=config)
-    example_data_file_name = get_feature_file(data_dir=data_folder, tag=tag, f_type=f_type, config=config)
-    graph_data_file_name = get_feature_file(data_dir=data_folder, tag=tag, f_type=f_type, config=config)
+    example_data_file_name = get_example_file(data_dir=data_folder, tag=tag, f_type=f_type, config=config)
+    graph_data_file_name = get_graph_file(data_dir=data_folder, tag=tag, f_type=f_type, config=config)
 
     feature_data = get_or_load(feature_data_file_name)
     example_data = get_or_load(example_data_file_name)
