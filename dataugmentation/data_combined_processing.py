@@ -37,6 +37,8 @@ def load_data_graph_feat_examples(data_folder, tag, f_type, config):
     feature_data = get_or_load(feature_data_file_name)
     example_data = get_or_load(example_data_file_name)
     graph_data = get_or_load(graph_data_file_name)
+    print('Loading data from {}'.format(data_folder))
+    print('Features {}, Examples {}, Graphs {}'.format(len(feature_data), len(example_data), len(graph_data)))
     return feature_data, example_data, graph_data
 
 def combine_data_graph_feat_examples(data_folder, config, tag_f_type_list):
