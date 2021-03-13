@@ -13,6 +13,7 @@ if __name__ == '__main__':
                              "than this will be truncated, and sequences shorter than this will be padded.")
     args = parser.parse_args()
 
+    print('1. combine hgn with docred')
     combined_tag_type_pair_list_hgn_docred = [('train', 'hgn_low'), ('docred', 'docred_low')]
     hgn_docred_combined_type = 'hgn_docred_low'
 
@@ -21,12 +22,12 @@ if __name__ == '__main__':
 
 
 
-    combined_tag_type_pair_list_hgn_sae_docred = [('train', 'hgn_low_sae'), ('docred', 'docred_low_sae')]
-    hgn_docred_sae_combined_type = 'hgn_docred_low_sae'
-
-    combined_tag_type_pair_list_long_docred = [('train', 'long_low'), ('docred', 'docred_low')]
-    long_docred_combined_type = 'long_docred_low'
-    combined_tag_type_pair_list_long_sae_docred = [('train', 'long_low_sae'), ('docred', 'docred_low_sae')]
-    long_docred_sae_combined_type = 'long_docred_low_sae'
+    # combined_tag_type_pair_list_hgn_sae_docred = [('train', 'hgn_low_sae'), ('docred', 'docred_low_sae')]
+    # hgn_docred_sae_combined_type = 'hgn_docred_low_sae'
+    #
+    # combined_tag_type_pair_list_long_docred = [('train', 'long_low'), ('docred', 'docred_low')]
+    # long_docred_combined_type = 'long_docred_low'
+    # combined_tag_type_pair_list_long_sae_docred = [('train', 'long_low_sae'), ('docred', 'docred_low_sae')]
+    # long_docred_sae_combined_type = 'long_docred_low_sae'
 
 
