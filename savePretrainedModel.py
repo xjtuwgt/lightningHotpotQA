@@ -37,7 +37,7 @@ from jdscripts.pretrainedencoders import model_intialization_test
 model_type = 'roberta'
 model_name = 'roberta-large'
 exp_name = 'train.roberta.bs2.lr1e-05.datahgn_low.seed303'
-encoder_pickle_name = 'epoch_5.pkl'
+encoder_pickle_name = 'encoder_5.pkl'
 model = load_hgn_hotpotqa_model(model_type=model_type, model_name=model_name, exp_name=exp_name, encoder_pkl_name=encoder_pickle_name)
 for name, param in model.named_parameters():
     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
