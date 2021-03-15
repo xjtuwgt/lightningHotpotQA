@@ -16,6 +16,7 @@ from csr_mhqa.utils import *
 # from jdmodels.jdHGN import HierarchicalGraphNetwork
 from models.HGN import HierarchicalGraphNetwork
 from hgntransformers import get_linear_schedule_with_warmup
+from utils.jdutils import get_diff_lr_optimizer
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -134,7 +135,11 @@ if args.max_steps > 0:
 else:
     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
-optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+if args.learning_rate_schema == 'fixed':
+    optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+else:
+    optimizer = get_diff_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+
 if args.fp16:
     try:
         from apex import amp
