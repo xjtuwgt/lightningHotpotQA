@@ -18,7 +18,7 @@ def single_task_trial(search_space: dict, rand_seed=42):
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + \
-               '.lr' + str(parameter_dict['learning_rate']) + '.data' +str(parameter_dict['daug_type']) + '.seed' +str(rand_seed)
+               '.lr' + str(parameter_dict['learning_rate']) +'.lrs' + str(parameter_dict['learning_rate_schema']) + '.data' +str(parameter_dict['daug_type']) + '.seed' +str(rand_seed)
     parameter_dict['exp_name'] = exp_name
     return parameter_dict
 
@@ -58,12 +58,13 @@ def HypeParameterSpace():
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
+    learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['varied']}
     gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2'
-    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['ahotrod/roberta_large_squad2']}
+    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta/roberta-large_hgn']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
-                    gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim,
+                    gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim, learning_rate_schema,
                     gnn_drop, bi_attn_drop, trans_drop, lstm_drop, num_train_epochs, model_type, encoder_name_or_path]
     search_space = dict((x['name'], x) for x in search_space)
     return search_space
