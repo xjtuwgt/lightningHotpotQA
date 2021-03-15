@@ -19,8 +19,9 @@ if __name__ == '__main__':
     hgn_docred_combined_type = 'hgn_docred_low'
 
     data_folder = args.data_path
-    combine_data_graph_feat_examples(data_folder=data_folder, config=args, tag_f_type_list=combined_tag_type_pair_list_hgn_docred)
-
+    features, examples, graphs = combine_data_graph_feat_examples(data_folder=data_folder, config=args, tag_f_type_list=combined_tag_type_pair_list_hgn_docred)
+    save_data_graph_feat(out_folder=join(data_folder, 'train'), config=args, f_type=hgn_docred_combined_type,
+                         examples=examples, features=features, graphs=graphs)
 
 
     # combined_tag_type_pair_list_hgn_sae_docred = [('train', 'hgn_low_sae'), ('docred', 'docred_low_sae')]
