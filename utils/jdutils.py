@@ -243,13 +243,13 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
 
     optimizer_grouped_parameters = []
     for idx, module_group in enumerate(module_groups):
-        lr = args.learning_rate * (10.0 ** idx)
+        lr = learning_rate * (10.0 ** idx)
         logging.info('group {} lr = {}'.format(idx, lr))
         grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                       weight_decay=args.weight_decay,
                                                       lr=lr)
         optimizer_grouped_parameters += grouped_parameters
 
-    optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate,
+    optimizer = AdamW(optimizer_grouped_parameters, lr=learning_rate,
                       eps=args.adam_epsilon)
     return optimizer
