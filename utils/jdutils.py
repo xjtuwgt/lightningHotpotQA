@@ -16,6 +16,7 @@ import logging
 import string
 import re
 from hgntransformers import AdamW
+from utils.gpu_utils import gpu_setting
 
 def log_metrics(mode, metrics):
     '''
@@ -253,3 +254,19 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
     optimizer = AdamW(optimizer_grouped_parameters, lr=learning_rate,
                       eps=args.adam_epsilon)
     return optimizer
+
+def gpu_id_setting(gpus: int):
+    gpu_id = None
+    true_gpu_num = 0
+    if torch.cuda.is_available():
+        if gpus > 0:
+            free_gpu_ids, used_memory = gpu_setting(num_gpu=gpus)
+            logging.info('{} gpus with used memory = {}, gpu ids = {}'.format(len(free_gpu_ids), used_memory, free_gpu_ids))
+            if gpus > len(free_gpu_ids):
+                gpu_list_str = ','.join([str(_) for _ in free_gpu_ids])
+                true_gpu_num = len(free_gpu_ids)
+            else:
+                gpu_list_str = ','.join([str(free_gpu_ids[i]) for i in range(gpus)])
+                true_gpu_num = gpus
+            gpu_id = gpu_list_str
+    return gpu_id, true_gpu_num
