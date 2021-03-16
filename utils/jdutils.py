@@ -261,7 +261,7 @@ def gpu_id_setting(gpus: int):
     if torch.cuda.is_available():
         if gpus > 0:
             free_gpu_ids, used_memory = gpu_setting(num_gpu=gpus)
-            logging.info('{} gpus with used memory = {}, gpu ids = {}'.format(len(free_gpu_ids), used_memory, free_gpu_ids))
+            print('{} gpus with used memory = {}, gpu ids = {}'.format(len(free_gpu_ids), used_memory, free_gpu_ids))
             if gpus > len(free_gpu_ids):
                 gpu_list_str = ','.join([str(_) for _ in free_gpu_ids])
                 true_gpu_num = len(free_gpu_ids)
