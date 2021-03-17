@@ -3,8 +3,12 @@ import argparse
 from os.path import join
 import numpy as np
 import math
-from utils.jdutils import set_seed
 from tqdm import tqdm
+import random
+
+def set_seed(random_seed):
+    random.seed(random_seed)
+    np.random.seed(random_seed)
 
 def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
     with open(full_file, 'r', encoding='utf-8') as reader:

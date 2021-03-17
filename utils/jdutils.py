@@ -15,7 +15,6 @@ from csr_mhqa.utils import convert_to_tokens
 import logging
 import string
 import re
-import random
 from hgntransformers import AdamW
 
 
@@ -31,11 +30,6 @@ def normalize_question(question: str) -> str:
     if question[-1] == '?':
         question = question[:-1]
     return question
-
-def set_seed(random_seed):
-    random.seed(random_seed)
-    np.random.seed(random_seed)
-    torch.manual_seed(random_seed)
 
 
 def normalize_text(s: str) -> str:
