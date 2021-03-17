@@ -3,6 +3,7 @@ import argparse
 from os.path import join
 import numpy as np
 import math
+from utils.jdutils import set_seed
 from tqdm import tqdm
 
 def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
@@ -13,6 +14,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
     case_num = 0
     no_drop_num = 0
     for case in tqdm(full_data):
+        key = case['_id']
         sup_facts = list(set([(sp[0], sp[1]) for sp in case['supporting_facts']]))
         sup_fact_dict = {}
         for sp in sup_facts:
@@ -30,7 +32,20 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         if sum(sent_drop_flags) == 0:
             no_drop_num = no_drop_num + 1
         case_num = case_num + 1
+        key = key + "_sent_drop_{:.2f}".format(drop_out) ## for data augmentation
+        #####+++++++++++++
+        case['_id'] = key
+        drop_supp_facts = []
+        for key, value in drop_supp_fact_dict.items():
+            for sent_id in value:
+                drop_supp_facts.append([key, sent_id])
+        case['supporting_facts'] = drop_supp_facts
+        case['context'] = drop_context
+        if sum(sent_drop_flags) > 0:
+            drop_out_cases.append(case)
+        #####+++++++++++++
     print('Number of cases without drop = {}'.format(no_drop_num))
+    return drop_out_cases
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
@@ -100,12 +115,15 @@ if __name__ == '__main__':
     parser.add_argument("--full_data_name", type=str, required=True)
     parser.add_argument("--output_path", type=str, required=True, help='define output data set')
     parser.add_argument("--drop_out", type=float, default=0.5, help='define dropout ratio')
+    parser.add_argument("--rand_seed", type=int, default=42, help='define dropout ratio')
 
     args = parser.parse_args()
     for key, value in vars(args).items():
         print('Parameter {}: {}'.format(key, value))
 
+    set_seed(random_seed=args.rand_seed)
+
     raw_data_file = join(args.full_data_path, args.full_data_name)
     out_put_path = args.output_path
     drop_out_ratio = args.drop_out
-    hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
+    drop_case_data = hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
