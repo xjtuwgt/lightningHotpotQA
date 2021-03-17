@@ -24,26 +24,49 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         context = case['context']
         assert len(context) >= 2
         ##############################################
-        sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
+        sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
     drop_context = []
+    drop_supp_fact_dict = {}
     for ctx_idx, ctx in enumerate(context):
         title_i, sentences_i = ctx
         if title_i in supp_fact_dict:
-            support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
+            drop_ctx, drop_facts = support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
+            if drop_ctx is not None:
+                sent_drop_flags[ctx_idx] = 1
+                drop_context.append(drop_ctx)
+                drop_supp_fact_dict[title_i] = drop_facts
         else:
             drop_ctx = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
-            else:
-                print(len(sentences_i))
-    return sent_drop_flags
+                drop_context.append(drop_ctx)
+    return sent_drop_flags, drop_context, drop_supp_fact_dict
 
 def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
-
-    return
+    sent_id_list = [s_id for s_id in range(len(sentence_list)) if s_id not in support_fact_ids]
+    assert len(sent_id_list) == (len(sentence_list) - len(support_fact_ids))
+    sample_size = math.floor(len(sent_id_list) * drop_out)
+    if sample_size < 1:
+        return None, None
+    keep_sent_ids = np.random.choice(sent_id_list, len(sent_id_list) - sample_size, replace=False).tolist()
+    keep_sent_ids = sorted(keep_sent_ids + support_fact_ids)
+    keep_sent_list = []
+    new_supp_fact_ids = []
+    for new_sent_idx, sent_idx in enumerate(keep_sent_ids):
+        keep_sent_list.append(sent_id_list[sent_idx])
+        if sent_idx in support_fact_ids:
+            new_supp_fact_ids.append(new_sent_idx)
+    res_context = [title, keep_sent_list]
+    res_support_fact_ids = new_supp_fact_ids
+    print(sent_id_list)
+    print(keep_sent_list)
+    print(support_fact_ids)
+    print(res_support_fact_ids)
+    print('*' * 75)
+    return res_context, res_support_fact_ids
 
 
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
@@ -52,8 +75,8 @@ def no_support_sentence_drop_out(title, sentence_list, drop_out):
     # print(sent_num)
     if sample_size < 1:
         return None
-    drop_sent_ids = np.random.choice(sent_num, sample_size, replace=False).tolist()
-    sent_keep_list = [sent_ for sent_idx, sent_ in enumerate(sentence_list) if sent_idx not in drop_sent_ids]
+    keep_sent_ids = sorted(np.random.choice(sent_num, sent_num - sample_size, replace=False).tolist())
+    sent_keep_list = [sentence_list[_] for _ in keep_sent_ids]
     res = [title, sent_keep_list]
     return res
 
