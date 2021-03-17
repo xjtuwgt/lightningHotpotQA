@@ -49,6 +49,7 @@ def HypeParameterSpace():
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 8]}
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
     gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.25, 0.3]} #0.3
+    gnn_attn_drop = {'name': 'gnn_attn_drop', 'type': 'choice', 'values': [0.25, 0.3]}  # 0.3
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
@@ -65,7 +66,7 @@ def HypeParameterSpace():
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
-                    gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim, learning_rate_schema,
+                    gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim, learning_rate_schema, gnn_attn_drop,
                     gnn_drop, num_edge_type, bi_attn_drop, trans_drop, lstm_drop, num_train_epochs, model_type, encoder_name_or_path]
     search_space = dict((x['name'], x) for x in search_space)
     return search_space

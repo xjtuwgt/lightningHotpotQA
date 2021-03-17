@@ -94,7 +94,7 @@ class GATSelfAttention(nn.Module):
         self.out_dim = out_dim
         self.dropout = self.config.gnn_drop
         ###++++++++ attention dropout --> edge drop
-        self.attn_dropout = self.config.attn_drop
+        self.attn_dropout = self.config.gnn_attn_drop
         ###++++++++ attention dropout --> edge drop
         self.q_attn = q_attn
         self.query_dim = in_dim
