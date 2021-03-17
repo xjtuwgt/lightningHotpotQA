@@ -79,11 +79,12 @@ def no_support_sentence_drop_out(title, sentence_list, drop_out):
     keep_sent_ids = sorted(np.random.choice(sent_num, sent_num - sample_size, replace=False).tolist())
     keep_sent_list = [sentence_list[_] for _ in keep_sent_ids]
     res = [title, keep_sent_list]
-    print(sentence_list)
-    print(len(sentence_list))
-    print(keep_sent_list)
-    print(len(keep_sent_list))
-    print('*' * 75)
+    if len(sentence_list) <= 2:
+        print(sentence_list)
+        print(len(sentence_list))
+        print(keep_sent_list)
+        print(len(keep_sent_list))
+        print('*' * 75)
     return res
 
 
