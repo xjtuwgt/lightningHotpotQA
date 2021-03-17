@@ -21,7 +21,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         for key, value in sup_fact_dict.items():
             sup_fact_dict[key] = sorted(value)
 
-        context = dict(case['context'])
+        context = case['context']
         assert len(context) >= 2
         for x in context:
             print(x)
