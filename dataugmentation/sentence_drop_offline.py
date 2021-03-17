@@ -52,6 +52,7 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
 def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     filtered_support_fact_ids = [_ for _ in support_fact_ids if _ < len(sentence_list)]
     sent_id_list = [s_id for s_id in range(len(sentence_list)) if s_id not in filtered_support_fact_ids]
+    assert len(filtered_support_fact_ids) > 0
     assert len(sent_id_list) == (len(sentence_list) - len(filtered_support_fact_ids))
     sample_size = math.floor(len(sent_id_list) * drop_out)
     if sample_size < 1:
@@ -66,6 +67,7 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
             new_supp_fact_ids.append(new_sent_idx)
     res_context = [title, keep_sent_list]
     res_support_fact_ids = new_supp_fact_ids
+    assert len(res_support_fact_ids) > 0
     print(len(sentence_list))
     print(len(keep_sent_list))
     for x, y in zip(support_fact_ids, res_support_fact_ids):
