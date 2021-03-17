@@ -30,8 +30,8 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     drop_context = []
     for ctx_idx, ctx in enumerate(context):
         title_i, sentences_i = ctx
-        if title_i not in supp_fact_dict:
-            no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
+        if title_i in supp_fact_dict:
+            support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
         else:
             drop_ctx = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
             if drop_ctx is not None:
@@ -40,7 +40,7 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
                 print(len(sentences_i))
     return sent_drop_flags
 
-def support_sentence_drop_out(title, sentence_list, drop_out, support_fact_ids):
+def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
 
     return
 
@@ -48,7 +48,7 @@ def support_sentence_drop_out(title, sentence_list, drop_out, support_fact_ids):
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
     sample_size = math.floor(sent_num * drop_out)
-    print(sent_num)
+    # print(sent_num)
     if sample_size < 1:
         return None
     drop_sent_ids = np.random.choice(sent_num, sample_size, replace=False).tolist()
