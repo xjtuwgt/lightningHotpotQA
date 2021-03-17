@@ -134,6 +134,6 @@ if __name__ == '__main__':
     cached_drop_case_json_file = join(args.output_path, 'drop_sent.rand_{}.drop_{:.2f}.'.format(args.rand_seed, args.drop_out) + args.full_data_name)
 
 
-    # with open(cached_drop_case_json_file, 'w') as fout:
-    #     json.dump(drop_case_list, fout)
+    with open(cached_drop_case_json_file, 'w') as fout:
+        json.dump(drop_case_list, fout)
     print('Saving {} cases into {}'.format(len(drop_case_list), cached_drop_case_json_file))
