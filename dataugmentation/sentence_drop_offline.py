@@ -15,7 +15,6 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
 
     drop_out_cases = []
     for case in tqdm(full_data):
-        guid = case['_id']
         sup_facts = list(set([(sp[0], sp[1]) for sp in case['supporting_facts']]))
         sup_fact_dict = {}
         for sp in sup_facts:
@@ -28,7 +27,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
 
         context = dict(case['context'])
         ##############################################
-        print(case)
+        print(sup_fact_dict)
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     drop_context = []
