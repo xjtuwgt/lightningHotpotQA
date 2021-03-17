@@ -66,10 +66,11 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
             new_supp_fact_ids.append(new_sent_idx)
     res_context = [title, keep_sent_list]
     res_support_fact_ids = new_supp_fact_ids
-    print(sentence_list)
-    print(keep_sent_list)
-    print(support_fact_ids)
-    print(res_support_fact_ids)
+    print(len(sentence_list))
+    print(len(keep_sent_list))
+    for x, y in zip(support_fact_ids, res_support_fact_ids):
+        print('orig = {}'.format(sentence_list[x]))
+        print('drop = {}'.format(keep_sent_list[y]))
     print('*' * 75)
     return res_context, res_support_fact_ids
 
