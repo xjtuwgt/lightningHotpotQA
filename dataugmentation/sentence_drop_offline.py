@@ -36,6 +36,8 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
             drop_ctx = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
+            else:
+                print(len(sentences_i))
     return sent_drop_flags
 
 def support_sentence_drop_out(title, sentence_list, drop_out, support_fact_ids):
