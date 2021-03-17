@@ -18,6 +18,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
     case_num = 0
     no_drop_num = 0
     for case in tqdm(full_data):
+        print(case['_id'])
         key = case['_id']
         sup_facts = list(set([(sp[0], sp[1]) for sp in case['supporting_facts']]))
         sup_fact_dict = {}
