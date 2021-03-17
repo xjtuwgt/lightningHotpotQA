@@ -22,8 +22,13 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
             sup_fact_dict[key] = sorted(value)
 
         context = dict(case['context'])
+        assert len(context) >= 2
+        for x in context:
+            print(x)
+            print(type(x))
         ##############################################
-        print(sup_fact_dict)
+        # print(sup_fact_dict)
+        break
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     drop_context = []
