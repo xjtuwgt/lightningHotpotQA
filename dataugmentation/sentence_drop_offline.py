@@ -31,6 +31,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
             print(len(context))
             print(drop_context)
             print(len(drop_context))
+            print(sent_drop_flags)
             print('*' * 100)
         case_num = case_num + 1
 
