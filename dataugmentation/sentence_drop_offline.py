@@ -42,7 +42,6 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     for ctx_idx, ctx in enumerate(context):
         title_i, sentences_i = ctx
         if title_i in supp_fact_dict:
-            drop_context.append(ctx)
             drop_ctx, drop_facts = support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
