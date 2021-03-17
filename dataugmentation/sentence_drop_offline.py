@@ -1,6 +1,7 @@
 import json
 import sys
 import argparse
+from os.path import join
 import numpy as np
 import math
 
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--full_data", type=str, required=True)
+    parser.add_argument("--full_data_path", type=str, required=True)
     parser.add_argument("--full_data_name", type=str, required=True)
     parser.add_argument("--output_path", type=str, required=True, help='define output data set')
     parser.add_argument("--drop_out", type=float, default=0.5, help='define dropout ratio')
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     for key, value in vars(args).items():
         print('Parameter {}: {}'.format(key, value))
 
-    raw_data_file = args.full_data
+    raw_data_file = join(args.full_data_path, args.full_data_name)
     out_put_file = args.output_data
     drop_out_ratio = args.drop_out
     hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
