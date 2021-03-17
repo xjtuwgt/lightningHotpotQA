@@ -23,7 +23,6 @@ if __name__ == '__main__':
     save_data_graph_feat(out_folder=join(data_folder, 'train'), config=args, f_type=hgn_docred_combined_type,
                          examples=examples, features=features, graphs=graphs)
 
-
     # combined_tag_type_pair_list_hgn_sae_docred = [('train', 'hgn_low_sae'), ('docred', 'docred_low_sae')]
     # hgn_docred_sae_combined_type = 'hgn_docred_low_sae'
     #
