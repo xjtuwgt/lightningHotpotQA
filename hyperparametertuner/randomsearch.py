@@ -43,7 +43,7 @@ def rand_search_parameter(space: dict):
         raise ValueError('Training batch mode %s not supported' % para_type)
 
 def HypeParameterSpace():
-    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [1e-6, 2e-6, 5e-6]}
+    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [2e-6, 5e-6, 1e-5]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [2, 4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 8]}
@@ -56,10 +56,10 @@ def HypeParameterSpace():
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_low']}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
-    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # SAE -9
+    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # SAE = 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
-    learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['varied']}
+    learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['fixed']}
     gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2'
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta/roberta-large_hgn']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
