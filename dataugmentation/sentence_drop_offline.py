@@ -53,6 +53,8 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
                 drop_context.append(drop_ctx)
+            else:
+                print('+' * 100)
     return sent_drop_flags, drop_context, drop_supp_fact_dict
 
 def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
