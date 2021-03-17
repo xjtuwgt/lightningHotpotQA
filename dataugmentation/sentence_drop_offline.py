@@ -21,13 +21,13 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
                 sup_fact_dict[sp[0]].append(sp[1])
         for key, value in sup_fact_dict.items():
             sup_fact_dict[key] = sorted(value)
-
         context = case['context']
         assert len(context) >= 2
         ##############################################
         sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
-        case_num = case_num + 1
         print('**** {} ****'.format(case_num))
+        case_num = case_num + 1
+
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
@@ -78,18 +78,11 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
     sample_size = math.floor(sent_num * drop_out)
-    # print(sent_num)
     if sample_size < 1:
         return None
     keep_sent_ids = sorted(np.random.choice(sent_num, sent_num - sample_size, replace=False).tolist())
     keep_sent_list = [sentence_list[_] for _ in keep_sent_ids]
     res = [title, keep_sent_list]
-    # if len(sentence_list) <= 1:
-    #     print(sentence_list)
-    #     print(len(sentence_list))
-    #     print(keep_sent_list)
-    #     print(len(keep_sent_list))
-    #     print('*' * 75)
     return res
 
 
