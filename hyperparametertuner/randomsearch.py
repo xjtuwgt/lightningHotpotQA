@@ -48,7 +48,7 @@ def HypeParameterSpace():
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [2, 4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 8]}
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
-    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.25]} #0.3
+    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.25, 0.3]} #0.3
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}

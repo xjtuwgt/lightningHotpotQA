@@ -212,6 +212,9 @@ def default_train_parser():
 
     parser.add_argument('--gnn', default='gat:1,2', type=str, help='gat:n_layer, n_head')
     parser.add_argument("--gnn_drop", type=float, default=0.3)
+    #########
+    parser.add_argument("--attn_drop", type=float, default=0.3)
+    #########
     parser.add_argument('--q_attn', type=boolean_string, default='True', help='whether use query attention in GAT')
     parser.add_argument("--lstm_drop", type=float, default=0.3)
     parser.add_argument("--lstm_layer", type=int, default=1) ###++++++

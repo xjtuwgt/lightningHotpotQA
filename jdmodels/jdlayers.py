@@ -78,6 +78,9 @@ class GATSelfAttention(nn.Module):
         self.in_dim = in_dim
         self.out_dim = out_dim
         self.dropout = self.config.gnn_drop
+        ###++++++++ attention dropout --> edge drop
+        self.attn_dropout = self.config.attn_drop
+        ###++++++++ attention dropout --> edge drop
         self.q_attn = q_attn
         self.query_dim = in_dim
         self.n_type = self.config.num_edge_type
@@ -131,11 +134,12 @@ class GATSelfAttention(nn.Module):
             h = h * node_mask
 
         coefs = F.softmax(scores, dim=2)  # N * E * E
+        # ++++++++++++++++++++++++ attention dropout --> edge drop
+        coefs = F.dropout(coefs, self.attn_dropout, self.training)
+        # ++++++++++++++++++++++++ attention dropout --> edge drop
         h = coefs.unsqueeze(3) * h.unsqueeze(2)  # N * E * E * d
         h = torch.sum(h, dim=1)
         return h
-
-
 
 class GraphBlock(nn.Module):
     def __init__(self, q_attn, config, input_dim, hidden_dim):
