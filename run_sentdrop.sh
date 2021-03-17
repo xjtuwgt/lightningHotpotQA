@@ -21,7 +21,7 @@ preprocess() {
         echo "1. Sentence drop based data augmentation"
         # Input: INPUT_FILE
         # Output: sent_drop_json
-        python dataugmentation/sentence_drop_offline.py --ull_data_path $INPUT_PATH --output_data OUTPUT_PROCESSED --full_data_name $INPUT_FILE_NAME --drop_out 0.5
+        python dataugmentation/sentence_drop_offline.py --full_data_path $INPUT_PATH --output_data_path OUTPUT_PROCESSED --full_data_name $INPUT_FILE_NAME --drop_out 0.5
 
         done
 
