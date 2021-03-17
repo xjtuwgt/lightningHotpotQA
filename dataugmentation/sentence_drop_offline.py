@@ -25,7 +25,9 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         assert len(context) >= 2
         ##############################################
         sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
-        print('Sum of drop flags = {}/{}'.format(sum(sent_drop_flags), len(context)))
+        # print('Sum of drop flags = {}/{}'.format(sum(sent_drop_flags), len(context)))
+        if sum(sent_drop_flags) == 0:
+            print('*' * 100)
         case_num = case_num + 1
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
@@ -72,6 +74,11 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
     sample_size = math.floor(sent_num * drop_out)
+    if sample_size == sent_num:
+        if sent_num > 2:
+            sample_size = sent_num - 2
+        else:
+            sample_size = 1
     if sample_size < 1:
         return None
     keep_sent_ids = sorted(np.random.choice(sent_num, sent_num - sample_size, replace=False).tolist())
