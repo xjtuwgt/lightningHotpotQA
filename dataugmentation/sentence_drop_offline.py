@@ -1,13 +1,9 @@
 import json
-import sys
 import argparse
 from os.path import join
 import numpy as np
 import math
-
-
 from tqdm import tqdm
-assert len(sys.argv) == 3
 
 def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
     with open(full_file, 'r', encoding='utf-8') as reader:
