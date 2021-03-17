@@ -48,6 +48,7 @@ def support_sentence_drop_out(title, sentence_list, drop_out, support_fact_ids):
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
     sample_size = math.floor(sent_num * drop_out)
+    print(sent_num)
     if sample_size < 1:
         return None
     drop_sent_ids = np.random.choice(sent_num, sample_size, replace=False).tolist()
