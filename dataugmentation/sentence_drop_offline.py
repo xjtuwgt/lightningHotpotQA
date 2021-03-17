@@ -60,12 +60,12 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     if sample_size < 1:
         return None, None
     keep_sent_ids = np.random.choice(sent_id_list, len(sent_id_list) - sample_size, replace=False).tolist()
-    keep_sent_ids = sorted(keep_sent_ids + support_fact_ids)
+    keep_sent_ids = sorted(keep_sent_ids + filtered_support_fact_ids)
     keep_sent_list = []
     new_supp_fact_ids = []
     for new_sent_idx, sent_idx in enumerate(keep_sent_ids):
         keep_sent_list.append(sentence_list[sent_idx])
-        if sent_idx in support_fact_ids:
+        if sent_idx in filtered_support_fact_ids:
             new_supp_fact_ids.append(new_sent_idx)
     res_context = [title, keep_sent_list]
     res_support_fact_ids = new_supp_fact_ids
