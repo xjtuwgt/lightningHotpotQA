@@ -137,3 +137,9 @@ if __name__ == '__main__':
     with open(cached_drop_case_json_file, 'w') as fout:
         json.dump(drop_case_list, fout)
     print('Saving {} cases into {}'.format(len(drop_case_list), cached_drop_case_json_file))
+
+    ######
+    with open(cached_drop_case_json_file, 'r', encoding='utf-8') as reader:
+        drop_data = json.load(reader)
+    for case in tqdm(drop_data):
+        print(case['_id'])
