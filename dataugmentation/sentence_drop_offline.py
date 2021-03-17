@@ -23,20 +23,20 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
 
         context = case['context']
         assert len(context) >= 2
-        for x in context:
-            print(x)
-            print(type(x))
         ##############################################
-        # print(sup_fact_dict)
-        break
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
+    sent_drop_flags = [0] * len(context)
     drop_context = []
     for ctx_idx, ctx in enumerate(context):
         title_i, sentences_i = ctx
         if title_i not in supp_fact_dict:
             no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
-    return
+        else:
+            drop_ctx = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
+            if drop_ctx is not None:
+                sent_drop_flags[ctx_idx] = 1
+    return sent_drop_flags
 
 def support_sentence_drop_out(title, sentence_list, drop_out, support_fact_ids):
 
