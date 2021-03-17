@@ -28,6 +28,7 @@ if __name__ == '__main__':
     #
     # combined_tag_type_pair_list_long_docred = [('train', 'long_low'), ('docred', 'docred_low')]
     # long_docred_combined_type = 'long_docred_low'
+    #
     # combined_tag_type_pair_list_long_sae_docred = [('train', 'long_low_sae'), ('docred', 'docred_low_sae')]
     # long_docred_sae_combined_type = 'long_docred_low_sae'
 

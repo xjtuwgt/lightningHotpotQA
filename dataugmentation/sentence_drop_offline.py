@@ -29,12 +29,6 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         # print('Sum of drop flags = {}/{}'.format(sum(sent_drop_flags), len(context)))
         if sum(sent_drop_flags) == 0:
             no_drop_num = no_drop_num + 1
-            print(context)
-            print(len(context))
-            print(drop_context)
-            print(len(drop_context))
-            print(sent_drop_flags)
-            print('*' * 100)
         case_num = case_num + 1
     print('Number of cases without drop = {}'.format(no_drop_num))
 
