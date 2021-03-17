@@ -11,6 +11,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
 
     drop_out_cases = []
     case_num = 0
+    no_drop_num = 0
     for case in tqdm(full_data):
         sup_facts = list(set([(sp[0], sp[1]) for sp in case['supporting_facts']]))
         sup_fact_dict = {}
@@ -27,6 +28,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
         # print('Sum of drop flags = {}/{}'.format(sum(sent_drop_flags), len(context)))
         if sum(sent_drop_flags) == 0:
+            no_drop_num = no_drop_num + 1
             print(context)
             print(len(context))
             print(drop_context)
@@ -34,6 +36,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
             print(sent_drop_flags)
             print('*' * 100)
         case_num = case_num + 1
+    print('Number of cases without drop = {}'.format(no_drop_num))
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
