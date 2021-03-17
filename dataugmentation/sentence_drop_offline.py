@@ -67,13 +67,7 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     res_context = [title, keep_sent_list]
     res_support_fact_ids = new_supp_fact_ids
     assert len(res_support_fact_ids) > 0
-    # print(len(sentence_list))
-    # print(len(keep_sent_list))
-    # for x, y in zip(support_fact_ids, res_support_fact_ids):
-    #     print('orig = {}'.format(sentence_list[x]))
-    #     print('drop = {}'.format(keep_sent_list[y]))
     return res_context, res_support_fact_ids
-
 
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
@@ -84,8 +78,6 @@ def no_support_sentence_drop_out(title, sentence_list, drop_out):
     keep_sent_list = [sentence_list[_] for _ in keep_sent_ids]
     res = [title, keep_sent_list]
     return res
-
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
