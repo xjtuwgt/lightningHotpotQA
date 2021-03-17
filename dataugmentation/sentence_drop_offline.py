@@ -28,7 +28,9 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         # print('Sum of drop flags = {}/{}'.format(sum(sent_drop_flags), len(context)))
         if sum(sent_drop_flags) == 0:
             print(context)
+            print(len(context))
             print(drop_context)
+            print(len(drop_context))
             print('*' * 100)
         case_num = case_num + 1
 
