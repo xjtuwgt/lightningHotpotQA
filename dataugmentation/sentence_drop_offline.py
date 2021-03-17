@@ -64,6 +64,6 @@ if __name__ == '__main__':
         print('Parameter {}: {}'.format(key, value))
 
     raw_data_file = join(args.full_data_path, args.full_data_name)
-    out_put_file = args.output_data
+    out_put_path = args.output_path
     drop_out_ratio = args.drop_out
     hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
