@@ -48,13 +48,16 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
                 sent_drop_flags[ctx_idx] = 1
                 drop_context.append(drop_ctx)
                 drop_supp_fact_dict[title_i] = drop_facts
+            else:
+                drop_context.append(ctx)
+                drop_supp_fact_dict[title_i] = supp_fact_dict
         else:
             drop_ctx = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
                 drop_context.append(drop_ctx)
             else:
-                print('+' * 100)
+                drop_context.append(ctx)
     return sent_drop_flags, drop_context, drop_supp_fact_dict
 
 def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
