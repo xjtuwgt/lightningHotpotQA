@@ -126,4 +126,10 @@ if __name__ == '__main__':
     raw_data_file = join(args.full_data_path, args.full_data_name)
     out_put_path = args.output_path
     drop_out_ratio = args.drop_out
-    drop_case_data = hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
+    drop_case_list = hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
+    cached_drop_case_json_file = join(args.output_path, 'drop_sent.rand_{}.drop_{:.2f}'.format(args.rand_seed, args.drop_out) + args.full_data_name)
+
+
+    # with open(cached_drop_case_json_file, 'w') as fout:
+    #     json.dump(drop_case_list, fout)
+    print('Saving {} cases into {}'.format(len(drop_case_list), cached_drop_case_json_file))
