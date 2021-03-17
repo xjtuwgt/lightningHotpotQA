@@ -18,7 +18,6 @@ preprocess() {
 
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
 
-
         echo "1. Sentence drop based data augmentation"
         # Input: INPUT_FILE
         # Output: sent_drop_json
