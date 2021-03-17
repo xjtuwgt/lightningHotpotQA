@@ -24,6 +24,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         context = case['context']
         assert len(context) >= 2
         ##############################################
+        sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
 
 def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
@@ -48,7 +49,7 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
     sample_size = math.floor(sent_num * drop_out)
-    print(sent_num)
+    # print(sent_num)
     if sample_size < 1:
         return None
     drop_sent_ids = np.random.choice(sent_num, sample_size, replace=False).tolist()
