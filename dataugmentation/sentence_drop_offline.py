@@ -18,8 +18,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
     case_num = 0
     no_drop_num = 0
     for case in tqdm(full_data):
-        print(case['_id'])
-        key = case['_id']
+        case_id = case['_id']
         sup_facts = list(set([(sp[0], sp[1]) for sp in case['supporting_facts']]))
         sup_fact_dict = {}
         for sp in sup_facts:
@@ -37,9 +36,9 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         if sum(sent_drop_flags) == 0:
             no_drop_num = no_drop_num + 1
         case_num = case_num + 1
-        key = key + "_sent_drop_{:.2f}".format(drop_out) ## for data augmentation
+        case_id = case_id + "_sent_drop_{:.2f}".format(drop_out) ## for data augmentation
         #####+++++++++++++
-        case['_id'] = key
+        case['_id'] = case_id
         drop_supp_facts = []
         for key, value in drop_supp_fact_dict.items():
             for sent_id in value:
