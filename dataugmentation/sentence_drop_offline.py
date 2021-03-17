@@ -24,11 +24,12 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         context = case['context']
         assert len(context) >= 2
         ##############################################
-        sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out, case_num=case_num)
+        sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
+        print('Sum of drop flags = {}'.format(sum(sent_drop_flags)))
         case_num = case_num + 1
 
 
-def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float, case_num):
+def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
     drop_context = []
     drop_supp_fact_dict = {}
@@ -36,7 +37,7 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float, case_n
         title_i, sentences_i = ctx
         if title_i in supp_fact_dict:
             drop_context.append(ctx)
-            drop_ctx, drop_facts = support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i], case_num=case_num)
+            drop_ctx, drop_facts = support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
                 drop_context.append(drop_ctx)
@@ -48,7 +49,7 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float, case_n
                 drop_context.append(drop_ctx)
     return sent_drop_flags, drop_context, drop_supp_fact_dict
 
-def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out, case_num):
+def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     filtered_support_fact_ids = [_ for _ in support_fact_ids if _ < len(sentence_list)]
     sent_id_list = [s_id for s_id in range(len(sentence_list)) if s_id not in filtered_support_fact_ids]
     assert len(filtered_support_fact_ids) > 0
@@ -67,12 +68,11 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out, 
     res_context = [title, keep_sent_list]
     res_support_fact_ids = new_supp_fact_ids
     assert len(res_support_fact_ids) > 0
-    print(len(sentence_list))
-    print(len(keep_sent_list))
-    for x, y in zip(support_fact_ids, res_support_fact_ids):
-        print('orig = {}'.format(sentence_list[x]))
-        print('drop = {}'.format(keep_sent_list[y]))
-    print('*' * 75, case_num)
+    # print(len(sentence_list))
+    # print(len(keep_sent_list))
+    # for x, y in zip(support_fact_ids, res_support_fact_ids):
+    #     print('orig = {}'.format(sentence_list[x]))
+    #     print('drop = {}'.format(keep_sent_list[y]))
     return res_context, res_support_fact_ids
 
 
