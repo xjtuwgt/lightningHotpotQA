@@ -56,7 +56,7 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     keep_sent_list = []
     new_supp_fact_ids = []
     for new_sent_idx, sent_idx in enumerate(keep_sent_ids):
-        keep_sent_list.append(sent_id_list[sent_idx])
+        keep_sent_list.append(sentence_list[sent_idx])
         if sent_idx in support_fact_ids:
             new_supp_fact_ids.append(new_sent_idx)
     res_context = [title, keep_sent_list]
