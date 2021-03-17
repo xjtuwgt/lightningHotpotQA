@@ -51,6 +51,7 @@ def complete_default_train_parser(args):
         gpu_id_list, true_gpu_counts = gpu_id_setting(gpus=torch.cuda.device_count())
         if true_gpu_counts > 0:
             os.environ["CUDA_VISIBLE_DEVICES"] = gpu_id_list
+        args.gpu_id = gpu_id_list
     #######++++++++
 
     # set n_gpu
