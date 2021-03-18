@@ -3,6 +3,7 @@ from numpy import random
 import numpy as np
 import shutil
 import json
+import argparse
 
 def remove_all_files(dirpath):
     for filename in os.listdir(dirpath):
@@ -96,7 +97,7 @@ def generate_random_search_bash(task_num, seed=42):
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
             json.dump(rand_hype_dict, fp)
         print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
-        with open(jobs_path + 'jdhgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
+        with open(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
             command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdgraphtrain.py --config_file " + \
                         json_file_path + config_json_file_name
             # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
@@ -105,4 +106,9 @@ def generate_random_search_bash(task_num, seed=42):
     print('{} jobs have been generated'.format(task_num))
 
 if __name__ == '__main__':
-    generate_random_search_bash(task_num=1, seed=42)
+    parser = argparse.ArgumentParser()
+    # Required parameters
+    parser.add_argument("--rand_seed", type=int, required=True)
+    parser.add_argument("--task_num", type=int, required=True)
+    args = parser.parse_args()
+    generate_random_search_bash(task_num=args.task_num, seed=args.rand_seed)
