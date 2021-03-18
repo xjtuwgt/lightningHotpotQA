@@ -24,7 +24,6 @@ preprocess() {
         python dataugmentation/sentence_drop_offline.py --full_data_path $INPUT_PATH --output_path $OUTPUT_PROCESSED --full_data_name $INPUT_FILE_NAME --drop_out 0.5
 
         done
-
 }
 
 for proc in  "preprocess"
