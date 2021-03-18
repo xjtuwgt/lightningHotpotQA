@@ -18,6 +18,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float, rand_seed: int)
     case_num = 0
     no_drop_num = 0
     for case in tqdm(full_data):
+
         case_id = case['_id']
         sup_facts = list(set([(sp[0], sp[1]) for sp in case['supporting_facts']]))
         sup_fact_dict = {}
@@ -31,7 +32,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float, rand_seed: int)
         context = case['context']
         assert len(context) >= 2
         ##############################################
-        sent_drop_flags, drop_context, drop_supp_fact_dict = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
+        sent_drop_flags, drop_context, drop_supp_fact_dict, keep_sent_ids_list = sentence_drop_context(context=context, supp_fact_dict=sup_fact_dict, drop_out=drop_out)
         # print('Sum of drop flags = {}/{}'.format(sum(sent_drop_flags), len(context)))
         if sum(sent_drop_flags) == 0:
             no_drop_num = no_drop_num + 1
@@ -55,10 +56,11 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
     sent_drop_flags = [0] * len(context)
     drop_context = []
     drop_supp_fact_dict = {}
+    keep_sent_ids_list = []
     for ctx_idx, ctx in enumerate(context):
         title_i, sentences_i = ctx
         if title_i in supp_fact_dict:
-            drop_ctx, drop_facts = support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
+            drop_ctx, drop_facts, keep_sent_ids = support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out, support_fact_ids=supp_fact_dict[title_i])
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
                 drop_context.append(drop_ctx)
@@ -66,14 +68,17 @@ def sentence_drop_context(context, supp_fact_dict: dict, drop_out: float):
             else:
                 drop_context.append(ctx)
                 drop_supp_fact_dict[title_i] = supp_fact_dict
+            keep_sent_ids_list.append(keep_sent_ids)
         else:
-            drop_ctx = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
+            drop_ctx, keep_sent_ids = no_support_sentence_drop_out(title=title_i, sentence_list=sentences_i, drop_out=drop_out)
             if drop_ctx is not None:
                 sent_drop_flags[ctx_idx] = 1
                 drop_context.append(drop_ctx)
             else:
                 drop_context.append(ctx)
-    return sent_drop_flags, drop_context, drop_supp_fact_dict
+            keep_sent_ids_list.append(keep_sent_ids)
+    assert len(sent_drop_flags) == len(keep_sent_ids_list)
+    return sent_drop_flags, drop_context, drop_supp_fact_dict, keep_sent_ids_list
 
 def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     filtered_support_fact_ids = [_ for _ in support_fact_ids if _ < len(sentence_list)]
@@ -82,7 +87,8 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     assert len(sent_id_list) == (len(sentence_list) - len(filtered_support_fact_ids))
     sample_size = math.floor(len(sent_id_list) * drop_out)
     if sample_size < 1:
-        return None, None
+        keep_sent_ids = [_ for _ in range(len(sentence_list))]
+        return None, None, keep_sent_ids
     keep_sent_ids = np.random.choice(sent_id_list, len(sent_id_list) - sample_size, replace=False).tolist()
     keep_sent_ids = sorted(keep_sent_ids + filtered_support_fact_ids)
     keep_sent_list = []
@@ -94,7 +100,7 @@ def support_sentence_drop_out(title, sentence_list, support_fact_ids, drop_out):
     res_context = [title, keep_sent_list]
     res_support_fact_ids = new_supp_fact_ids
     assert len(res_support_fact_ids) > 0
-    return res_context, res_support_fact_ids
+    return res_context, res_support_fact_ids, keep_sent_ids
 
 def no_support_sentence_drop_out(title, sentence_list, drop_out):
     sent_num = len(sentence_list)
@@ -105,11 +111,12 @@ def no_support_sentence_drop_out(title, sentence_list, drop_out):
         else:
             sample_size = 1
     if sample_size < 1:
-        return None
+        keep_sent_ids = [_ for _ in range(sent_num)]
+        return None, keep_sent_ids
     keep_sent_ids = sorted(np.random.choice(sent_num, sent_num - sample_size, replace=False).tolist())
     keep_sent_list = [sentence_list[_] for _ in keep_sent_ids]
     res = [title, keep_sent_list]
-    return res
+    return res, keep_sent_ids
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
