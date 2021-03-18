@@ -40,16 +40,23 @@ for a in args_dict:
 ##########################################################################
 helper = DataHelper(gz=True, config=args)
 
+args.daug_type = 'hgn_long_docred_low'
+args.devf_type = 'hgn_low'
+
 # Set datasets
-# train_dataloader = helper.train_loader
+train_dataloader = helper.train_loader
 dev_example_dict = helper.dev_example_dict
 dev_feature_dict = helper.dev_feature_dict
-# dev_dataloader = helper.dev_loader
+dev_dataloader = helper.dev_loader
 dev_loader = helper.hotpot_val_dataloader
 
 # _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 # tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
 #                                             do_lower_case=args.do_lower_case)
+
+for batch_idx, batch in enumerate(train_dataloader):
+    ids = batch['ids']
+    print(batch_idx)
 
 for batch_idx, batch in enumerate(dev_loader):
     ids = batch['ids']
