@@ -3,7 +3,6 @@ from numpy import random
 import numpy as np
 import shutil
 import json
-import argparse
 from envs import PROJECT_FOLDER
 
 def remove_all_files(dirpath):
@@ -105,11 +104,3 @@ def generate_random_search_bash(task_num, seed=42):
             #             json_file_path + config_json_file_name
             rsh_i.write(command_i)
     print('{} jobs have been generated'.format(task_num))
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    # Required parameters
-    parser.add_argument("--rand_seed", type=int, required=True)
-    parser.add_argument("--task_num", type=int, required=True)
-    args = parser.parse_args()
-    generate_random_search_bash(task_num=args.task_num, seed=args.rand_seed)
