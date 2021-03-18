@@ -61,16 +61,19 @@ def combine_data_graph_feat_examples(data_folder, config, tag_f_type_list):
 def save_data_graph_feat(out_folder, features, examples, graphs, f_type, config):
     cached_features_file = os.path.join(out_folder,
                                         get_cached_filename('{}_features'.format(f_type), config))
+    print('1. Start saving {} features'.format(len(features)))
     with gzip.open(cached_features_file, 'wb') as fout:
         pickle.dump(features, fout)
     print('Save {} features into {}'.format(len(features), cached_features_file))
 
+    print('2. Start saving {} examples'.format(len(examples)))
     cached_examples_file = os.path.join(out_folder,
                                         get_cached_filename('{}_examples'.format(f_type), config))
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
     print('Save {} examples into {}'.format(len(examples), cached_examples_file))
 
+    print('2. Start saving {} graphs'.format(len(graphs)))
     cached_graph_file = os.path.join(out_folder,
                                        get_cached_filename('{}_graphs'.format(f_type), config))
     with gzip.open(cached_graph_file, 'wb') as fout:
