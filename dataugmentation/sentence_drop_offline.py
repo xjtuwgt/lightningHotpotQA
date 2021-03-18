@@ -10,7 +10,7 @@ def set_seed(random_seed):
     random.seed(random_seed)
     np.random.seed(random_seed)
 
-def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
+def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float, rand_seed: int):
     with open(full_file, 'r', encoding='utf-8') as reader:
         full_data = json.load(reader)
 
@@ -36,7 +36,7 @@ def hotpot_qa_sentnece_drop_examples(full_file, drop_out: float):
         if sum(sent_drop_flags) == 0:
             no_drop_num = no_drop_num + 1
         case_num = case_num + 1
-        case_id = case_id + "_sent_drop_{:.2f}".format(drop_out) ## for data augmentation
+        case_id = case_id + "_drop_{:.2f}_seed_{}".format(drop_out, rand_seed) ## for data augmentation
         #####+++++++++++++
         case['_id'] = case_id
         drop_supp_facts = []
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     raw_data_file = join(args.full_data_path, args.full_data_name)
     out_put_path = args.output_path
     drop_out_ratio = args.drop_out
-    drop_case_list = hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio)
+    drop_case_list = hotpot_qa_sentnece_drop_examples(full_file=raw_data_file, drop_out=drop_out_ratio, rand_seed=args.rand_seed)
     cached_drop_case_json_file = join(args.output_path, 'drop_sent.rand_{}.drop_{:.2f}.'.format(args.rand_seed, args.drop_out) + args.full_data_name)
 
 
