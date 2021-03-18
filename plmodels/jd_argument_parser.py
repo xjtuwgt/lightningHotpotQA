@@ -46,13 +46,6 @@ def set_seed(args):
 def complete_default_train_parser(args):
     if args.gpu_id:
         os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
-    #######++++++++
-    # else:
-    #     gpu_id_list, true_gpu_counts = gpu_id_setting(gpus=torch.cuda.device_count())
-    #     if true_gpu_counts > 0:
-    #         os.environ["CUDA_VISIBLE_DEVICES"] = gpu_id_list
-    #     args.gpu_id = gpu_id_list
-    #######++++++++
 
     # set n_gpu
     if args.local_rank == -1:
