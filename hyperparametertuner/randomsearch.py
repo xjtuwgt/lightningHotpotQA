@@ -4,6 +4,7 @@ import numpy as np
 import shutil
 import json
 import argparse
+from envs import PROJECT_FOLDER
 
 def remove_all_files(dirpath):
     for filename in os.listdir(dirpath):
@@ -73,7 +74,7 @@ def HypeParameterSpace():
     return search_space
 
 def generate_random_search_bash(task_num, seed=42):
-    relative_path = '../'
+    relative_path = PROJECT_FOLDER
     json_file_path = 'configs/jdhgn/'
     job_path = 'jdhgn_jobs/'
     #================================================
