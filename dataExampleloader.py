@@ -47,9 +47,9 @@ dev_feature_dict = helper.dev_feature_dict
 # dev_dataloader = helper.dev_loader
 dev_loader = helper.hotpot_val_dataloader
 
-_, _, tokenizer_class = MODEL_CLASSES[args.model_type]
-tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
-                                            do_lower_case=args.do_lower_case)
+# _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
+# tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
+#                                             do_lower_case=args.do_lower_case)
 
 for batch_idx, batch in enumerate(dev_loader):
     ids = batch['ids']
