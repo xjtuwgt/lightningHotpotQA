@@ -17,7 +17,7 @@ def single_task_trial(search_space: dict, rand_seed=42):
     for key, value in search_space.items():
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
-    exp_name = 'train.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + \
+    exp_name = 'train.graph.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + \
                '.lr' + str(parameter_dict['learning_rate']) +'.lrs' + str(parameter_dict['learning_rate_schema']) + '.data' +str(parameter_dict['daug_type']) + '.seed' +str(rand_seed)
     parameter_dict['exp_name'] = exp_name
     return parameter_dict
@@ -71,7 +71,7 @@ def HypeParameterSpace():
     search_space = dict((x['name'], x) for x in search_space)
     return search_space
 
-def generate_random_search_bash(task_num, seed=42, lightning=False):
+def generate_random_search_bash(task_num, seed=42):
     relative_path = '../'
     json_file_path = 'configs/jdhgn/'
     job_path = 'jdhgn_jobs/'
@@ -90,25 +90,19 @@ def generate_random_search_bash(task_num, seed=42, lightning=False):
     search_space = HypeParameterSpace()
     for i in range(task_num):
         rand_hype_dict = single_task_trial(search_space, seed+i)
-        config_json_file_name = 'train.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
+        config_json_file_name = 'train.graph.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
                                 +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.' + rand_hype_dict['learning_rate_schema']\
                                 + str(rand_hype_dict['seed']) + '.json'
-        if not lightning:
-            with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
-                json.dump(rand_hype_dict, fp)
-            print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
-            with open(jobs_path + 'jdhgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
-                command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
-                            json_file_path + config_json_file_name
-                rsh_i.write(command_i)
-        else:
-            with open(jobs_path + 'jdlighthgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
-                # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
-                #             json_file_path + config_json_file_name
-                command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python lightningtrain.py --config_file " + \
-                            json_file_path + config_json_file_name
-                rsh_i.write(command_i)
+        with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
+            json.dump(rand_hype_dict, fp)
+        print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
+        with open(jobs_path + 'jdhgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
+            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdgraphtrain.py --config_file " + \
+                        json_file_path + config_json_file_name
+            # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
+            #             json_file_path + config_json_file_name
+            rsh_i.write(command_i)
     print('{} jobs have been generated'.format(task_num))
 
 if __name__ == '__main__':
-    generate_random_search_bash(task_num=5, seed=42)
+    generate_random_search_bash(task_num=1, seed=42)
