@@ -58,7 +58,7 @@ def HypeParameterSpace():
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low_sae']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_low']}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
-    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [9]} # SAE = 9
+    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [9]} # if SAE, then this number should be 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
     learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['fixed']}
