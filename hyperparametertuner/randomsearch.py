@@ -93,8 +93,9 @@ def generate_random_search_bash(task_num, seed=42):
     for i in range(task_num):
         rand_hype_dict = single_task_trial(search_space, seed+i)
         config_json_file_name = 'train.graph.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
-                                +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.' + rand_hype_dict['learning_rate_schema'] + '.' + rand_hype_dict['gnn'].replace(',', '.').replace(':', '') \
-                                + str(rand_hype_dict['seed']) + '.json'
+                                +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.' + rand_hype_dict['learning_rate_schema'] + '.' + \
+                                rand_hype_dict['gnn'].replace(',', '.').replace(':', '') \
+                                + '.seed' + str(rand_hype_dict['seed']) + '.json'
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
             json.dump(rand_hype_dict, fp)
         print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
