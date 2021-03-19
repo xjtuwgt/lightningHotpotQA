@@ -50,10 +50,10 @@ preprocess() {
 #        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE --sae_graph
 
         echo "3. Dump features for albert (do_lower_case)"
-        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name ralbert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE
+        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name ralbert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE
 
         echo "3. Dump features for albert (do_lower_case) (SAE graph)"
-        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE --sae_graph
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE --sae_graph
 
 #        echo "4. Test dumped features"
         #python scripts/6_test_features.py --full_data $INPUT_FILE --input_dir $OUTPUT_FEAT --output_dir $OUTPUT_FEAT --model_type roberta --model_name_or_path roberta-large
