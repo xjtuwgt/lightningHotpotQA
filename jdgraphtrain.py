@@ -169,6 +169,13 @@ if args.local_rank in [-1, 0]:
 encoder.zero_grad()
 model.zero_grad()
 
+###++++++++++++++++++++++++++++++++++++++++++
+total_batch_num = len(train_dataloader)
+logger.info('Total number of batches = {}'.format(total_batch_num))
+eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
+logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
+###++++++++++++++++++++++++++++++++++++++++++
+
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
     epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
@@ -236,6 +243,38 @@ for epoch in train_iterator:
         if args.max_steps > 0 and global_step > args.max_steps:
             epoch_iterator.close()
             break
+        ########################+++++++
+        if (step + 1) % eval_batch_interval_num == 0:
+            if args.local_rank == -1 or torch.distributed.get_rank() == 0:
+                output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step + 1}.json')
+                output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step + 1}.txt')
+                metrics, threshold = eval_model(args, encoder, model,
+                                                dev_dataloader, dev_example_dict, dev_feature_dict,
+                                                output_pred_file, output_eval_file, args.dev_gold_file)
+
+                if metrics['joint_f1'] >= best_joint_f1:
+                    best_joint_f1 = metrics['joint_f1']
+                    torch.save({'epoch': epoch + 1,
+                                'lr': scheduler.get_lr()[0],
+                                'encoder': 'encoder.pkl',
+                                'model': 'model.pkl',
+                                'best_joint_f1': best_joint_f1,
+                                'threshold': threshold},
+                               join(args.exp_name, f'cached_config.bin')
+                               )
+                    logger.info(
+                        'Current best joint_f1 = {} with best threshold = {}'.format(best_joint_f1, threshold))
+                    for key, val in metrics.items():
+                        logger.info("Current {} = {}".format(key, val))
+                    logger.info('*' * 100)
+                torch.save({k: v.cpu() for k, v in encoder.state_dict().items()},
+                           join(args.exp_name, f'encoder_{epoch + 1}.step_{step + 1}.pkl'))
+                torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+                           join(args.exp_name, f'model_{epoch + 1}.step_{step + 1}.pkl'))
+
+                for key, val in metrics.items():
+                    tb_writer.add_scalar(key, val, epoch)
+        ########################+++++++
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
         output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch+1}.json')
         output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch+1}.txt')
