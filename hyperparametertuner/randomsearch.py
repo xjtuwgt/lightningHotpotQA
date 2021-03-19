@@ -75,8 +75,8 @@ def HypeParameterSpace():
 
 def generate_random_search_bash(task_num, seed=42):
     relative_path = PROJECT_FOLDER
-    json_file_path = 'configs/jdhgn/'
-    job_path = 'jdhgn_jobs/'
+    json_file_path = '/configs/jdhgn/'
+    job_path = '/jdhgn_jobs/'
     #================================================
     bash_save_path = relative_path + json_file_path
     jobs_path = relative_path + job_path
