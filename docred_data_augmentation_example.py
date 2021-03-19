@@ -48,3 +48,5 @@ if __name__ == '__main__':
                          examples=examples, features=features, graphs=graphs)
 
 
+    ### python3 docred_data_augmentation_example.py --model_type 'roberta'
+    ### python3 docred_data_augmentation_example.py --model_type 'albert'
