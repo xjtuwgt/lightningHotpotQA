@@ -243,6 +243,10 @@ for epoch in train_iterator:
         if args.max_steps > 0 and global_step > args.max_steps:
             epoch_iterator.close()
             break
+
+        ##++++++
+        # if torch.cuda.is_available():
+        #     torch.cuda.empty_cache()
         ########################+++++++
         if (step + 1) % eval_batch_interval_num == 0:
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
