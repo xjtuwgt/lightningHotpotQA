@@ -45,13 +45,13 @@ def rand_search_parameter(space: dict):
         raise ValueError('Training batch mode %s not supported' % para_type)
 
 def HypeParameterSpace():
-    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [2e-6, 5e-6, 1e-5]}
+    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [5e-6, 1e-5, 2e-5]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
-    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1, 2, 4]}
-    sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5, 8]}
+    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [4]}
+    sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [4, 5, 8]} ##
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
-    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.25, 0.3]} #0.3
-    gnn_attn_drop = {'name': 'gnn_attn_drop', 'type': 'choice', 'values': [0.25, 0.3]}  # 0.3
+    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.3]} #0.3
+    gnn_attn_drop = {'name': 'gnn_attn_drop', 'type': 'choice', 'values': [0.3]}  # 0.3
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
@@ -63,7 +63,7 @@ def HypeParameterSpace():
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
     learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['fixed']}
-    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2'
+    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:2,4']} ##'gat:1,2' 'gat:1,4'
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta/roberta-large_hgn']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
