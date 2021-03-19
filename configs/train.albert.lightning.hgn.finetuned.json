@@ -1,5 +1,5 @@
 {
-    "exp_name": "Original_HGN_albert_xxlarge_v2_hgn_long_docred_fixed_lr",
+    "exp_name": "HGN_SAE_Graph_albert_xxlarge_v2_hgn_long_docred_fixed_lr",
     "model_type": "albert",
     "num_train_epochs": 6,
     "encoder_name_or_path": "albert-xxlarge-v2",
