@@ -188,7 +188,7 @@ def default_train_parser():
                         help="Linear warmup over warmup_steps.")
     parser.add_argument('--logging_steps', type=int, default=50,
                         help="Log every X updates steps.")
-    parser.add_argument('--eval_interval_ratio', type=float, default=0.25,
+    parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
     parser.add_argument('--learning_rate_schema', type=str, default='fixed',
                         help="Log every X updates steps.")
