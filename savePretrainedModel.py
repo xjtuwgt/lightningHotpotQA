@@ -29,6 +29,13 @@ for name, param in model.named_parameters():
     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 save_hotpotqa_model(encoder=model, model_type=model_type, model_name=model_name)
 
+model_type = 'albert'
+model_name = 'albert-xxlarge-v2'
+prtrained_name = 'albert-xxlarge-v2_hotpotqa'
+model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=prtrained_name)
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+
 # model_type = 'roberta'
 # model_name = 'roberta-large'
 # encoder_name = 'roberta/roberta-large_hotpotqa'
