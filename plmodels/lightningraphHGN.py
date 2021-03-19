@@ -116,6 +116,9 @@ class lightningHGN(pl.LightningModule):
         dict_for_log['step'] = batch_idx + 1
         ##################################################################################
         output = {'loss': loss, 'log': dict_for_log, 'progress_bar': dict_for_progress_bar}
+        ##++++
+        del batch
+        ##++++
         return output
 
     def validation_step(self, batch, batch_idx):
