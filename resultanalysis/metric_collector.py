@@ -15,7 +15,7 @@ def list_all_txt_files(path):
     eval_file_names = [i for i in eval_file_names if 'gpu' not in i]
     return eval_file_names
 
-def best_metric_collection():
+def best_metric_collection(key_word=None):
     best_metric_dict = None
     best_joint_f1 = -1
     best_setting = None
@@ -24,6 +24,9 @@ def best_metric_collection():
     for folder_idx, folder_name in enumerate(folder_names):
         eval_file_names = list_all_txt_files(path=folder_name)
         trim_folder_name = folder_name[(len(OUTPUT_FOLDER)+1):]
+        if key_word is not None:
+            if key_word not in trim_folder_name:
+                continue
         for file_idx, file_name in enumerate(eval_file_names):
             print('{} | {} | {} | {}'.format(folder_idx, file_idx, trim_folder_name, file_name))
             with open(os.path.join(folder_name, file_name)) as fp:
