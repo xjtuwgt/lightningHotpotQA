@@ -45,7 +45,7 @@ def docred_checker():
                 print('{}: {}'.format(key_name, key_value))
             else:
                 for ctx_idx, ctx in enumerate(key_value):
-                    print('{}: {}'.format(ctx_idx, ctx))
+                    print('{}: {}'.format(ctx_idx + 1, ctx))
         # context = case['context']
         # space_context = add_space(context_list=context)
         # case['context'] = space_context
