@@ -16,5 +16,6 @@ def docred_checker():
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
-        print('key {}'.format(key))
-        print(para_data[key])
+        print(case)
+        # print('key {}'.format(key))
+        # print(para_data[key])
