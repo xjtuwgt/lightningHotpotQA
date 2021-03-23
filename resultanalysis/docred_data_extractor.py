@@ -49,7 +49,7 @@ def docred_checker():
         print(context)
         print('-' * 50)
         print(add_space(context_list=context))
-        # print('*' * 100)
+        print('*' * 100)
         # print('key {}'.format(key))
         # print(para_data[key])
 
