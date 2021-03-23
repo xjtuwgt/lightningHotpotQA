@@ -3,10 +3,27 @@ from os.path import join
 import json
 from tqdm import tqdm
 
+def add_space(context_list):
+    space_context = []
+    for idx, context in enumerate(context_list):
+        space_sent_list = []
+        sent_list = context[1]
+        if idx == 0:
+            for sent_idx, sent in enumerate(sent_list):
+                if sent_idx == 0:
+                    space_sent_list.append(sent)
+                else:
+                    space_sent_list.append(' ' + sent)
+        else:
+            for sent_idx, sent in enumerate(sent_list):
+                space_sent_list.append(' ' + sent)
+        space_context.append([context[0], space_sent_list])
+    return space_context
+
 
 def docred_checker():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
-    DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER, 'data_raw/hotpot_dev_fullwiki_v1.json') #converted_docred_total.json
+    DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER, 'data_raw/converted_docred_total.json') #converted_docred_total.json
     with open(DOCRED_OUTPUT_PROCESSED_raw_file, 'r', encoding='utf-8') as reader:
         raw_data = json.load(reader)
     with open(DOCRED_OUTPUT_PROCESSED_para_file, 'r', encoding='utf-8') as reader:
@@ -16,8 +33,10 @@ def docred_checker():
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
-        for key_name, key_value in case.items():
-            print('{}: {}'.format(key_name, key_value))
+        # for key_name, key_value in case.items():
+        #     print('{}: {}'.format(key_name, key_value))
+        context = case['context']
+        print(add_space(context_list=context))
         print('*' * 100)
         # print('key {}'.format(key))
         # print(para_data[key])
