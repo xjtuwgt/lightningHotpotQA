@@ -11,7 +11,7 @@ from tensorboardX import SummaryWriter
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
-from utils.jdutils import get_diff_lr_optimizer
+from utils.jdutils import get_lr_with_optimizer
 from csr_mhqa.utils import *
 
 from jdmodels.jdHGN import HierarchicalGraphNetwork
@@ -137,7 +137,7 @@ else:
 if args.learning_rate_schema == 'fixed':
     optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
 else:
-    optimizer = get_diff_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+    optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
 
 if args.fp16:
     try:

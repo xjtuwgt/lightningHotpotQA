@@ -165,6 +165,7 @@ def default_train_parser():
     parser.add_argument('--precision', default=32, type=int) ## 32
     parser.add_argument('--plugins', default='ddp_shared', type=str) ## save memory
     parser.add_argument("--gpu_list", default=None, type=str, help="GPU id list")
+    parser.add_argument("--layer_wise_lr_decay", default=0.9, type=float, help="layer wise decay")
     ##################################
 
     # learning and log
@@ -191,7 +192,7 @@ def default_train_parser():
     parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
     parser.add_argument('--learning_rate_schema', type=str, default='fixed',
-                        help="Log every X updates steps.")
+                        help="Log every X updates steps.") # 'group_decay', 'layer_decay'
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # hyper-parameter

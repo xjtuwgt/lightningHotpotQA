@@ -16,7 +16,7 @@ from csr_mhqa.utils import *
 # from jdmodels.jdHGN import HierarchicalGraphNetwork
 from models.HGN import HierarchicalGraphNetwork
 from hgntransformers import get_linear_schedule_with_warmup
-from utils.jdutils import get_diff_lr_optimizer
+from utils.jdutils import get_lr_with_optimizer
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -138,7 +138,7 @@ else:
 if args.learning_rate_schema == 'fixed':
     optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
 else:
-    optimizer = get_diff_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+    optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
 
 if args.fp16:
     try:

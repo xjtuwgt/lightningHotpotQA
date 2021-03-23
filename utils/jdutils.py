@@ -16,6 +16,7 @@ import logging
 import string
 import re
 from hgntransformers import AdamW
+from csr_mhqa.utils import get_optimizer
 
 
 def log_metrics(mode, metrics):
@@ -192,7 +193,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     return best_metrics, best_threshold, doc_recall_metric
 
 
-def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
+def get_group_decay_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
     "Prepare optimizer and schedule (linear warmup and decay)"
     encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 1}
     assert args.encoder_name_or_path in encoder_layer_number_dict
@@ -243,8 +244,9 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
         return grouped_parameters
 
     optimizer_grouped_parameters = []
+    group_number = len(module_groups)
     for idx, module_group in enumerate(module_groups):
-        lr = learning_rate * (10.0 ** idx)
+        lr = learning_rate * ((0.2 ** (group_number - idx - 1)))
         logging.info('group {} lr = {}'.format(idx, lr))
         grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                       weight_decay=args.weight_decay,
@@ -256,7 +258,7 @@ def get_diff_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
     return optimizer
 
 
-def get_layerwised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
+def get_layer_wised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
     "Prepare optimizer and schedule (linear warmup and decay)"
     encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 1}
     assert args.encoder_name_or_path in encoder_layer_number_dict
@@ -273,7 +275,7 @@ def get_layerwised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
 
     if args.encoder_name_or_path == 'roberta-large':
         encoder_layer_number = encoder_layer_number_dict[args.encoder_name_or_path]
-        encoder_group_number = 2
+        encoder_group_number = encoder_layer_number
         module_groups, encoder_group_number = achieve_module_groups(encoder=hgn_encoder,
                                                                     number_of_layer=encoder_layer_number,
                                                                     number_of_groups=encoder_group_number)
@@ -307,8 +309,9 @@ def get_layerwised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
         return grouped_parameters
 
     optimizer_grouped_parameters = []
+    module_group_num = len(module_groups)
     for idx, module_group in enumerate(module_groups):
-        lr = learning_rate * (10.0 ** idx)
+        lr = learning_rate * (args.learning_rate_decay ** (module_group_num - idx - 1))
         logging.info('group {} lr = {}'.format(idx, lr))
         grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                       weight_decay=args.weight_decay,
@@ -317,4 +320,17 @@ def get_layerwised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=learning_rate,
                       eps=args.adam_epsilon)
+    return optimizer
+
+
+def get_lr_with_optimizer(encoder, model, args):
+    learning_rate = args.learning_rate
+    if args.learning_rate_schema == 'fixed':
+        optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+    elif args.learning_rate_schema == 'group_decay':
+        optimizer = get_group_decay_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+    elif args.learning_rate_schema == 'layer_decay':
+        optimizer = get_layer_wised_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+    else:
+        raise 'Wrong lr setting method = {}'.format(args.learning_rate_schema)
     return optimizer
