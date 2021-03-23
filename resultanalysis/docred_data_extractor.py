@@ -41,7 +41,7 @@ def docred_checker():
         # print(case)
         key = case['_id']
         for key_name, key_value in case.items():
-            if key_name != 'context'
+            if key_name != 'context':
                 print('{}: {}'.format(key_name, key_value))
             else:
                 for ctx_idx, ctx in enumerate(key_value):
