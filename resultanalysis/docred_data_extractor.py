@@ -29,8 +29,8 @@ def add_space(context_list):
 
 def docred_checker():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
-    DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER, 'data_raw/converted_docred_total.json') #converted_docred_total.json
-    Saved_raw_DOCRED_OUTPUT_PROCESSED = join(DATASET_FOLDER, 'data_raw/space_converted_docred_total.json')
+    DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER, 'data_raw/space_converted_docred_total.json') #converted_docred_total.json
+    # Saved_raw_DOCRED_OUTPUT_PROCESSED = join(DATASET_FOLDER, 'data_raw/space_converted_docred_total.json')
     with open(DOCRED_OUTPUT_PROCESSED_raw_file, 'r', encoding='utf-8') as reader:
         raw_data = json.load(reader)
     with open(DOCRED_OUTPUT_PROCESSED_para_file, 'r', encoding='utf-8') as reader:
@@ -39,18 +39,18 @@ def docred_checker():
     examples = []
     for case in tqdm(raw_data):
         # print(case)
-        # key = case['_id']
-        # for key_name, key_value in case.items():
-        #     print('{}: {}'.format(key_name, key_value))
-        context = case['context']
-        space_context = add_space(context_list=context)
-        case['context'] = space_context
-        examples.append(case)
-        print(context)
-        print('-' * 50)
-        print(add_space(context_list=context))
-        print('*' * 100)
+        key = case['_id']
+        for key_name, key_value in case.items():
+            print('{}: {}'.format(key_name, key_value))
+        # context = case['context']
+        # space_context = add_space(context_list=context)
+        # case['context'] = space_context
+        # examples.append(case)
+        # print(context)
+        # print('-' * 50)
+        # print(add_space(context_list=context))
+        # print('*' * 100)
         # print('key {}'.format(key))
         # print(para_data[key])
 
-    json.dump(examples, open(Saved_raw_DOCRED_OUTPUT_PROCESSED, 'w'))
+    # json.dump(examples, open(Saved_raw_DOCRED_OUTPUT_PROCESSED, 'w'))
