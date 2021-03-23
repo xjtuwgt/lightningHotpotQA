@@ -11,5 +11,5 @@ def docred_checker():
         full_data = json.load(reader)
     print('loading {} data from {}'.format(len(full_data), DOCRED_OUTPUT_PROCESSED_fill_file))
     examples = []
-    # for case in tqdm(full_data):
-    #     print(case)
+    for case in tqdm(full_data):
+        print(case)
