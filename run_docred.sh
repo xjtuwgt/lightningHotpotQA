@@ -14,7 +14,7 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 # 0. Build Database from Wikipedia
 
 preprocess() {
-    INPUTS=("space_converted_docred_total.json;docred")
+    INPUTS=("converted_docred_total.json;docred")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -43,11 +43,11 @@ preprocess() {
 #        # Output: ner.json
 #        python docredscripts/2_extract_ner_docred.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
 
-#        echo "3. Dump features for roberta (do_lower_case)"
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE
-#
-#        echo "3. Dump features for roberta (do_lower_case) (SAE graph)"
-#        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE --sae_graph
+        echo "3. Dump features for roberta (do_lower_case)"
+        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE
+
+        echo "3. Dump features for roberta (do_lower_case) (SAE graph)"
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE --sae_graph
 
         echo "3. Dump features for albert (do_lower_case)"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/docred_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker docred --data_type $DATA_TYPE
