@@ -46,9 +46,9 @@ def docred_checker():
         space_context = add_space(context_list=context)
         case['context'] = space_context
         examples.append(case)
-        # print(context)
-        # print('-' * 50)
-        # print(add_space(context_list=context))
+        print(context)
+        print('-' * 50)
+        print(add_space(context_list=context))
         # print('*' * 100)
         # print('key {}'.format(key))
         # print(para_data[key])
