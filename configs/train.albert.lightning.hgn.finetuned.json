@@ -14,7 +14,7 @@
     "trans_drop": 0.2,
     "sent_lambda": 5,
     "eval_batch_size": 8,
-    "learning_rate": 5e-6,
+    "learning_rate": 3e-6,
     "mask_edge_types": "0",
     "learning_rate_schema": "varied",
     "max_entity_num": 60,
