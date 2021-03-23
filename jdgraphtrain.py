@@ -11,6 +11,7 @@ from tensorboardX import SummaryWriter
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
+from utils.jdutils import get_diff_lr_optimizer
 from csr_mhqa.utils import *
 
 from jdmodels.jdHGN import HierarchicalGraphNetwork
@@ -133,7 +134,11 @@ if args.max_steps > 0:
 else:
     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
-optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+if args.learning_rate_schema == 'fixed':
+    optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+else:
+    optimizer = get_diff_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+
 if args.fp16:
     try:
         from apex import amp
@@ -152,6 +157,7 @@ if args.local_rank != -1:
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
                                                       output_device=args.local_rank,
                                                       find_unused_parameters=True)
+
 
 scheduler = get_linear_schedule_with_warmup(optimizer,
                                             num_warmup_steps=args.warmup_steps,
