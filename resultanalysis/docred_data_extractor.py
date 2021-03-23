@@ -53,8 +53,4 @@ def docred_checker():
         # print('key {}'.format(key))
         # print(para_data[key])
 
-
-
-
-
-    # json.dump(examples, open(Saved_raw_DOCRED_OUTPUT_PROCESSED, 'w'))
+    json.dump(examples, open(Saved_raw_DOCRED_OUTPUT_PROCESSED, 'w'))
