@@ -10,12 +10,18 @@ def add_space(context_list):
         sent_list = context[1]
         if idx == 0:
             for sent_idx, sent in enumerate(sent_list):
+                sent = sent.replace(' .', '.')
+                sent = sent.replace(' ,', ',')
+                sent = sent.strip()
                 if sent_idx == 0:
-                    space_sent_list.append(sent)
+                    space_sent_list.append(sent.strip())
                 else:
                     space_sent_list.append(' ' + sent)
         else:
             for sent_idx, sent in enumerate(sent_list):
+                sent = sent.replace(' .', '.')
+                sent = sent.replace(' ,', ',')
+                sent = sent.strip()
                 space_sent_list.append(' ' + sent)
         space_context.append([context[0], space_sent_list])
     return space_context
@@ -46,4 +52,9 @@ def docred_checker():
         # print('*' * 100)
         # print('key {}'.format(key))
         # print(para_data[key])
-    json.dump(examples, open(Saved_raw_DOCRED_OUTPUT_PROCESSED, 'w'))
+
+
+
+
+
+    # json.dump(examples, open(Saved_raw_DOCRED_OUTPUT_PROCESSED, 'w'))
