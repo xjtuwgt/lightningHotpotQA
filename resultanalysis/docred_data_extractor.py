@@ -13,6 +13,8 @@ def docred_checker():
         para_data = json.load(reader)
     print('loading {} data from {}'.format(len(raw_data), DOCRED_OUTPUT_PROCESSED_raw_file))
     examples = []
-    for case in tqdm(para_data):
+    for case in tqdm(raw_data):
         # print(case)
-        print(case)
+        key = case['_id']
+        print('key {}'.format(key))
+        print(para_data[key])
