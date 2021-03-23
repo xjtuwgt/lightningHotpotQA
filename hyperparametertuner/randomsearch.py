@@ -56,7 +56,7 @@ def HypeParameterSpace():
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [5]}
-    devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low']}
+    devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low_sae']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_docred_low_sae']}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [9]} # if SAE, then this number should be 9
