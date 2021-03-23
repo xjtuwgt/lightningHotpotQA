@@ -14,5 +14,5 @@ def docred_checker():
     print('loading {} data from {}'.format(len(raw_data), DOCRED_OUTPUT_PROCESSED_raw_file))
     examples = []
     for case in tqdm(raw_data):
-        print(case)
+        # print(case)
         print(para_data[case['_id']])
