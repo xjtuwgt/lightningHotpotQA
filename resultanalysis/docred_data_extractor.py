@@ -36,6 +36,8 @@ def docred_checker():
         # for key_name, key_value in case.items():
         #     print('{}: {}'.format(key_name, key_value))
         context = case['context']
+        print(context)
+        print('-' * 50)
         print(add_space(context_list=context))
         print('*' * 100)
         # print('key {}'.format(key))
