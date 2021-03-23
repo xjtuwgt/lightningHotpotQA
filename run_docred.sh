@@ -14,7 +14,7 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 # 0. Build Database from Wikipedia
 
 preprocess() {
-    INPUTS=("converted_docred_total.json;docred")
+    INPUTS=("space_converted_docred_total.json;docred")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
