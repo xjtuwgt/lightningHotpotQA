@@ -271,7 +271,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     print('*' * 75)
     print('Ans type conf matrix:\n{}'.format(conf_matrix))
     print('*' * 75)
-    print('Type conf matrix:\n{}'.format(conf_ans_sent_matrix))
+    print('Sent vs ans conf matrix:\n{}'.format(conf_ans_sent_matrix))
     print('*' * 75)
     print("Ans prediction type: {}".format(prediction_ans_type_counter))
     print("Sent prediction type: {}".format(prediction_sent_type_counter))
