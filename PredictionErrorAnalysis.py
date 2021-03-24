@@ -62,7 +62,7 @@ if __name__ == '__main__':
         raw_data = json.load(reader)
 
     # pred_results_file = os.path.join(args.pred_dir, args.model_type, 'pred.json')
-    pred_results_file = os.path.join(args.pred_dir, args.model_name_or_path, 'tmp.json')
+    pred_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.pred_res_name)
     with open(pred_results_file, 'r', encoding='utf-8') as reader:
         pred_data = json.load(reader)
 
