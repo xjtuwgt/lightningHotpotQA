@@ -37,7 +37,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+    print(config_class, model_class, tokenizer_class)
     # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
     # f_type = args.f_type
     #
