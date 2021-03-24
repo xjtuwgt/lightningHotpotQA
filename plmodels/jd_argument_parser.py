@@ -191,7 +191,7 @@ def default_train_parser():
                         help="Log every X updates steps.")
     parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
-    parser.add_argument('--learning_rate_schema', type=str, default='fixed',
+    parser.add_argument('--learning_rate_schema', type=str, default='layer_decay',
                         help="Log every X updates steps.") # 'group_decay', 'layer_decay'
 
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

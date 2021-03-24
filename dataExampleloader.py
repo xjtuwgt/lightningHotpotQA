@@ -45,7 +45,7 @@ encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = HierarchicalGraphNetwork(config=args)
 learning_rate = args.learning_rate
 
-args.learning_rate_schema = 'group_decay'
+args.learning_rate_schema = 'layer_decay'
 
 if args.learning_rate_schema == 'fixed':
     optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
