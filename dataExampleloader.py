@@ -6,7 +6,7 @@ import logging
 from resultanalysis.docred_data_extractor import docred_checker
 from model_envs import MODEL_CLASSES
 from torch.utils.data import DataLoader
-from utils.jdutils import get_lr_with_optimizer
+from utils.jdutils import get_lr_with_optimizer, get_rec_adam_optimizer
 from csr_mhqa.utils import get_optimizer
 from models.HGN import HierarchicalGraphNetwork
 from csr_mhqa.utils import load_encoder_model
@@ -47,10 +47,12 @@ learning_rate = args.learning_rate
 
 args.learning_rate_schema = 'layer_decay'
 
-if args.learning_rate_schema == 'fixed':
-    optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
-else:
-    optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
+# if args.learning_rate_schema == 'fixed':
+#     optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+# else:
+#     optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
+
+optimizer = get_rec_adam_optimizer(pretrained_model=encoder, new_model=model, args=args)
 #
 # #########################################################################
 # # Read Data
