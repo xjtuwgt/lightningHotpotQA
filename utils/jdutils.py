@@ -326,31 +326,22 @@ def get_layer_wised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
 
 def get_lr_with_optimizer(encoder, model, args):
     learning_rate = args.learning_rate
-    if args.learning_rate_schema == 'fixed':
-        optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
-    elif args.learning_rate_schema == 'group_decay':
-        optimizer = get_group_decay_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
-    elif args.learning_rate_schema == 'layer_decay':
-        optimizer = get_layer_wised_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+    if args.optimizer == 'Adam':
+        if args.learning_rate_schema == 'fixed':
+            optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
+        elif args.learning_rate_schema == 'group_decay':
+            optimizer = get_group_decay_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+        elif args.learning_rate_schema == 'layer_decay':
+            optimizer = get_layer_wised_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
+        else:
+            raise 'Wrong lr setting method = {}'.format(args.learning_rate_schema)
     else:
-        raise 'Wrong lr setting method = {}'.format(args.learning_rate_schema)
+        optimizer = get_rec_adam_optimizer(pretrained_model=encoder, new_model=model, args=args)
     return optimizer
 
 def get_rec_adam_optimizer(pretrained_model, new_model, args):
     no_decay = ["bias", "LayerNorm.weight"]
-    if args.optimizer == 'Adam':
-        optimizer_grouped_parameters = [
-            {
-                "params": [p for n, p in new_model.named_parameters() if not any(nd in n for nd in no_decay)],
-                "weight_decay": args.weight_decay,
-            },
-            {
-                "params": [p for n, p in new_model.named_parameters() if any(nd in n for nd in no_decay)],
-                "weight_decay": 0.0
-            },
-        ]
-        optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
-    elif args.optimizer == 'RecAdam':
+    if args.optimizer == 'RecAdam':
         # Prepare for the grouped parameters for RecAdam optimizer.
         # Since the classifier layer is not pretrained, it is not penalized during optimization.
         optimizer_grouped_parameters = [

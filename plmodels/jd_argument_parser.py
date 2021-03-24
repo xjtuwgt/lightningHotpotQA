@@ -195,7 +195,7 @@ def default_train_parser():
                         help="Log every X updates steps.") # 'group_decay', 'layer_decay'
 
     ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument("--optimizer", type=str, default="RecAdam", choices=["Adam", "RecAdam"],
+    parser.add_argument("--optimizer", type=str, default="RecAdam", choices=["Adam", "Adamw", "RecAdam"],
                         help="Choose the optimizer to use. Default RecAdam.")
     parser.add_argument("--recadam_anneal_fun", type=str, default='sigmoid', choices=["sigmoid", "linear", 'constant'],
                         help="the type of annealing function in RecAdam. Default sigmoid")
