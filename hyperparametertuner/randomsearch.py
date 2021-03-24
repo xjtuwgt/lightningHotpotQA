@@ -45,7 +45,8 @@ def rand_search_parameter(space: dict):
         raise ValueError('Training batch mode %s not supported' % para_type)
 
 def HypeParameterSpace():
-    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [5e-6, 1e-5, 2e-5]}
+    learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [3e-5, 5e-5, 1e-4, 1.5e-4]}
+    layer_wise_lr_decay = {'name': 'layer_wise_lr_decay', 'type': 'choice', 'values': [0.7, 0.8, 0.9]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [2]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [4, 5]} ##
@@ -55,19 +56,19 @@ def HypeParameterSpace():
     bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
-    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [5]}
+    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [6]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low_sae']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_long_docred_low_sae']} #
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
     num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [9]} # if SAE, then this number should be 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
-    learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['fixed']}
+    learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['layer_decay']}
     gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,4']} ##'gat:1,2' 'gat:1,4'
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta/roberta-large_hgn']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
     #++++++++++++++++++++++++++++++++++
-    search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num,
+    search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num, layer_wise_lr_decay,
                     gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim, learning_rate_schema, gnn_attn_drop,
                     gnn_drop, num_edge_type, bi_attn_drop, trans_drop, lstm_drop, num_train_epochs, model_type, encoder_name_or_path]
     search_space = dict((x['name'], x) for x in search_space)
