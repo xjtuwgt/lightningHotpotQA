@@ -311,7 +311,7 @@ def get_layer_wised_lr_optimizer(hgn_encoder, hgn_model, args, learning_rate):
     optimizer_grouped_parameters = []
     module_group_num = len(module_groups)
     for idx, module_group in enumerate(module_groups):
-        lr = learning_rate * (args.learning_rate_decay ** (module_group_num - idx - 1))
+        lr = learning_rate * (args.layer_wise_lr_decay ** (module_group_num - idx - 1))
         logging.info('group {} lr = {}'.format(idx, lr))
         grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                       weight_decay=args.weight_decay,
