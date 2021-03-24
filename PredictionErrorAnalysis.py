@@ -37,8 +37,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
+    # config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+    # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
     # f_type = args.f_type
     #
     # cached_examples_file = os.path.join(args.input_dir,
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # print("Loading features from: {}".format(cached_features_file))
     # print("Loading graphs from: {}".format(cached_graphs_file))
 
-    error_analysis(raw_data=raw_data, predictions=pred_data, tokenizer=tokenizer, use_ent_ans=False)
+    error_analysis(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
     # data_analysis(raw_data, example_dict, feature_dict, tokenizer, use_ent_ans=False)
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
