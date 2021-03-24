@@ -19,7 +19,7 @@ def single_task_trial(search_space: dict, rand_seed=42):
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.graph.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + '.as' + str(parameter_dict['gradient_accumulation_steps']) + \
-               '.lr' + str(parameter_dict['learning_rate']) +'.lrs' + str(parameter_dict['learning_rate_schema']) + '.gnn' + str(parameter_dict['gnn'].replace(':','').replace(',', '.')) +\
+               '.lr' + str(parameter_dict['learning_rate']) +'.lrs' + str(parameter_dict['learning_rate_schema']) + '.lrd' + str(parameter_dict['layer_wise_lr_decay']) + '.gnn' + str(parameter_dict['gnn'].replace(':','').replace(',', '.')) +\
                '.data' +str(parameter_dict['daug_type']) + '.seed' +str(rand_seed)
     parameter_dict['exp_name'] = exp_name
     return parameter_dict
@@ -94,7 +94,8 @@ def generate_random_search_bash(task_num, seed=42):
     for i in range(task_num):
         rand_hype_dict = single_task_trial(search_space, seed+i)
         config_json_file_name = 'train.graph.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
-                                +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.' + rand_hype_dict['learning_rate_schema'] + '.' + \
+                                +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.lrs' + rand_hype_dict['learning_rate_schema'] + '.lrd' + \
+                                rand_hype_dict['layer_wise_lr_decay'] + \
                                 rand_hype_dict['gnn'].replace(',', '.').replace(':', '') \
                                 + '.seed' + str(rand_hype_dict['seed']) + '.json'
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
