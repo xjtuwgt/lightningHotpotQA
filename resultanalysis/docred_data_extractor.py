@@ -26,6 +26,35 @@ def add_space(context_list):
         space_context.append([context[0], space_sent_list])
     return space_context
 
+def docred_refiner():
+    DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
+    DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER,
+                                            'data_raw/converted_docred_total.json')  # converted_docred_total.json
+    REFINEd_DOCRED_OUTPUT_PROCESSED = join(DATASET_FOLDER, 'data_raw/refined_converted_docred_total.json')
+    with open(DOCRED_OUTPUT_PROCESSED_raw_file, 'r', encoding='utf-8') as reader:
+        raw_data = json.load(reader)
+    with open(DOCRED_OUTPUT_PROCESSED_para_file, 'r', encoding='utf-8') as reader:
+        para_data = json.load(reader)
+    print('loading {} data from {}'.format(len(raw_data), DOCRED_OUTPUT_PROCESSED_raw_file))
+    examples = []
+    for case in tqdm(raw_data):
+        # print(case)
+        key = case['_id']
+        for key_name, key_value in case.items():
+            if key_name != 'context':
+                print('{}: {}'.format(key_name, key_value))
+            else:
+                for ctx_idx, ctx in enumerate(key_value):
+                    print('{}: {}'.format(ctx_idx + 1, ctx))
+        # context = case['context']
+        # space_context = add_space(context_list=context)
+        # case['context'] = space_context
+        # examples.append(case)
+        # print(context)
+        # print('-' * 50)
+        # print(add_space(context_list=context))
+        print('*' * 100)
+
 
 def docred_checker():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')

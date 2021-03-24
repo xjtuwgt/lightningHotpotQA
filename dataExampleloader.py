@@ -3,7 +3,7 @@ import sys
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper, HotpotDataset
 import logging
-from resultanalysis.docred_data_extractor import docred_checker
+from resultanalysis.docred_data_extractor import docred_checker, docred_refiner
 from model_envs import MODEL_CLASSES
 from torch.utils.data import DataLoader
 from utils.jdutils import get_lr_with_optimizer, get_rec_adam_optimizer
@@ -18,34 +18,34 @@ logger = logging.getLogger(__name__)
 #########################################################################
 # Initialize arguments
 ##########################################################################
-parser = default_train_parser()
-
-logger.info("IN CMD MODE")
-args_config_provided = parser.parse_args(sys.argv[1:])
-if args_config_provided.config_file is not None:
-    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
-else:
-    argv = sys.argv[1:]
-args = parser.parse_args(argv)
-#########################################################################
-for key, value in vars(args).items():
-    print('Hype-parameter\t{} = {}'.format(key, value))
-#########################################################################
-args = complete_default_train_parser(args)
-
-logger.info('-' * 100)
-logger.info('Input Argument Information')
-logger.info('-' * 100)
-args_dict = vars(args)
-for a in args_dict:
-    logger.info('%-28s  %s' % (a, args_dict[a]))
-
-
-encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-model = HierarchicalGraphNetwork(config=args)
-learning_rate = args.learning_rate
-
-args.learning_rate_schema = 'layer_decay'
+# parser = default_train_parser()
+#
+# logger.info("IN CMD MODE")
+# args_config_provided = parser.parse_args(sys.argv[1:])
+# if args_config_provided.config_file is not None:
+#     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+# else:
+#     argv = sys.argv[1:]
+# args = parser.parse_args(argv)
+# #########################################################################
+# for key, value in vars(args).items():
+#     print('Hype-parameter\t{} = {}'.format(key, value))
+# #########################################################################
+# args = complete_default_train_parser(args)
+#
+# logger.info('-' * 100)
+# logger.info('Input Argument Information')
+# logger.info('-' * 100)
+# args_dict = vars(args)
+# for a in args_dict:
+#     logger.info('%-28s  %s' % (a, args_dict[a]))
+#
+#
+# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
+# model = HierarchicalGraphNetwork(config=args)
+# learning_rate = args.learning_rate
+#
+# args.learning_rate_schema = 'layer_decay'
 
 # if args.learning_rate_schema == 'fixed':
 #     optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
@@ -115,3 +115,4 @@ helper = DataHelper(gz=True, config=args)
 #     # print(row['ids'])
 
 # docred_checker()
+docred_refiner()
