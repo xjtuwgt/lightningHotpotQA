@@ -17,6 +17,7 @@ import string
 import re
 from hgntransformers import AdamW
 from csr_mhqa.utils import get_optimizer
+from utils.optimizerutils import RecAdam
 
 
 def log_metrics(mode, metrics):
@@ -333,4 +334,63 @@ def get_lr_with_optimizer(encoder, model, args):
         optimizer = get_layer_wised_lr_optimizer(hgn_encoder=encoder, hgn_model=model, args=args, learning_rate=learning_rate)
     else:
         raise 'Wrong lr setting method = {}'.format(args.learning_rate_schema)
+    return optimizer
+
+def get_rec_adam_optimizer(pretrained_model, new_model, args):
+    no_decay = ["bias", "LayerNorm.weight"]
+    if args.optimizer == 'Adam':
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in new_model.named_parameters() if not any(nd in n for nd in no_decay)],
+                "weight_decay": args.weight_decay,
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if any(nd in n for nd in no_decay)],
+                "weight_decay": 0.0
+            },
+        ]
+        optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
+    elif args.optimizer == 'RecAdam':
+        # Prepare for the grouped parameters for RecAdam optimizer.
+        # Since the classifier layer is not pretrained, it is not penalized during optimization.
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           not any(nd in n for nd in no_decay) and args.model_type in n],
+                "weight_decay": args.weight_decay,
+                "anneal_w": args.recadam_anneal_w,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    not any(nd in p_n for nd in no_decay) and args.model_type in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           not any(nd in n for nd in no_decay) and args.model_type not in n],
+                "weight_decay": args.weight_decay,
+                "anneal_w": 0.0,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    not any(nd in p_n for nd in no_decay) and args.model_type not in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           any(nd in n for nd in no_decay) and args.model_type in n],
+                "weight_decay": 0.0,
+                "anneal_w": args.recadam_anneal_w,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    any(nd in p_n for nd in no_decay) and args.model_type in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           any(nd in n for nd in no_decay) and args.model_type not in n],
+                "weight_decay": 0.0,
+                "anneal_w": 0.0,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    any(nd in p_n for nd in no_decay) and args.model_type not in p_n]
+            }
+        ]
+        optimizer = RecAdam(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon,
+                            anneal_fun=args.recadam_anneal_fun, anneal_k=args.recadam_anneal_k,
+                            anneal_t0=args.recadam_anneal_t0, pretrain_cof=args.recadam_pretrain_cof)
+    else:
+        raise 'error oprimizer {}'.format(args.optimizer)
+
     return optimizer

@@ -194,6 +194,17 @@ def default_train_parser():
     parser.add_argument('--learning_rate_schema', type=str, default='layer_decay',
                         help="Log every X updates steps.") # 'group_decay', 'layer_decay'
 
+    ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    parser.add_argument("--optimizer", type=str, default="RecAdam", choices=["Adam", "RecAdam"],
+                        help="Choose the optimizer to use. Default RecAdam.")
+    parser.add_argument("--recadam_anneal_fun", type=str, default='sigmoid', choices=["sigmoid", "linear", 'constant'],
+                        help="the type of annealing function in RecAdam. Default sigmoid")
+    parser.add_argument("--recadam_anneal_k", type=float, default=0.5, help="k for the annealing function in RecAdam.")
+    parser.add_argument("--recadam_anneal_t0", type=int, default=250, help="t0 for the annealing function in RecAdam.")
+    parser.add_argument("--recadam_anneal_w", type=float, default=1.0,
+                        help="Weight for the annealing function in RecAdam. Default 1.0.")
+    parser.add_argument("--recadam_pretrain_cof", type=float, default=5000.0,
+                        help="Coefficient of the quadratic penalty in RecAdam. Default 5000.0.")
     #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # hyper-parameter
     parser.add_argument('--q_update', type=boolean_string, default='False', help='Whether update query')
