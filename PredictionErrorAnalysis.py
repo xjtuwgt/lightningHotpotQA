@@ -56,7 +56,9 @@ if __name__ == '__main__':
     # example_dict = {example.qas_id: example for example in examples}
     # feature_dict = {feature.qas_id: feature for feature in features}
 
-    with open(args.raw_data, 'r', encoding='utf-8') as reader:
+    raw_data_file = os.path.join(args.input_dir, args.raw_data)
+
+    with open(raw_data_file, 'r', encoding='utf-8') as reader:
         raw_data = json.load(reader)
 
     # pred_results_file = os.path.join(args.pred_dir, args.model_type, 'pred.json')
