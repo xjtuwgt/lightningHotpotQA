@@ -57,7 +57,7 @@ optimizer = get_rec_adam_optimizer(pretrained_model=encoder, new_model=model, ar
 # #########################################################################
 # # Read Data
 # ##########################################################################
-# helper = DataHelper(gz=True, config=args)
+helper = DataHelper(gz=True, config=args)
 #
 # args.daug_type = 'hgn_long_docred_low'
 # args.devf_type = 'hgn_low'
