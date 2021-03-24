@@ -134,10 +134,7 @@ if args.max_steps > 0:
 else:
     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
-if args.learning_rate_schema == 'fixed':
-    optimizer = get_optimizer(encoder, model, args, learning_rate, remove_pooler=False)
-else:
-    optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
+optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
 
 if args.fp16:
     try:

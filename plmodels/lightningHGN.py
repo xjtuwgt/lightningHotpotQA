@@ -19,6 +19,7 @@ from argparse import Namespace
 from utils.jdutils import log_metrics
 from plmodels.pldata_processing import HotpotDataset, DataHelper
 import logging
+from utils.optimizerutils import RecAdam
 
 
 MODEL_CLASSES = {
@@ -237,10 +238,15 @@ class lightningHGN(pl.LightningModule):
 
     def configure_optimizers(self):
         # "Prepare optimizer and schedule (linear warmup and decay)"
-        if self.hparams.learning_rate_schema == 'fixed':
-            return self.fixed_learning_rate_optimizers()
+        if self.hparams.optimizer == 'Adam':
+            if self.hparams.learning_rate_schema == 'fixed':
+                return self.fixed_learning_rate_optimizers()
+            elif self.hparamself.learning_rate_schema == 'layer_decay':
+                return self.layer_wise_learning_rate_optimizer()
+            else:
+                raise 'Wrong lr setting method = {}'.format(self.hparams.learning_rate_schema)
         else:
-            return self.layer_wise_learning_rate_optimizer()
+            return self.rec_adam_learning_optimizer()
 
     def fixed_learning_rate_optimizers(self):
         "Prepare optimizer and schedule (linear warmup and decay)"
@@ -282,11 +288,13 @@ class lightningHGN(pl.LightningModule):
                 groups.append(
                     [*encoder.encoder.layer[(group_id * layer_num_each_group):((group_id + 1) * layer_num_each_group)]])
             return groups, number_of_divided_groups
+
         if self.hparams.encoder_name_or_path == 'roberta-large':
             encoder_layer_number = encoder_layer_number_dict[self.hparams.encoder_name_or_path]
-            encoder_group_number = 2
-            module_groups, encoder_group_number = achieve_module_groups(encoder=self.encoder, number_of_layer=encoder_layer_number,
-                                                  number_of_groups=encoder_group_number)
+            encoder_group_number = encoder_layer_number
+            module_groups, encoder_group_number = achieve_module_groups(encoder=self.encoder,
+                                                                        number_of_layer=encoder_layer_number,
+                                                                        number_of_groups=encoder_group_number)
             module_groups.append([self.model])
             assert len(module_groups) == encoder_group_number + 1
         elif self.hparams.encoder_name_or_path == 'albert-xxlarge-v2':
@@ -318,14 +326,15 @@ class lightningHGN(pl.LightningModule):
 
         optimizer_grouped_parameters = []
         for idx, module_group in enumerate(module_groups):
-            lr = self.hparams.learning_rate * (10.0**idx)
+            lr = self.hparams.learning_rate * (10.0 ** idx)
             logging.info('group {} lr = {}'.format(idx, lr))
             grouped_parameters = achieve_parameter_groups(module_group=module_group,
                                                           weight_decay=self.hparams.weight_decay,
                                                           lr=lr)
             optimizer_grouped_parameters += grouped_parameters
 
-        optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
+        optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate,
+                          eps=self.hparams.adam_epsilon)
         scheduler = get_linear_schedule_with_warmup(
             optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
         )
@@ -335,3 +344,156 @@ class lightningHGN(pl.LightningModule):
             'frequency': 1
         }
         return [optimizer], [scheduler]
+
+    def rec_adam_learning_optimizer(self):
+        no_decay = ["bias", "LayerNorm.weight"]
+        new_model = self.model
+        args = self.hparams
+        pretrained_model = self.encoder
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           not any(nd in n for nd in no_decay) and args.model_type in n],
+                "weight_decay": args.weight_decay,
+                "anneal_w": args.recadam_anneal_w,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    not any(nd in p_n for nd in no_decay) and args.model_type in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           not any(nd in n for nd in no_decay) and args.model_type not in n],
+                "weight_decay": args.weight_decay,
+                "anneal_w": 0.0,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    not any(nd in p_n for nd in no_decay) and args.model_type not in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           any(nd in n for nd in no_decay) and args.model_type in n],
+                "weight_decay": 0.0,
+                "anneal_w": args.recadam_anneal_w,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    any(nd in p_n for nd in no_decay) and args.model_type in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           any(nd in n for nd in no_decay) and args.model_type not in n],
+                "weight_decay": 0.0,
+                "anneal_w": 0.0,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    any(nd in p_n for nd in no_decay) and args.model_type not in p_n]
+            }
+        ]
+        optimizer = RecAdam(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon,
+                            anneal_fun=args.recadam_anneal_fun, anneal_k=args.recadam_anneal_k,
+                            anneal_t0=args.recadam_anneal_t0, pretrain_cof=args.recadam_pretrain_cof)
+        scheduler = get_linear_schedule_with_warmup(
+            optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
+        )
+        scheduler = {
+            'scheduler': scheduler,
+            'interval': 'step',
+            'frequency': 1
+        }
+        return [optimizer], [scheduler]
+
+    # def configure_optimizers(self):
+    #     # "Prepare optimizer and schedule (linear warmup and decay)"
+    #     if self.hparams.learning_rate_schema == 'fixed':
+    #         return self.fixed_learning_rate_optimizers()
+    #     else:
+    #         return self.layer_wise_learning_rate_optimizer()
+    #
+    # def fixed_learning_rate_optimizers(self):
+    #     "Prepare optimizer and schedule (linear warmup and decay)"
+    #     no_decay = ["bias", "LayerNorm.weight"]
+    #     optimizer_grouped_parameters = [
+    #         {
+    #             "params": [p for n, p in self.named_parameters() if
+    #                        (p.requires_grad) and (not any(nd in n for nd in no_decay))],
+    #             "weight_decay": self.hparams.weight_decay,
+    #         },
+    #         {
+    #             "params": [p for n, p in self.named_parameters() if
+    #                        (p.requires_grad) and (any(nd in n for nd in no_decay))],
+    #             "weight_decay": 0.0,
+    #         }
+    #     ]
+    #     optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
+    #     scheduler = get_linear_schedule_with_warmup(
+    #         optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
+    #     )
+    #     scheduler = {
+    #         'scheduler': scheduler,
+    #         'interval': 'step',
+    #         'frequency': 1
+    #     }
+    #     return [optimizer], [scheduler]
+    #
+    # def layer_wise_learning_rate_optimizer(self):
+    #     "Prepare optimizer and schedule (linear warmup and decay)"
+    #     encoder_layer_number_dict = {'roberta-large': 24, 'albert-xxlarge-v2': 1}
+    #     assert self.hparams.encoder_name_or_path in encoder_layer_number_dict
+    #
+    #     def achieve_module_groups(encoder, number_of_layer, number_of_groups):
+    #         layer_num_each_group = number_of_layer // number_of_groups
+    #         number_of_divided_groups = number_of_groups + 1 if number_of_layer % number_of_groups > 0 else number_of_groups
+    #         groups = []
+    #         groups.append([encoder.embeddings, *encoder.encoder.layer[:layer_num_each_group]])
+    #         for group_id in range(1, number_of_divided_groups):
+    #             groups.append(
+    #                 [*encoder.encoder.layer[(group_id * layer_num_each_group):((group_id + 1) * layer_num_each_group)]])
+    #         return groups, number_of_divided_groups
+    #     if self.hparams.encoder_name_or_path == 'roberta-large':
+    #         encoder_layer_number = encoder_layer_number_dict[self.hparams.encoder_name_or_path]
+    #         encoder_group_number = 2
+    #         module_groups, encoder_group_number = achieve_module_groups(encoder=self.encoder, number_of_layer=encoder_layer_number,
+    #                                               number_of_groups=encoder_group_number)
+    #         module_groups.append([self.model])
+    #         assert len(module_groups) == encoder_group_number + 1
+    #     elif self.hparams.encoder_name_or_path == 'albert-xxlarge-v2':
+    #         module_groups = []
+    #         module_groups.append([self.encoder])
+    #         module_groups.append([self.model])
+    #         assert len(module_groups) == 2
+    #     else:
+    #         raise 'Not supported {}'.format(self.hparams.encoder_name_or_path)
+    #
+    #     def achieve_parameter_groups(module_group, weight_decay, lr):
+    #         named_parameters = []
+    #         no_decay = ["bias", "LayerNorm.weight"]
+    #         for module in module_group:
+    #             named_parameters += module.named_parameters()
+    #         grouped_parameters = [
+    #             {
+    #                 "params": [p for n, p in named_parameters if
+    #                            (p.requires_grad) and (not any(nd in n for nd in no_decay))],
+    #                 "weight_decay": weight_decay, 'lr': lr
+    #             },
+    #             {
+    #                 "params": [p for n, p in named_parameters if
+    #                            (p.requires_grad) and (any(nd in n for nd in no_decay))],
+    #                 "weight_decay": 0.0, 'lr': lr
+    #             }
+    #         ]
+    #         return grouped_parameters
+    #
+    #     optimizer_grouped_parameters = []
+    #     for idx, module_group in enumerate(module_groups):
+    #         lr = self.hparams.learning_rate * (10.0**idx)
+    #         logging.info('group {} lr = {}'.format(idx, lr))
+    #         grouped_parameters = achieve_parameter_groups(module_group=module_group,
+    #                                                       weight_decay=self.hparams.weight_decay,
+    #                                                       lr=lr)
+    #         optimizer_grouped_parameters += grouped_parameters
+    #
+    #     optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
+    #     scheduler = get_linear_schedule_with_warmup(
+    #         optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
+    #     )
+    #     scheduler = {
+    #         'scheduler': scheduler,
+    #         'interval': 'step',
+    #         'frequency': 1
+    #     }
+    #     return [optimizer], [scheduler]
