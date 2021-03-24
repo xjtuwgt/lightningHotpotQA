@@ -23,12 +23,10 @@ if __name__ == '__main__':
 
     # Other parameters
     parser.add_argument("--model_type", default="roberta", type=str)
-    parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
-                        help="Path to pre-trained model")
-    parser.add_argument("--at_model_name_or_path", default=None, type=str, required=True,
+    parser.add_argument("--model_name_or_path", default='train.roberta.bs2.lr1e-05.datahgn_low.seed304', type=str,
                         help="Path to pre-trained model")
 
-    parser.add_argument("--pred_res_name", default=None, type=str, help="Prediction result")
+    parser.add_argument("--pred_res_name", default='pred.epoch_5.step_33918.json', type=str, help="Prediction result")
 
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
@@ -41,16 +39,16 @@ if __name__ == '__main__':
 
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
-    f_type = args.f_type
-
-    cached_examples_file = os.path.join(args.input_dir,
-                                        get_cached_filename('{}_examples'.format(f_type), args))
-    cached_features_file = os.path.join(args.input_dir,
-                                        get_cached_filename('{}_features'.format(f_type),  args))
-    cached_graphs_file = os.path.join(args.input_dir,
-                                     get_cached_filename('{}_graphs'.format(f_type), args))
-
-    examples = pickle.load(gzip.open(cached_examples_file, 'rb'))
+    # f_type = args.f_type
+    #
+    # cached_examples_file = os.path.join(args.input_dir,
+    #                                     get_cached_filename('{}_examples'.format(f_type), args))
+    # cached_features_file = os.path.join(args.input_dir,
+    #                                     get_cached_filename('{}_features'.format(f_type),  args))
+    # cached_graphs_file = os.path.join(args.input_dir,
+    #                                  get_cached_filename('{}_graphs'.format(f_type), args))
+    #
+    # examples = pickle.load(gzip.open(cached_examples_file, 'rb'))
     # features = pickle.load(gzip.open(cached_features_file, 'rb'))
     # graph_dict = pickle.load(gzip.open(cached_graphs_file, 'rb'))
     #
@@ -61,15 +59,15 @@ if __name__ == '__main__':
         raw_data = json.load(reader)
 
     # pred_results_file = os.path.join(args.pred_dir, args.model_type, 'pred.json')
-    pred_results_file = os.path.join(args.pred_dir, args.at_model_name_or_path, 'tmp.json')
+    pred_results_file = os.path.join(args.pred_dir, args.model_name_or_path, 'tmp.json')
     with open(pred_results_file, 'r', encoding='utf-8') as reader:
         pred_data = json.load(reader)
 
     print('Loading predictions from: {}'.format(pred_results_file))
     print('Loading raw data from: {}'.format(args.raw_data))
-    print("Loading examples from: {}".format(cached_examples_file))
-    print("Loading features from: {}".format(cached_features_file))
-    print("Loading graphs from: {}".format(cached_graphs_file))
+    # print("Loading examples from: {}".format(cached_examples_file))
+    # print("Loading features from: {}".format(cached_features_file))
+    # print("Loading graphs from: {}".format(cached_graphs_file))
 
     error_analysis(raw_data=raw_data, predictions=pred_data, tokenizer=tokenizer, use_ent_ans=False)
     # data_analysis(raw_data, example_dict, feature_dict, tokenizer, use_ent_ans=False)
