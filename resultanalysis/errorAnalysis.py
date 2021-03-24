@@ -210,7 +210,8 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         sp_golds = [(x[0], x[1]) for x in sp_golds]
         sp_para_golds = list(set([_[0] for _ in sp_golds]))
         ##+++++++++++
-        sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
+        # sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
+        # sp_predictions
         # print(len(set(sp_predictions)))
         ##+++++++++++
         sp_sent_type = set_comparison(prediction_list=sp_predictions, true_list=sp_golds)
