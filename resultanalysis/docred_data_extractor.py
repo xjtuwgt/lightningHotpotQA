@@ -27,19 +27,19 @@ def add_space(context_list):
     return space_context
 
 def find_answer(answer, sents):
-    for sent in sents:
+    for s_idx, sent in enumerate(sents):
         if answer in sent:
-            return True
-    return False
+            return s_idx
+    return -1
 
 def find_in_answer_context(answer, context):
     founds = []
     for ctx_idx, ctx in enumerate(context):
-        is_answer_found = find_answer(answer=answer, sents=ctx[1])
-        if is_answer_found:
+        ans_idx = find_answer(answer=answer, sents=ctx[1])
+        if ans_idx >= 0:
             founds.append(1)
             if ctx_idx == 0:
-                print('{} : {}'.format(ctx_idx, len(ctx[1])))
+                print('{} : {}: {}'.format(ctx_idx, ans_idx, len(ctx[1])))
         else:
             founds.append(0)
     ans_found_idx = -1
