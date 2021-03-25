@@ -62,14 +62,17 @@ def docred_refiner():
     examples = []
     answer_position = []
     answer_not_found = []
+    no_answer_found = 0
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
         answer = case['answer'].strip()
         context = case['context']
         ans_find_idx = find_in_answer_context(answer=answer, context=context)
-        if ans_find_idx < 0:
-            print(key)
+        if ans_find_idx >= 0:
+            answer_position.append(ans_find_idx)
+        else:
+            no_answer_found = no_answer_found + 1
         # for ctx_idx, ctx in enumerate(context):
         #     is_answer_found = find_answer(answer=answer, sents=ctx[1])
         #     if is_answer_found:
