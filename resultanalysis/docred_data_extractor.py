@@ -94,21 +94,21 @@ def docred_refiner():
         fine_tune_flag = fintuner_in_answer_context(answer=answer, supporting_facts=support_facts, context=context)
         if fine_tune_flag:
             tunable_count = tunable_count + 1
-        # ans_find_idx = find_in_answer_context(answer=answer, context=context)
-        #         # if ans_find_idx >= 0:
-        #         #     answer_position.append(ans_find_idx)
-        #         # else:
-        #         #     no_answer_found = no_answer_found + 1
+        ans_find_idx = find_in_answer_context(answer=answer, context=context)
+        if ans_find_idx >= 0:
+            answer_position.append(ans_find_idx)
+        else:
+            no_answer_found = no_answer_found + 1
 
-        # if ans_find_idx == 0 and len(context[0][1]) > 1:
-        #     first_one_sent = first_one_sent + 1
-        # for ctx_idx, ctx in enumerate(context):
-        #     is_answer_found = find_answer(answer=answer, sents=ctx[1])
-        #     if is_answer_found:
-        #         answer_position.append(ctx_idx)
-        #         break
-        #     else:
-        #         continue
+        if ans_find_idx == 0 and len(context[0][1]) > 1:
+            first_one_sent = first_one_sent + 1
+        for ctx_idx, ctx in enumerate(context):
+            is_answer_found = find_answer(answer=answer, sents=ctx[1])
+            if is_answer_found:
+                answer_position.append(ctx_idx)
+                break
+            else:
+                continue
         # for key_name, key_value in case.items():
         #     if key_name != 'context':
         #         print('{}: {}'.format(key_name, key_value))
