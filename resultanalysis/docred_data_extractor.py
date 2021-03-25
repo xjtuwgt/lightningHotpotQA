@@ -66,7 +66,7 @@ def docred_refiner():
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
-        answer = case['answer'].strip()
+        answer = case['answer']
         context = case['context']
         ans_find_idx = find_in_answer_context(answer=answer, context=context)
         if ans_find_idx >= 0:
