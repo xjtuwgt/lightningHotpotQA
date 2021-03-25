@@ -32,6 +32,11 @@ def find_answer(answer, sents):
             return True
     return False
 
+def find_in_answer_context(answer, context):
+    is_answer_found = []
+    for ctx_idx, ctx in enumerate(context):
+        is_answer_found = find_answer(answer=answer, sents=ctx[1])
+
 def docred_refiner():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
     DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER,
@@ -44,10 +49,11 @@ def docred_refiner():
     print('loading {} data from {}'.format(len(raw_data), DOCRED_OUTPUT_PROCESSED_raw_file))
     examples = []
     answer_position = []
+    answer_not_found = []
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
-        answer = case['answer']
+        answer = case['answer'].strip()
         context = case['context']
         for ctx_idx, ctx in enumerate(context):
             is_answer_found = find_answer(answer=answer, sents=ctx[1])
