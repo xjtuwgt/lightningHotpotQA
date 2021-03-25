@@ -71,13 +71,15 @@ def docred_refiner():
         key = case['_id']
         answer = case['answer']
         context = case['context']
-        if len(context[0][1]) == 1:
-            first_one_sent = first_one_sent + 1
+
         ans_find_idx = find_in_answer_context(answer=answer, context=context)
         if ans_find_idx >= 0:
             answer_position.append(ans_find_idx)
         else:
             no_answer_found = no_answer_found + 1
+
+        if ans_find_idx >=0 and len(context[0][1]) == 1:
+            first_one_sent = first_one_sent + 1
         # for ctx_idx, ctx in enumerate(context):
         #     is_answer_found = find_answer(answer=answer, sents=ctx[1])
         #     if is_answer_found:
