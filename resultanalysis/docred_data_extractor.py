@@ -71,7 +71,7 @@ def docred_refiner():
         key = case['_id']
         answer = case['answer']
         context = case['context']
-        title = context[0][0].split(' ')[:-2]
+        title = context[0][0][:-2].strip()
         print(title)
 
         ans_find_idx = find_in_answer_context(answer=answer, context=context)
