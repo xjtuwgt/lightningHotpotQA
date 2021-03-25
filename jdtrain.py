@@ -15,7 +15,7 @@ from csr_mhqa.utils import *
 
 # from jdmodels.jdHGN import HierarchicalGraphNetwork
 from models.HGN import HierarchicalGraphNetwork
-from hgntransformers import get_linear_schedule_with_warmup
+from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 from utils.jdutils import get_lr_with_optimizer
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -156,9 +156,20 @@ if args.local_rank != -1:
                                                       output_device=args.local_rank,
                                                       find_unused_parameters=True)
 
-scheduler = get_linear_schedule_with_warmup(optimizer,
+if args.lr_scheduler == 'linear':
+    scheduler = get_linear_schedule_with_warmup(optimizer,
                                             num_warmup_steps=args.warmup_steps,
                                             num_training_steps=t_total)
+elif args.lr_scheduler == 'cosine':
+    scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                num_warmup_steps=args.warmup_steps,
+                                                num_training_steps=t_total)
+elif args.lr_scheduler == 'cosine_restart':
+    scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                   num_warmup_steps=args.warmup_steps,
+                                                                   num_training_steps=t_total)
+else:
+    raise '{} is not supported'.format(args.lr_scheduler)
 
 #########################################################################
 # launch training
