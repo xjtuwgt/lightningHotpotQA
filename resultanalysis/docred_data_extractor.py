@@ -52,6 +52,7 @@ def docred_refiner():
         for ctx_idx, ctx in enumerate(context):
             is_answer_found = find_answer(answer=answer, sents=ctx[1])
             if is_answer_found:
+                answer_position.append(ctx_idx)
                 break
         # for key_name, key_value in case.items():
         #     if key_name != 'context':
