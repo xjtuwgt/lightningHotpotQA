@@ -6,8 +6,6 @@ import numpy as np
 from os.path import join
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
-from torch.utils.data.distributed import DistributedSampler
 
 from envs import DATASET_FOLDER
 
@@ -319,9 +317,6 @@ class DataHelper:
 
     @property
     def hotpot_train_dataloader(self) -> DataLoader:
-
-
-
         train_data = self.Dataset(*self.load_train(),
                                  para_limit=self.config.max_para_num,
                                  sent_limit=self.config.max_sent_num,
@@ -330,13 +325,10 @@ class DataHelper:
                                  num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
         ####++++++++++++
-        train_sampler = RandomSampler(train_data) if self.config.local_rank == -1 else DistributedSampler(train_data)
-        ####++++++++++++
         dataloader = DataLoader(dataset=train_data, batch_size=self.config.batch_size,
             shuffle=True,
             drop_last=True,
             pin_memory=True,
-            sampler=train_sampler,
             num_workers=max(1, self.config.cpu_num // 2),
             collate_fn=HotpotDataset.collate_fn)
         return dataloader
