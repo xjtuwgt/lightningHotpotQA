@@ -127,9 +127,9 @@ def docred_refiner():
     print('first one sent = {}'.format(first_one_sent))
     print('tunable count = {}'.format(tunable_count))
     print('title number = {}'.format(len(title_dict)))
-    sorted_title_dict = sorted(title_dict.items(), key=lambda kv: kv[1])
-    for key, value in sorted_title_dict:
-        print('{}: {}'.format(key, value))
+    # sorted_title_dict = sorted(title_dict.items(), key=lambda kv: kv[1])
+    # for key, value in sorted_title_dict:
+    #     print('{}: {}'.format(key, value))
 
 
 def docred_checker():
