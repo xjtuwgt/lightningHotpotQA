@@ -70,6 +70,7 @@ def docred_refiner():
         print('*' * 100)
     print(len(raw_data))
     print(len(answer_position))
+    print(sum(answer_position))
 
 
 def docred_checker():
