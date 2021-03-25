@@ -65,11 +65,14 @@ def docred_refiner():
     answer_position = []
     answer_not_found = []
     no_answer_found = 0
+    first_one_sent = 0
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
         answer = case['answer']
         context = case['context']
+        if len(context[0][1]) == 1:
+            first_one_sent = first_one_sent + 1
         ans_find_idx = find_in_answer_context(answer=answer, context=context)
         if ans_find_idx >= 0:
             answer_position.append(ans_find_idx)
@@ -100,6 +103,7 @@ def docred_refiner():
     print(len(answer_position))
     print(sum(answer_position))
     print('no answer found = {}'.format(no_answer_found))
+    print('first one sent = {}'.format(first_one_sent))
 
 
 def docred_checker():
