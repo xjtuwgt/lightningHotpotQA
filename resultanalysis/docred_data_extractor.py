@@ -38,6 +38,7 @@ def find_in_answer_context(answer, context):
         is_answer_found = find_answer(answer=answer, sents=ctx[1])
         if is_answer_found:
             founds.append(1)
+            print('{} : {}'.format(ctx_idx, len(ctx[1])))
         else:
             founds.append(0)
     ans_found_idx = -1
