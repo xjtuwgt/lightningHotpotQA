@@ -114,8 +114,8 @@ def docred_refiner():
     print('no answer found = {}'.format(no_answer_found))
     print('first one sent = {}'.format(first_one_sent))
     print('title number = {}'.format(len(title_dict)))
-    sorted_title_dict = collections.OrderedDict(title_dict)
-    for key, value in sorted_title_dict.items():
+    sorted_title_dict = sorted(title_dict.items(), key=lambda kv: kv[1])
+    for key, value in sorted_title_dict:
         print('{}: {}'.format(key, value))
 
 
