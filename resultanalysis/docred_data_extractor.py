@@ -54,6 +54,8 @@ def docred_refiner():
             if is_answer_found:
                 answer_position.append(ctx_idx)
                 break
+            else:
+                continue
         # for key_name, key_value in case.items():
         #     if key_name != 'context':
         #         print('{}: {}'.format(key_name, key_value))
