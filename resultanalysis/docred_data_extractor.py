@@ -41,7 +41,7 @@ def find_in_answer_context(answer, context):
         else:
             founds.append(0)
     ans_found_idx = -1
-    assert sum(founds) < 2
+    assert sum(founds) <= 2
     if sum(founds) > 0:
         if founds[0] == 1:
             ans_found_idx = 0
