@@ -67,7 +67,7 @@ def HypeParameterSpace():
     gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,4']} ##'gat:1,2' 'gat:1,4'
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['roberta/roberta-large_hgn']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['roberta-large']}
-    optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['Adam']}
+    optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['RecAdam']} #RecAdam
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num, layer_wise_lr_decay,
                     gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim, learning_rate_schema, gnn_attn_drop, optimizer,
