@@ -38,8 +38,8 @@ def find_in_answer_context(answer, context):
         ans_idx = find_answer(answer=answer, sents=ctx[1])
         if ans_idx >= 0:
             founds.append(1)
-            if ctx_idx == 0:
-                print('{} : {}: {}'.format(ctx_idx, ans_idx, len(ctx[1])))
+            # if ctx_idx == 0:
+            #     print('{} : {}: {}'.format(ctx_idx, ans_idx, len(ctx[1])))
         else:
             founds.append(0)
     ans_found_idx = -1
@@ -113,6 +113,8 @@ def docred_refiner():
     print('no answer found = {}'.format(no_answer_found))
     print('first one sent = {}'.format(first_one_sent))
     print('title number = {}'.format(len(title_dict)))
+    for key, value in title_dict.items():
+        print('{}: {}'.format(key, value))
 
 
 def docred_checker():
