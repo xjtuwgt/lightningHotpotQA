@@ -26,6 +26,12 @@ def add_space(context_list):
         space_context.append([context[0], space_sent_list])
     return space_context
 
+def find_answer(answer, sents):
+    for sent in sents:
+        if answer in sent:
+            return True
+    return False
+
 def docred_refiner():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
     DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER,
@@ -44,10 +50,9 @@ def docred_refiner():
         answer = case['answer']
         context = case['context']
         for ctx_idx, ctx in enumerate(context):
-            for s_idx, sent in enumerate(ctx[1]):
-                if answer in sent:
-                    answer_position.append(ctx_idx)
-                    break
+            is_answer_found = find_answer(answer=answer, sents=ctx[1])
+            if is_answer_found:
+                break
         # for key_name, key_value in case.items():
         #     if key_name != 'context':
         #         print('{}: {}'.format(key_name, key_value))
