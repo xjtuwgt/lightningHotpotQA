@@ -97,6 +97,7 @@ def docred_refiner():
     print(len(raw_data))
     print(len(answer_position))
     print(sum(answer_position))
+    print('no answer found = {}'.format(no_answer_found))
 
 
 def docred_checker():
