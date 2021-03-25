@@ -33,9 +33,21 @@ def find_answer(answer, sents):
     return False
 
 def find_in_answer_context(answer, context):
-    is_answer_found = []
+    founds = []
     for ctx_idx, ctx in enumerate(context):
         is_answer_found = find_answer(answer=answer, sents=ctx[1])
+        if is_answer_found:
+            founds.append(1)
+        else:
+            founds.append(0)
+    ans_found_idx = -1
+    assert sum(founds) < 2
+    if sum(founds) > 0:
+        if founds[0] == 1:
+            ans_found_idx = 0
+        else:
+            ans_found_idx = 1
+    return ans_found_idx
 
 def docred_refiner():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
@@ -55,13 +67,16 @@ def docred_refiner():
         key = case['_id']
         answer = case['answer'].strip()
         context = case['context']
-        for ctx_idx, ctx in enumerate(context):
-            is_answer_found = find_answer(answer=answer, sents=ctx[1])
-            if is_answer_found:
-                answer_position.append(ctx_idx)
-                break
-            else:
-                continue
+        ans_find_idx = find_in_answer_context(answer=answer, context=context)
+        if ans_find_idx < 0:
+            print(key)
+        # for ctx_idx, ctx in enumerate(context):
+        #     is_answer_found = find_answer(answer=answer, sents=ctx[1])
+        #     if is_answer_found:
+        #         answer_position.append(ctx_idx)
+        #         break
+        #     else:
+        #         continue
         # for key_name, key_value in case.items():
         #     if key_name != 'context':
         #         print('{}: {}'.format(key_name, key_value))
@@ -75,7 +90,7 @@ def docred_refiner():
         # print(context)
         # print('-' * 50)
         # print(add_space(context_list=context))
-        print('*' * 100)
+        # print('*' * 100)
     print(len(raw_data))
     print(len(answer_position))
     print(sum(answer_position))
