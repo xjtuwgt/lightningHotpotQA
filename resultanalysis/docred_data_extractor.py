@@ -55,11 +55,11 @@ def find_in_answer_context(answer, context):
 def fintuner_in_answer_context(answer, context, supporting_facts):
     ans_idx = find_answer(answer=answer, sents=context[0][1])
     support_facts = set([(x[0], x[1]) for x in supporting_facts])
-    if ans_idx > 0:
-        if (context[0][0], ans_idx) not in support_facts:
-            print(ans_idx, len(context[0][1]))
-            print(supporting_facts)
-            return True
+    if ans_idx > 0 and len(support_facts) > 1:
+        # if (context[0][0], ans_idx) not in support_facts:
+        #     print(ans_idx, len(context[0][1]))
+        #     print(supporting_facts)
+        return True
     return False
 
 def docred_refiner():
