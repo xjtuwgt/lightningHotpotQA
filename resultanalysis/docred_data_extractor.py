@@ -56,6 +56,7 @@ def fintuner_in_answer_context(answer, context, supporting_facts):
     ans_idx = find_answer(answer=answer, sents=context[0][1])
     if ans_idx > 0:
         if (context[0][0], ans_idx) not in supporting_facts:
+            print(ans_idx, len(context[0][1]))
             return True
     return False
 
