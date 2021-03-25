@@ -78,7 +78,7 @@ def docred_refiner():
         else:
             no_answer_found = no_answer_found + 1
 
-        if ans_find_idx >=0 and len(context[0][1]) == 1:
+        if ans_find_idx == 0 and len(context[0][1]) == 1:
             first_one_sent = first_one_sent + 1
         # for ctx_idx, ctx in enumerate(context):
         #     is_answer_found = find_answer(answer=answer, sents=ctx[1])
