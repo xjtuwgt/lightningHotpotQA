@@ -37,15 +37,23 @@ def docred_refiner():
         para_data = json.load(reader)
     print('loading {} data from {}'.format(len(raw_data), DOCRED_OUTPUT_PROCESSED_raw_file))
     examples = []
+    answer_position = []
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
-        for key_name, key_value in case.items():
-            if key_name != 'context':
-                print('{}: {}'.format(key_name, key_value))
-            else:
-                for ctx_idx, ctx in enumerate(key_value):
-                    print('{}: {}'.format(ctx_idx + 1, ctx))
+        answer = case['answer']
+        context = case['context']
+        for ctx_idx, ctx in enumerate(context):
+            for s_idx, sent in enumerate(ctx[1]):
+                if answer in sent:
+                    answer_position.append(ctx_idx)
+                    break
+        # for key_name, key_value in case.items():
+        #     if key_name != 'context':
+        #         print('{}: {}'.format(key_name, key_value))
+        #     else:
+        #         for ctx_idx, ctx in enumerate(key_value):
+        #             print('{}: {}'.format(ctx_idx + 1, ctx))
         # context = case['context']
         # space_context = add_space(context_list=context)
         # case['context'] = space_context
@@ -54,6 +62,8 @@ def docred_refiner():
         # print('-' * 50)
         # print(add_space(context_list=context))
         print('*' * 100)
+    print(len(raw_data))
+    print(len(answer_position))
 
 
 def docred_checker():
