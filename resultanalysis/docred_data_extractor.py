@@ -52,6 +52,13 @@ def find_in_answer_context(answer, context):
             ans_found_idx = 1
     return ans_found_idx
 
+def fintuner_in_answer_context(answer, context, supporting_facts):
+    ans_idx = find_answer(answer=answer, sents=context[0][1])
+    if ans_idx > 0:
+        if (context[0][0], ans_idx) not in supporting_facts:
+            return True
+    return False
+
 def docred_refiner():
     DOCRED_OUTPUT_PROCESSED_para_file = join(DATASET_FOLDER, 'data_processed/docred/docred_multihop_para.json')
     DOCRED_OUTPUT_PROCESSED_raw_file = join(DATASET_FOLDER,
@@ -68,25 +75,30 @@ def docred_refiner():
     no_answer_found = 0
     first_one_sent = 0
     title_dict = {}
+    tunable_count = 0
     for case in tqdm(raw_data):
         # print(case)
         key = case['_id']
         answer = case['answer']
         context = case['context']
+        support_facts = case['supporting_facts']
         title = context[0][0][:-2].strip()
         if title not in title_dict:
             title_dict[title] = 1
         else:
             title_dict[title] = title_dict[title] + 1
 
-        ans_find_idx = find_in_answer_context(answer=answer, context=context)
-        if ans_find_idx >= 0:
-            answer_position.append(ans_find_idx)
-        else:
-            no_answer_found = no_answer_found + 1
+        fine_tune_flag = fintuner_in_answer_context(answer=answer, supporting_facts=support_facts, context=context)
+        if fine_tune_flag:
+            tunable_count = tunable_count + 1
+        # ans_find_idx = find_in_answer_context(answer=answer, context=context)
+        #         # if ans_find_idx >= 0:
+        #         #     answer_position.append(ans_find_idx)
+        #         # else:
+        #         #     no_answer_found = no_answer_found + 1
 
-        if ans_find_idx == 0 and len(context[0][1]) > 1:
-            first_one_sent = first_one_sent + 1
+        # if ans_find_idx == 0 and len(context[0][1]) > 1:
+        #     first_one_sent = first_one_sent + 1
         # for ctx_idx, ctx in enumerate(context):
         #     is_answer_found = find_answer(answer=answer, sents=ctx[1])
         #     if is_answer_found:
@@ -113,6 +125,7 @@ def docred_refiner():
     print(sum(answer_position))
     print('no answer found = {}'.format(no_answer_found))
     print('first one sent = {}'.format(first_one_sent))
+    print('tunable count = {}'.format(tunable_count))
     print('title number = {}'.format(len(title_dict)))
     sorted_title_dict = sorted(title_dict.items(), key=lambda kv: kv[1])
     for key, value in sorted_title_dict:
