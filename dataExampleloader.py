@@ -115,4 +115,4 @@ logger = logging.getLogger(__name__)
 #     # print(row['ids'])
 
 # docred_checker()
-docred_refiner()
+# docred_refiner()
