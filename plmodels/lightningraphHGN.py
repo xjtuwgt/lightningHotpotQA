@@ -4,7 +4,7 @@ from os.path import join
 import numpy as np
 import json
 from torch.utils.data import DataLoader
-from hgntransformers import AdamW, get_linear_schedule_with_warmup
+from hgntransformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 from hgntransformers import (BertConfig, BertTokenizer, BertModel,
                              RobertaConfig, RobertaTokenizer, RobertaModel,
                              AlbertConfig, AlbertTokenizer, AlbertModel)
@@ -269,9 +269,25 @@ class lightningHGN(pl.LightningModule):
             }
         ]
         optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate, eps=self.hparams.adam_epsilon)
-        scheduler = get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
-        )
+        # scheduler = get_linear_schedule_with_warmup(
+        #     optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
+        # )
+
+        if self.hparams.lr_scheduler == 'linear':
+            scheduler = get_linear_schedule_with_warmup(optimizer,
+                                                        num_warmup_steps=self.hparams.warmup_steps,
+                                                        num_training_steps=self.total_steps)
+        elif self.hparams.lr_scheduler == 'cosine':
+            scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                        num_warmup_steps=self.hparams.warmup_steps,
+                                                        num_training_steps=self.total_steps)
+        elif self.hparams.lr_scheduler == 'cosine_restart':
+            scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                           num_warmup_steps=self.hparams.warmup_steps,
+                                                                           num_training_steps=self.total_steps)
+        else:
+            raise '{} is not supported'.format(self.hparams.lr_scheduler)
+
         scheduler = {
             'scheduler': scheduler,
             'interval': 'step',
@@ -340,9 +356,25 @@ class lightningHGN(pl.LightningModule):
 
         optimizer = AdamW(optimizer_grouped_parameters, lr=self.hparams.learning_rate,
                           eps=self.hparams.adam_epsilon)
-        scheduler = get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
-        )
+        # scheduler = get_linear_schedule_with_warmup(
+        #     optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
+        # )
+
+        if self.hparams.lr_scheduler == 'linear':
+            scheduler = get_linear_schedule_with_warmup(optimizer,
+                                                        num_warmup_steps=self.hparams.warmup_steps,
+                                                        num_training_steps=self.total_steps)
+        elif self.hparams.lr_scheduler == 'cosine':
+            scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                        num_warmup_steps=self.hparams.warmup_steps,
+                                                        num_training_steps=self.total_steps)
+        elif self.hparams.lr_scheduler == 'cosine_restart':
+            scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                           num_warmup_steps=self.hparams.warmup_steps,
+                                                                           num_training_steps=self.total_steps)
+        else:
+            raise '{} is not supported'.format(self.hparams.lr_scheduler)
+
         scheduler = {
             'scheduler': scheduler,
             'interval': 'step',
@@ -392,9 +424,24 @@ class lightningHGN(pl.LightningModule):
         optimizer = RecAdam(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon,
                             anneal_fun=args.recadam_anneal_fun, anneal_k=args.recadam_anneal_k,
                             anneal_t0=args.recadam_anneal_t0, pretrain_cof=args.recadam_pretrain_cof)
-        scheduler = get_linear_schedule_with_warmup(
-            optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
-        )
+
+        # scheduler = get_linear_schedule_with_warmup(
+        #     optimizer, num_warmup_steps=self.hparams.warmup_steps, num_training_steps=self.total_steps
+        # )
+        if self.hparams.lr_scheduler == 'linear':
+            scheduler = get_linear_schedule_with_warmup(optimizer,
+                                                        num_warmup_steps=self.hparams.warmup_steps,
+                                                        num_training_steps=self.total_steps)
+        elif self.hparams.lr_scheduler == 'cosine':
+            scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                        num_warmup_steps=self.hparams.warmup_steps,
+                                                        num_training_steps=self.total_steps)
+        elif self.hparams.lr_scheduler == 'cosine_restart':
+            scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                           num_warmup_steps=self.hparams.warmup_steps,
+                                                                           num_training_steps=self.total_steps)
+        else:
+            raise '{} is not supported'.format(self.hparams.lr_scheduler)
         scheduler = {
             'scheduler': scheduler,
             'interval': 'step',

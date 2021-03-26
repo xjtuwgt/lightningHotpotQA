@@ -1,30 +1,22 @@
-from transformers import ElectraModel, ElectraConfig
-from transformers import ElectraTokenizer, ElectraModel
-from transformers import ElectraTokenizer, ElectraForQuestionAnswering
+from transformers import ElectraForPreTraining, ElectraTokenizerFast, ElectraForMaskedLM
+from transformers.file_utils import hf_bucket_url, cached_path
 import torch
 
-electra_large_model_name = 'google/electra-large-discriminator'
-
-tokenizer = ElectraTokenizer.from_pretrained(electra_large_model_name)
-model = ElectraModel.from_pretrained(electra_large_model_name, return_dict=True)
-for name, param in model.named_parameters():
-    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-
-inputs = tokenizer("Hello, my dog is cute", return_tensors="pt")
-outputs = model(**inputs)
-
-print(outputs)
-
-
-# tokenizer = ElectraTokenizer.from_pretrained('google/electra-small-discriminator')
-# model = ElectraForQuestionAnswering.from_pretrained('google/electra-small-discriminator', return_dict=True)
+discriminator = ElectraForMaskedLM.from_pretrained("google/electra-large-discriminator")
+tokenizer = ElectraTokenizerFast.from_pretrained("google/electra-large-discriminator")
+print(tokenizer)
 #
-# question, text = "Who was Jim Henson?", "Jim Henson was a nice puppet"
-# inputs = tokenizer(question, text, return_tensors='pt')
-# start_positions = torch.tensor([1])
-# end_positions = torch.tensor([3])
+# sentence = "The quick brown fox jumps over the lazy dog"
+# fake_sentence = "The quick brown fox fake over the lazy dog"
 #
-# outputs = model(**inputs, start_positions=start_positions, end_positions=end_positions)
-# loss = outputs.loss
-# start_scores = outputs.start_logits
-# end_scores = outputs.end_logits
+# fake_tokens = tokenizer.tokenize(fake_sentence)
+# fake_inputs = tokenizer.encode(fake_sentence, return_tensors="pt")
+# discriminator_outputs = discriminator(fake_inputs)
+# predictions = torch.round((torch.sign(discriminator_outputs[0]) + 1) / 2)
+#
+# [print("%7s" % token, end="") for token in fake_tokens]
+#
+# [print("%7s" % int(prediction), end="") for prediction in predictions.tolist()]
+
+import os
+
