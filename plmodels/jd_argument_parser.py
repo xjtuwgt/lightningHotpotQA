@@ -197,7 +197,7 @@ def default_train_parser():
     ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument("--optimizer", type=str, default="Adam", choices=["Adam", "RecAdam"],
                         help="Choose the optimizer to use. Default RecAdam.")
-    parser.add_argument("--lr_scheduler", type=str, default="linear", choices=["linear", "cosine", "cosine_restart"],
+    parser.add_argument("--lr_scheduler", type=str, default="cosine", choices=["linear", "cosine", "cosine_restart"],
                         help="Choose the optimizer to use. Default RecAdam.")
     parser.add_argument("--recadam_anneal_fun", type=str, default='sigmoid', choices=["sigmoid", "linear", 'constant'],
                         help="the type of annealing function in RecAdam. Default sigmoid")
