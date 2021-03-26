@@ -15,32 +15,32 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
                     datefmt='%m/%d/%Y %H:%M:%S',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
-#########################################################################
+########################################################################
 # Initialize arguments
-##########################################################################
-# parser = default_train_parser()
-#
-# logger.info("IN CMD MODE")
-# args_config_provided = parser.parse_args(sys.argv[1:])
-# if args_config_provided.config_file is not None:
-#     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
-# else:
-#     argv = sys.argv[1:]
-# args = parser.parse_args(argv)
-# #########################################################################
-# for key, value in vars(args).items():
-#     print('Hype-parameter\t{} = {}'.format(key, value))
-# #########################################################################
-# args = complete_default_train_parser(args)
-#
-# logger.info('-' * 100)
-# logger.info('Input Argument Information')
-# logger.info('-' * 100)
-# args_dict = vars(args)
-# for a in args_dict:
-#     logger.info('%-28s  %s' % (a, args_dict[a]))
-#
-#
+#########################################################################
+parser = default_train_parser()
+
+logger.info("IN CMD MODE")
+args_config_provided = parser.parse_args(sys.argv[1:])
+if args_config_provided.config_file is not None:
+    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+else:
+    argv = sys.argv[1:]
+args = parser.parse_args(argv)
+#########################################################################
+for key, value in vars(args).items():
+    print('Hype-parameter\t{} = {}'.format(key, value))
+#########################################################################
+args = complete_default_train_parser(args)
+
+logger.info('-' * 100)
+logger.info('Input Argument Information')
+logger.info('-' * 100)
+args_dict = vars(args)
+for a in args_dict:
+    logger.info('%-28s  %s' % (a, args_dict[a]))
+
+
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
 # learning_rate = args.learning_rate
@@ -57,17 +57,17 @@ logger = logging.getLogger(__name__)
 # # #########################################################################
 # # # Read Data
 # # ##########################################################################
-# helper = DataHelper(gz=True, config=args)
-#
-# args.daug_type = 'hgn_long_docred_low'
-# args.devf_type = 'hgn_low'
-#
-# # Set datasets
+helper = DataHelper(gz=True, config=args)
+
+args.daug_type = 'hgn_low'
+args.devf_type = 'hgn_low'
+
+# Set datasets
 # train_dataloader = helper.train_loader
-# dev_example_dict = helper.dev_example_dict
-# dev_feature_dict = helper.dev_feature_dict
-# dev_dataloader = helper.dev_loader
-# dev_loader = helper.hotpot_val_dataloader
+dev_example_dict = helper.dev_example_dict
+dev_feature_dict = helper.dev_feature_dict
+dev_dataloader = helper.dev_loader
+dev_loader = helper.hotpot_val_dataloader
 #
 # # _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 # # tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
