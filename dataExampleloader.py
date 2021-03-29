@@ -83,7 +83,7 @@ for batch_idx, batch in enumerate(dev_loader):
         if key not in {'ids'}:
             print(key, value.shape, value.device, value.dtype)
         if key == 'segment_idxs':
-            print(value.sum(dim=0))
+            print(value.sum(dim=-1))
         # print(type(value))
         # print(key, value)
     break
