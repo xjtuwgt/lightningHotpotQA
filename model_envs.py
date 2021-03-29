@@ -1,10 +1,10 @@
-# from transformers import T5ForConditionalGeneration, AutoTokenizer, T5Config
 from hgntransformers import (BertConfig, BertTokenizer, BertModel,
                              RobertaConfig, RobertaTokenizer, RobertaModel,
                              AlbertConfig, AlbertTokenizer, AlbertModel)
 from hgntransformers import (BertModel, XLNetModel, RobertaModel)
-
-# from transformers import (ElectraConfig, ElectraTokenizer, ElectraModel, ElectraForMaskedLM)
+from electramodels.modeling_electra import ElectraModel
+from electramodels.tokenization_electra import ElectraTokenizer
+from electramodels.configuration_electra import ElectraConfig
 
 
 ############################################################
@@ -17,6 +17,6 @@ MODEL_CLASSES = {
     'bert': (BertConfig, BertModel, BertTokenizer),
     'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
     'albert': (AlbertConfig, AlbertModel, AlbertTokenizer),
-    # 'electra': (ElectraConfig, ElectraForMaskedLM, ElectraTokenizer)
+    'electra': (ElectraConfig, ElectraModel, ElectraTokenizer)
     # 'unifiedqa': (T5Config, T5ForConditionalGeneration, AutoTokenizer)
 }
