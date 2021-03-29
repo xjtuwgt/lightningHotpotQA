@@ -694,7 +694,7 @@ class AutoModelForSequenceClassification(object):
 
         raise ValueError(
             "Unrecognized model identifier in {}. Should contains one of "
-            "'bert', 'xlnet', 'xlm-roberta', 'xlm', 'roberta', 'distilbert', 'camembert', 'albert'".format(
+            "'bert', 'xlnet', 'xlm-roberta', 'xlm', , 'roberta', 'distilbert', 'camembert', 'albert'".format(
                 pretrained_model_name_or_path
             )
         )

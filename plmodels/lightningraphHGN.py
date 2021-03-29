@@ -99,7 +99,7 @@ class lightningHGN(pl.LightningModule):
     def forward(self, batch):
         inputs = {'input_ids':      batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
-                  'token_type_ids': batch['segment_idxs'] if self.hparams.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
+                  'token_type_ids': batch['segment_idxs'] if self.hparams.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
         batch['context_encoding'] = self.encoder(**inputs)[0]
         batch['context_mask'] = batch['context_mask'].float().to(batch['context_encoding'].device)
         start, end, q_type, paras, sents, ents, yp1, yp2 = self.model(batch, return_yp=True)

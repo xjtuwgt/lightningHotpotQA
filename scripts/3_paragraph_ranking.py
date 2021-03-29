@@ -61,7 +61,7 @@ def evaluate(args, model, tokenizer, prefix=""):
         with torch.no_grad():
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
-                      'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
+                      'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet', 'electra'] else None,  # XLM don't use segment_ids
                       'labels':         batch[3]}
             outputs = model(**inputs)
             tmp_eval_loss, logits = outputs[:2]

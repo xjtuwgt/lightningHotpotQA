@@ -126,7 +126,7 @@ def eval_model(args, encoder, model, dataloader, example_dict, feature_dict, pre
         with torch.no_grad():
             inputs = {'input_ids':      batch['context_idxs'],
                       'attention_mask': batch['context_mask'],
-                      'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
+                      'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
             outputs = encoder(**inputs)
 
             batch['context_encoding'] = outputs[0]
