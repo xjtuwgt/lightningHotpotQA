@@ -2,7 +2,7 @@ from hgntransformers import (BertConfig, BertTokenizer, BertModel,
                              RobertaConfig, RobertaTokenizer, RobertaModel,
                              AlbertConfig, AlbertTokenizer, AlbertModel)
 from hgntransformers import (BertModel, XLNetModel, RobertaModel)
-from electramodels.modeling_electra import ElectraModel
+from electramodels.modeling_electra import ElectraModel, ElectraForPreTraining
 from electramodels.tokenization_electra import ElectraTokenizer
 from electramodels.configuration_electra import ElectraConfig
 
