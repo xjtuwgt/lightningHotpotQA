@@ -77,16 +77,16 @@ dev_loader = helper.hotpot_val_dataloader
 #     ids = batch['ids']
 #     print(batch_idx)
 #
-for batch_idx, batch in enumerate(dev_loader):
-    ids = batch['ids']
-    for key, value in batch.items():
-        if key not in {'ids'}:
-            print(key, value.shape, value.device, value.dtype)
-        if key == 'segment_idxs':
-            print(value.sum(dim=-1))
-        # print(type(value))
-        # print(key, value)
-    break
+# for batch_idx, batch in enumerate(dev_loader):
+#     ids = batch['ids']
+#     for key, value in batch.items():
+#         if key not in {'ids'}:
+#             print(key, value.shape, value.device, value.dtype)
+#         if key == 'segment_idxs':
+#             print(value.sum(dim=-1))
+#         # print(type(value))
+#         # print(key, value)
+#     break
 #
 #     # for idx, id in enumerate(ids):
 #     #     print(dev_example_dict[id].question_tokens)
