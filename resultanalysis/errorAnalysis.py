@@ -277,7 +277,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
 
     print(len(pred_sent_type_list), len(pred_ans_type_list), len(pred_doc_type_list))
 
-    supp_sent_compare_type = ['less', 'more', 'equal']
+    supp_sent_compare_type = ['equal', 'less', 'more']
     result_types = ['em', 'sub_of_gold', 'super_of_gold', 'no_over_lap', 'others']
     supp_sent_comp_dict = dict([(y, x) for x, y in enumerate(supp_sent_compare_type)])
     supp_sent_type_dict = dict([(y, x) for x, y in enumerate(result_types)])
