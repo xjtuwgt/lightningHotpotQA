@@ -104,9 +104,12 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             para_mask_i = support_para_mask_np[i]
             para_scores_i[para_mask_i == 0] = -100
             para_sorted_idxes = np.argsort(para_scores_i)[::-1]
-            top2_para_idxes = para_sorted_idxes[:2]
-            top2_pred_paras = set([para_names_i[_] for _ in top2_para_idxes])
-            top2_para_total_sent_num_i = len([x for x in sent_names_i if x[0] in top2_pred_paras])
+            topk_para_idxes = para_sorted_idxes[:2]
+            topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
+            print(sent_names_i)
+            print(topk_pred_paras)
+            print('*' * 45)
+            top2_para_total_sent_num_i = len([x for x in sent_names_i if x[0] in topk_pred_paras])
             ##+++++++++++++++++++++++++
 
             for j in range(predict_support_np.shape[1]):
@@ -117,7 +120,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     if predict_support_np[i, j] > thresholds[thresh_i]:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
                     # +++++++++++++++++++++++++++
-                    temp = [x for x in cur_sp_pred[thresh_i] if x[0] in top2_pred_paras]
+                    temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
                     cur_sp_pred[thresh_i] = temp
                     if len(cur_sp_pred[thresh_i]) < 2:
                         cur_sp_pred[thresh_i].extend(topk_pred_sents)
