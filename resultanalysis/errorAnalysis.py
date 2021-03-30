@@ -278,7 +278,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     print(len(pred_sent_type_list), len(pred_ans_type_list), len(pred_doc_type_list))
 
     supp_sent_compare_type = ['less', 'more', 'equal']
-    conf_supp_sent_matrix = confusion_matrix(pred_sent_type_list, supp_sent_compare_type)
+    conf_supp_sent_matrix = confusion_matrix(pred_sent_type_list, pred_sent_count_list)
     print('Sent Type vs Sent Count conf matrix:\n{}'.format(conf_supp_sent_matrix))
 
     result_types = ['em', 'sub_of_gold', 'super_of_gold', 'no_over_lap', 'others']
