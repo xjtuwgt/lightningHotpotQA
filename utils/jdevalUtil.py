@@ -127,10 +127,10 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     if predict_support_np[i, j] > thresholds[thresh_i]:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
                     # +++++++++++++++++++++++++++
-                    temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
-                    cur_sp_pred[thresh_i] = temp
-                    if len(cur_sp_pred[thresh_i]) < 2:
-                        cur_sp_pred[thresh_i].extend(topk_pred_sents)
+                    # temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
+                    # cur_sp_pred[thresh_i] = temp
+                    # if len(cur_sp_pred[thresh_i]) < 2:
+                    #     cur_sp_pred[thresh_i].extend(topk_pred_sents)
                     # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
                     # # +++++++++++++++++++++++++++
 
@@ -166,3 +166,58 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
 
     print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
     return best_metrics, best_threshold
+
+
+def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
+    answer2sent_dict, answer2para_dict = {}, {}
+    answer_dict, answer_type_dict = {}, {}
+    answer_type_prob_dict = {}
+
+    q_type = np.argmax(q_type_prob, 1)
+
+    def get_ans_from_pos(qid, y1, y2):
+        feature = features[qid]
+        example = examples[qid]
+
+        tok_to_orig_map = feature.token_to_orig_map
+        orig_all_tokens = example.question_tokens + example.doc_tokens
+
+        final_text = " "
+        if y1 < len(tok_to_orig_map) and y2 < len(tok_to_orig_map):
+            orig_tok_start = tok_to_orig_map[y1]
+            orig_tok_end = tok_to_orig_map[y2]
+
+            ques_tok_len = len(example.question_tokens)
+            if orig_tok_start < ques_tok_len and orig_tok_end < ques_tok_len:
+                ques_start_idx = example.question_word_to_char_idx[orig_tok_start]
+                ques_end_idx = example.question_word_to_char_idx[orig_tok_end] + len(
+                    example.question_tokens[orig_tok_end])
+                final_text = example.question_text[ques_start_idx:ques_end_idx]
+            else:
+                orig_tok_start -= len(example.question_tokens)
+                orig_tok_end -= len(example.question_tokens)
+                ctx_start_idx = example.ctx_word_to_char_idx[orig_tok_start]
+                ctx_end_idx = example.ctx_word_to_char_idx[orig_tok_end] + len(example.doc_tokens[orig_tok_end])
+                final_text = example.ctx_text[example.ctx_word_to_char_idx[orig_tok_start]:example.ctx_word_to_char_idx[
+                                                                                               orig_tok_end] + len(
+                    example.doc_tokens[orig_tok_end])]
+
+        return final_text
+
+    for i, qid in enumerate(ids):
+        feature = features[qid]
+        answer_text = ''
+        if q_type[i] in [0, 3]:
+            answer_text = get_ans_from_pos(qid, y1[i], y2[i])
+        elif q_type[i] == 1:
+            answer_text = 'yes'
+        elif q_type[i] == 2:
+            answer_text = 'no'
+        else:
+            raise ValueError("question type error")
+
+        answer_dict[qid] = answer_text
+        answer_type_prob_dict[qid] = q_type_prob[i].tolist()
+        answer_type_dict[qid] = q_type[i].item()
+
+    return answer_dict, answer_type_dict, answer_type_prob_dict
