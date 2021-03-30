@@ -81,7 +81,7 @@ if encoder_path is not None:
     # encoder.load_state_dict(torch.load(encoder_path))
 if model_path is not None:
     y = torch.load(model_path)
-    print(y)
+    # print(y)
     # model.load_state_dict(torch.load(model_path))
 
 encoder.to(args.device)
