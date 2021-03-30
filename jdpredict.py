@@ -7,7 +7,7 @@ from os.path import join
 import torch
 
 # from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
+from plmodels.jd_argument_parser import default_dev_parser, complete_default_dev_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import load_encoder_model, eval_model
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 #########################################################################
 # Initialize arguments
 ##########################################################################
-parser = default_train_parser()
+parser = default_dev_parser()
 
 logger.info("IN CMD MODE")
 args_config_provided = parser.parse_args(sys.argv[1:])
@@ -33,7 +33,7 @@ if args_config_provided.config_file is not None:
 else:
     argv = sys.argv[1:]
 args = parser.parse_args(argv)
-args = complete_default_train_parser(args)
+args = complete_default_dev_parser(args)
 
 logger.info('-' * 100)
 logger.info('Input Argument Information')
@@ -41,7 +41,6 @@ logger.info('-' * 100)
 args_dict = vars(args)
 for a in args_dict:
     logger.info('%-28s  %s' % (a, args_dict[a]))
-
 
 #########################################################################
 # Read Data
