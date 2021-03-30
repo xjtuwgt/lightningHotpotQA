@@ -285,9 +285,11 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     print(len(pred_sent_type_list), len(pred_sent_count_list))
     conf_supp_sent_matrix = np.zeros((len(supp_sent_compare_type), len(result_types)), dtype=np.long)
     for idx in range(len(pred_sent_type_list)):
-        comp_type = pred_sent_count_list[idx]
-        supp_sent_type = pred_sent_type_list[idx]
-        conf_supp_sent_matrix[supp_sent_comp_dict[comp_type]][supp_sent_type_dict[supp_sent_type]] += 1
+        comp_type_i = pred_sent_count_list[idx]
+        supp_sent_type_i = pred_sent_type_list[idx]
+        comp_idx_i = supp_sent_comp_dict[comp_type_i]
+        supp_sent_idx_i = supp_sent_type_dict[supp_sent_type_i]
+        conf_supp_sent_matrix[comp_idx_i][supp_sent_idx_i] += 1
     print('Sent Type vs Sent Count conf matrix:\n{}'.format(conf_supp_sent_matrix))
 
 
