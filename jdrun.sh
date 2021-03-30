@@ -3,13 +3,12 @@
 # DEFINE data related (please make changes according to your configurations)
 # DATA ROOT folder where you put data files
 DATA_ROOT=./data/
-
+ELECTRA_ROOT=google
 
 PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,preprocess,train" or "preprocess" only
 
 # define precached BERT MODEL path
 ROBERTA_LARGE=$DATA_ROOT/models/pretrained/roberta-large
-ELECTRA_ROOT=google
 
 # Add current pwd to PYTHONPATH
 export DIR_TMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
