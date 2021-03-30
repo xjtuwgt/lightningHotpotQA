@@ -102,9 +102,9 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             print('+' * 100)
             if total_sent_num_i != sent_mask_i.sum():
                 cut_sentence_count = cut_sentence_count + 1
-                print(sent_names_i)
-                print(total_sent_num_i)
-                print(sent_mask_i.sum())
+                # print(sent_names_i)
+                # print(total_sent_num_i)
+                # print(sent_mask_i.sum())
             assert total_sent_num_i >= sent_mask_i.sum()
             # for temp_i in range(total_sent_num_i):
             #     print('{}\t{:.4f}'.format(sent_names_i[temp_i], sent_scores_i[temp_i]))
