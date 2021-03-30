@@ -4,7 +4,7 @@
     "encoder_name_or_path": "roberta-large",
     "encoder_name": "encoder_4.step_11316.pkl",
     "model_name": "model_4.step_11316.pkl",
-    "devf_type": "hgn_low_sae",
+    "devf_type": "long_low_sae",
     "gnn": "gat:1,4",
     "num_edge_type": 9,
     "fp16": "True",
