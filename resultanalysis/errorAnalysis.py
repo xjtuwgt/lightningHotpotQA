@@ -195,6 +195,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     pred_ans_type_list = []
     pred_sent_type_list = []
     pred_doc_type_list = []
+
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for row in raw_data:
@@ -212,7 +213,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         ##+++++++++++
         # sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
         # sp_predictions
-        print("Supp len\t{}\t{}".format(len(set(sp_golds)), len(set(sp_predictions))))
+        print("{}\t{}\t{}".format(qid, len(set(sp_golds)), len(set(sp_predictions))))
         ##+++++++++++
         sp_sent_type = set_comparison(prediction_list=sp_predictions, true_list=sp_golds)
         ###+++++++++
