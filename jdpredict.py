@@ -75,6 +75,9 @@ model = HierarchicalGraphNetwork(config=args)
 if encoder_path is not None:
     x = torch.load(encoder_path)
     print(x)
+    for name, param in encoder.named_parameters():
+        print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+    print('*' * 75)
     # encoder.load_state_dict(torch.load(encoder_path))
 if model_path is not None:
     y = torch.load(model_path)
