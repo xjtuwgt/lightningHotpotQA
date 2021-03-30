@@ -44,6 +44,9 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     answer_type_prob_dict = {}
 
     # dataloader.refresh()
+    #++++++
+    cut_sentence_count = 0
+    #++++++
 
     thresholds = np.arange(0.1, 1.0, 0.05)
     N_thresh = len(thresholds)
@@ -98,10 +101,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             # print(sent_scores_i)
             print('+' * 100)
             if total_sent_num_i != sent_mask_i.sum():
+                cut_sentence_count = cut_sentence_count + 1
                 print(sent_names_i)
                 print(total_sent_num_i)
                 print(sent_mask_i.sum())
-            # assert total_sent_num_i == sent_mask_i.sum()
+            assert total_sent_num_i >= sent_mask_i.sum()
             # for temp_i in range(total_sent_num_i):
             #     print('{}\t{:.4f}'.format(sent_names_i[temp_i], sent_scores_i[temp_i]))
             sorted_idxes = np.argsort(sent_scores_i)[::-1]
@@ -163,4 +167,5 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     best_metrics, best_threshold = choose_best_threshold(answer_dict, prediction_file)
     json.dump(best_metrics, open(eval_file, 'w'))
 
+    print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
     return best_metrics, best_threshold
