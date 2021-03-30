@@ -95,9 +95,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             sent_scores_i = predict_support_np[i]
             sent_mask_i = support_sent_mask_np[i]
             sent_scores_i[sent_mask_i == 0] = -100
-            print(sent_scores_i)
+            # print(sent_scores_i)
             print('+' * 100)
-            print(total_sent_num_i, sent_mask_i.sum())
+            assert total_sent_num_i == sent_mask_i.sum()
+            for temp_i in range(total_sent_num_i):
+                print('{}\t{:.4f}'.format(sent_names_i[temp_i], sent_scores_i[temp_i]))
             sorted_idxes = np.argsort(sent_scores_i)[::-1]
             topk_sent_idxes = sorted_idxes[:2]
             topk_pred_sents = [sent_names_i[_] for _ in topk_sent_idxes]
