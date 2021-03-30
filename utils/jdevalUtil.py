@@ -99,7 +99,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             sent_mask_i = support_sent_mask_np[i]
             sent_scores_i[sent_mask_i == 0] = -100
             # print(sent_scores_i)
-            print('+' * 100)
+            # print('+' * 100)
             if total_sent_num_i != sent_mask_i.sum():
                 cut_sentence_count = cut_sentence_count + 1
                 # print(sent_names_i)
