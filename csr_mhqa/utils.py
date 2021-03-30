@@ -129,7 +129,12 @@ def eval_model(args, encoder, model, dataloader, example_dict, feature_dict, pre
                       'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
             outputs = encoder(**inputs)
 
-            batch['context_encoding'] = outputs[0]
+            ####++++++++++++++++++++++++++++++++++++++
+            if args.model_type == 'electra':
+                batch['context_encoding'] = outputs.last_hidden_state
+            else:
+                batch['context_encoding'] = outputs[0]
+            ####++++++++++++++++++++++++++++++++++++++
             batch['context_mask'] = batch['context_mask'].float().to(args.device)
             start, end, q_type, paras, sent, ent, yp1, yp2 = model(batch, return_yp=True)
 
