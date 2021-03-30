@@ -9,7 +9,8 @@ import torch
 # from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from plmodels.jd_argument_parser import default_dev_parser, complete_default_dev_parser, json_to_argv
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
-from csr_mhqa.utils import load_encoder_model, eval_model
+from csr_mhqa.utils import load_encoder_model
+from utils.jdevalUtil import jd_eval_model
 
 # from models.HGN import HierarchicalGraphNetwork
 from jdmodels.jdHGN import HierarchicalGraphNetwork
@@ -101,7 +102,7 @@ model.eval()
 output_pred_file = join(args.exp_name, 'dev_pred.json')
 output_eval_file = join(args.exp_name, 'dev_eval.txt')
 
-metrics, threshold = eval_model(args, encoder, model,
+metrics, threshold = jd_eval_model(args, encoder, model,
                                 dev_dataloader, dev_example_dict, dev_feature_dict,
                                 output_pred_file, output_eval_file, args.dev_gold_file)
 print("Best threshold: {}".format(threshold))
