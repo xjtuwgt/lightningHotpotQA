@@ -25,73 +25,73 @@ logger = logging.getLogger(__name__)
 ##########################################################################
 parser = default_dev_parser()
 
-logger.info("IN CMD MODE")
-args_config_provided = parser.parse_args(sys.argv[1:])
-if args_config_provided.config_file is not None:
-    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
-else:
-    argv = sys.argv[1:]
-args = parser.parse_args(argv)
-args = complete_default_dev_parser(args)
-
-logger.info('-' * 100)
-logger.info('Input Argument Information')
-logger.info('-' * 100)
-args_dict = vars(args)
-for a in args_dict:
-    logger.info('%-28s  %s' % (a, args_dict[a]))
-
-#########################################################################
-# Read Data
-##########################################################################
-helper = DataHelper(gz=True, config=args)
-
-# Set datasets
-dev_example_dict = helper.dev_example_dict
-dev_feature_dict = helper.dev_feature_dict
-# dev_dataloader = helper.dev_loader
-dev_dataloader = helper.hotpot_val_dataloader
-
-#########################################################################
-# Initialize Model
-##########################################################################
-config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-config = config_class.from_pretrained(args.encoder_name_or_path)
-
-encoder_path = join(args.exp_name, args.encoder_name_or_path) ## replace encoder.pkl as encoder
-model_path = join(args.exp_name, args.model_path_name) ## replace encoder.pkl as encoder
-logger.info("Loading encoder from: {}".format(encoder_path))
-logger.info("Loading model from: {}".format(model_path))
-
-if torch.cuda.is_available():
-    device_ids, _ = single_free_cuda()
-    device = torch.device('cuda:{}'.format(device_ids[0]))
-else:
-    device = torch.device('cpu')
-
-encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-model = HierarchicalGraphNetwork(config=args)
-
-if encoder_path is not None:
-    encoder.load_state_dict(torch.load(encoder_path))
-if model_path is not None:
-    model.load_state_dict(torch.load(model_path))
-
-encoder.to(args.device)
-model.to(args.device)
-
-encoder.eval()
-model.eval()
-
-#########################################################################
-# Evaluation
-##########################################################################
-output_pred_file = join(args.exp_name, 'dev_pred.json')
-output_eval_file = join(args.exp_name, 'dev_eval.txt')
-
-metrics, threshold = eval_model(args, encoder, model,
-                                dev_dataloader, dev_example_dict, dev_feature_dict,
-                                output_pred_file, output_eval_file, args.dev_gold_file)
-print("Best threshold: {}".format(threshold))
-for key, val in metrics.items():
-    print("{} = {}".format(key, val))
+# logger.info("IN CMD MODE")
+# args_config_provided = parser.parse_args(sys.argv[1:])
+# if args_config_provided.config_file is not None:
+#     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+# else:
+#     argv = sys.argv[1:]
+# args = parser.parse_args(argv)
+# args = complete_default_dev_parser(args)
+#
+# logger.info('-' * 100)
+# logger.info('Input Argument Information')
+# logger.info('-' * 100)
+# args_dict = vars(args)
+# for a in args_dict:
+#     logger.info('%-28s  %s' % (a, args_dict[a]))
+#
+# #########################################################################
+# # Read Data
+# ##########################################################################
+# helper = DataHelper(gz=True, config=args)
+#
+# # Set datasets
+# dev_example_dict = helper.dev_example_dict
+# dev_feature_dict = helper.dev_feature_dict
+# # dev_dataloader = helper.dev_loader
+# dev_dataloader = helper.hotpot_val_dataloader
+#
+# #########################################################################
+# # Initialize Model
+# ##########################################################################
+# config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
+# config = config_class.from_pretrained(args.encoder_name_or_path)
+#
+# encoder_path = join(args.exp_name, args.encoder_name_or_path) ## replace encoder.pkl as encoder
+# model_path = join(args.exp_name, args.model_path_name) ## replace encoder.pkl as encoder
+# logger.info("Loading encoder from: {}".format(encoder_path))
+# logger.info("Loading model from: {}".format(model_path))
+#
+# if torch.cuda.is_available():
+#     device_ids, _ = single_free_cuda()
+#     device = torch.device('cuda:{}'.format(device_ids[0]))
+# else:
+#     device = torch.device('cpu')
+#
+# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
+# model = HierarchicalGraphNetwork(config=args)
+#
+# if encoder_path is not None:
+#     encoder.load_state_dict(torch.load(encoder_path))
+# if model_path is not None:
+#     model.load_state_dict(torch.load(model_path))
+#
+# encoder.to(args.device)
+# model.to(args.device)
+#
+# encoder.eval()
+# model.eval()
+#
+# #########################################################################
+# # Evaluation
+# ##########################################################################
+# output_pred_file = join(args.exp_name, 'dev_pred.json')
+# output_eval_file = join(args.exp_name, 'dev_eval.txt')
+#
+# metrics, threshold = eval_model(args, encoder, model,
+#                                 dev_dataloader, dev_example_dict, dev_feature_dict,
+#                                 output_pred_file, output_eval_file, args.dev_gold_file)
+# print("Best threshold: {}".format(threshold))
+# for key, val in metrics.items():
+#     print("{} = {}".format(key, val))
