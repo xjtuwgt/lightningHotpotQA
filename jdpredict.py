@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 #########################################################################
 # Initialize arguments
 ##########################################################################
-parser = default_dev_parser()
+# parser = default_dev_parser()
 
 # logger.info("IN CMD MODE")
 # args_config_provided = parser.parse_args(sys.argv[1:])
