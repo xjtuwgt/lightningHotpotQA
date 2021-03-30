@@ -95,15 +95,15 @@ model.to(args.device)
 encoder.eval()
 model.eval()
 
-# #########################################################################
-# # Evaluation
-# ##########################################################################
-# output_pred_file = join(args.exp_name, 'dev_pred.json')
-# output_eval_file = join(args.exp_name, 'dev_eval.txt')
-#
-# metrics, threshold = eval_model(args, encoder, model,
-#                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-#                                 output_pred_file, output_eval_file, args.dev_gold_file)
-# print("Best threshold: {}".format(threshold))
-# for key, val in metrics.items():
-#     print("{} = {}".format(key, val))
+#########################################################################
+# Evaluation
+##########################################################################
+output_pred_file = join(args.exp_name, 'dev_pred.json')
+output_eval_file = join(args.exp_name, 'dev_eval.txt')
+
+metrics, threshold = eval_model(args, encoder, model,
+                                dev_dataloader, dev_example_dict, dev_feature_dict,
+                                output_pred_file, output_eval_file, args.dev_gold_file)
+print("Best threshold: {}".format(threshold))
+for key, val in metrics.items():
+    print("{} = {}".format(key, val))
