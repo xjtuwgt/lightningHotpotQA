@@ -95,6 +95,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             sent_scores_i = predict_support_np[i]
             sent_mask_i = support_sent_mask_np[i]
             sent_scores_i[sent_mask_i == 0] = -100
+            print(sent_scores_i)
+            print('+' * 100)
             sorted_idxes = np.argsort(sent_scores_i)[::-1]
             topk_sent_idxes = sorted_idxes[:2]
             topk_pred_sents = [sent_names_i[_] for _ in topk_sent_idxes]
@@ -106,9 +108,6 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             para_sorted_idxes = np.argsort(para_scores_i)[::-1]
             topk_para_idxes = para_sorted_idxes[:2]
             topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
-            print(sent_names_i)
-            print(topk_pred_paras)
-            print('*' * 45)
             top2_para_total_sent_num_i = len([x for x in sent_names_i if x[0] in topk_pred_paras])
             ##+++++++++++++++++++++++++
 
