@@ -412,8 +412,8 @@ def default_dev_parser():
     parser.add_argument("--sp_threshold", type=float, default=0.5)
 
     # check point path or name
-    parser.add_argument("--encoder_path_name", type=str, default=None)
-    parser.add_argument("--model_path_name", type=str, default=None)
+    parser.add_argument("--encoder_name", type=str, default=None)
+    parser.add_argument("--model_name", type=str, default=None)
     return parser
 
 def complete_default_dev_parser(args):
