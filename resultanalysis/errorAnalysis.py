@@ -264,7 +264,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         pred_ans_type_list.append(ans_type)
 
 
-        print('{} | {} | {}'.format(ans_type, raw_answer, ans_prediction))
+        # print('{} | {} | {}'.format(ans_type, raw_answer, ans_prediction))
 
     print(len(pred_sent_type_list), len(pred_ans_type_list), len(pred_doc_type_list))
 
