@@ -216,9 +216,9 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         # sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
         # sp_predictions
         print("{}\t{}\t{}".format(qid, len(set(sp_golds)), len(set(sp_predictions))))
-        if len(set(sp_golds)) < len(set(sp_predictions)):
+        if len(set(sp_golds)) > len(set(sp_predictions)):
             pred_sent_count_list.append('less')
-        elif len(set(sp_golds)) > len(set(sp_predictions)):
+        elif len(set(sp_golds)) < len(set(sp_predictions)):
             pred_sent_count_list.append('more')
         else:
             pred_sent_count_list.append('equal')
