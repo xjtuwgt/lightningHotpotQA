@@ -96,8 +96,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             sent_mask_i = support_sent_mask_np[i]
             sent_scores_i[sent_mask_i == 0] = -100
             sorted_idxes = np.argsort(sent_scores_i)[::-1]
-            top2_sent_idxes = sorted_idxes[:2]
-            top2_pred_sents = [sent_names_i[_] for _ in top2_sent_idxes]
+            if total_sent_num_i > 2:
+                topk_sent_idxes = sorted_idxes[:3]
+            else:
+                topk_sent_idxes = sorted_idxes[:2]
+            topk_pred_sents = [sent_names_i[_] for _ in topk_sent_idxes]
 
             para_names_i = example_dict[cur_id].para_names
             para_scores_i = predict_support_para_np[i]
@@ -118,7 +121,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
                     # +++++++++++++++++++++++++++
                     if len(cur_sp_pred[thresh_i]) < 2:
-                        cur_sp_pred[thresh_i].extend(top2_pred_sents)
+                        cur_sp_pred[thresh_i].extend(topk_pred_sents)
                     # if len(cur_sp_pred[thresh_i]) == total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
                     #     cur_sp_pred[thresh_i] = cur_sp_pred[thresh_i][:-2]
                     # +++++++++++++++++++++++++++
