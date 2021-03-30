@@ -107,6 +107,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             #     print('{}\t{:.4f}'.format(sent_names_i[temp_i], sent_scores_i[temp_i]))
             sorted_idxes = np.argsort(sent_scores_i)[::-1]
             topk_sent_idxes = sorted_idxes[:2]
+            topk_score_ref = sent_scores_i[topk_sent_idxes[-1]]
             topk_pred_sents = [sent_names_i[_] for _ in topk_sent_idxes]
 
             para_names_i = example_dict[cur_id].para_names
@@ -124,7 +125,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     break
 
                 for thresh_i in range(N_thresh):
-                    if predict_support_np[i, j] > thresholds[thresh_i]:
+                    # if predict_support_np[i, j] > thresholds[thresh_i]:
+                    if predict_support_np[i, j] > thresholds[thresh_i] * topk_score_ref:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
                     # +++++++++++++++++++++++++++
                     # temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
