@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # DEFINE data related (please make changes according to your configurations)
-# DATA ROOT folder where you put data files, transformers 3.3.0
+# DATA ROOT folder where you put data files
 DATA_ROOT=./data/
+
 LONG_FORMER_ROOT=allenai
 ELECTRA_ROOT=google
 SELECTEED_DOC_NUM=4
