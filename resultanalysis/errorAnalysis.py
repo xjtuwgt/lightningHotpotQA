@@ -192,9 +192,11 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     prediction_ans_type_counter = Counter()
     prediction_sent_type_counter = Counter()
     prediction_para_type_counter = Counter()
+
     pred_ans_type_list = []
     pred_sent_type_list = []
     pred_doc_type_list = []
+    pred_sent_count_list = []
 
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -214,6 +216,12 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         # sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
         # sp_predictions
         print("{}\t{}\t{}".format(qid, len(set(sp_golds)), len(set(sp_predictions))))
+        if len(set(sp_golds)) < len(set(sp_predictions)):
+            pred_sent_count_list.append('less')
+        elif len(set(sp_golds)) < len(set(sp_predictions)):
+            pred_sent_count_list.append('more')
+        else:
+            pred_sent_count_list.append('equal')
         ##+++++++++++
         sp_sent_type = set_comparison(prediction_list=sp_predictions, true_list=sp_golds)
         ###+++++++++
@@ -268,6 +276,10 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         # print('{} | {} | {}'.format(ans_type, raw_answer, ans_prediction))
 
     print(len(pred_sent_type_list), len(pred_ans_type_list), len(pred_doc_type_list))
+
+    supp_sent_compare_type = ['less', 'more', 'equal']
+    conf_supp_sent_matrix = confusion_matrix(pred_sent_type_list, supp_sent_compare_type)
+    print('Sent Type vs Sent Count conf matrix:\n{}'.format(conf_supp_sent_matrix))
 
     result_types = ['em', 'sub_of_gold', 'super_of_gold', 'no_over_lap', 'others']
     conf_matrix = confusion_matrix(yes_no_span_true, yes_no_span_predictions, labels=["yes", "no", "span"])
