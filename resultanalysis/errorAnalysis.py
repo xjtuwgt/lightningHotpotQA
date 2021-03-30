@@ -278,10 +278,18 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     print(len(pred_sent_type_list), len(pred_ans_type_list), len(pred_doc_type_list))
 
     supp_sent_compare_type = ['less', 'more', 'equal']
-    conf_supp_sent_matrix = confusion_matrix(pred_sent_type_list, pred_sent_count_list)
+    result_types = ['em', 'sub_of_gold', 'super_of_gold', 'no_over_lap', 'others']
+    supp_sent_comp_dict = dict([(y, x) for x, y in enumerate(supp_sent_compare_type)])
+    supp_sent_type_dict = dict([(y, x) for x, y in enumerate(result_types)])
+    assert len(pred_sent_type_list) == len(pred_sent_count_list)
+    conf_supp_sent_matrix = np.zeros((len(supp_sent_compare_type), len(result_types)))
+    for idx in range(len(pred_sent_type_list)):
+        comp_type = pred_sent_count_list[idx]
+        supp_sent_type = pred_sent_type_list[idx]
+        conf_supp_sent_matrix[supp_sent_comp_dict[comp_type]][supp_sent_type_dict[supp_sent_type]] += 1
     print('Sent Type vs Sent Count conf matrix:\n{}'.format(conf_supp_sent_matrix))
 
-    result_types = ['em', 'sub_of_gold', 'super_of_gold', 'no_over_lap', 'others']
+
     conf_matrix = confusion_matrix(yes_no_span_true, yes_no_span_predictions, labels=["yes", "no", "span"])
     conf_ans_sent_matrix = confusion_matrix(pred_sent_type_list, pred_ans_type_list, labels=result_types)
     print('*' * 75)
