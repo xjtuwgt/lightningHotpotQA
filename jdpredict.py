@@ -23,35 +23,35 @@ logger = logging.getLogger(__name__)
 #########################################################################
 # Initialize arguments
 ##########################################################################
-# parser = default_dev_parser()
+parser = default_dev_parser()
 
-# logger.info("IN CMD MODE")
-# args_config_provided = parser.parse_args(sys.argv[1:])
-# if args_config_provided.config_file is not None:
-#     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
-# else:
-#     argv = sys.argv[1:]
-# args = parser.parse_args(argv)
-# args = complete_default_dev_parser(args)
-#
-# logger.info('-' * 100)
-# logger.info('Input Argument Information')
-# logger.info('-' * 100)
-# args_dict = vars(args)
-# for a in args_dict:
-#     logger.info('%-28s  %s' % (a, args_dict[a]))
-#
-# #########################################################################
-# # Read Data
-# ##########################################################################
-# helper = DataHelper(gz=True, config=args)
-#
-# # Set datasets
-# dev_example_dict = helper.dev_example_dict
-# dev_feature_dict = helper.dev_feature_dict
-# # dev_dataloader = helper.dev_loader
-# dev_dataloader = helper.hotpot_val_dataloader
-#
+logger.info("IN CMD MODE")
+args_config_provided = parser.parse_args(sys.argv[1:])
+if args_config_provided.config_file is not None:
+    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+else:
+    argv = sys.argv[1:]
+args = parser.parse_args(argv)
+args = complete_default_dev_parser(args)
+
+logger.info('-' * 100)
+logger.info('Input Argument Information')
+logger.info('-' * 100)
+args_dict = vars(args)
+for a in args_dict:
+    logger.info('%-28s  %s' % (a, args_dict[a]))
+
+#########################################################################
+# Read Data
+##########################################################################
+helper = DataHelper(gz=True, config=args)
+
+# Set datasets
+dev_example_dict = helper.dev_example_dict
+dev_feature_dict = helper.dev_feature_dict
+# dev_dataloader = helper.dev_loader
+dev_dataloader = helper.hotpot_val_dataloader
+
 # #########################################################################
 # # Initialize Model
 # ##########################################################################
