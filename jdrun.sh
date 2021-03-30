@@ -9,6 +9,7 @@ PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,pr
 
 # define precached BERT MODEL path
 ROBERTA_LARGE=$DATA_ROOT/models/pretrained/roberta-large
+ELECTRA_ROOT=google
 
 # Add current pwd to PYTHONPATH
 export DIR_TMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -90,12 +91,18 @@ preprocess() {
 #        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE --sae_graph
 ##        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE --sae_graph
 
-        echo "5. Dump features for albert (do_lower_case)"
-        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE
+#        echo "5. Dump features for albert (do_lower_case)"
+#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE
+##        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker hgn --data_type $DATA_TYPE
+#
+#        echo "5. Dump features for albert (do_lower_case) (SAE graph)"
+#        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE --sae_graph
 
-        echo "5. Dump features for albert (do_lower_case) (SAE graph)"
-        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE --sae_graph
+        echo "5. Dump features for electra (do_lower_case)"
+        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE
+
+        echo "5. Dump features for electra (do_lower_case) (SAE graph)"
+        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker hgn --data_type $DATA_TYPE --sae_graph
 
 #        echo "6. Test dumped features"
         #python scripts/6_test_features.py --raw_data $INPUT_FILE --input_dir $OUTPUT_FEAT --output_dir $OUTPUT_FEAT --model_type roberta --model_name_or_path roberta-large
