@@ -291,6 +291,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         supp_sent_idx_i = supp_sent_type_dict[supp_sent_type_i]
         conf_supp_sent_matrix[comp_idx_i][supp_sent_idx_i] += 1
     print('Sent Type vs Sent Count conf matrix:\n{}'.format(conf_supp_sent_matrix))
+    print('Sum of matrix = {}'.format(conf_supp_sent_matrix.sum()))
 
 
     conf_matrix = confusion_matrix(yes_no_span_true, yes_no_span_predictions, labels=["yes", "no", "span"])
