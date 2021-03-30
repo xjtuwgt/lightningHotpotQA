@@ -97,6 +97,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             sent_scores_i[sent_mask_i == 0] = -100
             print(sent_scores_i)
             print('+' * 100)
+            print(total_sent_num_i, sent_mask_i.sum())
             sorted_idxes = np.argsort(sent_scores_i)[::-1]
             topk_sent_idxes = sorted_idxes[:2]
             topk_pred_sents = [sent_names_i[_] for _ in topk_sent_idxes]
