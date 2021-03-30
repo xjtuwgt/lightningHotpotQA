@@ -282,6 +282,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     supp_sent_comp_dict = dict([(y, x) for x, y in enumerate(supp_sent_compare_type)])
     supp_sent_type_dict = dict([(y, x) for x, y in enumerate(result_types)])
     assert len(pred_sent_type_list) == len(pred_sent_count_list)
+    print(len(pred_sent_type_list), len(pred_sent_count_list))
     conf_supp_sent_matrix = np.zeros((len(supp_sent_compare_type), len(result_types)), dtype=np.long)
     for idx in range(len(pred_sent_type_list)):
         comp_type = pred_sent_count_list[idx]
