@@ -87,8 +87,8 @@ model.eval()
 #########################################################################
 # Evaluation
 ##########################################################################
-output_pred_file = join(args.exp_name, 'pred.json')
-output_eval_file = join(args.exp_name, 'eval.txt')
+output_pred_file = join(args.exp_name, 'dev_pred.json')
+output_eval_file = join(args.exp_name, 'dev_eval.txt')
 
 metrics, threshold = eval_model(args, encoder, model,
                                 dev_dataloader, dev_example_dict, dev_feature_dict,
