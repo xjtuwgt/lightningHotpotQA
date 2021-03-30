@@ -73,16 +73,21 @@ encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = HierarchicalGraphNetwork(config=args)
 
 if encoder_path is not None:
-    x = torch.load(encoder_path)
-    print(type(x))
-    for name, param in encoder.named_parameters():
-        print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-    print('*' * 75)
-    # encoder.load_state_dict(torch.load(encoder_path))
+    state_dict = torch.load(encoder_path)
+    print('loading parameter from {}'.format(encoder_path))
+    for key in list(state_dict.keys()):
+        if 'module.' in key:
+            state_dict[key.replace('module.', '')] = state_dict[key]
+            del state_dict[key]
+    encoder.load_state_dict(state_dict)
 if model_path is not None:
-    y = torch.load(model_path)
-    # print(y)
-    # model.load_state_dict(torch.load(model_path))
+    state_dict = torch.load(model_path)
+    print('loading parameter from {}'.format(model_path))
+    for key in list(state_dict.keys()):
+        if 'module.' in key:
+            state_dict[key.replace('module.', '')] = state_dict[key]
+            del state_dict[key]
+    model.load_state_dict(state_dict)
 
 encoder.to(args.device)
 model.to(args.device)
