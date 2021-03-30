@@ -102,9 +102,6 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             # print('+' * 100)
             if total_sent_num_i != sent_mask_i.sum():
                 cut_sentence_count = cut_sentence_count + 1
-                # print(sent_names_i)
-                # print(total_sent_num_i)
-                # print(sent_mask_i.sum())
             assert total_sent_num_i >= sent_mask_i.sum()
             # for temp_i in range(total_sent_num_i):
             #     print('{}\t{:.4f}'.format(sent_names_i[temp_i], sent_scores_i[temp_i]))
@@ -129,11 +126,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                 for thresh_i in range(N_thresh):
                     if predict_support_np[i, j] > thresholds[thresh_i]:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
-                    # # +++++++++++++++++++++++++++
-                    # temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
-                    # cur_sp_pred[thresh_i] = temp
-                    # if len(cur_sp_pred[thresh_i]) < 2:
-                    #     cur_sp_pred[thresh_i].extend(topk_pred_sents)
+                    # +++++++++++++++++++++++++++
+                    temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
+                    cur_sp_pred[thresh_i] = temp
+                    if len(cur_sp_pred[thresh_i]) < 2:
+                        cur_sp_pred[thresh_i].extend(topk_pred_sents)
                     # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
                     # # +++++++++++++++++++++++++++
 
