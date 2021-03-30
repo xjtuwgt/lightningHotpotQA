@@ -59,8 +59,8 @@ dev_dataloader = helper.hotpot_val_dataloader
 config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
 config = config_class.from_pretrained(args.encoder_name_or_path)
 
-encoder_path = join(args.exp_name, 'encoder.pkl') ## replace encoder.pkl as encoder
-model_path = join(args.exp_name, 'model.pkl') ## replace encoder.pkl as encoder
+encoder_path = join(args.exp_name, args.encoder_name_or_path) ## replace encoder.pkl as encoder
+model_path = join(args.exp_name, args.model_path_name) ## replace encoder.pkl as encoder
 logger.info("Loading encoder from: {}".format(encoder_path))
 logger.info("Loading model from: {}".format(model_path))
 

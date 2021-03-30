@@ -444,13 +444,9 @@ def complete_default_dev_parser(args):
     args.input_dim = 768 if 'base' in args.encoder_name_or_path else (4096 if 'albert' in args.encoder_name_or_path else 1024)
 
     # output dir name
-    if not args.exp_name:
-        args.exp_name = '_'.join([args.encoder_name_or_path,
-                          'lr' + str(args.learning_rate),
-                          'bs' + str(args.batch_size)])
     args.exp_name = os.path.join(args.output_dir, args.exp_name)
     set_seed(args)
     os.makedirs(args.exp_name, exist_ok=True)
-    torch.save(args, join(args.exp_name, "training_args.bin"))
+    torch.save(args, join(args.exp_name, "dev_args.bin"))
 
     return args
