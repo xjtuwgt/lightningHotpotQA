@@ -55,34 +55,34 @@ dev_dataloader = helper.hotpot_val_dataloader
 # #########################################################################
 # # Initialize Model
 # ##########################################################################
-# config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-# config = config_class.from_pretrained(args.encoder_name_or_path)
-#
-# encoder_path = join(args.exp_name, args.encoder_name_or_path) ## replace encoder.pkl as encoder
-# model_path = join(args.exp_name, args.model_path_name) ## replace encoder.pkl as encoder
-# logger.info("Loading encoder from: {}".format(encoder_path))
-# logger.info("Loading model from: {}".format(model_path))
-#
-# if torch.cuda.is_available():
-#     device_ids, _ = single_free_cuda()
-#     device = torch.device('cuda:{}'.format(device_ids[0]))
-# else:
-#     device = torch.device('cpu')
-#
-# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-# model = HierarchicalGraphNetwork(config=args)
-#
-# if encoder_path is not None:
-#     encoder.load_state_dict(torch.load(encoder_path))
-# if model_path is not None:
-#     model.load_state_dict(torch.load(model_path))
-#
-# encoder.to(args.device)
-# model.to(args.device)
-#
-# encoder.eval()
-# model.eval()
-#
+config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
+config = config_class.from_pretrained(args.encoder_name_or_path)
+
+encoder_path = join(args.exp_name, args.encoder_name_or_path) ## replace encoder.pkl as encoder
+model_path = join(args.exp_name, args.model_path_name) ## replace encoder.pkl as encoder
+logger.info("Loading encoder from: {}".format(encoder_path))
+logger.info("Loading model from: {}".format(model_path))
+
+if torch.cuda.is_available():
+    device_ids, _ = single_free_cuda()
+    device = torch.device('cuda:{}'.format(device_ids[0]))
+else:
+    device = torch.device('cpu')
+
+encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
+model = HierarchicalGraphNetwork(config=args)
+
+if encoder_path is not None:
+    encoder.load_state_dict(torch.load(encoder_path))
+if model_path is not None:
+    model.load_state_dict(torch.load(model_path))
+
+encoder.to(args.device)
+model.to(args.device)
+
+encoder.eval()
+model.eval()
+
 # #########################################################################
 # # Evaluation
 # ##########################################################################
