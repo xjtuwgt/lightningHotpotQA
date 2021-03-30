@@ -81,7 +81,9 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
 
         predict_support_np = torch.sigmoid(sent[:, :, 1]).data.cpu().numpy()
         ####################################################################
-        support_sent_mask = batch
+        support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
+        predict_support_para_np = torch.sigmoid(paras[:, :, 1]).data.cpu().numpy()
+        support_para_mask_np = batch['para_mask'].data.cpu().numpy()
         ####################################################################
 
         for i in range(predict_support_np.shape[0]):
@@ -89,7 +91,22 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             cur_id = batch['ids'][i]
             ##+++++++++++++++++++++++++
             sent_names_i = example_dict[cur_id].sent_names
+            total_sent_num_i = len(sent_names_i)
             sent_scores_i = predict_support_np[i]
+            sent_mask_i = support_sent_mask_np[i]
+            sent_scores_i[sent_mask_i == 0] = -100
+            sorted_idxes = np.argsort(sent_scores_i)[::-1]
+            top2_sent_idxes = sorted_idxes[:2]
+            top2_pred_sents = [sent_names_i[_] for _ in top2_sent_idxes]
+
+            para_names_i = example_dict[cur_id].para_names
+            para_scores_i = predict_support_para_np[i]
+            para_mask_i = support_para_mask_np[i]
+            para_scores_i[para_mask_i == 0] = -100
+            para_sorted_idxes = np.argsort(para_scores_i)[::-1]
+            top2_para_idxes = para_sorted_idxes[:2]
+            top2_pred_paras = set([para_names_i[_] for _ in top2_para_idxes])
+            top2_para_total_sent_num_i = len([x for x in sent_names_i if x[0] in top2_pred_paras])
             ##+++++++++++++++++++++++++
 
             for j in range(predict_support_np.shape[1]):
@@ -99,6 +116,12 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                 for thresh_i in range(N_thresh):
                     if predict_support_np[i, j] > thresholds[thresh_i]:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
+                    # +++++++++++++++++++++++++++
+                    if len(cur_sp_pred[thresh_i]) < 2:
+                        cur_sp_pred[thresh_i].extend(top2_pred_sents)
+                    # if len(cur_sp_pred[thresh_i]) == total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
+                    #     cur_sp_pred[thresh_i] = cur_sp_pred[thresh_i][:-2]
+                    # +++++++++++++++++++++++++++
 
             for thresh_i in range(N_thresh):
                 if cur_id not in total_sp_dict[thresh_i]:
