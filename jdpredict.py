@@ -73,9 +73,13 @@ encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = HierarchicalGraphNetwork(config=args)
 
 if encoder_path is not None:
-    encoder.load_state_dict(torch.load(encoder_path))
+    x = torch.load(encoder_path)
+    print(x)
+    # encoder.load_state_dict(torch.load(encoder_path))
 if model_path is not None:
-    model.load_state_dict(torch.load(model_path))
+    y = torch.load(model_path)
+    print(y)
+    # model.load_state_dict(torch.load(model_path))
 
 encoder.to(args.device)
 model.to(args.device)
