@@ -122,7 +122,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     # +++++++++++++++++++++++++++
                     if len(cur_sp_pred[thresh_i]) < 2:
                         cur_sp_pred[thresh_i].extend(topk_pred_sents)
-                    # if len(cur_sp_pred[thresh_i]) == total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
+                    if len(cur_sp_pred[thresh_i]) == total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
+                        print('here')
                     #     cur_sp_pred[thresh_i] = cur_sp_pred[thresh_i][:-2]
                     # +++++++++++++++++++++++++++
 
