@@ -255,7 +255,6 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         for t_i, idx in enumerate(answer_candidates_idxs):
             print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
         print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
-        print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
@@ -269,5 +268,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         answer_dict[qid] = answer_text
         answer_type_prob_dict[qid] = q_type_prob[i].tolist()
         answer_type_dict[qid] = q_type[i].item()
+        print('predicted answer {}'.format(answer_text))
+        print('*' * 75)
 
     return answer_dict, answer_type_dict, answer_type_prob_dict
