@@ -224,13 +224,13 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
         feature = features[qid]
         example = examples[qid]
 
-        # for key, value in feature.__dict__.items():
-        #     print(key, value)
-        #
+        for key, value in feature.__dict__.items():
+            print(key)
+        print('+' * 75)
         for key, value in example.__dict__.items():
             print(key)
         print(y1[i], y2[i])
-        print('*' * 50)
+        print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
