@@ -235,8 +235,13 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
         return final_text
 
-    def get_sent_accord_ans(qid, y1, y2, sent_spans):
-
+    def get_sent_name_accord_ans(y1, y2, sent_spans, para_spans):
+        ans_para_idx = -1
+        for para_idx, para_span in enumerate(para_spans):
+            para_start_idx, para_end_idx, para_name = para_span
+            if y1 >= para_start_idx and y2 <= para_end_idx:
+                ans_para_idx = para_idx
+                print(para_span, ans_para_idx)
         return
 
     for i, qid in enumerate(ids):
@@ -249,6 +254,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         entity_spans = feature.entity_spans
         print('sent_spans', sent_spans)
         print('para_spans', para_spans)
+        get_sent_name_accord_ans(y1=y1[i], y2=y2[i], sent_spans=sent_spans, para_spans=para_spans)
         ###++++++++++++++++++++++++++++++
         answer_text = ''
         if q_type[i] in [0, 3]:
@@ -275,29 +281,29 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
 
-        if q_type[i] == 3:
-            if is_gold_ent[i] >= 0:
-                print('gold entity ---->', example.ctx_entities_text[int(is_gold_ent[i])])
-            # print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
-            if not exact_match_score(answer_text, example.orig_answer_text):
-                print(y1[i], y2[i])
-                # print(q_type)
-                # print(sent_spans)
-                print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
-                print('Orig answer:{}'.format(example.orig_answer_text))
-                answer_candidates_idxs = example.answer_candidates_in_ctx_entity_ids
-                print('q_type: {}'.format(q_type[i]))
-                for t_i, idx in enumerate(answer_candidates_idxs):
-                    print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
-                print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
-                ###++++++++++++++++++++++++++++++
-                print('predicted answer {}'.format(answer_text))
-                # print('entity', len(example.ctx_entities_text), len(entity_spans), ans_cand_mask[i].sum(), ent_mask[i].sum(),
-                #       example.ctx_entities_text[ent_prediction[i]])
-                # print('ans mask', ans_cand_mask[i])
-                # print('ent_mask', ent_mask[i])
-                # print('ent_score', ent_pred_prob[i])
-                print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
+        # if q_type[i] == 3:
+        #     if is_gold_ent[i] >= 0:
+        #         print('gold entity ---->', example.ctx_entities_text[int(is_gold_ent[i])])
+        #     # print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
+        #     if not exact_match_score(answer_text, example.orig_answer_text):
+        #         print(y1[i], y2[i])
+        #         # print(q_type)
+        #         # print(sent_spans)
+        #         print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
+        #         print('Orig answer:{}'.format(example.orig_answer_text))
+        #         answer_candidates_idxs = example.answer_candidates_in_ctx_entity_ids
+        #         print('q_type: {}'.format(q_type[i]))
+        #         for t_i, idx in enumerate(answer_candidates_idxs):
+        #             print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
+        #         print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
+        #         ###++++++++++++++++++++++++++++++
+        #         print('predicted answer {}'.format(answer_text))
+        #         # print('entity', len(example.ctx_entities_text), len(entity_spans), ans_cand_mask[i].sum(), ent_mask[i].sum(),
+        #         #       example.ctx_entities_text[ent_prediction[i]])
+        #         # print('ans mask', ans_cand_mask[i])
+        #         # print('ent_mask', ent_mask[i])
+        #         # print('ent_score', ent_pred_prob[i])
+        #         print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
 
 
         print('*' * 75)
