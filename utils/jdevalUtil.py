@@ -77,6 +77,12 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
+        ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch['ids'],
+                                                                                    yp1.data.cpu().numpy().tolist(),
+                                                                                    yp2.data.cpu().numpy().tolist(),
+                                                                                    type_prob)
+        ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         answer_type_dict.update(answer_type_dict_)
         answer_type_prob_dict.update(answer_type_prob_dict_)
@@ -176,6 +182,7 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
     answer_type_prob_dict = {}
 
     q_type = np.argmax(q_type_prob, 1)
+    print(q_type)
 
     def get_ans_from_pos(qid, y1, y2):
         feature = features[qid]
@@ -208,6 +215,9 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
 
     for i, qid in enumerate(ids):
         feature = features[qid]
+        example = examples[qid]
+        print(feature)
+        print(example)
         answer_text = ''
         if q_type[i] in [0, 3]:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
