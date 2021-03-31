@@ -131,6 +131,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             topk_para_idxes = para_sorted_idxes[:2]
             topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
             top2_para_total_sent_num_i = len([x for x in sent_names_i if x[0] in topk_pred_paras])
+
+            ans_sent_name = answer_sent_name_dict_[cur_id]
             ##+++++++++++++++++++++++++
 
             for j in range(predict_support_np.shape[1]):
@@ -153,6 +155,9 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                 temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
                 cur_sp_pred[thresh_i] = temp
                 print('former len {} {}'.format(former_len, len(temp)))
+                print(temp)
+                print(ans_sent_name)
+                print('-' * 12)
                 # if len(cur_sp_pred[thresh_i]) < 2:
                 #     cur_sp_pred[thresh_i].extend(topk_pred_sents)
                 # # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
