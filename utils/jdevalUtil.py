@@ -270,10 +270,11 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         # print('+' * 75)
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
-        if is_gold_ent[i] >= 0:
-            print('gold entity', example.ctx_entities_text[int(is_gold_ent[i])])
+
         if q_type[i] == 3:
-            print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
+            if is_gold_ent[i] >= 0:
+                print('gold entity ---->', example.ctx_entities_text[int(is_gold_ent[i])])
+            # print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
             if not exact_match_score(answer_text, example.orig_answer_text):
                 print(y1[i], y2[i])
                 # print(q_type)
