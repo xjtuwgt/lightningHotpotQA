@@ -1,0 +1,14 @@
+{
+    "exp_name": "train.graph.roberta.bs2.as1.lr3e-05.lrslayer_decay.lrd0.9.gnngat1.4.datahgn_docred_low_saeRecAdam.cosine.seed100",
+    "model_type": "roberta",
+    "encoder_name_or_path": "roberta-large",
+    "encoder_name": "encoder_4.step_28290.pkl",
+    "model_name": "model_4.step_28290.pkl",
+    "devf_type": "long_low",
+    "gnn": "gat:1,4",
+    "num_edge_type": 8,
+    "fp16": "True",
+    "bi_attn_drop": 0.3,
+    "trans_drop": 0.2,
+    "gnn_drop": 0.3
+}
