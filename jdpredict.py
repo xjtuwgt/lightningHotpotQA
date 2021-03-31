@@ -12,8 +12,8 @@ from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import load_encoder_model, eval_model
 from utils.jdevalUtil import jd_eval_model
 
-from models.HGN import HierarchicalGraphNetwork
-# from jdmodels.jdHGN import HierarchicalGraphNetwork
+# from models.HGN import HierarchicalGraphNetwork
+from jdmodels.jdHGN import HierarchicalGraphNetwork
 from model_envs import MODEL_CLASSES
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -102,12 +102,12 @@ model.eval()
 output_pred_file = join(args.exp_name, 'dev_pred.json')
 output_eval_file = join(args.exp_name, 'dev_eval.txt')
 
-# metrics, threshold = jd_eval_model(args, encoder, model,
-#                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-#                                 output_pred_file, output_eval_file, args.dev_gold_file)
-metrics, threshold = eval_model(args, encoder, model,
+metrics, threshold = jd_eval_model(args, encoder, model,
                                 dev_dataloader, dev_example_dict, dev_feature_dict,
                                 output_pred_file, output_eval_file, args.dev_gold_file)
+# metrics, threshold = eval_model(args, encoder, model,
+#                                 dev_dataloader, dev_example_dict, dev_feature_dict,
+#                                 output_pred_file, output_eval_file, args.dev_gold_file)
 print("Best threshold: {}".format(threshold))
 for key, val in metrics.items():
     print("{} = {}".format(key, val))

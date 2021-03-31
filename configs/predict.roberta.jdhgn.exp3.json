@@ -1,0 +1,14 @@
+{
+    "exp_name": "train.graph.roberta.bs2.as4.lr1e-05.lrsfixed.gnngat1.4.datahgn_low_sae.seed2001",
+    "model_type": "roberta",
+    "encoder_name_or_path": "roberta-large",
+    "encoder_name": "encoder_5.pkl",
+    "model_name": "model_5.pkl",
+    "devf_type": "hgn_low_sae",
+    "gnn": "gat:1,4",
+    "num_edge_type": 9,
+    "fp16": "True",
+    "bi_attn_drop": 0.3,
+    "trans_drop": 0.2,
+    "gnn_drop": 0.3
+}
