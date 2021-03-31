@@ -237,6 +237,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         ###++++++++++++++++++++++++++++++
         assert support_sent_mask_np[i].sum() == len(feature.__dict__['sent_spans'])
         sent_spans = feature.sent_spans
+        entity_spans = feature.entity_spans
         ###++++++++++++++++++++++++++++++
 
         # for key, value in feature.__dict__.items():
@@ -253,7 +254,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         print('q_type: {}'.format(q_type[i]))
         for t_i, idx in enumerate(answer_candidates_idxs):
             print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
-        print(len(answer_candidates_idxs), len(example.answer_in_ques_entity_ids), ans_cand_mask[i].sum())
+        print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
         print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
