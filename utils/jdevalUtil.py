@@ -271,7 +271,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
         if q_type[i] == 3:
-            print('gold_en', is_gold_ent[i], ent_prediction[i])
+            print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
             if not exact_match_score(answer_text, example.orig_answer_text):
                 print(y1[i], y2[i])
                 # print(q_type)
@@ -290,6 +290,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
                 print('ans mask', ans_cand_mask[i])
                 print('ent_mask', ent_mask[i])
                 print('ent_score', ent_pred_prob[i])
+                print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
 
         print('*' * 75)
 
