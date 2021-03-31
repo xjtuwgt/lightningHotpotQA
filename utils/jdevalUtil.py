@@ -197,6 +197,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
     q_type = np.argmax(q_type_prob, 1)
     # print(q_type)
+    # +++++++++++++
+    ent_prediction = np.argmax(ent_pred_prob, 1)
 
     def get_ans_from_pos(qid, y1, y2):
         feature = features[qid]
@@ -255,6 +257,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         answer_type_dict[qid] = q_type[i].item()
 
         ###++++++++++++++++++++++++++++++
+        print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans), entity_spans[ent_prediction[i]])
         # for key, value in feature.__dict__.items():
         #     print('feature: {}\n{}'.format(key, value))
         # print('+' * 75)
