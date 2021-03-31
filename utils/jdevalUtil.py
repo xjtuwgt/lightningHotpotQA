@@ -283,6 +283,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
                 print('predicted answer {}'.format(answer_text))
                 print('entity', len(example.ctx_entities_text), len(entity_spans), ans_cand_mask[i].sum(), ent_mask[i].sum(),
                       example.ctx_entities_text[ent_prediction[i]])
+                print('ans mask', ans_cand_mask[i])
+                print('ent_mask', ent_mask[i])
         print('*' * 75)
 
     return answer_dict, answer_type_dict, answer_type_prob_dict
