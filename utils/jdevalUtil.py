@@ -210,7 +210,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
             orig_tok_end = tok_to_orig_map[y2]
 
             ques_tok_len = len(example.question_tokens)
-            print('question tokens = {}'.format(example.question_tokens))
+            # print('question tokens = {}'.format(example.question_tokens))
             if orig_tok_start < ques_tok_len and orig_tok_end < ques_tok_len:
                 ques_start_idx = example.question_word_to_char_idx[orig_tok_start]
                 ques_end_idx = example.question_word_to_char_idx[orig_tok_end] + len(
