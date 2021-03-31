@@ -235,7 +235,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
         return final_text
 
-    def answer_to_sentence_id(qid, y1, y2):
+    def get_sent_accord_ans(qid, y1, y2, sent_spans):
+
         return
 
     for i, qid in enumerate(ids):
@@ -245,6 +246,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         assert support_sent_mask_np[i].sum() == len(feature.__dict__['sent_spans'])
         sent_spans = feature.sent_spans
         entity_spans = feature.entity_spans
+        print('sent_spans', sent_spans)
         ###++++++++++++++++++++++++++++++
         answer_text = ''
         if q_type[i] in [0, 3]:
