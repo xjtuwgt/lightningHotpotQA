@@ -189,6 +189,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
     ids = batch['ids']
     support_para_mask_np = batch['para_mask'].data.cpu().numpy()
     ans_cand_mask = batch['ans_cand_mask'].data.cpu().numpy()
+    ent_mask = batch['ent_mask'].data.cpu().numpy()
     #+++++++++++++
     answer_dict, answer_type_dict = {}, {}
     answer_type_prob_dict = {}
@@ -257,7 +258,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         answer_type_dict[qid] = q_type[i].item()
 
         ###++++++++++++++++++++++++++++++
-        print('entity', len(example.ctx_entities_text), len(entity_spans))
+        print('entity', len(example.ctx_entities_text), len(entity_spans), ent_mask[i].sum())
         # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
         #       entity_spans[ent_prediction[i]], example.orig_answer_text)
         # if q_type[i] == 3:
