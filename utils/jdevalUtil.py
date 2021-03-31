@@ -243,6 +243,10 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob)
         print(q_type)
         print(sent_spans)
         print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
+        print('Orig answer:{}'.format(example.orig_answer_text))
+        answer_candidates_idxs = example.answer_candidates_in_ctx_entity_ids
+        for idx in answer_candidates_idxs:
+            print(example.ctx_entities_text[idx])
         print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
