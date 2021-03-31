@@ -82,10 +82,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
         print('ent_prediction', ent.shape)
         print('ent_mask', batch['ans_cand_mask'])
         print('gold_ent', batch['is_gold_ent'])
+        ent_pre_prob = torch.sigmoid(ent).data.cpu().numpy()
         x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch,
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
-                                                                                    type_prob)
+                                                                                    type_prob, ent_pre_prob)
         sys.exit(0)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -181,11 +182,12 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     return best_metrics, best_threshold
 
 
-def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob):
+def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob, ent_pred_prob):
     answer2sent_dict, answer2para_dict = {}, {}
     support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
     ids = batch['ids']
     support_para_mask_np = batch['para_mask'].data.cpu().numpy()
+    ans_cand_mask = batch['ans_cand_mask'].data.cpu().numpy()
     #+++++++++++++
     answer_dict, answer_type_dict = {}, {}
     answer_type_prob_dict = {}
@@ -251,6 +253,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob)
         print('q_type: {}'.format(q_type[i]))
         for t_i, idx in enumerate(answer_candidates_idxs):
             print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
+        print(len(answer_candidates_idxs), ans_cand_mask[i].sum())
         print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
