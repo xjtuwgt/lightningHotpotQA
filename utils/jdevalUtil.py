@@ -194,6 +194,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
     answer_dict, answer_type_dict = {}, {}
     answer_type_prob_dict = {}
 
+    print(batch['is_gold_ent'])
+
 
 
     q_type = np.argmax(q_type_prob, 1)
