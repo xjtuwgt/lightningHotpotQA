@@ -243,14 +243,14 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
             if y1 >= para_start_idx and y2 <= para_end_idx:
                 ans_para_idx = para_idx
                 break
-        if ans_para_idx > 0:
+        if ans_para_idx >= 0:
             para_start_idx, para_end_idx, para_name = para_spans[ans_para_idx]
             sent_spans_filtered = [_ for _ in sent_spans if (_[0]>= para_start_idx and _[1] <= para_end_idx)]
             for sent_idx, sent_span in enumerate(sent_spans_filtered):
                 sent_start_idx, sent_end_idx = sent_span
                 if y1 >= sent_start_idx and y2 <= sent_end_idx:
                     ans_sent_idx = sent_idx
-        if ans_para_idx > 0 and ans_sent_idx > 0:
+        if ans_para_idx >= 0 and ans_sent_idx >= 0:
             sent_name = [para_spans[ans_para_idx][2], ans_sent_idx]
         else:
             sent_name = None
@@ -266,12 +266,13 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         entity_spans = feature.entity_spans
         # print('sent_spans', sent_spans)
         # print('para_spans', para_spans)
-        ans_sent_name = get_sent_name_accord_ans(y1=y1[i], y2=y2[i], sent_spans=sent_spans, para_spans=para_spans)
-        print(ans_sent_name)
         ###++++++++++++++++++++++++++++++
         answer_text = ''
+        answer_sent_name = None
         if q_type[i] in [0, 3]:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
+            ans_sent_name = get_sent_name_accord_ans(y1=y1[i], y2=y2[i], sent_spans=sent_spans, para_spans=para_spans)
+            print(ans_sent_name)
         elif q_type[i] == 1:
             answer_text = 'yes'
         elif q_type[i] == 2:
