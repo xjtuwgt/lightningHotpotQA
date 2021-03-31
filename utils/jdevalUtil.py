@@ -84,7 +84,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
         # print('ent_mask', batch['ans_cand_mask'])
         # print('gold_ent', batch['is_gold_ent'])
         ent_pre_prob = torch.sigmoid(ent).data.cpu().numpy()
-        x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch,
+        _, _, answer_sent_name_dict_ = convert_answer_to_sent_names(example_dict, feature_dict, batch,
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob, ent_pre_prob)
@@ -141,18 +141,21 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     # if predict_support_np[i, j] > thresholds[thresh_i]:
                     if predict_support_np[i, j] > thresholds[thresh_i] * topk_score_ref:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
-                    # +++++++++++++++++++++++++++
-                    temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
-                    cur_sp_pred[thresh_i] = temp
-                    if len(cur_sp_pred[thresh_i]) < 2:
-                        cur_sp_pred[thresh_i].extend(topk_pred_sents)
-                    # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
-                    # # +++++++++++++++++++++++++++
 
             for thresh_i in range(N_thresh):
                 if cur_id not in total_sp_dict[thresh_i]:
                     total_sp_dict[thresh_i][cur_id] = []
 
+                ##+++++
+                # +++++++++++++++++++++++++++
+                print(len(cur_sp_pred[thresh_i]))
+                # temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
+                # cur_sp_pred[thresh_i] = temp
+                # if len(cur_sp_pred[thresh_i]) < 2:
+                #     cur_sp_pred[thresh_i].extend(topk_pred_sents)
+                # # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
+                # # +++++++++++++++++++++++++++
+                ##+++++
                 total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
 
     def choose_best_threshold(ans_dict, pred_file):
@@ -183,8 +186,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     return best_metrics, best_threshold
 
 
-def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob, ent_pred_prob):
-    answer2sent_dict, answer2para_dict = {}, {}
+def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob, ent_pred_prob):
+    answer2sent_name_dict = {}
     support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
     ids = batch['ids']
     support_para_mask_np = batch['para_mask'].data.cpu().numpy()
@@ -196,8 +199,6 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
     answer_type_prob_dict = {}
 
     # print('is_gold_ent', batch['is_gold_ent'])
-
-
 
     q_type = np.argmax(q_type_prob, 1)
     # print(q_type)
@@ -285,6 +286,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
         ###++++++++++++++++++++++++++++++
         print('answer_sent_name', answer_sent_name, answer_text)
+        answer2sent_name_dict[qid] = answer_sent_name
 
         # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
         #       entity_spans[ent_prediction[i]], example.orig_answer_text)
@@ -322,4 +324,4 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
         print('*' * 75)
 
-    return answer_dict, answer_type_dict, answer_type_prob_dict
+    return answer_dict, answer_type_dict, answer2sent_name_dict
