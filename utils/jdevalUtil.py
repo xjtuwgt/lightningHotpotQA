@@ -195,7 +195,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
 
     q_type = np.argmax(q_type_prob, 1)
-    print(q_type)
+    # print(q_type)
 
     def get_ans_from_pos(qid, y1, y2):
         feature = features[qid]
