@@ -284,7 +284,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         answer_type_dict[qid] = q_type[i].item()
 
         ###++++++++++++++++++++++++++++++
-        print('answer_sent_name', answer_sent_name)
+        print('answer_sent_name', answer_sent_name, answer_text)
 
         # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
         #       entity_spans[ent_prediction[i]], example.orig_answer_text)
