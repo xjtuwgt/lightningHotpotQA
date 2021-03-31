@@ -236,7 +236,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob)
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
         print(y1[i], y2[i])
-        print('support_sent_mask_np {} {}'.format(support_para_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
+        print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
         print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
