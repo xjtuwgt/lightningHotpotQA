@@ -79,7 +79,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch['ids'],
+        x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch,
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
@@ -178,10 +178,16 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     return best_metrics, best_threshold
 
 
-def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
+def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob):
     answer2sent_dict, answer2para_dict = {}, {}
+    support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
+    ids = batch['ids']
+    support_para_mask_np = batch['para_mask'].data.cpu().numpy()
+    #+++++++++++++
     answer_dict, answer_type_dict = {}, {}
     answer_type_prob_dict = {}
+
+
 
     q_type = np.argmax(q_type_prob, 1)
     print(q_type)
@@ -230,6 +236,7 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
         for key, value in example.__dict__.items():
             print('example: {}\n{}'.format(key, value))
         print(y1[i], y2[i])
+        print('support_sent_mask_np {}'.format(support_para_mask_np[i].sum()))
         print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
