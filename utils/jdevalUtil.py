@@ -271,8 +271,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         answer_sent_name = None
         if q_type[i] in [0, 3]:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
-            ans_sent_name = get_sent_name_accord_ans(y1=y1[i], y2=y2[i], sent_spans=sent_spans, para_spans=para_spans)
-            print(ans_sent_name)
+            answer_sent_name = get_sent_name_accord_ans(y1=y1[i], y2=y2[i], sent_spans=sent_spans, para_spans=para_spans)
         elif q_type[i] == 1:
             answer_text = 'yes'
         elif q_type[i] == 2:
@@ -285,6 +284,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         answer_type_dict[qid] = q_type[i].item()
 
         ###++++++++++++++++++++++++++++++
+        print('answer_sent_name', answer_sent_name)
 
         # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
         #       entity_spans[ent_prediction[i]], example.orig_answer_text)
