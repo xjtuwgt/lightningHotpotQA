@@ -252,8 +252,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         sent_spans = feature.sent_spans
         para_spans = feature.para_spans
         entity_spans = feature.entity_spans
-        print('sent_spans', sent_spans)
-        print('para_spans', para_spans)
+        # print('sent_spans', sent_spans)
+        # print('para_spans', para_spans)
         get_sent_name_accord_ans(y1=y1[i], y2=y2[i], sent_spans=sent_spans, para_spans=para_spans)
         ###++++++++++++++++++++++++++++++
         answer_text = ''
