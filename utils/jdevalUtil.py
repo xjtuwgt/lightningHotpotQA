@@ -87,7 +87,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob, ent_pre_prob)
-        sys.exit(0)
+        # sys.exit(0)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         answer_type_dict.update(answer_type_dict_)
