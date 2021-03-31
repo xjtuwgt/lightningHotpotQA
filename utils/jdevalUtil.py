@@ -229,6 +229,10 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob)
     for i, qid in enumerate(ids):
         feature = features[qid]
         example = examples[qid]
+        ###++++++++++++++++++++++++++++++
+        assert support_sent_mask_np[i].sum() == len(feature.__dict__['sent_spans'])
+        sent_spans = feature.sent_spans
+        ###++++++++++++++++++++++++++++++
 
         # for key, value in feature.__dict__.items():
         #     print('feature: {}\n{}'.format(key, value))
@@ -236,6 +240,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob)
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
         print(y1[i], y2[i])
+        print(q_type)
+        print(sent_spans)
         print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
         print('*' * 75)
         answer_text = ''
