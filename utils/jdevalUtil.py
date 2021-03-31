@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm
 import torch
 import shutil
+import sys
 import os
 from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
 from csr_mhqa.utils import convert_to_tokens
@@ -82,6 +83,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
+        sys.exit(0)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         answer_type_dict.update(answer_type_dict_)
