@@ -80,8 +80,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     type_prob)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         print('ent_prediction', ent.shape)
-        print('ent_mask', batch['ans_cand_mask'])
-        print('gold_ent', batch['is_gold_ent'])
+        # print('ent_mask', batch['ans_cand_mask'])
+        # print('gold_ent', batch['is_gold_ent'])
         ent_pre_prob = torch.sigmoid(ent).data.cpu().numpy()
         x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch,
                                                                                     yp1.data.cpu().numpy().tolist(),
@@ -259,7 +259,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         # print('+' * 75)
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
-        if q_type == 3:
+        if q_type[i] == 3:
             print(y1[i], y2[i])
             # print(q_type)
             # print(sent_spans)
