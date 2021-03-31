@@ -129,10 +129,10 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     if predict_support_np[i, j] > thresholds[thresh_i] * topk_score_ref:
                         cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
                     # +++++++++++++++++++++++++++
-                    # temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
-                    # cur_sp_pred[thresh_i] = temp
-                    # if len(cur_sp_pred[thresh_i]) < 2:
-                    #     cur_sp_pred[thresh_i].extend(topk_pred_sents)
+                    temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
+                    cur_sp_pred[thresh_i] = temp
+                    if len(cur_sp_pred[thresh_i]) < 2:
+                        cur_sp_pred[thresh_i].extend(topk_pred_sents)
                     # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
                     # # +++++++++++++++++++++++++++
 
