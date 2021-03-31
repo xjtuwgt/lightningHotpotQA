@@ -1,9 +1,9 @@
 {
-    "exp_name": "roberta",
+    "exp_name": "train.roberta.bs2.lr1e-06.lrsvaried.datahgn_low.seed1",
     "model_type": "roberta",
     "encoder_name_or_path": "roberta-large",
-    "encoder_name": "encoder.pkl",
-    "model_name": "model.pkl",
+    "encoder_name": "encoder_2.pkl",
+    "model_name": "model_2.pkl",
     "devf_type": "long_low",
     "gnn": "gat:1,2",
     "num_edge_type": 8,
