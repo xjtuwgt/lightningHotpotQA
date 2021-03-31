@@ -199,6 +199,7 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
             orig_tok_end = tok_to_orig_map[y2]
 
             ques_tok_len = len(example.question_tokens)
+            print('question tokens = {}'.format(example.question_tokens))
             if orig_tok_start < ques_tok_len and orig_tok_end < ques_tok_len:
                 ques_start_idx = example.question_word_to_char_idx[orig_tok_start]
                 ques_end_idx = example.question_word_to_char_idx[orig_tok_end] + len(
@@ -209,11 +210,15 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
                 orig_tok_end -= len(example.question_tokens)
                 ctx_start_idx = example.ctx_word_to_char_idx[orig_tok_start]
                 ctx_end_idx = example.ctx_word_to_char_idx[orig_tok_end] + len(example.doc_tokens[orig_tok_end])
-                final_text = example.ctx_text[example.ctx_word_to_char_idx[orig_tok_start]:example.ctx_word_to_char_idx[
-                                                                                               orig_tok_end] + len(
-                    example.doc_tokens[orig_tok_end])]
+                # final_text = example.ctx_text[example.ctx_word_to_char_idx[orig_tok_start]:example.ctx_word_to_char_idx[
+                #                                                                                orig_tok_end] + len(
+                #     example.doc_tokens[orig_tok_end])]
+                final_text = example.ctx_text[ctx_start_idx:ctx_end_idx]
 
         return final_text
+
+    def answer_to_sentence_id(qid, y1, y2):
+        return
 
     for i, qid in enumerate(ids):
         feature = features[qid]
@@ -222,8 +227,8 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
         # for key, value in feature.__dict__.items():
         #     print(key, value)
         #
-        # for key, value in example.__dict__.items():
-        #     print(key, value)
+        for key, value in example.__dict__.items():
+            print(key)
         print(y1[i], y2[i])
         print('*' * 50)
         answer_text = ''
