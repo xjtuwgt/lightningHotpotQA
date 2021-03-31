@@ -1,9 +1,9 @@
 {
-    "exp_name": "train.graph.roberta.bs2.as4.lr1e-05.lrsfixed.gnngat1.4.datahgn_low_sae.seed2001",
+    "exp_name": "train.graph.roberta.bs2.as1.lr3e-05.lrslayer_decay.lrd0.9.gnngat1.4.datahgn_docred_low_saeRecAdam.cosine.seed100",
     "model_type": "roberta",
     "encoder_name_or_path": "roberta-large",
-    "encoder_name": "encoder_5.pkl",
-    "model_name": "model_5.pkl",
+    "encoder_name": "encoder_2.step_5658.pkl",
+    "model_name": "model_2.step_5658.pkl",
     "devf_type": "hgn_low_sae",
     "gnn": "gat:1,4",
     "num_edge_type": 9,
