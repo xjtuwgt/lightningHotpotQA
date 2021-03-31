@@ -4,7 +4,8 @@ import sys
 
 from os.path import join
 
-from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
+# from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
+from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import *
