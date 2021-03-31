@@ -198,6 +198,7 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     pred_doc_type_list = []
     pred_sent_count_list = []
 
+    pred_para_count_list = []
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for row in raw_data:
@@ -216,6 +217,9 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
         # sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
         # sp_predictions
         print("{}\t{}\t{}".format(qid, len(set(sp_golds)), len(set(sp_predictions))))
+        sp_para_predictions = list(set([x[0] for x in sp_predictions]))
+        pred_para_count_list.append(len(sp_para_predictions))
+        # +++++++++++
         if len(set(sp_golds)) > len(set(sp_predictions)):
             pred_sent_count_list.append('less')
         elif len(set(sp_golds)) < len(set(sp_predictions)):
@@ -311,6 +315,8 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     print('*' * 75)
     conf_matrix_para_vs_ans = confusion_matrix(pred_doc_type_list, pred_ans_type_list, labels=result_types)
     print('Para Type vs ans Type conf matrix:\n{}'.format(conf_matrix_para_vs_ans))
+    para_counter = Counter(pred_para_count_list)
+    print('Para counter : {}'.format(para_counter))
     # pred_sent_para_type_counter = Counter()
     # for (sent_type, para_type) in zip(pred_doc_type_list, pred_sent_type_list):
     #     pred_sent_para_type_counter[(sent_type, para_type)] += 1
