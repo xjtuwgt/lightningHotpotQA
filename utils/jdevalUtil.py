@@ -245,8 +245,10 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         ###++++++++++++++++++++++++++++++
         assert support_sent_mask_np[i].sum() == len(feature.__dict__['sent_spans'])
         sent_spans = feature.sent_spans
+        para_spans = feature.para_spans
         entity_spans = feature.entity_spans
         print('sent_spans', sent_spans)
+        print('para_spans', para_spans)
         ###++++++++++++++++++++++++++++++
         answer_text = ''
         if q_type[i] in [0, 3]:
