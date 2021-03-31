@@ -253,7 +253,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         print('q_type: {}'.format(q_type[i]))
         for t_i, idx in enumerate(answer_candidates_idxs):
             print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
-        print(len(answer_candidates_idxs), ans_cand_mask[i].sum())
+        print(len(answer_candidates_idxs), len(example.answer_in_ques_entity_ids), ans_cand_mask[i].sum())
         print('*' * 75)
         answer_text = ''
         if q_type[i] in [0, 3]:
