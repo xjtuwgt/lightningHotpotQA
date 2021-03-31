@@ -79,6 +79,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        print(ent.shape)
+        print(batch['ans_cand_mask'])
         x, y, z = convert_answer_to_sent_paras(example_dict, feature_dict, batch,
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
