@@ -12,8 +12,8 @@ from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import load_encoder_model, eval_model
 from utils.jdevalUtil import jd_eval_model
 
-# from models.HGN import HierarchicalGraphNetwork
-from jdmodels.jdHGN import HierarchicalGraphNetwork
+from models.HGN import HierarchicalGraphNetwork
+# from jdmodels.jdHGN import HierarchicalGraphNetwork
 from model_envs import MODEL_CLASSES
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
