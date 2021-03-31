@@ -218,8 +218,9 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
     for i, qid in enumerate(ids):
         feature = features[qid]
         example = examples[qid]
-        print(feature)
-        print(example)
+
+        print(feature.__dict__)
+        print(example.__dict__)
         answer_text = ''
         if q_type[i] in [0, 3]:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
