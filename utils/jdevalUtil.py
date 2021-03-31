@@ -154,13 +154,13 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                 # print(len(cur_sp_pred[thresh_i]))
                 temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
                 cur_sp_pred[thresh_i] = temp
+                if len(cur_sp_pred[thresh_i]) < 2:
+                    cur_sp_pred[thresh_i].extend(topk_pred_sents)
                 print('former len {} {}'.format(former_len, len(temp)))
                 print(temp)
+                print('para number = {}'.format(len([set([x for x in temp])])))
                 print(ans_sent_name)
                 print('-' * 12)
-                # if len(cur_sp_pred[thresh_i]) < 2:
-                #     cur_sp_pred[thresh_i].extend(topk_pred_sents)
-                # # # if len(cur_sp_pred[thresh_i]) >= top2_para_total_sent_num_i and len(cur_sp_pred[thresh_i]) >=4:
                 # # +++++++++++++++++++++++++++
                 ##+++++
                 total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
@@ -259,7 +259,7 @@ def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob,
                 if y1 >= sent_start_idx and y2 <= sent_end_idx:
                     ans_sent_idx = sent_idx
         if ans_para_idx >= 0 and ans_sent_idx >= 0:
-            sent_name = [para_spans[ans_para_idx][2], ans_sent_idx]
+            sent_name = (para_spans[ans_para_idx][2], ans_sent_idx)
         else:
             sent_name = None
         return sent_name
@@ -292,7 +292,7 @@ def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob,
         answer_type_dict[qid] = q_type[i].item()
 
         ###++++++++++++++++++++++++++++++
-        print('answer_sent_name', answer_sent_name, answer_text)
+        # print('answer_sent_name', answer_sent_name, answer_text)
         answer2sent_name_dict[qid] = answer_sent_name
 
         # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
