@@ -291,7 +291,7 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
                 # print('ent_mask', ent_mask[i])
                 # print('ent_score', ent_pred_prob[i])
                 print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
-                print('gold entity', example.ctx_entities_text[is_gold_ent[i]])
+                print('gold entity', example.ctx_entities_text[int(is_gold_ent[i])])
 
         print('*' * 75)
 
