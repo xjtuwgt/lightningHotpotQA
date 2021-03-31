@@ -225,10 +225,10 @@ def convert_answer_to_sent_paras(examples, features, ids, y1, y2, q_type_prob):
         example = examples[qid]
 
         for key, value in feature.__dict__.items():
-            print('feature', key)
+            print('feature: {}\n{}'.format(key, value))
         print('+' * 75)
         for key, value in example.__dict__.items():
-            print('example', key)
+            print('example: {}\n{}'.format(key, value))
         print(y1[i], y2[i])
         print('*' * 75)
         answer_text = ''
