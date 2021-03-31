@@ -8,6 +8,7 @@ import os
 from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
 from csr_mhqa.utils import convert_to_tokens
 import torch.nn.functional as F
+from eval.hotpot_evaluate_v1 import exact_match_score
 
 def recall_computation(prediction, gold):
     gold_set = set(gold)
@@ -260,18 +261,19 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
         # for key, value in example.__dict__.items():
         #     print('example: {}\n{}'.format(key, value))
         if q_type[i] == 3:
-            print(y1[i], y2[i])
-            # print(q_type)
-            # print(sent_spans)
-            print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
-            print('Orig answer:{}'.format(example.orig_answer_text))
-            answer_candidates_idxs = example.answer_candidates_in_ctx_entity_ids
-            print('q_type: {}'.format(q_type[i]))
-            for t_i, idx in enumerate(answer_candidates_idxs):
-                print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
-            print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
-            ###++++++++++++++++++++++++++++++
-            print('predicted answer {}'.format(answer_text))
+            if not exact_match_score(answer_text, example.orig_answer_text):
+                print(y1[i], y2[i])
+                # print(q_type)
+                # print(sent_spans)
+                print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
+                print('Orig answer:{}'.format(example.orig_answer_text))
+                answer_candidates_idxs = example.answer_candidates_in_ctx_entity_ids
+                print('q_type: {}'.format(q_type[i]))
+                for t_i, idx in enumerate(answer_candidates_idxs):
+                    print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
+                print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
+                ###++++++++++++++++++++++++++++++
+                print('predicted answer {}'.format(answer_text))
         print('*' * 75)
 
     return answer_dict, answer_type_dict, answer_type_prob_dict
