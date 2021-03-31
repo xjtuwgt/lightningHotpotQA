@@ -261,8 +261,6 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
 
         # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
         #       entity_spans[ent_prediction[i]], example.orig_answer_text)
-        if q_type[i] == 3:
-            print('entity', len(example.ctx_entities_text), len(entity_spans), ent_mask[i].sum(), example.ctx_entities_text[ent_prediction[i]])
         #     entity_prediction
         # for key, value in feature.__dict__.items():
         #     print('feature: {}\n{}'.format(key, value))
@@ -283,6 +281,8 @@ def convert_answer_to_sent_paras(examples, features, batch, y1, y2, q_type_prob,
                 print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
                 ###++++++++++++++++++++++++++++++
                 print('predicted answer {}'.format(answer_text))
+                print('entity', len(example.ctx_entities_text), len(entity_spans), ent_mask[i].sum(),
+                      example.ctx_entities_text[ent_prediction[i]])
         print('*' * 75)
 
     return answer_dict, answer_type_dict, answer_type_prob_dict
