@@ -250,7 +250,7 @@ def post_process_sent_para(cur_id, example_dict, feature_dict, sent_scores_np_i,
             print(diff_para_sent_names)
             print(sent_names_i)
             print(topk_sent_selected_paras)
-        assert len(diff_para_sent_names) == len(diff_para)
+        # assert len(diff_para_sent_names) == len(diff_para)
     # ++++++++++++++++++++++++++
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
 

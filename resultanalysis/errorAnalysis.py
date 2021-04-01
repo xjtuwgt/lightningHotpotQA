@@ -332,10 +332,4 @@ def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=F
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for row in raw_data:
         qid = row['_id']
-        if qid == '5ae60d36554299546bf8303e':
-            # print(row['context'])
-            for x_idx, x in enumerate(row['context']):
-                print('title', x_idx, x[0])
-                for y_idx, y in enumerate(x[1]):
-                    print('sentence', y_idx, y)
-            return
+        question_type = row['']
