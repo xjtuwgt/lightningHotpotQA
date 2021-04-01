@@ -223,6 +223,9 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
             # assert sorted_idx_i >=0
             if sorted_idx_i < 0:
                 print(topk_pred_paras)
+                print(topk_sent_selected_paras)
+                print(para_mask_i)
+                print(sent_mask_i)
                 print(para)
                 print(topk)
                 print(sent_mask_num)
