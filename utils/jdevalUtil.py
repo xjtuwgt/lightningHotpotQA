@@ -177,11 +177,15 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
         cut_sent_flag = True
     assert total_sent_num_i >= sent_mask_i.sum()
     sent_mask_num = int(sent_mask_i.sum())
+    total_para_num_i = len(para_names_i)
+    para_mask_i = para_mask_np_i
+    assert total_para_num_i >= para_mask_i.sum()
+    para_mask_num = int(para_mask_i.sum())
 
     sorted_idxes = np.argsort(sent_scores_i)[::-1]
     topk_sent_idxes = sorted_idxes[:2].tolist()
     topk_sent_selected_paras = set([sent_names_i[_][0] for _ in topk_sent_idxes])
-    if len(topk_sent_selected_paras) < 2:
+    if len(topk_sent_selected_paras) < 2 and para_mask_num > 1:
         for s_idx in range(2, sent_mask_num):
             topk_sent_idxes.append(sorted_idxes[s_idx])
             if sent_names_i[sorted_idxes[s_idx]][0] not in topk_sent_selected_paras:
@@ -193,13 +197,12 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
     topk_sent_selected_paras = set([_[0] for _ in topk_pred_sent_names])
 
     para_scores_i = para_scores_np_i
-    para_mask_i = para_mask_np_i
-    para_mask_num = int(para_mask_i.sum())
-    if para_mask_num == 1:
-        print('hhhhhh' * 30)
     para_scores_i[para_mask_i == 0] = -100
     para_sorted_idxes = np.argsort(para_scores_i)[::-1]
-    topk_para_idxes = para_sorted_idxes[:2]
+    if para_mask_num == 1:
+        topk_para_idxes = para_sorted_idxes[:1]
+    else:
+        topk_para_idxes = para_sorted_idxes[:2]
     topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
     assert len(topk_pred_paras) >= 2
     diff_para = topk_pred_paras.difference(topk_sent_selected_paras)
@@ -218,27 +221,15 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
         for para in list(diff_para):
             sorted_idx_i = find_largest_sent_idx(para=para, topk=topk, sent_mask_num=sent_mask_num,
                                                  sent_names=sent_names_i)
-            if sorted_idx_i >= 0:
-                diff_para_sent_idxes.append(sorted_idx_i)
-            else:
-                print(sent_names_i)
-                print(sent_names_i[:sent_mask_num])
-                print(topk_pred_sent_names)
-                print()
-                print(para)
-            # for s_idx_i in range(topk, sent_mask_num):
-            #     sorted_idx_i = sorted_idxes[s_idx_i]
-            #     if sent_names_i[sorted_idx_i][0] == para:
-            #         diff_para_sent_idxes.append(sorted_idx_i)
-            #         break
+            assert sorted_idx_i >=0
+            diff_para_sent_idxes.append(sorted_idx_i)
         diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
         if len(diff_para) != len(diff_para_sent_names):
             print(diff_para)
             print(diff_para_sent_names)
             print(sent_names_i)
             print(topk_sent_selected_paras)
-            assert len(diff_para_sent_names) == len(diff_para)
-    # ++++++++
+        assert len(diff_para_sent_names) == len(diff_para)
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
 
 def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras, ans_sent_name):
