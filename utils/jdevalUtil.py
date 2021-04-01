@@ -180,12 +180,13 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
     if total_sent_num_i != sent_mask_i.sum():
         cut_sent_flag = True
     assert total_sent_num_i >= sent_mask_i.sum()
+    sent_mask_num = int(sent_mask_i.sum())
 
     sorted_idxes = np.argsort(sent_scores_i)[::-1]
     topk_sent_idxes = sorted_idxes[:2].tolist()
     topk_sent_selected_paras = set([sent_names_i[_][0] for _ in topk_sent_idxes])
     if len(topk_sent_selected_paras) < 2:
-        for s_idx in range(2, sent_mask_i.sum()):
+        for s_idx in range(2, sent_mask_num):
             topk_sent_idxes.append(sorted_idxes[s_idx])
             if sent_names_i[sorted_idxes[s_idx]][0] not in topk_sent_selected_paras:
                 break
@@ -206,7 +207,7 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
     if len(diff_para) > 0:
         topk = len(topk_sent_idxes)
         for para in list(diff_para):
-            for s_idx_i in range(topk, sent_mask_i.sum()):
+            for s_idx_i in range(topk, sent_mask_num):
                 sorted_idx_i = sorted_idxes[s_idx_i]
                 if sent_names_i[sorted_idx_i][0] == para:
                     diff_para_sent_idxes.append(s_idx_i)
