@@ -80,7 +80,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        print('ent_prediction', ent.shape)
+        # print('ent_prediction', ent.shape)
         # print('ent_mask', batch['ans_cand_mask'])
         # print('gold_ent', batch['is_gold_ent'])
         ent_pre_prob = torch.sigmoid(ent).data.cpu().numpy()
@@ -219,6 +219,7 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
                 diff_para_sent_idxes.append(sorted_idx_i)
             else:
                 print(sent_names_i)
+                print(sent_names_i[:sent_mask_num])
                 print(para)
             # for s_idx_i in range(topk, sent_mask_num):
             #     sorted_idx_i = sorted_idxes[s_idx_i]
