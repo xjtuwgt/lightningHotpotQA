@@ -88,7 +88,6 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob, ent_pre_prob)
-        # sys.exit(0)
         ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         answer_type_dict.update(answer_type_dict_)
@@ -132,11 +131,9 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                topk_pred_sent_names=topk_pred_sent_names,
                                                                diff_para_sent_names=diff_para_sent_names,
                                                                ans_sent_name=ans_sent_name)
-                # print('former ', cur_sp_pred[thresh_i])
-                # print('post ', post_process_thresh_i_sp_pred)
+                total_sp_dict[thresh_i][cur_id].extend(post_process_thresh_i_sp_pred)
                 # # +++++++++++++++++++++++++++
-                ##+++++
-                total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
+                # total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
 
     def choose_best_threshold(ans_dict, pred_file):
         best_joint_f1 = 0

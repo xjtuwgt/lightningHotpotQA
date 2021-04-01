@@ -101,6 +101,7 @@ model.eval()
 ##########################################################################
 output_pred_file = join(args.exp_name, 'dev_pred.json')
 output_eval_file = join(args.exp_name, 'dev_eval.txt')
+output_score_file = join(args.exp_name, 'dev_score.txt')
 
 metrics, threshold = jd_eval_model(args, encoder, model,
                                 dev_dataloader, dev_example_dict, dev_feature_dict,
