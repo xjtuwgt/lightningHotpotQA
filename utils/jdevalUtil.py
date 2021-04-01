@@ -110,6 +110,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                        sent_scores_np_i=predict_support_np[i], sent_mask_np_i=support_sent_mask_np[i],
                                        para_scores_np_i=predict_support_para_np[i], para_mask_np_i=support_para_mask_np[i])
             ans_sent_name = answer_sent_name_dict_[cur_id]
+            if cut_sent_flag:
+                cut_sentence_count += 1
             ##+++++++++++++++++++++++++
 
             for j in range(predict_support_np.shape[1]):
