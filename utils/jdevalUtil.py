@@ -222,7 +222,7 @@ def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_nam
     if number_of_paras == 1:
         assert len(diff_para_sent_names) > 0
         post_process_sp_pred.extend(diff_para_sent_names)
-    if ans_sent_name not in post_process_sp_pred:
+    if (ans_sent_name is not None) and (ans_sent_name not in post_process_sp_pred):
         post_process_sp_pred.append(ans_sent_name)
     return post_process_sp_pred
 
