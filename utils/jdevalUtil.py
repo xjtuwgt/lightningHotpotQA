@@ -107,7 +107,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             cur_id = batch['ids'][i]
             ##+++++++++++++++++++++++++
             topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras = \
-                post_process_sent_para(cur_id=cur_id, example_dict=example_dict,
+                post_process_sent_para(cur_id=cur_id, example_dict=example_dict, feature_dict=feature_dict,
                                        sent_scores_np_i=predict_support_np[i], sent_mask_np_i=support_sent_mask_np[i],
                                        para_scores_np_i=predict_support_para_np[i], para_mask_np_i=support_para_mask_np[i])
             ans_sent_name = answer_sent_name_dict_[cur_id]
@@ -165,7 +165,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
     return best_metrics, best_threshold
 
-def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_i, para_scores_np_i, para_mask_np_i):
+def post_process_sent_para(cur_id, example_dict, feature_dict, sent_scores_np_i, sent_mask_np_i, para_scores_np_i, para_mask_np_i):
     sent_names_i = example_dict[cur_id].sent_names
     para_names_i = example_dict[cur_id].para_names
     cut_sent_flag = False
@@ -222,6 +222,8 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
                                                  sent_names=sent_names_i)
             # assert sorted_idx_i >=0
             if sorted_idx_i < 0:
+                print(feature_dict[cur_id].para_spans)
+                print(feature_dict[cur_id].sent_spans)
                 print(topk_pred_paras)
                 print(topk_sent_selected_paras)
                 print(para_mask_i)
