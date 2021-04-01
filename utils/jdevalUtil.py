@@ -209,7 +209,7 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
             for s_idx_i in range(topk, sent_mask_num):
                 sorted_idx_i = sorted_idxes[s_idx_i]
                 if sent_names_i[sorted_idx_i][0] == para:
-                    diff_para_sent_idxes.append(s_idx_i)
+                    diff_para_sent_idxes.append(sorted_idx_i)
                     break
         diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
         assert len(diff_para_sent_names) == len(diff_para)
