@@ -194,6 +194,9 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
 
     para_scores_i = para_scores_np_i
     para_mask_i = para_mask_np_i
+    para_mask_num = int(para_mask_i.sum())
+    if para_mask_num == 1:
+        print('hhhhhh' * 30)
     para_scores_i[para_mask_i == 0] = -100
     para_sorted_idxes = np.argsort(para_scores_i)[::-1]
     topk_para_idxes = para_sorted_idxes[:2]
