@@ -49,7 +49,7 @@ def HypeParameterSpace():
     learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [3e-5, 2e-5, 1e-5, 1.5e-5]} #3e-5, 5e-5, 1e-4, 1.5e-4
     layer_wise_lr_decay = {'name': 'layer_wise_lr_decay', 'type': 'choice', 'values': [0.9]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
-    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1]}
+    gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1,2,4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5]} ##
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
     gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.3]} #0.3
@@ -58,10 +58,10 @@ def HypeParameterSpace():
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [6]}
-    devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low']}
-    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_docred_low']} #
+    devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['hgn_low_sae']}
+    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_docred_low_sae']} #
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['roberta']}
-    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # if SAE, then this number should be 9
+    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [9]} # if SAE, then this number should be 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
     learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['layer_decay']}
