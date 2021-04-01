@@ -106,32 +106,10 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             cur_sp_pred = [[] for _ in range(N_thresh)]
             cur_id = batch['ids'][i]
             ##+++++++++++++++++++++++++
-            sent_names_i = example_dict[cur_id].sent_names
-            total_sent_num_i = len(sent_names_i)
-            sent_scores_i = predict_support_np[i]
-            sent_mask_i = support_sent_mask_np[i]
-            sent_scores_i[sent_mask_i == 0] = -100
-            # print(sent_scores_i)
-            # print('+' * 100)
-            if total_sent_num_i != sent_mask_i.sum():
-                cut_sentence_count = cut_sentence_count + 1
-            assert total_sent_num_i >= sent_mask_i.sum()
-            # for temp_i in range(total_sent_num_i):
-            #     print('{}\t{:.4f}'.format(sent_names_i[temp_i], sent_scores_i[temp_i]))
-            sorted_idxes = np.argsort(sent_scores_i)[::-1]
-            topk_sent_idxes = sorted_idxes[:2]
-            topk_score_ref = sent_scores_i[topk_sent_idxes[-1]]
-            topk_pred_sents = [sent_names_i[_] for _ in topk_sent_idxes]
-
-            para_names_i = example_dict[cur_id].para_names
-            para_scores_i = predict_support_para_np[i]
-            para_mask_i = support_para_mask_np[i]
-            para_scores_i[para_mask_i == 0] = -100
-            para_sorted_idxes = np.argsort(para_scores_i)[::-1]
-            topk_para_idxes = para_sorted_idxes[:2]
-            topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
-            top2_para_total_sent_num_i = len([x for x in sent_names_i if x[0] in topk_pred_paras])
-
+            topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras = \
+                post_process_sent_para(cur_id=cur_id, example_dict=example_dict,
+                                       sent_scores_np_i=predict_support_np[i], sent_mask_np_i=support_sent_mask_np[i],
+                                       para_scores_np_i=predict_support_para_np[i], para_mask_np_i=support_para_mask_np[i])
             ans_sent_name = answer_sent_name_dict_[cur_id]
             ##+++++++++++++++++++++++++
 
@@ -147,7 +125,6 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             for thresh_i in range(N_thresh):
                 if cur_id not in total_sp_dict[thresh_i]:
                     total_sp_dict[thresh_i][cur_id] = []
-
                 ##+++++
                 # +++++++++++++++++++++++++++
                 former_len = len(cur_sp_pred[thresh_i])
@@ -155,7 +132,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                 temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
                 cur_sp_pred[thresh_i] = temp
                 if len(cur_sp_pred[thresh_i]) < 2:
-                    cur_sp_pred[thresh_i].extend(topk_pred_sents)
+                    cur_sp_pred[thresh_i].extend(topk_pred_sent_names)
                 print('former len {} {}'.format(former_len, len(temp)))
                 print(temp)
                 print('para number = {}'.format(len([set([x for x in temp])])))
@@ -192,6 +169,54 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
     return best_metrics, best_threshold
 
+def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_i, para_scores_np_i, para_mask_np_i):
+    sent_names_i = example_dict[cur_id].sent_names
+    para_names_i = example_dict[cur_id].para_names
+    cut_sent_flag = False
+    total_sent_num_i = len(sent_names_i)
+    sent_scores_i = sent_scores_np_i
+    sent_mask_i = sent_mask_np_i
+    sent_scores_i[sent_mask_i == 0] = -100
+    if total_sent_num_i != sent_mask_i.sum():
+        cut_sent_flag = True
+    assert total_sent_num_i >= sent_mask_i.sum()
+
+    sorted_idxes = np.argsort(sent_scores_i)[::-1]
+    topk_sent_idxes = sorted_idxes[:2].tolist()
+    topk_sent_selected_paras = set([sent_names_i[_][0] for _ in topk_sent_idxes])
+    if len(topk_sent_selected_paras) < 2:
+        for s_idx in range(2, sent_mask_i.sum()):
+            topk_sent_idxes.append(sorted_idxes[s_idx])
+            if sent_names_i[sorted_idxes[s_idx]][0] not in topk_sent_selected_paras:
+                break
+            else:
+                continue
+    topk_score_ref = sent_scores_i[topk_sent_idxes[-1]]
+    topk_pred_sent_names = [sent_names_i[_] for _ in topk_sent_idxes]
+    topk_sent_selected_paras = set([_[0] for _ in topk_pred_sent_names])
+
+    para_scores_i = para_scores_np_i
+    para_mask_i = para_mask_np_i
+    para_scores_i[para_mask_i == 0] = -100
+    para_sorted_idxes = np.argsort(para_scores_i)[::-1]
+    topk_para_idxes = para_sorted_idxes[:2]
+    topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
+    diff_para = topk_pred_paras.difference(topk_sent_selected_paras)
+    diff_para_sent_idxes = []
+    if len(diff_para) > 0:
+        topk = len(topk_sent_idxes)
+        for para in list(diff_para):
+            for s_idx_i in range(topk, sent_mask_i.sum()):
+                sorted_idx_i = sorted_idxes[s_idx_i]
+                if sent_names_i[sorted_idx_i][0] == para:
+                    diff_para_sent_idxes.append(s_idx_i)
+                    break
+    diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
+    return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
+
+def post_process_technique(cur_sp_pred, cur_id, ):
+
+    return
 
 def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob, ent_pred_prob):
     answer2sent_name_dict = {}
