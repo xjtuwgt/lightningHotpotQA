@@ -6,7 +6,7 @@ import numpy as np
 import argparse
 import os
 from sklearn.metrics import confusion_matrix
-from eval.hotpot_evaluate_v1 import normalize_answer
+from eval.hotpot_evaluate_v1 import normalize_answer, exact_match_score, f1_score
 
 from os.path import join
 from collections import Counter
@@ -329,7 +329,73 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
 def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=False):
 
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    def update_answer(prediction, gold):
+        em = exact_match_score(prediction, gold)
+        f1, prec, recall = f1_score(prediction, gold)
+        return (em, prec, recall, f1)
+
+    def update_sp(prediction, gold):
+        cur_sp_pred = set(map(tuple, prediction))
+        gold_sp_pred = set(map(tuple, gold))
+        tp, fp, fn = 0, 0, 0
+        for e in cur_sp_pred:
+            if e in gold_sp_pred:
+                tp += 1
+            else:
+                fp += 1
+        for e in gold_sp_pred:
+            if e not in cur_sp_pred:
+                fn += 1
+        prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
+        recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
+        f1 = 2 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
+        em = 1.0 if fp + fn == 0 else 0.0
+        return (em, prec, recall, f1)
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    type_metric_dict = {}
     for row in raw_data:
+        question_type = row['type']
+        if question_type not in type_metric_dict:
+            type_metric_dict[question_type] = []
+
         qid = row['_id']
-        question_type = row['']
+        sp_predictions = predictions['sp'][qid]
+        sp_predictions = [(x[0], x[1]) for x in sp_predictions]
+        sp_golds = row['supporting_facts']
+        sp_golds = [(x[0], x[1]) for x in sp_golds]
+        sp_metrics = update_sp(prediction=sp_predictions, gold=sp_golds)
+
+        if qid == '5add114a5542994734353826':
+            for x in row['context']:
+                print('title ', x[0])
+                for y_idx, y in enumerate(x[1]):
+                    print('sentence', y_idx, y)
+
+        ans_prediction = predictions['answer'][qid]
+        raw_answer = row['answer']
+        raw_answer = normalize_answer(raw_answer)
+        ans_prediction = normalize_answer(ans_prediction)
+        ans_metrics = update_answer(prediction=ans_prediction, gold=raw_answer)
+
+
+        type_metric_dict[question_type].append((ans_metrics, sp_metrics))
+
+    for key, value in type_metric_dict.items():
+        print('question type = {}'.format(key))
+        answer_em, answer_prec, answer_recall, answer_f1 = 0.0, 0.0, 0.0, 0.0
+        sp_em, sp_prec, sp_recall, sp_f1 = 0.0, 0.0, 0.0, 0.0
+        type_count = len(value)
+        for ans_tup, sp_tup in value:
+            answer_em += ans_tup[0]
+            answer_recall += ans_tup[1]
+            answer_prec += ans_tup[2]
+            answer_f1 += ans_tup[3]
+
+            sp_em += sp_tup[0]
+            sp_recall += sp_tup[1]
+            sp_prec += sp_tup[2]
+            sp_f1 += sp_tup[3]
+
+        print('ans {}\t{}\t{}\t{}'.format(answer_em/type_count, answer_recall/type_count, answer_prec/type_count, answer_f1/type_count))
+        print('sup {}\t{}\t{}\t{}'.format(sp_em / type_count, sp_recall / type_count, sp_prec / type_count,
+                                          sp_f1 / type_count))
