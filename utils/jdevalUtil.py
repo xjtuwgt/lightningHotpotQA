@@ -204,9 +204,9 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
     else:
         topk_para_idxes = para_sorted_idxes[:2]
     topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
-    assert len(topk_pred_paras) >= 2
+    assert len(topk_pred_paras) <= para_mask_num
     diff_para = topk_pred_paras.difference(topk_sent_selected_paras)
-    #++++++++
+    #++++++++++++++++++++++++++
     diff_para_sent_idxes = []
     diff_para_sent_names = []
     def find_largest_sent_idx(para, topk, sent_mask_num, sent_names):
@@ -215,7 +215,6 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
             if sent_names[sorted_idx_i][0] == para:
                 return sorted_idx_i
         return -1
-
     if len(diff_para) > 0:
         topk = len(topk_sent_idxes)
         for para in list(diff_para):
@@ -230,6 +229,7 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
             print(sent_names_i)
             print(topk_sent_selected_paras)
         assert len(diff_para_sent_names) == len(diff_para)
+    # ++++++++++++++++++++++++++
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
 
 def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras, ans_sent_name):
