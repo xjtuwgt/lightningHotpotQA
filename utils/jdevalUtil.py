@@ -200,28 +200,38 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
     topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
     assert len(topk_pred_paras) >= 2
     diff_para = topk_pred_paras.difference(topk_sent_selected_paras)
+    #++++++++
     diff_para_sent_idxes = []
     diff_para_sent_names = []
-    # def find_largest_sent_idx(para, topk, sent_mask_num, sent_names):
-    #     for s_idx_i in range(topk, sent_mask_num):
-    #         sorted_idx_i = sorted_idxes[s_idx_i]
-    #         if sent_names[sorted_idx_i][0] == para:
-    #             return sorted_idx_i
-    #     return -1
+    def find_largest_sent_idx(para, topk, sent_mask_num, sent_names):
+        for s_idx_i in range(topk, sent_mask_num):
+            sorted_idx_i = sorted_idxes[s_idx_i]
+            if sent_names[sorted_idx_i][0] == para:
+                return sorted_idx_i
+        return -1
 
     if len(diff_para) > 0:
         topk = len(topk_sent_idxes)
         for para in list(diff_para):
-            for s_idx_i in range(topk, sent_mask_num):
-                sorted_idx_i = sorted_idxes[s_idx_i]
-                if sent_names_i[sorted_idx_i][0] == para:
-                    diff_para_sent_idxes.append(sorted_idx_i)
-                    break
+            sorted_idx_i = find_largest_sent_idx(para=para, topk=topk, sent_mask_num=sent_mask_num,
+                                                 sent_names=sent_names_i)
+            if sorted_idx_i >= 0:
+                diff_para_sent_idxes.append(sorted_idx_i)
+            else:
+                print(sent_names_i)
+                print(para)
+            # for s_idx_i in range(topk, sent_mask_num):
+            #     sorted_idx_i = sorted_idxes[s_idx_i]
+            #     if sent_names_i[sorted_idx_i][0] == para:
+            #         diff_para_sent_idxes.append(sorted_idx_i)
+            #         break
         diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
         if len(diff_para) != len(diff_para_sent_names):
             print(diff_para)
             print(diff_para_sent_names)
+            print(sent_names_i)
             assert len(diff_para_sent_names) == len(diff_para)
+    # ++++++++
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
 
 def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras, ans_sent_name):
@@ -236,11 +246,11 @@ def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_nam
         post_process_sp_pred.extend(diff_para_sent_names)
     if (ans_sent_name is not None) and (ans_sent_name not in post_process_sp_pred):
         post_process_sp_pred.append(ans_sent_name)
-    print(len(set([x[0] for x in post_process_sp_pred])))
-    if len(cur_sp_pred) != len(post_process_sp_pred):
-        print('cur', cur_sp_pred)
-        print('post', post_process_sp_pred)
-    print('*' * 80)
+    # print(len(set([x[0] for x in post_process_sp_pred])))
+    # if len(cur_sp_pred) != len(post_process_sp_pred):
+    #     print('cur', cur_sp_pred)
+    #     print('post', post_process_sp_pred)
+    # print('*' * 80)
     return post_process_sp_pred
 
 def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob, ent_pred_prob):
