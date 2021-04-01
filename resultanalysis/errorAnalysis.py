@@ -327,140 +327,15 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
 
 
 def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=False):
-    yes_no_span_predictions = []
-    yes_no_span_true = []
-    prediction_ans_type_counter = Counter()
-    prediction_sent_type_counter = Counter()
-    prediction_para_type_counter = Counter()
 
-    pred_ans_type_list = []
-    pred_sent_type_list = []
-    pred_doc_type_list = []
-    pred_sent_count_list = []
-
-    pred_para_count_list = []
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for row in raw_data:
         qid = row['_id']
-        sp_predictions = predictions['sp'][qid]
-        sp_predictions = [(x[0], x[1]) for x in sp_predictions]
-        ans_prediction = predictions['answer'][qid]
-
-        raw_answer = row['answer']
-        raw_answer = normalize_answer(raw_answer)
-        ans_prediction = normalize_answer(ans_prediction)
-        sp_golds = row['supporting_facts']
-        sp_golds = [(x[0], x[1]) for x in sp_golds]
-        sp_para_golds = list(set([_[0] for _ in sp_golds]))
-        ##+++++++++++
-        # sp_predictions = [x for x in sp_predictions if x[0] in sp_para_golds]
-        # sp_predictions
-        print("{}\t{}\t{}".format(qid, len(set(sp_golds)), len(set(sp_predictions))))
-        sp_para_predictions = list(set([x[0] for x in sp_predictions]))
-        pred_para_count_list.append(len(sp_para_predictions))
-        # +++++++++++
-        if len(set(sp_golds)) > len(set(sp_predictions)):
-            pred_sent_count_list.append('less')
-        elif len(set(sp_golds)) < len(set(sp_predictions)):
-            pred_sent_count_list.append('more')
-        else:
-            pred_sent_count_list.append('equal')
-        ##+++++++++++
-        sp_sent_type = set_comparison(prediction_list=sp_predictions, true_list=sp_golds)
-        ###+++++++++
-        prediction_sent_type_counter[sp_sent_type] +=1
-        pred_sent_type_list.append(sp_sent_type)
-        ###+++++++++
-        sp_para_preds = list(set([_[0] for _ in sp_predictions]))
-        para_type = set_comparison(prediction_list=sp_para_preds, true_list=sp_para_golds)
-        prediction_para_type_counter[para_type] += 1
-        pred_doc_type_list.append(para_type)
-        ###+++++++++
-        if raw_answer not in ['yes', 'no']:
-            yes_no_span_true.append('span')
-        else:
-            yes_no_span_true.append(raw_answer)
-
-        if ans_prediction not in ['yes', 'no']:
-            yes_no_span_predictions.append('span')
-        else:
-            yes_no_span_predictions.append(ans_prediction)
-
-        ans_type = 'em'
-        if raw_answer not in ['yes', 'no']:
-            if raw_answer == ans_prediction:
-                ans_type = 'em'
-            elif raw_answer in ans_prediction:
-                # print('{}: {} |{}'.format(qid, raw_answer, ans_prediction))
-                # print('-'*75)
-                ans_type = 'super_of_gold'
-            elif ans_prediction in raw_answer:
-                # print('{}: {} |{}'.format(qid, raw_answer, ans_prediction))
-                # print('-'*75)
-                ans_type = 'sub_of_gold'
-            else:
-                ans_pred_tokens = ans_prediction.split(' ')
-                ans_raw_tokens = raw_answer.split(' ')
-                is_empty_set = len(set(ans_pred_tokens).intersection(set(ans_raw_tokens))) == 0
-                if is_empty_set:
-                    ans_type = 'no_over_lap'
-                else:
-                    ans_type = 'others'
-        else:
-            if raw_answer == ans_prediction:
-                ans_type = 'em'
-            else:
-                ans_type = 'others'
-
-        prediction_ans_type_counter[ans_type] += 1
-        pred_ans_type_list.append(ans_type)
-
-
-        # print('{} | {} | {}'.format(ans_type, raw_answer, ans_prediction))
-
-    print(len(pred_sent_type_list), len(pred_ans_type_list), len(pred_doc_type_list))
-
-    supp_sent_compare_type = ['equal', 'less', 'more']
-    result_types = ['em', 'sub_of_gold', 'super_of_gold', 'no_over_lap', 'others']
-    supp_sent_comp_dict = dict([(y, x) for x, y in enumerate(supp_sent_compare_type)])
-    supp_sent_type_dict = dict([(y, x) for x, y in enumerate(result_types)])
-    assert len(pred_sent_type_list) == len(pred_sent_count_list)
-    print(len(pred_sent_type_list), len(pred_sent_count_list))
-    conf_supp_sent_matrix = np.zeros((len(supp_sent_compare_type), len(result_types)), dtype=np.long)
-    for idx in range(len(pred_sent_type_list)):
-        comp_type_i = pred_sent_count_list[idx]
-        supp_sent_type_i = pred_sent_type_list[idx]
-        comp_idx_i = supp_sent_comp_dict[comp_type_i]
-        supp_sent_idx_i = supp_sent_type_dict[supp_sent_type_i]
-        conf_supp_sent_matrix[comp_idx_i][supp_sent_idx_i] += 1
-    print('Sent Type vs Sent Count conf matrix:\n{}'.format(conf_supp_sent_matrix))
-    print('Sum of matrix = {}'.format(conf_supp_sent_matrix.sum()))
-
-
-    conf_matrix = confusion_matrix(yes_no_span_true, yes_no_span_predictions, labels=["yes", "no", "span"])
-    conf_ans_sent_matrix = confusion_matrix(pred_sent_type_list, pred_ans_type_list, labels=result_types)
-    print('*' * 75)
-    print('Ans type conf matrix:\n{}'.format(conf_matrix))
-    print('*' * 75)
-    print('Sent vs ans conf matrix:\n{}'.format(conf_ans_sent_matrix))
-    print('*' * 75)
-    print("Ans prediction type: {}".format(prediction_ans_type_counter))
-    print("Sent prediction type: {}".format(prediction_sent_type_counter))
-    print("Para prediction type: {}".format(prediction_para_type_counter))
-    print('*' * 75)
-
-    conf_matrix_para_vs_sent = confusion_matrix(pred_doc_type_list, pred_sent_type_list, labels=result_types)
-    print('Para Type vs Sent Type conf matrix:\n{}'.format(conf_matrix_para_vs_sent))
-    print('*' * 75)
-    conf_matrix_para_vs_ans = confusion_matrix(pred_doc_type_list, pred_ans_type_list, labels=result_types)
-    print('Para Type vs ans Type conf matrix:\n{}'.format(conf_matrix_para_vs_ans))
-    para_counter = Counter(pred_para_count_list)
-    print('Para counter : {}'.format(para_counter))
-    # pred_sent_para_type_counter = Counter()
-    # for (sent_type, para_type) in zip(pred_doc_type_list, pred_sent_type_list):
-    #     pred_sent_para_type_counter[(sent_type, para_type)] += 1
-    # print('*' * 75)
-    # for key, value in dict(pred_sent_para_type_counter).items():
-    #     print('{} vs {}: {}'.format(key[0], key[1], value))
-    # print('Para sent type: {}'.format(pred_sent_para_type_counter))
+        if qid == '5ae60d36554299546bf8303e':
+            print(row['context'])
+            for x in row['context']:
+                print(x[0])
+                for y in x[1]:
+                    print(y)
+            return

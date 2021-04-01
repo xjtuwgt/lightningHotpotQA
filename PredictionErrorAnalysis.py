@@ -6,7 +6,7 @@ import os
 
 from model_envs import MODEL_CLASSES
 from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
-from resultanalysis.errorAnalysis import error_analysis, data_analysis
+from resultanalysis.errorAnalysis import error_analysis, data_analysis, error_analysis_question_type
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 
 if __name__ == '__main__':
@@ -72,7 +72,8 @@ if __name__ == '__main__':
     # print("Loading features from: {}".format(cached_features_file))
     # print("Loading graphs from: {}".format(cached_graphs_file))
 
-    error_analysis(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
+    # error_analysis(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
+    error_analysis_question_type(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
     # data_analysis(raw_data, example_dict, feature_dict, tokenizer, use_ent_ans=False)
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
