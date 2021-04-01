@@ -222,9 +222,11 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
                                                  sent_names=sent_names_i)
             # assert sorted_idx_i >=0
             if sorted_idx_i < 0:
+                print(topk_pred_paras)
                 print(para)
                 print(topk)
                 print(sent_mask_num)
+                print(para_mask_num)
                 print(sent_names_i)
             assert sorted_idx_i >= 0
             diff_para_sent_idxes.append(sorted_idx_i)
