@@ -199,8 +199,10 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
     para_sorted_idxes = np.argsort(para_scores_i)[::-1]
     topk_para_idxes = para_sorted_idxes[:2]
     topk_pred_paras = set([para_names_i[_] for _ in topk_para_idxes])
+    assert len(topk_pred_paras) >= 2
     diff_para = topk_pred_paras.difference(topk_sent_selected_paras)
     diff_para_sent_idxes = []
+    diff_para_sent_names = []
     if len(diff_para) > 0:
         topk = len(topk_sent_idxes)
         for para in list(diff_para):
@@ -209,7 +211,8 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
                 if sent_names_i[sorted_idx_i][0] == para:
                     diff_para_sent_idxes.append(s_idx_i)
                     break
-    diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
+        diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
+        assert len(diff_para_sent_names) == len(diff_para)
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
 
 def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras, ans_sent_name):
@@ -220,6 +223,7 @@ def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_nam
     post_process_sp_pred = [x for x in post_process_sp_pred if x[0] in topk_pred_paras]
     number_of_paras = len(set([x[0] for x in post_process_sp_pred]))
     if number_of_paras == 1:
+
         assert len(diff_para_sent_names) > 0
         post_process_sp_pred.extend(diff_para_sent_names)
     if (ans_sent_name is not None) and (ans_sent_name not in post_process_sp_pred):
@@ -327,41 +331,4 @@ def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob,
         ###++++++++++++++++++++++++++++++
         # print('answer_sent_name', answer_sent_name, answer_text)
         answer2sent_name_dict[qid] = answer_sent_name
-
-        # print('entity', ent_prediction[i], ans_cand_mask[i].sum(), len(entity_spans),
-        #       entity_spans[ent_prediction[i]], example.orig_answer_text)
-        #     entity_prediction
-        # for key, value in feature.__dict__.items():
-        #     print('feature: {}\n{}'.format(key, value))
-        # print('+' * 75)
-        # for key, value in example.__dict__.items():
-        #     print('example: {}\n{}'.format(key, value))
-
-        # if q_type[i] == 3:
-        #     if is_gold_ent[i] >= 0:
-        #         print('gold entity ---->', example.ctx_entities_text[int(is_gold_ent[i])])
-        #     # print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
-        #     if not exact_match_score(answer_text, example.orig_answer_text):
-        #         print(y1[i], y2[i])
-        #         # print(q_type)
-        #         # print(sent_spans)
-        #         print('support_sent_mask_np {} {}'.format(support_sent_mask_np[i].sum(), len(feature.__dict__['sent_spans'])))
-        #         print('Orig answer:{}'.format(example.orig_answer_text))
-        #         answer_candidates_idxs = example.answer_candidates_in_ctx_entity_ids
-        #         print('q_type: {}'.format(q_type[i]))
-        #         for t_i, idx in enumerate(answer_candidates_idxs):
-        #             print('cand ans {}: {}'.format(t_i, example.ctx_entities_text[idx]))
-        #         print(len(answer_candidates_idxs), ans_cand_mask[i].sum(), ans_cand_mask[i].shape, len(entity_spans))
-        #         ###++++++++++++++++++++++++++++++
-        #         print('predicted answer {}'.format(answer_text))
-        #         # print('entity', len(example.ctx_entities_text), len(entity_spans), ans_cand_mask[i].sum(), ent_mask[i].sum(),
-        #         #       example.ctx_entities_text[ent_prediction[i]])
-        #         # print('ans mask', ans_cand_mask[i])
-        #         # print('ent_mask', ent_mask[i])
-        #         # print('ent_score', ent_pred_prob[i])
-        #         print('gold_entity prediction', is_gold_ent[i], ent_prediction[i])
-
-
-        print('*' * 75)
-
     return answer_dict, answer_type_dict, answer2sent_name_dict
