@@ -212,6 +212,7 @@ def post_process_sent_para(cur_id, example_dict, feature_dict, sent_scores_np_i,
 
     print(feature_dict[cur_id].para_spans)
     print(feature_dict[cur_id].sent_spans)
+    print(sent_names_i)
     print('*' * 45)
 
     def find_largest_sent_idx(para, topk, sent_mask_num, sent_names):
