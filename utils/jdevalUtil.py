@@ -220,7 +220,13 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
         for para in list(diff_para):
             sorted_idx_i = find_largest_sent_idx(para=para, topk=topk, sent_mask_num=sent_mask_num,
                                                  sent_names=sent_names_i)
-            assert sorted_idx_i >=0
+            # assert sorted_idx_i >=0
+            if sorted_idx_i < 0:
+                print(para)
+                print(topk)
+                print(sent_mask_num)
+                print(sent_names_i)
+            assert sorted_idx_i >= 0
             diff_para_sent_idxes.append(sorted_idx_i)
         diff_para_sent_names = [sent_names_i[_] for _ in diff_para_sent_idxes]
         if len(diff_para) != len(diff_para_sent_names):
