@@ -132,9 +132,8 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                                                                topk_pred_sent_names=topk_pred_sent_names,
                                                                diff_para_sent_names=diff_para_sent_names,
                                                                ans_sent_name=ans_sent_name)
-                print('former ', cur_sp_pred[thresh_i])
-                print('post ', post_process_thresh_i_sp_pred)
-                print('*' * 80)
+                # print('former ', cur_sp_pred[thresh_i])
+                # print('post ', post_process_thresh_i_sp_pred)
                 # # +++++++++++++++++++++++++++
                 ##+++++
                 total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
@@ -223,11 +222,15 @@ def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_nam
     post_process_sp_pred = [x for x in post_process_sp_pred if x[0] in topk_pred_paras]
     number_of_paras = len(set([x[0] for x in post_process_sp_pred]))
     if number_of_paras == 1:
-
         assert len(diff_para_sent_names) > 0
         post_process_sp_pred.extend(diff_para_sent_names)
     if (ans_sent_name is not None) and (ans_sent_name not in post_process_sp_pred):
         post_process_sp_pred.append(ans_sent_name)
+    print(len(set([x[0] for x in post_process_sp_pred])))
+    if len(cur_sp_pred) != len(post_process_sp_pred):
+        print('cur', cur_sp_pred)
+        print('post', post_process_sp_pred)
+    print('*' * 80)
     return post_process_sp_pred
 
 def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob, ent_pred_prob):
