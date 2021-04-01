@@ -220,6 +220,8 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
             else:
                 print(sent_names_i)
                 print(sent_names_i[:sent_mask_num])
+                print(topk_pred_sent_names)
+                print()
                 print(para)
             # for s_idx_i in range(topk, sent_mask_num):
             #     sorted_idx_i = sorted_idxes[s_idx_i]
@@ -231,6 +233,7 @@ def post_process_sent_para(cur_id, example_dict, sent_scores_np_i, sent_mask_np_
             print(diff_para)
             print(diff_para_sent_names)
             print(sent_names_i)
+            print(topk_sent_selected_paras)
             assert len(diff_para_sent_names) == len(diff_para)
     # ++++++++
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
