@@ -209,6 +209,11 @@ def post_process_sent_para(cur_id, example_dict, feature_dict, sent_scores_np_i,
     #++++++++++++++++++++++++++
     diff_para_sent_idxes = []
     diff_para_sent_names = []
+
+    print(feature_dict[cur_id].para_spans)
+    print(feature_dict[cur_id].sent_spans)
+    print('*' * 45)
+
     def find_largest_sent_idx(para, topk, sent_mask_num, sent_names):
         for s_idx_i in range(topk, sent_mask_num):
             sorted_idx_i = sorted_idxes[s_idx_i]
