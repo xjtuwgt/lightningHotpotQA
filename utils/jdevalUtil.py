@@ -129,6 +129,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                 # +++++++++++++++++++++++++++
                 former_len = len(cur_sp_pred[thresh_i])
                 # print(len(cur_sp_pred[thresh_i]))
+                print(topk_pred_paras)
                 temp = [x for x in cur_sp_pred[thresh_i] if x[0] in topk_pred_paras]
                 cur_sp_pred[thresh_i] = temp
                 if len(cur_sp_pred[thresh_i]) < 2:
