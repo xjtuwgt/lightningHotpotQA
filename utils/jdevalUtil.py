@@ -135,7 +135,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
                     cur_sp_pred[thresh_i].extend(topk_pred_sent_names)
                 print('former len {} {}'.format(former_len, len(temp)))
                 print(temp)
-                print('para number = {}'.format(len([set([x for x in temp])])))
+                print('para number = {}'.format(len([set([_[0] for _ in temp])])))
                 print(ans_sent_name)
                 print('-' * 12)
                 # # +++++++++++++++++++++++++++
