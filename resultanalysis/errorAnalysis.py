@@ -466,6 +466,10 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_golds = [(x[0], x[1]) for x in sp_golds]
         sp_para_golds = list(set([_[0] for _ in sp_golds]))
 
+        if qid == '5a8a4a4055429930ff3c0d77':
+            print(sp_predictions)
+            print(sp_golds)
+
         res_scores = prediction_scores[qid]
         sp_scores = res_scores['sp_score']
         sp_mask = res_scores['sp_mask']
@@ -479,7 +483,7 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
 
         # for key, value in sp_scores.items():
         #     print(key, value)
-        print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
+        # print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
         analysis_result_list.append((qid, question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
 
     df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
