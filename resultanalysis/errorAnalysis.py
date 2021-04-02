@@ -444,7 +444,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
             max_negative = 1.0
         else:
             max_negative = max(negative_scores)
-        return flag, min_positive, max_negative
+        num_candidates = mask_sum_num
+        num_golds = len(gold_name_set)
+        return flag, min_positive, max_negative, num_candidates, num_golds
 
     prune_gold_num = 0
     analysis_result_list = []
@@ -464,7 +466,7 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_mask = res_scores['sp_mask']
         sp_names = res_scores['sp_names']
         sp_names = [(x[0], x[1]) for x in sp_names]
-        flag, min_positive, max_negative = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+        flag, min_positive, max_negative, num_candidates, num_golds = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
         if not flag:
             prune_gold_num += 1
 
@@ -473,9 +475,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         # for key, value in sp_scores.items():
         #     print(key, value)
         print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
-        analysis_result_list.append((question_type, sp_sent_type, flag, min_positive, max_negative))
+        analysis_result_list.append((question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds))
 
-    df = pd.DataFrame(analysis_result_list, columns=['q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n'])
+    df = pd.DataFrame(analysis_result_list, columns=['q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num'])
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
     return df
