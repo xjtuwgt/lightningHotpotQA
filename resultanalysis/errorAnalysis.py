@@ -416,9 +416,27 @@ def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=F
 
 
 def prediction_score_analysis(raw_data, predictions, prediction_scores):
+    def positive_neg_score(scores, mask, names, gold_names, pred_names):
+        assert len(scores) == len(mask)
+
+        return
+
     for row in raw_data:
         qid = row['_id']
         sp_predictions = predictions['sp'][qid]
-        sp_scores = prediction_scores[qid]
+        sp_predictions = [(x[0], x[1]) for x in sp_predictions]
+        sp_para_predictions = list(set([x[0] for x in sp_predictions]))
+
+        sp_golds = row['supporting_facts']
+        sp_golds = [(x[0], x[1]) for x in sp_golds]
+        sp_para_golds = list(set([_[0] for _ in sp_golds]))
+
+        res_scores = prediction_scores[qid]
+        sp_scores = res_scores['sp_score']
+        sp_mask = res_scores['sp_mask']
+        sp_names = res_scores['sp_names']
+        sp_names = [(x[0], x[1]) for x in sp_names]
+        positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+
         for key, value in sp_scores.items():
             print(key, value)
