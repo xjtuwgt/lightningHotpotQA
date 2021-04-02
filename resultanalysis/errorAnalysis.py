@@ -434,8 +434,14 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
                 positive_scores.append(scores[idx])
             else:
                 negative_scores.append(scores[idx])
-        print(positive_scores)
-        print(negative_scores)
+
+        if len(positive_scores) > 0:
+            min_positive = min(positive_scores)
+        else:
+            min_positive = 0
+        max_negative = max(negative_scores)
+
+        print('{:.4f} {:.4f}'.format(min_positive, max_negative))
 
 
 
