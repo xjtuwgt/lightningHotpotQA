@@ -65,19 +65,37 @@ def show_min_max_score_2(data):
 
     plt.show()
 
+def show_candidate_number_vs_min_max_score(data):
+    min_positive_scores = data['min_p'].to_numpy()
+    max_negative_scores = data['max_n'].to_numpy()
+    cand_nums = data['cand_num'].to_numpy()
+    diff_score = min_positive_scores - max_negative_scores
+
+    # sorted_score = np.sort(diff_score)
+    sorted_idxes = np.argsort(diff_score)
+    diff_score = diff_score[sorted_idxes]
+    cand_nums = cand_nums[sorted_idxes]
+    min_positive_scores = min_positive_scores[sorted_idxes]
+    max_negative_scores = min_positive_scores[sorted_idxes]
+
+    plt.plot(cand_nums, min_positive_scores, '.')
+    plt.show()
+
 
 # show_min_max_score(data=error_df)
+# show_candidate_number_vs_min_max_score(data=error_df)
 
 # comparison = error_df[error_df['q_type'] == 'comparison']
 # show_min_max_score(data=comparison)
 
-# bridge = error_df[error_df['q_type'] == 'bridge']
+bridge = error_df[error_df['q_type'] == 'bridge']
 # show_min_max_score(data=bridge)
+show_candidate_number_vs_min_max_score(data=bridge)
 
-em_df = error_df[error_df['sp_sent_type'] == 'em']
-em_df = em_df[em_df['flag']]
-print(em_df.shape)
-show_min_max_score(data=em_df)
+# em_df = error_df[error_df['sp_sent_type'] == 'em']
+# em_df = em_df[em_df['flag']]
+# print(em_df.shape)
+# show_min_max_score(data=em_df)
 
 # for row_idx, row in em_df.iterrows():
 #     if row['min_p'] < row['max_n']:
