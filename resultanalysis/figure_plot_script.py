@@ -56,7 +56,12 @@ def show_min_max_score_2(data):
 
 em_df = error_df[error_df['sp_sent_type'] == 'em']
 print(em_df.shape)
-show_min_max_score(data=em_df)
+# show_min_max_score(data=em_df)
+
+for row_idx, row in em_df.iterrows():
+    if row['min_p'] < row['max_n']:
+        print(row_idx)
+        print(row)
 
 
 

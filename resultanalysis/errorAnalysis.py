@@ -96,6 +96,8 @@ def set_comparison(prediction_list, true_list):
         for pred in prediction_list:
             if pred not in true_list:
                 return False
+        if len(set(prediction_list).difference(set(true_list))) == 0 and len(set(true_list).difference(set(prediction_list))):
+            return True
         return True
     if em():
         return 'em'
@@ -478,9 +480,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         # for key, value in sp_scores.items():
         #     print(key, value)
         print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
-        analysis_result_list.append((question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
+        analysis_result_list.append((qid, question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
 
-    df = pd.DataFrame(analysis_result_list, columns=['q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
+    df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
     return df
