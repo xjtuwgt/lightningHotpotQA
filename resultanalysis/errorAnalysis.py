@@ -430,8 +430,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         # print(gold_names)
         # print(pred_names)
         print(type(scores), type(mask))
-        return
+        return flag
 
+    prune_gold_num = 0
     for row in raw_data:
         qid = row['_id']
         sp_predictions = predictions['sp'][qid]
@@ -447,7 +448,11 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_mask = res_scores['sp_mask']
         sp_names = res_scores['sp_names']
         sp_names = [(x[0], x[1]) for x in sp_names]
-        positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+        flag = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+        if flag == 0:
+            prune_gold_num += 1
 
         # for key, value in sp_scores.items():
         #     print(key, value)
+
+    print(prune_gold_num)
