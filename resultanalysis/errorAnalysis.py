@@ -450,6 +450,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         num_golds = len(gold_name_set)
         return flag, min_positive, max_negative, num_candidates, num_golds
 
+
+
+
     prune_gold_num = 0
     analysis_result_list = []
     for row in raw_data:
