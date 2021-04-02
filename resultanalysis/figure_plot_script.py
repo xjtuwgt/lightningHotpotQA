@@ -66,7 +66,7 @@ def show_min_max_score_2(data):
     plt.show()
 
 
-show_min_max_score(data=error_df)
+# show_min_max_score(data=error_df)
 
 # comparison = error_df[error_df['q_type'] == 'comparison']
 # show_min_max_score(data=comparison)
@@ -74,10 +74,10 @@ show_min_max_score(data=error_df)
 # bridge = error_df[error_df['q_type'] == 'bridge']
 # show_min_max_score(data=bridge)
 
-# em_df = error_df[error_df['sp_sent_type'] == 'em']
-# em_df = em_df[em_df['flag']]
-# print(em_df.shape)
-# show_min_max_score(data=em_df)
+em_df = error_df[error_df['sp_sent_type'] == 'em']
+em_df = em_df[em_df['flag']]
+print(em_df.shape)
+show_min_max_score(data=em_df)
 
 # for row_idx, row in em_df.iterrows():
 #     if row['min_p'] < row['max_n']:
