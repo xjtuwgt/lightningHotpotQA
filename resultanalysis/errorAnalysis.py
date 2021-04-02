@@ -453,6 +453,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
     for row in raw_data:
         qid = row['_id']
         question_type = row['type']
+        answer_type = row['answer']
+        if answer_type.strip().lower()  not in ['yes', 'no']:
+            answer_type = 'span'
         sp_predictions = predictions['sp'][qid]
         sp_predictions = [(x[0], x[1]) for x in sp_predictions]
         sp_para_predictions = list(set([x[0] for x in sp_predictions]))
@@ -475,9 +478,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         # for key, value in sp_scores.items():
         #     print(key, value)
         print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
-        analysis_result_list.append((question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds))
+        analysis_result_list.append((question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
 
-    df = pd.DataFrame(analysis_result_list, columns=['q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num'])
+    df = pd.DataFrame(analysis_result_list, columns=['q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
     return df
