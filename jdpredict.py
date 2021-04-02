@@ -119,3 +119,4 @@ with open(output_score_file, 'r') as fp:
     print(len(data))
     for x in data:
         print(x)
+        print(data[x])
