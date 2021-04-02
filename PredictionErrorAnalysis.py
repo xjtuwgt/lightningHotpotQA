@@ -23,10 +23,12 @@ if __name__ == '__main__':
 
     # Other parameters
     parser.add_argument("--model_type", default="roberta", type=str)
-    parser.add_argument("--model_name_or_path", default='train.graph.roberta.bs2.as4.lr1e-05.lrsfixed.gnngat1.4.datahgn_docred_low.seed667', type=str,
+    parser.add_argument("--model_name_or_path", default='train.graph.roberta.bs2.as1.lr2e-05.lrslayer_decay.lrd0.9.gnngat1.4.datahgn_docred_low_saeRecAdam.cosine.seed103', type=str,
                         help="Path to pre-trained model")
 
-    parser.add_argument("--pred_res_name", default='pred.epoch_5.json', type=str, help="Prediction result")
+    parser.add_argument("--pred_res_name", default='dev_pred.json', type=str, help="Prediction result")
+
+    parser.add_argument("--pred_score_name", default='dev_score.json', type=str, help="Prediction result")
 
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
