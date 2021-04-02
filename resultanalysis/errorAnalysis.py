@@ -413,3 +413,12 @@ def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=F
                                           sp_f1 / type_count))
         print('joint em ', all_joint_em/type_count)
         print('joint f1 ', all_joint_f1/type_count)
+
+
+def prediction_score_analysis(raw_data, predictions, prediction_scores):
+    for row in raw_data:
+        qid = row['_id']
+        sp_predictions = predictions['sp'][qid]
+        sp_scores = prediction_scores[qid]
+        for key, value in sp_scores.items():
+            print(key, value)

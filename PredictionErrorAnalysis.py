@@ -6,7 +6,7 @@ import os
 
 from model_envs import MODEL_CLASSES
 from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
-from resultanalysis.errorAnalysis import error_analysis, data_analysis, error_analysis_question_type
+from resultanalysis.errorAnalysis import error_analysis, data_analysis, error_analysis_question_type, prediction_score_analysis
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 
 if __name__ == '__main__':
@@ -68,6 +68,10 @@ if __name__ == '__main__':
     with open(pred_results_file, 'r', encoding='utf-8') as reader:
         pred_data = json.load(reader)
 
+    pred_score_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.pred_score_name)
+    with open(pred_score_results_file, 'r', encoding='utf-8') as reader:
+        pred_score_data = json.load(reader)
+
     print('Loading predictions from: {}'.format(pred_results_file))
     print('Loading raw data from: {}'.format(args.raw_data))
     # print("Loading examples from: {}".format(cached_examples_file))
@@ -75,8 +79,9 @@ if __name__ == '__main__':
     # print("Loading graphs from: {}".format(cached_graphs_file))
 
     # error_analysis(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
-    error_analysis_question_type(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
+    # error_analysis_question_type(raw_data=raw_data, predictions=pred_data, tokenizer=None, use_ent_ans=False)
     # data_analysis(raw_data, example_dict, feature_dict, tokenizer, use_ent_ans=False)
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
     #     print("{} = {}".format(key, val))
+    prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
