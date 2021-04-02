@@ -472,8 +472,10 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         if not flag:
             prune_gold_num += 1
 
+        sp_sent_type = set_comparison(prediction_list=sp_predictions, true_list=sp_golds)
+
         # for key, value in sp_scores.items():
         #     print(key, value)
-        print('{}\t{}\t{}'.format(flag, min_positive, max_negative))
+        print('{}\t{}\t{}\t{}'.format(sp_sent_type, flag, min_positive, max_negative))
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
