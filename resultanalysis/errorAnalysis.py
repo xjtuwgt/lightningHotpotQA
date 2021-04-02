@@ -443,15 +443,14 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
             max_negative = 1.0
         else:
             max_negative = max(negative_scores)
-
-        print('{:.4f} {:.4f}'.format(min_positive, max_negative))
-
-
-
-        # print(gold_names)
-        # print(pred_names)
-        print(type(scores), type(mask))
-        return flag
+        # print('{:.4f} {:.4f}'.format(min_positive, max_negative))
+        #
+        #
+        #
+        # # print(gold_names)
+        # # print(pred_names)
+        # print(type(scores), type(mask))
+        return flag, min_positive, max_negative
 
     prune_gold_num = 0
     for row in raw_data:
@@ -469,11 +468,12 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_mask = res_scores['sp_mask']
         sp_names = res_scores['sp_names']
         sp_names = [(x[0], x[1]) for x in sp_names]
-        flag = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+        flag, min_positive, max_negative = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
         if not flag:
             prune_gold_num += 1
 
         # for key, value in sp_scores.items():
         #     print(key, value)
+        print('{}\t{}\t{}'.format(flag, min_positive, max_negative))
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
