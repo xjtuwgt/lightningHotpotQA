@@ -328,33 +328,32 @@ def error_analysis(raw_data, predictions, tokenizer, use_ent_ans=False):
     #     print('{} vs {}: {}'.format(key[0], key[1], value))
     # print('Para sent type: {}'.format(pred_sent_para_type_counter))
 
+##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+def update_answer(prediction, gold):
+    em = exact_match_score(prediction, gold)
+    f1, prec, recall = f1_score(prediction, gold)
+    return (em, prec, recall, f1)
+
+def update_sp(prediction, gold):
+    cur_sp_pred = set(map(tuple, prediction))
+    gold_sp_pred = set(map(tuple, gold))
+    tp, fp, fn = 0, 0, 0
+    for e in cur_sp_pred:
+        if e in gold_sp_pred:
+            tp += 1
+        else:
+            fp += 1
+    for e in gold_sp_pred:
+        if e not in cur_sp_pred:
+            fn += 1
+    prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
+    recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
+    f1 = 2 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
+    em = 1.0 if fp + fn == 0 else 0.0
+    return (em, prec, recall, f1)
+    ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=False):
-
-    ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    def update_answer(prediction, gold):
-        em = exact_match_score(prediction, gold)
-        f1, prec, recall = f1_score(prediction, gold)
-        return (em, prec, recall, f1)
-
-    def update_sp(prediction, gold):
-        cur_sp_pred = set(map(tuple, prediction))
-        gold_sp_pred = set(map(tuple, gold))
-        tp, fp, fn = 0, 0, 0
-        for e in cur_sp_pred:
-            if e in gold_sp_pred:
-                tp += 1
-            else:
-                fp += 1
-        for e in gold_sp_pred:
-            if e not in cur_sp_pred:
-                fn += 1
-        prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
-        recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
-        f1 = 2 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
-        em = 1.0 if fp + fn == 0 else 0.0
-        return (em, prec, recall, f1)
-    ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     type_metric_dict = {}
     for row in raw_data:
         question_type = row['type']
@@ -448,11 +447,21 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
             max_negative = max(negative_scores)
         num_candidates = mask_sum_num
         num_golds = len(gold_name_set)
-        return flag, min_positive, max_negative, num_candidates, num_golds
 
+        min_p_names = []
+        max_n_names = []
+        for i in range(mask_sum_num):
+            if scores[i] >= min_positive:
+                min_p_names.append(names[i])
+            if scores[i] > max_negative:
+                max_n_names.append(names[i])
 
+        return flag, min_positive, max_negative, num_candidates, num_golds, min_p_names, max_n_names
 
-
+    threshold_metric_dict = {}
+    threshold_metric_dict['pred'] = []
+    threshold_metric_dict['min_p'] = []
+    threshold_metric_dict['max_n'] = []
     prune_gold_num = 0
     analysis_result_list = []
     for row in raw_data:
@@ -478,7 +487,17 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_mask = res_scores['sp_mask']
         sp_names = res_scores['sp_names']
         sp_names = [(x[0], x[1]) for x in sp_names]
-        flag, min_positive, max_negative, num_candidates, num_golds = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+        flag, min_positive, max_negative, num_candidates, num_golds, min_p_names, max_n_names = \
+            positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+
+        predict_metrics = update_sp(prediction=sp_predictions, gold=sp_golds)
+        threshold_metric_dict['pred'].append(predict_metrics)
+        min_p_metrics = update_sp(prediction=min_p_names, gold=sp_golds)
+        threshold_metric_dict['min_p'].append(min_p_metrics)
+        max_n_metrics = update_sp(prediction=max_n_names, gold=sp_golds)
+        threshold_metric_dict['max_n'].append(max_n_metrics)
+
+
         if not flag:
             prune_gold_num += 1
 
@@ -488,6 +507,18 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         #     print(key, value)
         # print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
         analysis_result_list.append((qid, question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
+
+    for key, value in threshold_metric_dict.items():
+        print('threshold type = {}'.format(key))
+        sp_em, sp_prec, sp_recall, sp_f1 = 0.0, 0.0, 0.0, 0.0
+        type_count = len(value)
+        for ans_tup, sp_tup in value:
+            sp_em += sp_tup[0]
+            sp_prec += sp_tup[1]
+            sp_recall += sp_tup[2]
+            sp_f1 += sp_tup[3]
+        print('sup {}\t{}\t{}\t{}'.format(sp_em / type_count, sp_recall / type_count, sp_prec / type_count,
+                                          sp_f1 / type_count))
 
     df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
 
