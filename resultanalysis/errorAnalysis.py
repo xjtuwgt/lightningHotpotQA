@@ -439,7 +439,11 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
             min_positive = min(positive_scores)
         else:
             min_positive = 0
-        max_negative = max(negative_scores)
+        if len(negative_scores) == 0:
+            print(prune_names)
+            print(gold_names)
+        else:
+            max_negative = max(negative_scores)
 
         print('{:.4f} {:.4f}'.format(min_positive, max_negative))
 
