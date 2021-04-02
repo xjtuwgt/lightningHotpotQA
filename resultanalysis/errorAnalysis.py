@@ -443,18 +443,12 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
             max_negative = 1.0
         else:
             max_negative = max(negative_scores)
-        # print('{:.4f} {:.4f}'.format(min_positive, max_negative))
-        #
-        #
-        #
-        # # print(gold_names)
-        # # print(pred_names)
-        # print(type(scores), type(mask))
         return flag, min_positive, max_negative
 
     prune_gold_num = 0
     for row in raw_data:
         qid = row['_id']
+        question_type = row['type']
         sp_predictions = predictions['sp'][qid]
         sp_predictions = [(x[0], x[1]) for x in sp_predictions]
         sp_para_predictions = list(set([x[0] for x in sp_predictions]))
@@ -476,6 +470,6 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
 
         # for key, value in sp_scores.items():
         #     print(key, value)
-        print('{}\t{}\t{}\t{}'.format(sp_sent_type, flag, min_positive, max_negative))
+        print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
