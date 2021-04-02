@@ -3,6 +3,7 @@ import pickle
 import json
 import argparse
 import os
+import pandas as pd
 
 from model_envs import MODEL_CLASSES
 from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
@@ -29,6 +30,8 @@ if __name__ == '__main__':
     parser.add_argument("--pred_res_name", default='dev_pred.json', type=str, help="Prediction result")
 
     parser.add_argument("--pred_score_name", default='dev_score.json', type=str, help="Prediction result")
+
+    parser.add_argument("--error_res_name", default='error_res.json', type=str, help="error analysis result")
 
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
@@ -84,4 +87,9 @@ if __name__ == '__main__':
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
     #     print("{} = {}".format(key, val))
-    prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
+    df = prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
+
+    error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
+    df.to_json(error_res_results_file)
+    error_df = pd.read_json(error_res_results_file)
+    print(error_df.shape)

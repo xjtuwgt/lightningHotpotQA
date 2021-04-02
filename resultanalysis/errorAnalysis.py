@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import argparse
 import os
+import pandas as pd
 from sklearn.metrics import confusion_matrix
 from eval.hotpot_evaluate_v1 import normalize_answer, exact_match_score, f1_score
 
@@ -446,6 +447,7 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         return flag, min_positive, max_negative
 
     prune_gold_num = 0
+    analysis_result_list = []
     for row in raw_data:
         qid = row['_id']
         question_type = row['type']
@@ -471,5 +473,9 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         # for key, value in sp_scores.items():
         #     print(key, value)
         print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
+        analysis_result_list.append((question_type, sp_sent_type, flag, min_positive, max_negative))
+
+    df = pd.DataFrame(analysis_result_list, columns=['q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n'])
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
+    return df
