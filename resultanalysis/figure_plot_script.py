@@ -60,6 +60,8 @@ def show_min_max_score_3(data):
 
     min_positive_scores = min_positive_scores[sorted_idxes]
 
+
+
     # x = np.arange(1, data.shape[0] + 1)
     # zeros_x = np.zeros(data.shape[0])
     # plt.plot(sorted_score, '.')
@@ -68,6 +70,9 @@ def show_min_max_score_3(data):
     # plt.plot(x, max_negative_scores, 'x', label = "max negative")
 
     # plt.plot(max_negative_scores, min_positive_scores, 'o')
+    diff_score = min_positive_scores - max_negative_scores
+    print(sum(diff_score > 0))
+    print(sum(diff_score <=0 ))
 
     plt.show()
 
@@ -89,6 +94,7 @@ def show_candidate_number_vs_min_max_score(data):
     max_negative_scores = data['max_n'].to_numpy()
     cand_nums = data['cand_num'].to_numpy()
     diff_score = min_positive_scores - max_negative_scores
+
 
     # diff_score[diff_score > 0.5] = 1
     # print(sum(diff_score < -0.5))
