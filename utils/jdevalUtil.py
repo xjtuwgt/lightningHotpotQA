@@ -119,11 +119,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             if cut_sent_flag:
                 cut_sentence_count += 1
             ##+++++++++++++++++++++++++
-            sent_pred_ = {'sp_score': predict_support_np[i], 'sp_mask': support_sent_mask_np[i], 'sp_names': example_dict[cur_id].sent_names}
-            para_pred_ = {'para_score': predict_support_para_np[i], 'para_mask': support_para_mask_np[i], 'para_names': example_dict[cur_id].para_names}
-            ans_pred_ = {'ans_type': type_prob[i], 'ent_score': ent_pre_prob[i], 'ent_mask': ent_mask_np[i],
+            sent_pred_ = {'sp_score': predict_support_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(), 'sp_names': example_dict[cur_id].sent_names}
+            para_pred_ = {'para_score': predict_support_para_np[i].tolist(), 'para_mask': support_para_mask_np[i].tolist(), 'para_names': example_dict[cur_id].para_names}
+            ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_prob[i].tolist(), 'ent_mask': ent_mask_np[i].tolist(),
                          'query_entity': example_dict[cur_id].ques_entities_text, 'ctx_entity': example_dict[cur_id].ctx_entities_text,
-                         'ans_ent_mask': ans_cand_mask_np[i], 'is_gold_ent': is_gold_ent_np[i], 'answer': answer_dict[cur_id]}
+                         'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(), 'answer': answer_dict[cur_id]}
             res_pred = {**sent_pred_, **para_pred_, **ans_pred_}
             prediction_res_score_dict[cur_id] = res_pred
             ##+++++++++++++++++++++++++
