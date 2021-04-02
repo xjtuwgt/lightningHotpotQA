@@ -512,7 +512,7 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         print('threshold type = {}'.format(key))
         sp_em, sp_prec, sp_recall, sp_f1 = 0.0, 0.0, 0.0, 0.0
         type_count = len(value)
-        for ans_tup, sp_tup in value:
+        for sp_tup in value:
             sp_em += sp_tup[0]
             sp_prec += sp_tup[1]
             sp_recall += sp_tup[2]
