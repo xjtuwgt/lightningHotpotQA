@@ -438,5 +438,5 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_names = [(x[0], x[1]) for x in sp_names]
         positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
 
-        for key, value in sp_scores.items():
-            print(key, value)
+        # for key, value in sp_scores.items():
+        #     print(key, value)
