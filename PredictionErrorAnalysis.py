@@ -91,5 +91,6 @@ if __name__ == '__main__':
 
     error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
     df.to_json(error_res_results_file)
+    print('saved {} records into {}'.format(df.shape, error_res_results_file))
     error_df = pd.read_json(error_res_results_file)
     print(error_df.shape)
