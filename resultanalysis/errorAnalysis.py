@@ -416,12 +416,19 @@ def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=F
 
 
 def prediction_score_analysis(raw_data, predictions, prediction_scores):
+
     def positive_neg_score(scores, mask, names, gold_names, pred_names):
         assert len(scores) == len(mask)
         mask_sum_num = int(sum(mask))
         prune_names = names[:mask_sum_num]
-        print(gold_names)
-        print(pred_names)
+        if (set(gold_names).issubset(set(prune_names))):
+            flag = 1
+        else:
+            flag = 0
+        print(flag)
+
+        # print(gold_names)
+        # print(pred_names)
         print(type(scores), type(mask))
         return
 
