@@ -455,4 +455,4 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         # for key, value in sp_scores.items():
         #     print(key, value)
 
-    print(prune_gold_num)
+    print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
