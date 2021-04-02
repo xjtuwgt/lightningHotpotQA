@@ -421,11 +421,23 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         assert len(scores) == len(mask)
         mask_sum_num = int(sum(mask))
         prune_names = names[:mask_sum_num]
-        if (set(gold_names).issubset(set(prune_names))):
-            flag = 1
+        gold_name_set = set(gold_names)
+        if (gold_name_set.issubset(set(prune_names))):
+            flag = True
         else:
-            flag = 0
-        print(flag)
+            flag = False
+        positive_scores = []
+        negative_scores = []
+        for idx in range(mask_sum_num):
+            name_i = prune_names[idx]
+            if name_i in gold_name_set:
+                positive_scores.append(scores[idx])
+            else:
+                negative_scores.append(scores[idx])
+        print(positive_scores)
+        print(negative_scores)
+
+
 
         # print(gold_names)
         # print(pred_names)
@@ -449,7 +461,7 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         sp_names = res_scores['sp_names']
         sp_names = [(x[0], x[1]) for x in sp_names]
         flag = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
-        if flag == 0:
+        if not flag:
             prune_gold_num += 1
 
         # for key, value in sp_scores.items():
