@@ -490,12 +490,19 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         flag, min_positive, max_negative, num_candidates, num_golds, min_p_names, max_n_names = \
             positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
 
+
+        ans_prediction = predictions['answer'][qid]
+        raw_answer = row['answer']
+        raw_answer = normalize_answer(raw_answer)
+        ans_prediction = normalize_answer(ans_prediction)
+        ans_metrics = update_answer(prediction=ans_prediction, gold=raw_answer)
+
         predict_metrics = update_sp(prediction=sp_predictions, gold=sp_golds)
-        threshold_metric_dict['pred'].append(predict_metrics)
+        threshold_metric_dict['pred'].append((ans_metrics, predict_metrics))
         min_p_metrics = update_sp(prediction=min_p_names, gold=sp_golds)
-        threshold_metric_dict['min_p'].append(min_p_metrics)
+        threshold_metric_dict['min_p'].append((ans_metrics, min_p_metrics))
         max_n_metrics = update_sp(prediction=max_n_names, gold=sp_golds)
-        threshold_metric_dict['max_n'].append(max_n_metrics)
+        threshold_metric_dict['max_n'].append((ans_metrics, max_n_metrics))
 
 
         if not flag:
@@ -510,15 +517,38 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
 
     for key, value in threshold_metric_dict.items():
         print('threshold type = {}'.format(key))
+        answer_em, answer_prec, answer_recall, answer_f1 = 0.0, 0.0, 0.0, 0.0
         sp_em, sp_prec, sp_recall, sp_f1 = 0.0, 0.0, 0.0, 0.0
         type_count = len(value)
-        for sp_tup in value:
+        all_joint_em, all_joint_f1 = 0.0, 0.0
+        for ans_tup, sp_tup in value:
+            answer_em += ans_tup[0]
+            answer_prec += ans_tup[1]
+            answer_recall += ans_tup[2]
+            answer_f1 += ans_tup[3]
+
             sp_em += sp_tup[0]
             sp_prec += sp_tup[1]
             sp_recall += sp_tup[2]
             sp_f1 += sp_tup[3]
+
+            joint_prec = ans_tup[1] * sp_tup[1]
+            joint_recall = ans_tup[2] * sp_tup[2]
+            if joint_prec + joint_recall > 0:
+                joint_f1 = 2 * joint_prec * joint_recall / (joint_prec + joint_recall)
+            else:
+                joint_f1 = 0.
+            joint_em = ans_tup[0] * sp_tup[0]
+
+            all_joint_f1 += joint_f1
+            all_joint_em += joint_em
+
+        print('ans {}\t{}\t{}\t{}'.format(answer_em / type_count, answer_recall / type_count, answer_prec / type_count,
+                                          answer_f1 / type_count))
         print('sup {}\t{}\t{}\t{}'.format(sp_em / type_count, sp_recall / type_count, sp_prec / type_count,
                                           sp_f1 / type_count))
+        print('joint em ', all_joint_em / type_count)
+        print('joint f1 ', all_joint_f1 / type_count)
 
     df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
 
