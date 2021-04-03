@@ -15,6 +15,7 @@ from utils.jdevalUtil import jd_eval_model
 # from models.HGN import HierarchicalGraphNetwork
 from jdmodels.jdHGN import HierarchicalGraphNetwork
 from model_envs import MODEL_CLASSES
+from envs import DATASET_FOLDER
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -105,6 +106,10 @@ model.eval()
 output_pred_file = join(args.exp_name, 'train_pred.json')
 output_eval_file = join(args.exp_name, 'train_eval.txt')
 output_score_file = join(args.exp_name, 'train_score.json')
+
+##++++
+args.dev_gold_file = join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json')
+##++++
 
 metrics, threshold = jd_eval_model(args, encoder, model,
                                 train_dataloader, train_example_dict, train_feature_dict,
