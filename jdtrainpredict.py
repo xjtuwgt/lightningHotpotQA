@@ -108,7 +108,7 @@ output_eval_file = join(args.exp_name, 'train_eval.txt')
 output_score_file = join(args.exp_name, 'train_score.json')
 
 ##++++
-args.dev_gold_file = join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json')
+args.dev_gold_file = join(DATASET_FOLDER, 'data_raw', 'hotpot_train_v1.1.json')
 ##++++
 
 metrics, threshold = jd_eval_model(args, encoder, model,
