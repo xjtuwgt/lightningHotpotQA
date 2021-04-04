@@ -102,6 +102,10 @@ def default_train_parser():
                         type=str,
                         default=join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json'))
 
+    parser.add_argument("--train_gold_file",
+                        type=str,
+                        default=join(DATASET_FOLDER, 'data_raw', 'hotpot_train_v1.1.json'))
+
     # model
     parser.add_argument("--model_type",
                         # default='bert',
