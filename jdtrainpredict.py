@@ -110,6 +110,8 @@ output_score_file = join(args.exp_name, 'train_score.json')
 ##++++
 args.dev_gold_file = join(DATASET_FOLDER, 'data_raw', 'hotpot_train_v1.1.json')
 ##++++
+for key, value in vars(args).items():
+    print(key, value)
 
 metrics, threshold = jd_eval_model(args, encoder, model,
                                 train_dataloader, train_example_dict, train_feature_dict,
