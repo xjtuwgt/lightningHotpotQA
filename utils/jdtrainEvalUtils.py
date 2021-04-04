@@ -31,7 +31,7 @@ def train_eval(prediction_file, gold_file, train_type: str):
         else:
             em, prec, recall = update_answer(
                 metrics, prediction['answer'][train_cur_id], dp['answer'])
-        if cur_id not in prediction['sp']:
+        if train_cur_id not in prediction['sp']:
             #print('missing sp fact {}'.format(cur_id))
             can_eval_joint = False
         else:
