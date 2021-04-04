@@ -276,7 +276,7 @@ def default_dev_parser():
                         default=join(DATASET_FOLDER, 'data_raw', 'hotpot_train_v1.1.json'))
 
     parser.add_argument("--train_type",
-                        type=str, required=True,
+                        type=str,
                         default=None)
 
     # model
