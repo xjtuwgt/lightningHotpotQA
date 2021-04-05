@@ -791,7 +791,7 @@ def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores
     threshold_metric_dict['gap'] = []
     prune_gold_num = 0
     analysis_result_list = []
-    # print(predictions['sp'])
+    print(predictions['sp'])
     for row in raw_data:
         qid = row['_id']
         question_type = row['type']
