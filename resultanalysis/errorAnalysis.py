@@ -417,6 +417,8 @@ def error_analysis_question_type(raw_data, predictions, tokenizer, use_ent_ans=F
         print('joint f1 ', all_joint_f1/type_count)
 
 
+
+
 def prediction_score_analysis(raw_data, predictions, prediction_scores):
 
     def positive_neg_score(scores, mask, names, gold_names, pred_names):
@@ -503,6 +505,171 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
         threshold_metric_dict['min_p'].append((ans_metrics, min_p_metrics))
         max_n_metrics = update_sp(prediction=max_n_names, gold=sp_golds)
         threshold_metric_dict['max_n'].append((ans_metrics, max_n_metrics))
+
+
+        if not flag:
+            prune_gold_num += 1
+
+        sp_sent_type = set_comparison(prediction_list=sp_predictions, true_list=sp_golds)
+
+        # for key, value in sp_scores.items():
+        #     print(key, value)
+        # print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
+        analysis_result_list.append((qid, question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
+
+    for key, value in threshold_metric_dict.items():
+        print('threshold type = {}'.format(key))
+        answer_em, answer_prec, answer_recall, answer_f1 = 0.0, 0.0, 0.0, 0.0
+        sp_em, sp_prec, sp_recall, sp_f1 = 0.0, 0.0, 0.0, 0.0
+        type_count = len(value)
+        all_joint_em, all_joint_f1 = 0.0, 0.0
+        for ans_tup, sp_tup in value:
+            answer_em += ans_tup[0]
+            answer_prec += ans_tup[1]
+            answer_recall += ans_tup[2]
+            answer_f1 += ans_tup[3]
+
+            sp_em += sp_tup[0]
+            sp_prec += sp_tup[1]
+            sp_recall += sp_tup[2]
+            sp_f1 += sp_tup[3]
+
+            joint_prec = ans_tup[1] * sp_tup[1]
+            joint_recall = ans_tup[2] * sp_tup[2]
+            if joint_prec + joint_recall > 0:
+                joint_f1 = 2 * joint_prec * joint_recall / (joint_prec + joint_recall)
+            else:
+                joint_f1 = 0.
+            joint_em = ans_tup[0] * sp_tup[0]
+
+            all_joint_f1 += joint_f1
+            all_joint_em += joint_em
+
+        print('ans {}\t{}\t{}\t{}'.format(answer_em / type_count, answer_recall / type_count, answer_prec / type_count,
+                                          answer_f1 / type_count))
+        print('sup {}\t{}\t{}\t{}'.format(sp_em / type_count, sp_recall / type_count, sp_prec / type_count,
+                                          sp_f1 / type_count))
+        print('joint em ', all_joint_em / type_count)
+        print('joint f1 ', all_joint_f1 / type_count)
+
+    df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
+
+    print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
+    return df
+
+def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
+
+    def score_gap_split(scores, mask, names):
+        assert len(scores) == len(mask)
+        mask_sum_num = int(sum(mask))
+        prune_names = names[:mask_sum_num]
+
+        prune_scores = np.array(scores[:mask_sum_num])
+        sorted_idxes = np.argsort(prune_scores)[::-1]
+        largest_gap = -1
+        max_gap_idx = -1
+        for i in range(mask_sum_num-1):
+            gap = prune_scores[sorted_idxes[i]] - prune_scores[sorted_idxes[i+1]]
+            if gap > largest_gap:
+                largest_gap = gap
+                max_gap_idx = i
+        pred_idxes = sorted_idxes[:(max_gap_idx+1)]
+        gap_names = [prune_names[_] for _ in pred_idxes]
+        return gap_names
+
+
+    def positive_neg_score(scores, mask, names, gold_names, pred_names):
+        assert len(scores) == len(mask)
+        mask_sum_num = int(sum(mask))
+        prune_names = names[:mask_sum_num]
+        gold_name_set = set(gold_names)
+        if (gold_name_set.issubset(set(prune_names))):
+            flag = True
+        else:
+            flag = False
+        positive_scores = []
+        negative_scores = []
+        for idx in range(mask_sum_num):
+            name_i = prune_names[idx]
+            if name_i in gold_name_set:
+                positive_scores.append(scores[idx])
+            else:
+                negative_scores.append(scores[idx])
+
+        if len(positive_scores) > 0:
+            min_positive = min(positive_scores)
+        else:
+            min_positive = 0.0
+        if len(negative_scores) == 0:
+            max_negative = 1.0
+        else:
+            max_negative = max(negative_scores)
+        num_candidates = mask_sum_num
+        num_golds = len(gold_name_set)
+
+        min_p_names = []
+        max_n_names = []
+        for i in range(mask_sum_num):
+            if scores[i] >= min_positive:
+                min_p_names.append(names[i])
+            if scores[i] > max_negative:
+                max_n_names.append(names[i])
+
+        return flag, min_positive, max_negative, num_candidates, num_golds, min_p_names, max_n_names
+
+    threshold_metric_dict = {}
+    threshold_metric_dict['pred'] = []
+    threshold_metric_dict['min_p'] = []
+    threshold_metric_dict['max_n'] = []
+    threshold_metric_dict['gap'] = []
+    prune_gold_num = 0
+    analysis_result_list = []
+    for row in raw_data:
+        qid = row['_id']
+        question_type = row['type']
+        answer_type = row['answer']
+        if answer_type.strip().lower()  not in ['yes', 'no']:
+            answer_type = 'span'
+        sp_predictions = predictions['sp'][qid]
+        sp_predictions = [(x[0], x[1]) for x in sp_predictions]
+        sp_para_predictions = list(set([x[0] for x in sp_predictions]))
+
+        sp_golds = row['supporting_facts']
+        sp_golds = [(x[0], x[1]) for x in sp_golds]
+        sp_para_golds = list(set([_[0] for _ in sp_golds]))
+
+        if qid == '5a8a4a4055429930ff3c0d77':
+            print(sp_predictions)
+            print(sp_golds)
+
+        res_scores = prediction_scores[qid]
+        sp_scores = res_scores['sp_score']
+        sp_mask = res_scores['sp_mask']
+        sp_names = res_scores['sp_names']
+        sp_names = [(x[0], x[1]) for x in sp_names]
+        flag, min_positive, max_negative, num_candidates, num_golds, min_p_names, max_n_names = \
+            positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
+
+        ##++++
+        gap_names = score_gap_split(scores=sp_scores, mask=sp_mask, names=sp_names)
+        ##++++
+
+
+        ans_prediction = predictions['answer'][qid]
+        raw_answer = row['answer']
+        raw_answer = normalize_answer(raw_answer)
+        ans_prediction = normalize_answer(ans_prediction)
+        ans_metrics = update_answer(prediction=ans_prediction, gold=raw_answer)
+
+        predict_metrics = update_sp(prediction=sp_predictions, gold=sp_golds)
+        threshold_metric_dict['pred'].append((ans_metrics, predict_metrics))
+        min_p_metrics = update_sp(prediction=min_p_names, gold=sp_golds)
+        threshold_metric_dict['min_p'].append((ans_metrics, min_p_metrics))
+        max_n_metrics = update_sp(prediction=max_n_names, gold=sp_golds)
+        threshold_metric_dict['max_n'].append((ans_metrics, max_n_metrics))
+
+        gap_metrics = update_sp(prediction=gap_names, gold=sp_golds)
+        threshold_metric_dict['gap'].append((ans_metrics, gap_metrics))
 
 
         if not flag:
