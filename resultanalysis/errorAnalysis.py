@@ -710,12 +710,12 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
             all_joint_f1 += joint_f1
             all_joint_em += joint_em
 
-        print('ans {}\t{}\t{}\t{}'.format(answer_em / type_count, answer_recall / type_count, answer_prec / type_count,
+        print('ans\t{}\t{}\t{}\t{}'.format(answer_em / type_count, answer_recall / type_count, answer_prec / type_count,
                                           answer_f1 / type_count))
-        print('sup {}\t{}\t{}\t{}'.format(sp_em / type_count, sp_recall / type_count, sp_prec / type_count,
+        print('sup\t{}\t{}\t{}\t{}'.format(sp_em / type_count, sp_recall / type_count, sp_prec / type_count,
                                           sp_f1 / type_count))
-        print('joint em ', all_joint_em / type_count)
-        print('joint f1 ', all_joint_f1 / type_count)
+        print('joint_em\t', all_joint_em / type_count)
+        print('joint_f1\t', all_joint_f1 / type_count)
 
     df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
 
