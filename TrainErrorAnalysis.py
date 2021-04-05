@@ -7,7 +7,7 @@ import pandas as pd
 
 from model_envs import MODEL_CLASSES
 from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
-from resultanalysis.errorAnalysis import error_analysis, data_analysis, error_analysis_question_type, prediction_score_analysis, prediction_score_gap_analysis
+from resultanalysis.errorAnalysis import prediction_score_gap_train_analysis
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 
 if __name__ == '__main__':
@@ -21,6 +21,8 @@ if __name__ == '__main__':
 
     parser.add_argument("--graph_id", type=str, default="1", help='define output directory')
     parser.add_argument("--f_type", type=str, default='hgn_low', help='data type')
+    parser.add_argument("--train_type", type=str, default='hgn_low_sae', help='data type')
+
 
     # Other parameters
     parser.add_argument("--model_type", default="roberta", type=str)
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
     #     print("{} = {}".format(key, val))
-    df = prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
+    df = prediction_score_gap_train_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data, train_type=args.train_type)
     # df = prediction_score_gap_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
 
     error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
