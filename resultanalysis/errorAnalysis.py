@@ -808,9 +808,6 @@ def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores
         sp_golds = [(x[0], x[1]) for x in sp_golds]
         sp_para_golds = list(set([_[0] for _ in sp_golds]))
 
-        if qid.startwith('5a8a4a4055429930ff3c0d77'):
-            print(sp_predictions)
-            print(sp_golds)
 
         res_scores = prediction_scores[qid]
         sp_scores = res_scores['sp_score']
