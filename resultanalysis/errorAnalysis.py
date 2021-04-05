@@ -791,14 +791,14 @@ def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores
     threshold_metric_dict['gap'] = []
     prune_gold_num = 0
     analysis_result_list = []
-    print(predictions['sp'])
+    # print(predictions['sp'])
     for row in raw_data:
         qid = row['_id']
         question_type = row['type']
         answer_type = row['answer']
         if train_type is not None:
             qid = qid + '_' + train_type
-        print(qid)
+        # print(qid)
         if answer_type.strip().lower()  not in ['yes', 'no']:
             answer_type = 'span'
         if qid not in predictions['sp']:
