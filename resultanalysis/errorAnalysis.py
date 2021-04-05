@@ -801,6 +801,8 @@ def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores
         print(qid)
         if answer_type.strip().lower()  not in ['yes', 'no']:
             answer_type = 'span'
+        if qid not in predictions['sp']:
+            continue
         sp_predictions = predictions['sp'][qid]
         sp_predictions = [(x[0], x[1]) for x in sp_predictions]
         sp_para_predictions = list(set([x[0] for x in sp_predictions]))
