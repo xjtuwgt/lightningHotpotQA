@@ -724,7 +724,7 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
 
 
 
-def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores, train_type):
+def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores, train_type=None):
 
     def score_gap_split(scores, mask, names):
         assert len(scores) == len(mask)

@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--raw_data", type=str, default='data_raw/hotpot_dev_distractor_v1.json')
+    parser.add_argument("--raw_data", type=str, default='data_raw/hotpot_train_v1.1.json')
     parser.add_argument("--input_dir", type=str, default=DATASET_FOLDER, help='define output directory')
     parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     parser.add_argument("--pred_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
     #     print("{} = {}".format(key, val))
-    df = prediction_score_gap_train_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data, train_type=args.train_type)
+    df = prediction_score_gap_train_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
     # df = prediction_score_gap_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
 
     error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
