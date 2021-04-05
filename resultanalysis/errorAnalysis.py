@@ -798,6 +798,7 @@ def prediction_score_gap_train_analysis(raw_data, predictions, prediction_scores
         answer_type = row['answer']
         if train_type is not None:
             qid = qid + '_' + train_type
+        print(qid)
         if answer_type.strip().lower()  not in ['yes', 'no']:
             answer_type = 'span'
         sp_predictions = predictions['sp'][qid]
