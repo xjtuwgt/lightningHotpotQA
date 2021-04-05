@@ -568,7 +568,7 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
         sorted_idxes = np.argsort(prune_scores)[::-1]
         largest_gap = -1
         max_gap_idx = -1
-        for i in range(mask_sum_num-1):
+        for i in range(1, mask_sum_num-1):
             gap = prune_scores[sorted_idxes[i]] - prune_scores[sorted_idxes[i+1]]
             if gap > largest_gap:
                 largest_gap = gap
