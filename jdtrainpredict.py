@@ -115,10 +115,10 @@ print("Best threshold: {}".format(threshold))
 for key, val in metrics.items():
     print("{} = {}".format(key, val))
 
-import json
-with open(output_score_file, 'r') as fp:
-    data = json.load(fp)
-    print(len(data))
-    for x in data:
-        print(x)
-        print(data[x])
+# import json
+# with open(output_score_file, 'r') as fp:
+#     data = json.load(fp)
+#     print(len(data))
+#     for x in data:
+#         print(x)
+#         print(data[x])
