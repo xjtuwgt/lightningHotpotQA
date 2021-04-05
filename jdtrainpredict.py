@@ -108,9 +108,6 @@ output_eval_file = join(args.exp_name, args.train_type + 'train_eval.txt')
 output_score_file = join(args.exp_name, args.train_type + 'train_score.json')
 
 
-for key, value in vars(args).items():
-    print(key, value)
-
 metrics, threshold = jd_train_eval_model(args, encoder, model,
                                 train_dataloader, train_example_dict, train_feature_dict,
                                 output_pred_file, output_eval_file, args.train_gold_file, args.train_type, output_score_file=output_score_file)
