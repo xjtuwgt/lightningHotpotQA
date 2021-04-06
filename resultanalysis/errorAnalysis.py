@@ -581,7 +581,7 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
             if question_type == 'bridge':
                 for i in range(len(pred_idxes), mask_sum_num):
                     s_idx = sorted_idxes[i]
-                    if prune_scores[s_idx] >= g_score * 0.75:
+                    if prune_scores[s_idx] >= 0.35:
                         pred_idxes.append(s_idx)
         gap_names = [prune_names[_] for _ in pred_idxes]
         return gap_names
