@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--graph_id", type=str, default="1", help='define output directory')
     parser.add_argument("--f_type", type=str, default='hgn_low', help='data type')
-    parser.add_argument("--train_type", type=str, default='long_low_sae', help='data type')
+    parser.add_argument("--train_type", type=str, default='hgn_low_sae', help='data type')
 
 
     # Other parameters
@@ -69,11 +69,11 @@ if __name__ == '__main__':
         raw_data = json.load(reader)
 
     # pred_results_file = os.path.join(args.pred_dir, args.model_type, 'pred.json')
-    pred_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.pred_res_name)
+    pred_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.train_type, args.pred_res_name)
     with open(pred_results_file, 'r', encoding='utf-8') as reader:
         pred_data = json.load(reader)
 
-    pred_score_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.pred_score_name)
+    pred_score_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.train_type, args.pred_score_name)
     with open(pred_score_results_file, 'r', encoding='utf-8') as reader:
         pred_score_data = json.load(reader)
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     df = prediction_score_gap_train_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data, train_type=args.train_type)
     # df = prediction_score_gap_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
 
-    error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
+    error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.train_type, args.error_res_name)
     df.to_json(error_res_results_file)
     print('saved {} records into {}'.format(df.shape, error_res_results_file))
     error_df = pd.read_json(error_res_results_file)
