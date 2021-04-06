@@ -559,7 +559,7 @@ def prediction_score_analysis(raw_data, predictions, prediction_scores):
 
 def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
 
-    def score_gap_split(scores, mask, names):
+    def score_gap_split(scores, mask, names, question_type):
         assert len(scores) == len(mask)
         mask_sum_num = int(sum(mask))
         prune_names = names[:mask_sum_num]
@@ -573,7 +573,15 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
             if gap > largest_gap:
                 largest_gap = gap
                 max_gap_idx = i
+
         pred_idxes = sorted_idxes[:(max_gap_idx+1)]
+        g_score = prune_scores[pred_idxes[-1]]
+        pred_idxes = pred_idxes.tolist()
+        if question_type == 'bridge':
+            for i in range(len(pred_idxes), mask_sum_num):
+                s_idx = sorted_idxes[i]
+                if prune_scores[s_idx] >= g_score * 0.8:
+                    pred_idxes.append(s_idx)
         gap_names = [prune_names[_] for _ in pred_idxes]
         return gap_names
 
@@ -651,7 +659,7 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
             positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds, pred_names=sp_predictions)
 
         ##++++
-        gap_names = score_gap_split(scores=sp_scores, mask=sp_mask, names=sp_names)
+        gap_names = score_gap_split(scores=sp_scores, mask=sp_mask, names=sp_names, question_type=question_type)
         ##++++
 
 
