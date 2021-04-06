@@ -575,13 +575,14 @@ def prediction_score_gap_analysis(raw_data, predictions, prediction_scores):
                 max_gap_idx = i
 
         pred_idxes = sorted_idxes[:(max_gap_idx+1)]
-        g_score = prune_scores[pred_idxes[-1]]
-        pred_idxes = pred_idxes.tolist()
-        if question_type == 'bridge':
-            for i in range(len(pred_idxes), mask_sum_num):
-                s_idx = sorted_idxes[i]
-                if prune_scores[s_idx] >= g_score * 0.8:
-                    pred_idxes.append(s_idx)
+        if len(pred_idxes) > 1:
+            g_score = prune_scores[pred_idxes[-1]]
+            pred_idxes = pred_idxes.tolist()
+            if question_type == 'bridge':
+                for i in range(len(pred_idxes), mask_sum_num):
+                    s_idx = sorted_idxes[i]
+                    if prune_scores[s_idx] >= g_score * 0.8:
+                        pred_idxes.append(s_idx)
         gap_names = [prune_names[_] for _ in pred_idxes]
         return gap_names
 
