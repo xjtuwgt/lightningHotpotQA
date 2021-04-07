@@ -97,7 +97,7 @@ def jd_train_eval_model(args, encoder, model, dataloader, example_dict, feature_
                 batch['context_encoding'] = outputs[0]
             ####++++++++++++++++++++++++++++++++++++++
             batch['context_mask'] = batch['context_mask'].float().to(args.device)
-            start, end, q_type, paras, sent, ent, yp1, yp2 = model(batch, return_yp=True)
+            start, end, q_type, paras, sent, ent, yp1, yp2, cls_emb = model(batch, return_yp=True, return_cls=True)
 
         type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
         answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(example_dict, feature_dict, batch['ids'],
@@ -128,6 +128,7 @@ def jd_train_eval_model(args, encoder, model, dataloader, example_dict, feature_
         support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
         predict_support_para_np = torch.sigmoid(paras[:, :, 1]).data.cpu().numpy()
         support_para_mask_np = batch['para_mask'].data.cpu().numpy()
+        cls_emb_np = cls_emb.data.cpu().numpy()
         ####################################################################
 
         for i in range(predict_support_np.shape[0]):
@@ -147,7 +148,8 @@ def jd_train_eval_model(args, encoder, model, dataloader, example_dict, feature_
             ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_prob[i].tolist(), 'ent_mask': ent_mask_np[i].tolist(),
                          'query_entity': example_dict[cur_id].ques_entities_text, 'ctx_entity': example_dict[cur_id].ctx_entities_text,
                          'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(), 'answer': answer_dict[cur_id]}
-            res_pred = {**sent_pred_, **para_pred_, **ans_pred_}
+            cls_emb_ = {'cls_emb': cls_emb_np[i].tolist()}
+            res_pred = {**sent_pred_, **para_pred_, **ans_pred_, **cls_emb_}
             prediction_res_score_dict[cur_id] = res_pred
             ##+++++++++++++++++++++++++
 
