@@ -8,7 +8,7 @@
     "daug_type": "hgn_low_sae",
     "train_type": "hgn_low_sae",
     "gnn": "gat:1,4",
-    "eval_batch_size": 16,
+    "per_gpu_train_batch_size": 16,
     "num_edge_type": 9,
     "fp16": "True",
     "bi_attn_drop": 0.3,
