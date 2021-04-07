@@ -103,9 +103,9 @@ model.eval()
 #########################################################################
 # Evaluation
 ##########################################################################
-output_pred_file = join(args.exp_name, args.train_type + 'train_pred.json')
-output_eval_file = join(args.exp_name, args.train_type + 'train_eval.txt')
-output_score_file = join(args.exp_name, args.train_type + 'train_score.json')
+output_pred_file = join(args.exp_name, args.train_type + '_train_pred.json')
+output_eval_file = join(args.exp_name, args.train_type + '_train_eval.txt')
+output_score_file = join(args.exp_name, args.train_type + '_train_score.json')
 
 
 metrics, threshold = jd_train_eval_model(args, encoder, model,
