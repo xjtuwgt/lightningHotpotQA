@@ -55,3 +55,5 @@ def feat_label_extraction(score_data_name):
     for row_idx, row in tqdm(enumerate(score_data)):
         print(row_idx)
         print(row)
+        row_data = score_data[row]
+        print(row_data)
