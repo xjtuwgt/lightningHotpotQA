@@ -13,8 +13,9 @@ if __name__ == '__main__':
     # print(len(z))
 
     args = parse_args()
+    dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
     dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
-    feat_label_extraction(score_data_name=dev_score_file_name)
+    feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
     # with open(dev_score_file_name, 'r', encoding='utf-8') as reader:
     #     dev_score_data = json.load(reader)
     # print(len(dev_score_data))

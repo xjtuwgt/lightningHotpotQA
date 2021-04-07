@@ -16,7 +16,7 @@ def parse_args(args=None):
     parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     parser.add_argument("--pred_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     # Other parameters
-    parser.add_argument("--model_type", default="roberta", type=str)
+    parser.add_argument("--train_type", type=str, default='hgn_low_sae', help='data type')
     parser.add_argument("--model_name_or_path", default='train.graph.roberta.bs2.as1.lr2e-05.lrslayer_decay.lrd0.9.gnngat1.4.datahgn_docred_low_saeRecAdam.cosine.seed103', type=str,
                         help="Path to pre-trained model")
     parser.add_argument("--dev_score_name", type=str, default='dev_score.json')
@@ -54,14 +54,44 @@ def row_feat_label_extraction(row):
     x_values = row['cls_emb']
     return x_values, y_value
 
+def row_x_feat_extraction(row):
+    x_feats = row['cls_emb']
+    #++++++++++++++
+    para_scores = row['para_score']
+    para_mask = row['para_mask']
+    para_num = int(sum(para_mask))
+    para_score_np = np.array(para_scores[:para_num])
+    para_feats = distribution_feat(scores=para_score_np)
+    x_feats += para_feats
+    # ++++++++++++++
+    sent_scores = row['sp_score']
+    sent_mask = row['sp_mask']
+    sent_num = int(sum(sent_mask))
+    sent_score_np = np.array(sent_scores[:sent_num])
+    sent_feats = distribution_feat(scores=sent_score_np)
+    x_feats += sent_feats
+    # ++++++++++++++
+    ent_scores = row['ent_score']
+    ent_mask = row['ent_mask']
+    ent_num = int(sum(ent_mask))
+    ent_score_np = np.array(ent_scores[:ent_num])
+    ent_feats = distribution_feat(scores=ent_score_np)
+    x_feats += ent_feats
+    return x_feats
 
-def feat_label_extraction(score_data_name):
+
+
+
+
+def feat_label_extraction(raw_data_name, score_data_name, train_type, train=False):
+    with open(raw_data_name, 'r', encoding='utf-8') as reader:
+        row_data = json.load(reader)
     with open(score_data_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
     x_values_list = []
     y_value_list = []
-    for row_idx, row in tqdm(enumerate(score_data)):
-        row_data = score_data[row]
-        x_values, y_value = row_feat_label_extraction(row=row_data)
-        print(x_values)
-        print(y_value)
+    for row_idx, row in tqdm(enumerate(row_data)):
+        qid = row['_id']
+        score_row = score_data[qid]
+        x_feats = row_x_feat_extraction(row=score_row)
+        print(x_feats)
