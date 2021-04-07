@@ -29,12 +29,12 @@ from jdscripts.pretrainedencoders import model_intialization_test
 #     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 # save_hotpotqa_model(encoder=model, model_type=model_type, model_name=model_name)
 
-model_type = 'albert'
-model_name = 'albert-xxlarge-v2'
-prtrained_name = 'albert-xxlarge-v2_hotpotqa'
-model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=prtrained_name)
-for name, param in model.named_parameters():
-    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+# model_type = 'albert'
+# model_name = 'albert-xxlarge-v2'
+# prtrained_name = 'albert-xxlarge-v2_hotpotqa'
+# model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=prtrained_name)
+# for name, param in model.named_parameters():
+#     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
 # model_type = 'roberta'
 # model_name = 'roberta-large'
@@ -56,3 +56,8 @@ for name, param in model.named_parameters():
 # model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=prtrained_name)
 # for name, param in model.named_parameters():
 #     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+
+electra_model_name = 'mrm8488/electra-large-finetuned-squadv1'
+model = load_model(model_type='electra', model_name=electra_model_name)
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
