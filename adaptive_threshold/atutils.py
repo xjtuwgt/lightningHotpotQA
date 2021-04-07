@@ -50,12 +50,18 @@ def distribution_feat(scores: ndarray):
     return dist_feat
 
 def row_feat_label_extraction(row):
-    for key, value in row.items():
-        print(key, value)
+    y_value = row['min_p']
+    x_values = row['cls_emb']
+    return x_values, y_value
+
 
 def feat_label_extraction(score_data_name):
     with open(score_data_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
+    x_values_list = []
+    y_value_list = []
     for row_idx, row in tqdm(enumerate(score_data)):
         row_data = score_data[row]
-        row_feat_label_extraction(row=row_data)
+        x_values, y_value = row_feat_label_extraction(row=row_data)
+        print(x_values)
+        print(y_value)
