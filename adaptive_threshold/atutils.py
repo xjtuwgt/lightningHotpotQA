@@ -54,3 +54,4 @@ def feat_label_extraction(score_data_name):
         score_data = json.load(reader)
     for row_idx, row in tqdm(enumerate(score_data)):
         print(row_idx)
+        print(row)
