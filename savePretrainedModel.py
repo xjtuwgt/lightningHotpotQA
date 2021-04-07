@@ -65,6 +65,7 @@ from jdscripts.pretrainedencoders import model_intialization_test
 
 model_type = 'electra'
 model_name = 'google/electra-large-discriminator'
-model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=electra_model_name)
+pretrained_name = 'mrm8488/electra-large-finetuned-squadv1'
+model = model_intialization_test(model_type=model_type, model_name=model_name, petrained_name=pretrained_name)
 for name, param in model.named_parameters():
     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
