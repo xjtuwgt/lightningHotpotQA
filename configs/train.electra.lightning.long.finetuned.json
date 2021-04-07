@@ -1,5 +1,5 @@
 {
-    "exp_name": "HGN_SAE_Graph_albert_xxlarge_v2_hgn_docred_REC_COSINE_varied_lr",
+    "exp_name": "HGN_SAE_Graph_electra_long_REC_COSINE_varied_lr",
     "model_type": "electra",
     "num_train_epochs": 6,
     "encoder_name_or_path": "google/electra-large-discriminator",
