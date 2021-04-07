@@ -18,8 +18,8 @@ def parse_args(args=None):
     parser.add_argument("--model_type", default="roberta", type=str)
     parser.add_argument("--model_name_or_path", default='train.graph.roberta.bs2.as1.lr2e-05.lrslayer_decay.lrd0.9.gnngat1.4.datahgn_docred_low_saeRecAdam.cosine.seed103', type=str,
                         help="Path to pre-trained model")
-    parser.add_argument("--dev_score_data", type=str, default='dev_score.json')
-    parser.add_argument("--train_score_data", type=str, default='train_score.json')
+    parser.add_argument("--dev_score_name", type=str, default='dev_score.json')
+    parser.add_argument("--train_score_name", type=str, default='train_score.json')
 
     return parser.parse_args(args)
 
