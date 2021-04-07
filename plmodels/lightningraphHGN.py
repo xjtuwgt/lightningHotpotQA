@@ -20,12 +20,16 @@ from utils.jdutils import log_metrics
 from plmodels.pldata_processing import HotpotDataset, DataHelper
 import logging
 from utils.optimizerutils import RecAdam
+from electramodels.modeling_electra import ElectraModel, ElectraForPreTraining
+from electramodels.tokenization_electra import ElectraTokenizer
+from electramodels.configuration_electra import ElectraConfig
 
 
 MODEL_CLASSES = {
     'bert': (BertConfig, BertModel, BertTokenizer),
     'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
-    'albert': (AlbertConfig, AlbertModel, AlbertTokenizer)
+    'albert': (AlbertConfig, AlbertModel, AlbertTokenizer),
+    'electra': (ElectraConfig, ElectraModel, ElectraTokenizer)
 }
 
 class lightningHGN(pl.LightningModule):
