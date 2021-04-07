@@ -41,6 +41,7 @@ class HierarchicalGraphNetwork(nn.Module):
     def forward(self, batch, return_yp):
         query_mapping = batch['query_mapping']
         context_encoding = batch['context_encoding']
+        print('context encode', context_encoding.shape)
         # extract query encoding
         trunc_query_mapping = query_mapping[:, :self.max_query_length].contiguous()
         trunc_query_state = (context_encoding * query_mapping.unsqueeze(2))[:, :self.max_query_length, :].contiguous()
@@ -62,6 +63,7 @@ class HierarchicalGraphNetwork(nn.Module):
                                                                                         graph_state_dict=graph_state_dict,
                                                                                         query_vec=query_vec)
         input_state, _ = self.ctx_attention(input_state, graph_state, graph_mask.squeeze(-1))
+        print('input state', input_state.shape)
         para_predictions, sent_predictions, ent_predictions = self.para_sent_ent_predict_layer.forward(batch=batch,
                                                                                      graph_state_dict=graph_state_dict)
         predictions = self.predict_layer(batch, input_state, packing_mask=query_mapping,
