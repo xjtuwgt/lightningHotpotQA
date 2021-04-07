@@ -49,11 +49,13 @@ def distribution_feat(scores: ndarray):
     dist_feat.extend(gap_dist_feat)
     return dist_feat
 
+def row_feat_label_extraction(row):
+    for key, value in row.items():
+        print(key, value)
+
 def feat_label_extraction(score_data_name):
     with open(score_data_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
     for row_idx, row in tqdm(enumerate(score_data)):
-        print(row_idx)
-        print(row)
         row_data = score_data[row]
-        print(row_data)
+        row_feat_label_extraction(row=row_data)
