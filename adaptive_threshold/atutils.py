@@ -94,4 +94,4 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         qid = row['_id']
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
-        print(x_feats)
+        print(len(x_feats))
