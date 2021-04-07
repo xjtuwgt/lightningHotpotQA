@@ -13,9 +13,8 @@ if __name__ == '__main__':
     # print(len(z))
 
     args = parse_args()
-    dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_data)
-    pred_score_results_file = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
-    with open(pred_score_results_file, 'r', encoding='utf-8') as reader:
-        pred_score_data = json.load(reader)
-    print(len(pred_score_data))
+    dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
+    with open(dev_score_file_name, 'r', encoding='utf-8') as reader:
+        dev_score_data = json.load(reader)
+    print(len(dev_score_data))
     # print(dev_score_file_name)
