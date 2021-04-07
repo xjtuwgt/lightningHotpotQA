@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_data)
-    pred_score_results_file = join(args.pred_dir, args.model_name_or_path, args.pred_score_name)
+    pred_score_results_file = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
     with open(pred_score_results_file, 'r', encoding='utf-8') as reader:
         pred_score_data = json.load(reader)
     print(len(pred_score_data))
