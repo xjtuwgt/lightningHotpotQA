@@ -38,7 +38,7 @@ class HierarchicalGraphNetwork(nn.Module):
         self.para_sent_ent_predict_layer = ParaSentEntPredictionLayer(self.config, hidden_dim=self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
-    def forward(self, batch, return_yp):
+    def forward(self, batch, return_yp, return_cls=False):
         query_mapping = batch['query_mapping']
         context_encoding = batch['context_encoding']
         print('context encode', context_encoding.shape)
@@ -64,6 +64,8 @@ class HierarchicalGraphNetwork(nn.Module):
                                                                                         query_vec=query_vec)
         input_state, _ = self.ctx_attention(input_state, graph_state, graph_mask.squeeze(-1))
         print('input state', input_state.shape)
+        cls_emb_state = input_state[:,0]
+        print(cls_emb_state.shape)
         para_predictions, sent_predictions, ent_predictions = self.para_sent_ent_predict_layer.forward(batch=batch,
                                                                                      graph_state_dict=graph_state_dict)
         predictions = self.predict_layer(batch, input_state, packing_mask=query_mapping,
