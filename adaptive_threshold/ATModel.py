@@ -1,7 +1,7 @@
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error
 
-def lasso_model_train(X, y):
+def at_lasso_model_train(X, y):
     clf = linear_model.Lasso(alpha=0.1)
     clf.fit(X, y)
     return clf
@@ -10,7 +10,7 @@ def lasso_model_train(X, y):
 x = [[0, 0], [1, 1], [2, 2], [3, 3]]
 y = [0, 1, 2, 3]
 
-clf = lasso_model_train(x, y)
+clf = at_lasso_model_train(x, y)
 print(clf)
 print(clf.coef_)
 
