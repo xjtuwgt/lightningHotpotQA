@@ -3,7 +3,6 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from numpy import ndarray
 import numpy as np
 from tqdm import tqdm
-from os.path import join
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
@@ -52,17 +51,3 @@ def distribution_feat(scores: ndarray):
 def feat_label_extraction(data):
     for row_idx, row in tqdm(enumerate(data)):
         print(row_idx)
-
-if __name__ == '__main__':
-
-    x = np.random.random(10)
-    print(x)
-    y = distribution_feat_extraction(scores=x, keep_num=True)
-    print(len(y))
-    z = distribution_feat(scores=x)
-    print(len(z))
-
-    args = parse_args()
-    dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_data)
-    print(dev_score_file_name)
-
