@@ -3,6 +3,7 @@
     "model_type": "electra",
     "num_train_epochs": 6,
     "encoder_name_or_path": "google/electra-large-discriminator",
+    "fine_tuned_encoder": "mrm8488/electra-large-finetuned-squadv1",
     "per_gpu_train_batch_size": 4,
     "gradient_accumulation_steps": 1,
     "gnn": "gat:1,4",
