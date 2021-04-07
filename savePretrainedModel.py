@@ -57,11 +57,11 @@ from jdscripts.pretrainedencoders import model_intialization_test
 # for name, param in model.named_parameters():
 #     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
-# electra_model_name = 'mrm8488/electra-large-finetuned-squadv1'
-# model = load_model(model_type='electra', model_name=electra_model_name)
-# for name, param in model.named_parameters():
-#     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-# save_model_as_pkl(encoder=model, model_name=electra_model_name)
+electra_model_name = 'mrm8488/electra-large-finetuned-squadv1'
+model = load_model(model_type='electra', model_name=electra_model_name)
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+save_model_as_pkl(encoder=model, model_name=electra_model_name)
 
 model_type = 'electra'
 model_name = 'google/electra-large-discriminator'
