@@ -129,4 +129,6 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         y_value_list.append(y_p)
     assert len(x_feats_list) == len(y_value_list)
     y_value_np = np.array(y_value_list)
-    print(np.sort(y_value_np))
+    s_y = np.sort(y_value_np)
+    for i in range(len(x_feats_list)):
+        print(s_y[i])
