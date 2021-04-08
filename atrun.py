@@ -43,7 +43,11 @@ def train_and_evaluation_at(args, params, train_filter):
     mse = mean_squared_error(dev_y, reg.predict(dev_x))
     print('Evaluation mse = {}'.format(mse))
 
-    pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'n_est_' + str(params['n_estimators']) + '_' + args.pickle_model_name)
+    if train_filter:
+        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_n_est_' + str(params['n_estimators']) + '_' + args.pickle_model_name)
+    else:
+        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path,
+                                      'n_est_' + str(params['n_estimators']) + '_' + args.pickle_model_name)
     save_sklearn_pickle_model(model=reg, pkl_filename=pickle_model_file_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
     mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
