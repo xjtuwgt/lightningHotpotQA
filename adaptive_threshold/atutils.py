@@ -125,6 +125,8 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         qid = row['_id']
         if train:
             qid = qid + "_" + train_type
+        if qid not in score_data:
+            continue
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
         x_feats_list.append(x_feats)
