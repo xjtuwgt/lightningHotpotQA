@@ -118,12 +118,14 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         row_data = json.load(reader)
     with open(score_data_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
-    x_values_list = []
-    y_value_list = []
+    # feat_y_list
     for row_idx, row in tqdm(enumerate(row_data)):
         qid = row['_id']
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
-        print(len(x_feats))
+        # x_feats_list.append(x_feats)
+        # print(len(x_feats))
         flag, y_p, y_n = row_y_label_extraction(raw_row=row, score_row=score_row)
-        print(flag, y_p, y_n)
+        # y_value_list.append(y_p)
+        # print(flag, y_p, y_n)
+    # return x_feats_list, y
