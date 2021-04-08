@@ -7,14 +7,18 @@ import torch
 from os.path import join
 from tqdm import tqdm, trange
 from tensorboardX import SummaryWriter
+import os
 
 from plmodels.jd_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
-from csr_mhqa.utils import *
+from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
 
-# from jdmodels.jdHGN import HierarchicalGraphNetwork
-from models.HGN import HierarchicalGraphNetwork
+# # from jdmodels.jdHGN import HierarchicalGraphNetwork
+# from models.HGN import HierarchicalGraphNetwork
+from jdmodels.HPSupModel import SuppFactPredModel
+from utils.jdutils import compute_sent_loss
+from utils.jdutils import supp_fact_eval_model
 from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 from utils.jdutils import get_lr_with_optimizer
 
@@ -90,7 +94,8 @@ else:
 
 # Set Encoder and Model
 encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-model = HierarchicalGraphNetwork(config=args)
+# model = HierarchicalGraphNetwork(config=args)
+model = SuppFactPredModel(config=args)
 
 if encoder_path is not None:
     encoder.load_state_dict(torch.load(encoder_path))
@@ -119,7 +124,7 @@ tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
 if encoder_path is not None and model_path is not None:
     output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
     output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
-    prev_metrics, prev_threshold = eval_model(args, encoder, model,
+    prev_metrics, prev_threshold = supp_fact_eval_model(args, encoder, model,
                                               dev_dataloader, dev_example_dict, dev_feature_dict,
                                               output_pred_file, output_eval_file, args.dev_gold_file)
     logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
@@ -175,7 +180,8 @@ else:
 # launch training
 ##########################################################################
 global_step = 0
-loss_name = ["loss_total", "loss_span", "loss_type", "loss_sup", "loss_ent", "loss_para"]
+# loss_name = ["loss_total", "loss_span", "loss_type", "loss_sup", "loss_ent", "loss_para"]
+loss_name = ["loss_sup"]
 tr_loss, logging_loss = [0] * len(loss_name), [0]* len(loss_name)
 if args.local_rank in [-1, 0]:
     tb_writer = SummaryWriter(args.exp_name)
@@ -212,9 +218,9 @@ for epoch in train_iterator:
             batch['context_encoding'] = encoder(**inputs)[0]
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(args.device)
-        start, end, q_type, paras, sents, ents, _, _ = model(batch, return_yp=True)
+        sents = model(batch, return_yp=True)
 
-        loss_list = compute_loss(args, batch, start, end, paras, sents, ents, q_type)
+        loss_list = compute_sent_loss(args, batch, sents)
         del batch
 
         if args.n_gpu > 1:
@@ -266,7 +272,7 @@ for epoch in train_iterator:
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
                 output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step+1}.json')
                 output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step+1}.txt')
-                metrics, threshold = eval_model(args, encoder, model,
+                metrics, threshold = supp_fact_eval_model(args, encoder, model,
                                                 dev_dataloader, dev_example_dict, dev_feature_dict,
                                                 output_pred_file, output_eval_file, args.dev_gold_file)
 
@@ -296,7 +302,7 @@ for epoch in train_iterator:
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
         output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch+1}.json')
         output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch+1}.txt')
-        metrics, threshold = eval_model(args, encoder, model,
+        metrics, threshold = supp_fact_eval_model(args, encoder, model,
                                         dev_dataloader, dev_example_dict, dev_feature_dict,
                                         output_pred_file, output_eval_file, args.dev_gold_file)
 

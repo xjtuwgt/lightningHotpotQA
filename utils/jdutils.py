@@ -395,4 +395,88 @@ def compute_sent_loss(args, batch, sent):
     sent_gold = batch['is_support'].long().view(-1)
     loss_sup = args.sent_lambda * criterion(sent_pred, sent_gold.long())
     loss = loss_sup
-    return loss
+    return [loss]
+
+
+def supp_fact_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file):
+    encoder.eval()
+    model.eval()
+
+    answer_dict = {}
+    answer_type_dict = {}
+
+    # dataloader.refresh()
+
+    thresholds = np.arange(0.1, 1.0, 0.05)
+    N_thresh = len(thresholds)
+    total_sp_dict = [{} for _ in range(N_thresh)]
+
+    for batch in tqdm(dataloader):
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for key, value in batch.items():
+            if key not in {'ids'}:
+                batch[key] = value.to(args.device)
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        with torch.no_grad():
+            inputs = {'input_ids':      batch['context_idxs'],
+                      'attention_mask': batch['context_mask'],
+                      'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
+            outputs = encoder(**inputs)
+
+            ####++++++++++++++++++++++++++++++++++++++
+            if args.model_type == 'electra':
+                batch['context_encoding'] = outputs.last_hidden_state
+            else:
+                batch['context_encoding'] = outputs[0]
+            ####++++++++++++++++++++++++++++++++++++++
+            batch['context_mask'] = batch['context_mask'].float().to(args.device)
+            sent = model(batch, return_yp=True)
+
+        predict_support_np = torch.sigmoid(sent[:, :, 1]).data.cpu().numpy()
+
+        for i in range(predict_support_np.shape[0]):
+            cur_sp_pred = [[] for _ in range(N_thresh)]
+            cur_id = batch['ids'][i]
+            ##++++
+            answer_dict[cur_id] = 'yes'
+            answer_type_dict[cur_id] = 'yes'
+            ##++++
+
+            for j in range(predict_support_np.shape[1]):
+                if j >= len(example_dict[cur_id].sent_names):
+                    break
+
+                for thresh_i in range(N_thresh):
+                    if predict_support_np[i, j] > thresholds[thresh_i]:
+                        cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
+
+            for thresh_i in range(N_thresh):
+                if cur_id not in total_sp_dict[thresh_i]:
+                    total_sp_dict[thresh_i][cur_id] = []
+
+                total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
+
+    def choose_best_threshold(ans_dict, pred_file):
+        best_joint_f1 = 0
+        best_metrics = None
+        best_threshold = 0
+        for thresh_i in range(N_thresh):
+            prediction = {'answer': ans_dict,
+                          'sp': total_sp_dict[thresh_i],
+                          'type': answer_type_dict}
+            tmp_file = os.path.join(os.path.dirname(pred_file), 'tmp.json')
+            with open(tmp_file, 'w') as f:
+                json.dump(prediction, f)
+            metrics = hotpot_eval(tmp_file, dev_gold_file)
+            if metrics['sp_f1'] >= best_joint_f1:
+                best_joint_f1 = metrics['sp_f1']
+                best_threshold = thresholds[thresh_i]
+                best_metrics = metrics
+                shutil.move(tmp_file, pred_file)
+
+        return best_metrics, best_threshold
+
+    best_metrics, best_threshold = choose_best_threshold(answer_dict, prediction_file)
+    json.dump(best_metrics, open(eval_file, 'w'))
+
+    return best_metrics, best_threshold
