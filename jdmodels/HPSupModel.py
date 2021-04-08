@@ -24,12 +24,12 @@ def init_sent_feature(batch, input_state, hidden_dim):
     sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)  # N x max_sent x 2d
     return sent_state
 
-class HierarchicalGraphNetwork(nn.Module):
+class SuppFactPredModel(nn.Module):
     """
     Packing Query Version
     """
     def __init__(self, config):
-        super(HierarchicalGraphNetwork, self).__init__()
+        super(SuppFactPredModel, self).__init__()
         self.config = config
         self.max_query_length = self.config.max_query_length
         self.bi_attention = BiAttention(input_dim=config.input_dim,

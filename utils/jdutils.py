@@ -14,6 +14,8 @@ import shutil
 from csr_mhqa.utils import convert_to_tokens
 import logging
 import string
+from torch import nn
+from csr_mhqa.data_processing import IGNORE_INDEX
 import re
 from hgntransformers import AdamW
 from csr_mhqa.utils import get_optimizer
@@ -385,3 +387,12 @@ def get_rec_adam_optimizer(pretrained_model, new_model, args):
         raise 'error oprimizer {}'.format(args.optimizer)
 
     return optimizer
+
+
+def compute_sent_loss(args, batch, sent):
+    criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
+    sent_pred = sent.view(-1, 2)
+    sent_gold = batch['is_support'].long().view(-1)
+    loss_sup = args.sent_lambda * criterion(sent_pred, sent_gold.long())
+    loss = loss_sup
+    return loss
