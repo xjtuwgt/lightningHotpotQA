@@ -115,13 +115,15 @@ def row_x_feat_extraction(row):
 
 def feat_label_extraction(raw_data_name, score_data_name, train_type, train=False):
     with open(raw_data_name, 'r', encoding='utf-8') as reader:
-        row_data = json.load(reader)
+        raw_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(raw_data), raw_data_name))
     with open(score_data_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(score_data), score_data_name))
     x_feats_list = []
     y_p_value_list = []
     y_n_value_list = []
-    for row_idx, row in tqdm(enumerate(row_data)):
+    for row_idx, row in tqdm(enumerate(raw_data)):
         qid = row['_id']
         if train:
             qid = qid + "_" + train_type
@@ -134,4 +136,5 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         y_p_value_list.append(y_p)
         y_n_value_list.append(y_n)
     assert len(x_feats_list) == len(y_p_value_list)
+    print('Get {} features'.format(len(x_feats_list)))
     return x_feats_list, y_p_value_list
