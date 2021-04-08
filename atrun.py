@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
 
-    params = {'n_estimators': 1500,
+    params = {'n_estimators': 30,
               'max_depth': 4,
               'min_samples_split': 5,
               'learning_rate': 0.005,
