@@ -29,8 +29,8 @@ if __name__ == '__main__':
     print(x.shape, y.shape)
 
     params = {'n_estimators': 1000,
-              'max_depth': 2,
-              'min_samples_split': 3,
+              'max_depth': 3,
+              'min_samples_split': 5,
               'learning_rate': 0.01,
               'verbose': True,
               'loss': 'ls'}
