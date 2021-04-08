@@ -124,8 +124,8 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
         # x_feats_list.append(x_feats)
-        # print(len(x_feats))
+        print(len(x_feats))
         flag, y_p, y_n = row_y_label_extraction(raw_row=row, score_row=score_row)
         # y_value_list.append(y_p)
-        # print(flag, y_p, y_n)
+        print(flag, y_p, y_n)
     # return x_feats_list, y
