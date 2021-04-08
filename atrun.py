@@ -24,6 +24,8 @@ def train_data_collection(args):
     print('Saving train data into {}'.format(train_npz_file_name))
 
 def train_and_evaluation_at(args, params):
+    for key, value in params.items():
+        print('Parameter {} = \t{}'.format(key, value))
     train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     train_x, train_y = load_npz_data(npz_file_name=train_npz_file_name)
@@ -46,7 +48,7 @@ if __name__ == '__main__':
     # dev_data_collection(args=args)
     # train_data_collection(args=args)
 
-    params = {'n_estimators': 100,
+    params = {'n_estimators': 20,
               'max_depth': 4,
               'min_samples_split': 5,
               'learning_rate': 0.002,
