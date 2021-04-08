@@ -147,3 +147,9 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
 def save_numpy_array(x_feats: ndarray, y: ndarray, npz_file_name):
     np.savez(npz_file_name, x=x_feats, y=y)
     print('Saving {} records as x, and {} records as y into {}'.format(x_feats.shape, y.shape, npz_file_name))
+
+def load_npz_data(npz_file_name):
+    with np.load(npz_file_name) as data:
+        x = data['x']
+        y = data['y']
+    return x, y

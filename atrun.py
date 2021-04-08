@@ -1,6 +1,6 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
-    parse_args, feat_label_extraction, save_numpy_array
+    parse_args, feat_label_extraction, save_numpy_array, load_npz_data
 from os.path import join
 import json
 
@@ -23,3 +23,5 @@ if __name__ == '__main__':
     #     dev_score_data = json.load(reader)
     # print(len(dev_score_data))
     # print(dev_score_file_name)
+    x, y = load_npz_data(npz_file_name=dev_npz_file_name)
+    print(x.shape, y.shape)
