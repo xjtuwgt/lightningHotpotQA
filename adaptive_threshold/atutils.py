@@ -49,10 +49,44 @@ def distribution_feat(scores: ndarray):
     dist_feat.extend(gap_dist_feat)
     return dist_feat
 
-def row_feat_label_extraction(row):
-    y_value = row['min_p']
-    x_values = row['cls_emb']
-    return x_values, y_value
+def row_y_label_extraction(raw_row, score_row):
+    def positive_neg_score(scores, mask, names, gold_names):
+        assert len(scores) == len(mask)
+        mask_sum_num = int(sum(mask))
+        prune_names = names[:mask_sum_num]
+        gold_name_set = set(gold_names)
+        if (gold_name_set.issubset(set(prune_names))):
+            flag = True
+        else:
+            flag = False
+        positive_scores = []
+        negative_scores = []
+        for idx in range(mask_sum_num):
+            name_i = prune_names[idx]
+            if name_i in gold_name_set:
+                positive_scores.append(scores[idx])
+            else:
+                negative_scores.append(scores[idx])
+
+        if len(positive_scores) > 0:
+            min_positive = min(positive_scores)
+        else:
+            min_positive = 0.0
+        if len(negative_scores) == 0:
+            max_negative = 1.0
+        else:
+            max_negative = max(negative_scores)
+
+        return flag, min_positive, max_negative
+
+    sp_golds = raw_row['supporting_facts']
+    sp_golds = [(x[0], x[1]) for x in sp_golds]
+    sp_scores = score_row['sp_score']
+    sp_mask = score_row['sp_mask']
+    sp_names = score_row['sp_names']
+    sp_names = [(x[0], x[1]) for x in sp_names]
+    flag, min_positive, max_negative = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds)
+    return flag, min_positive, max_negative
 
 def row_x_feat_extraction(row):
     x_feats = row['cls_emb']
@@ -79,10 +113,6 @@ def row_x_feat_extraction(row):
     x_feats += ent_feats
     return x_feats
 
-
-
-
-
 def feat_label_extraction(raw_data_name, score_data_name, train_type, train=False):
     with open(raw_data_name, 'r', encoding='utf-8') as reader:
         row_data = json.load(reader)
@@ -95,3 +125,5 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
         print(len(x_feats))
+        flag, y_p, y_n = row_y_label_extraction(raw_row=row, score_row=score_row)
+        print(flag, y_p, y_n)
