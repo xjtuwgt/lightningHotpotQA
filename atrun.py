@@ -26,6 +26,7 @@ def train_data_collection(args):
 def train_and_evaluation_at(args, params):
     for key, value in params.items():
         print('Parameter {} = {}'.format(key, value))
+    print('*' * 75)
     train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     train_x, train_y = load_npz_data(npz_file_name=train_npz_file_name)
