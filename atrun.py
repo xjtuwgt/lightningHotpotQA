@@ -22,7 +22,7 @@ def train_data_collection(args, train_filter):
     else:
         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
     x_feats, y_value = feat_label_extraction(raw_data_name=train_raw_data_file_name, score_data_name=train_score_file_name,
-                                             train_type=args.train_type, train=True)
+                                             train_type=args.train_type, train=True, train_filter=train_filter)
     save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=train_npz_file_name)
     print('Saving train data into {}'.format(train_npz_file_name))
 
