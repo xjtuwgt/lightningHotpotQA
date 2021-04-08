@@ -123,6 +123,8 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     y_n_value_list = []
     for row_idx, row in tqdm(enumerate(row_data)):
         qid = row['_id']
+        if train:
+            qid = qid + "_" + train_type
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
         x_feats_list.append(x_feats)
