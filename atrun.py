@@ -53,6 +53,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     # dev_data_collection(args=args)
+    # train_data_collection(args=args, train_filter=False)
     train_data_collection(args=args, train_filter=True)
 
     # params = {'n_estimators': 1500,
