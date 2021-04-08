@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # dev_data_collection(args=args)
     # train_data_collection(args=args)
 
-    params = {'n_estimators': 20,
+    params = {'n_estimators': 1000,
               'max_depth': 4,
               'min_samples_split': 5,
               'learning_rate': 0.002,
