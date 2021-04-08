@@ -31,7 +31,7 @@ if __name__ == '__main__':
     params = {'n_estimators': 10000,
               'max_depth': 4,
               'min_samples_split': 5,
-              'learning_rate': 0.005,
+              'learning_rate': 0.002,
               'verbose': True,
               'loss': 'ls'}
     reg = at_boostree_model_train(X=x, y=y, params=params)
