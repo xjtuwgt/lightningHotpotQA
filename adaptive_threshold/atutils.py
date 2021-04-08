@@ -131,4 +131,4 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     y_value_np = np.array(y_value_list)
     s_y = np.sort(y_value_np)
     for i in range(len(x_feats_list)):
-        print(s_y[i])
+        print(i, s_y[i])
