@@ -16,11 +16,11 @@ if __name__ == '__main__':
     # print(len(z))
 
     args = parse_args()
-    dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
-    dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
-    x_feats, y_value = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
+    # dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
+    # dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
+    # x_feats, y_value = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=dev_npz_file_name)
+    # save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=dev_npz_file_name)
     # with open(dev_score_file_name, 'r', encoding='utf-8') as reader:
     #     dev_score_data = json.load(reader)
     # print(len(dev_score_data))
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     x, y = load_npz_data(npz_file_name=dev_npz_file_name)
     print(x.shape, y.shape)
 
-    params = {'n_estimators': 2000,
+    params = {'n_estimators': 3000,
               'max_depth': 3,
               'min_samples_split': 5,
               'learning_rate': 0.01,
