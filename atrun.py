@@ -58,13 +58,13 @@ if __name__ == '__main__':
     args = parse_args()
     # dev_data_collection(args=args)
     # train_data_collection(args=args, train_filter=False)
-    train_data_collection(args=args, train_filter=True)
+    # train_data_collection(args=args, train_filter=True)
 
-    # params = {'n_estimators': 1500,
-    #           'max_depth': 4,
-    #           'min_samples_split': 5,
-    #           'learning_rate': 0.005,
-    #           'verbose': True,
-    #           'random_state': 1,
-    #           'loss': 'ls'}
-    # train_and_evaluation_at(args=args, params=params)
+    params = {'n_estimators': 1500,
+              'max_depth': 4,
+              'min_samples_split': 5,
+              'learning_rate': 0.005,
+              'verbose': True,
+              'random_state': 1,
+              'loss': 'ls'}
+    train_and_evaluation_at(args=args, params=params, train_filter=True)
