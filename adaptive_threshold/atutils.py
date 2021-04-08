@@ -119,16 +119,19 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     with open(score_data_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
     x_feats_list = []
-    y_value_list = []
+    y_p_value_list = []
+    y_n_value_list = []
     for row_idx, row in tqdm(enumerate(row_data)):
         qid = row['_id']
         score_row = score_data[qid]
         x_feats = row_x_feat_extraction(row=score_row)
         x_feats_list.append(x_feats)
         flag, y_p, y_n = row_y_label_extraction(raw_row=row, score_row=score_row)
-        y_value_list.append(y_p)
-    assert len(x_feats_list) == len(y_value_list)
-    y_value_np = np.array(y_value_list)
-    s_y = np.sort(y_value_np)[::-1]
+        y_p_value_list.append(y_p)
+        y_n_value_list.append(y_n)
+    assert len(x_feats_list) == len(y_p_value_list)
+    y_p_value_np = np.array(y_p_value_list)
+    y_n_value_np = np.array(y_n_value_list)
+    s_y_idx = np.argsort(y_p_value_np)[::-1]
     for i in range(len(x_feats_list)):
-        print(i, s_y[i])
+        print(i, y_p_value_np[s_y_idx[i]], y_n_value_np[s_y_idx[i]])
