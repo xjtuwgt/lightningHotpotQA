@@ -57,7 +57,6 @@ class SuppFactPredModel(nn.Module):
         input_state = self.bi_attn_linear(attn_output) # N x L x d
         input_state = self.sent_lstm(input_state, batch['context_lens'])
         ###############################################################################################################
-        ################################################################################################################
         sent_state = init_sent_feature(batch=batch, input_state=input_state, hidden_dim=self.hidden_dim)
         sent_predictions = self.sent_predict_layer.forward(sent_state=sent_state)
         return sent_predictions

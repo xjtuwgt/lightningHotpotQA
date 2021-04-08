@@ -34,8 +34,6 @@ def train_and_evaluation_at(args, params):
     mse = mean_squared_error(dev_y, reg.predict(dev_x))
     print(mse)
 
-
-
 if __name__ == '__main__':
 
     args = parse_args()
@@ -47,5 +45,6 @@ if __name__ == '__main__':
               'min_samples_split': 5,
               'learning_rate': 0.002,
               'verbose': True,
+              'random_state': 1,
               'loss': 'ls'}
     train_and_evaluation_at(args=args, params=params)
