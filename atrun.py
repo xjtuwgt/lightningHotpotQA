@@ -14,20 +14,26 @@ def dev_data_collection(args):
     save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=dev_npz_file_name)
     print('Saving dev data into {}'.format(dev_npz_file_name))
 
-def train_data_collection(args):
+def train_data_collection(args, train_filter):
     train_raw_data_file_name = join(args.input_dir, args.raw_train_data)
     train_score_file_name = join(args.pred_dir, args.model_name_or_path, args.train_type + '_' + args.train_score_name)
-    train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+    if train_filter:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+    else:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
     x_feats, y_value = feat_label_extraction(raw_data_name=train_raw_data_file_name, score_data_name=train_score_file_name,
                                              train_type=args.train_type, train=True)
     save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=train_npz_file_name)
     print('Saving train data into {}'.format(train_npz_file_name))
 
-def train_and_evaluation_at(args, params):
+def train_and_evaluation_at(args, params, train_filter):
     for key, value in params.items():
         print('Parameter {} = {}'.format(key, value))
     print('*' * 75)
-    train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+    if train_filter:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+    else:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     train_x, train_y = load_npz_data(npz_file_name=train_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y.shape, train_npz_file_name))
@@ -47,13 +53,13 @@ if __name__ == '__main__':
 
     args = parse_args()
     # dev_data_collection(args=args)
-    # train_data_collection(args=args)
+    train_data_collection(args=args, train_filter=True)
 
-    params = {'n_estimators': 1500,
-              'max_depth': 4,
-              'min_samples_split': 5,
-              'learning_rate': 0.005,
-              'verbose': True,
-              'random_state': 1,
-              'loss': 'ls'}
-    train_and_evaluation_at(args=args, params=params)
+    # params = {'n_estimators': 1500,
+    #           'max_depth': 4,
+    #           'min_samples_split': 5,
+    #           'learning_rate': 0.005,
+    #           'verbose': True,
+    #           'random_state': 1,
+    #           'loss': 'ls'}
+    # train_and_evaluation_at(args=args, params=params)
