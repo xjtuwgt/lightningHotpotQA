@@ -28,7 +28,7 @@ if __name__ == '__main__':
     x, y = load_npz_data(npz_file_name=dev_npz_file_name)
     print(x.shape, y.shape)
 
-    params = {'n_estimators': 3000,
+    params = {'n_estimators': 5000,
               'max_depth': 3,
               'min_samples_split': 5,
               'learning_rate': 0.01,
