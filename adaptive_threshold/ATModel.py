@@ -21,6 +21,7 @@ def save_sklearn_pickle_model(model, pkl_filename):
 def load_sklearn_pickle_model(pkl_filename):
     with open(pkl_filename, 'rb') as file:
         pickle_model = pickle.load(file)
+    print('Loading model from {}'.format(pkl_filename))
     return pickle_model
 
 

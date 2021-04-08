@@ -1,7 +1,7 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
     parse_args, feat_label_extraction, save_numpy_array, load_npz_data
-from adaptive_threshold.ATModel import at_boostree_model_train
+from adaptive_threshold.ATModel import at_boostree_model_train, save_sklearn_pickle_model, load_sklearn_pickle_model
 from os.path import join
 from sklearn.metrics import mean_squared_error
 import json
@@ -32,7 +32,12 @@ def train_and_evaluation_at(args, params):
     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y.shape, dev_npz_file_name))
     reg = at_boostree_model_train(X=train_x, y=train_y, params=params)
     mse = mean_squared_error(dev_y, reg.predict(dev_x))
-    print(mse)
+    print('Evaluation mse = {}'.format(mse))
+    pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_name)
+    save_sklearn_pickle_model(model=reg, pkl_filename=pickle_model_file_name)
+    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
+    mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
+    print('Evaluation mse on loaded model = {}'.format(mse))
 
 if __name__ == '__main__':
 
@@ -40,7 +45,7 @@ if __name__ == '__main__':
     # dev_data_collection(args=args)
     # train_data_collection(args=args)
 
-    params = {'n_estimators': 1000,
+    params = {'n_estimators': 100,
               'max_depth': 4,
               'min_samples_split': 5,
               'learning_rate': 0.002,
