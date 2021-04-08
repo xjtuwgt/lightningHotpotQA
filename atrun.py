@@ -23,31 +23,29 @@ def train_data_collection(args):
     save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=train_npz_file_name)
     print('Saving train data into {}'.format(train_npz_file_name))
 
+def train_and_evaluation_at(args, params):
+    train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    train_x, train_y = load_npz_data(npz_file_name=train_npz_file_name)
+    print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y.shape, train_npz_file_name))
+    dev_x, dev_y = load_npz_data(npz_file_name=dev_npz_file_name)
+    print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y.shape, dev_npz_file_name))
+    reg = at_boostree_model_train(X=train_x, y=train_y, params=params)
+    mse = mean_squared_error(dev_y, reg.predict(dev_x))
+    print(mse)
+
+
 
 if __name__ == '__main__':
 
     args = parse_args()
     # dev_data_collection(args=args)
-    train_data_collection(args=args)
+    # train_data_collection(args=args)
 
-    # # dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
-    # # dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
-    # # x_feats, y_value = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
-    # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    # # save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=dev_npz_file_name)
-    # # with open(dev_score_file_name, 'r', encoding='utf-8') as reader:
-    # #     dev_score_data = json.load(reader)
-    # # print(len(dev_score_data))
-    # # print(dev_score_file_name)
-    # x, y = load_npz_data(npz_file_name=dev_npz_file_name)
-    # print(x.shape, y.shape)
-
-    # params = {'n_estimators': 10000,
-    #           'max_depth': 4,
-    #           'min_samples_split': 5,
-    #           'learning_rate': 0.002,
-    #           'verbose': True,
-    #           'loss': 'ls'}
-    # reg = at_boostree_model_train(X=x, y=y, params=params)
-    # mse = mean_squared_error(y, reg.predict(x))
-    # print(mse)
+    params = {'n_estimators': 1000,
+              'max_depth': 4,
+              'min_samples_split': 5,
+              'learning_rate': 0.002,
+              'verbose': True,
+              'loss': 'ls'}
+    train_and_evaluation_at(args=args, params=params)
