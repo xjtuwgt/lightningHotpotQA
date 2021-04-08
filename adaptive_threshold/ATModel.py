@@ -25,30 +25,30 @@ def load_sklearn_pickle_model(pkl_filename):
 
 
 
-x = [[0, 0], [1, 1], [2, 2], [3, 3]]
-y = [0, 1, 2, 3]
-
-# clf = at_lasso_model_train(x, y)
-# print(clf)
-# print(clf.coef_)
+# x = [[0, 0], [1, 1], [2, 2], [3, 3]]
+# y = [0, 1, 2, 3]
 #
-# mse = mean_squared_error(y, clf.predict(x))
-# print(mse)
-
-params = {'n_estimators': 1000,
-          'max_depth': 2,
-          'min_samples_split': 3,
-          'learning_rate': 0.01,
-          'verbose': True,
-          'loss': 'ls'}
-
-reg = at_boostree_model_train(X=x, y=y, params=params)
-# pickle_file_name = 'tree.pkl'
-# # save_sklearn_pickle_model(reg, pickle_file_name)
-# # load_reg = load_sklearn_pickle_model(pickle_file_name)
+# # clf = at_lasso_model_train(x, y)
+# # print(clf)
+# # print(clf.coef_)
 # #
-# # print(load_reg.predict(x))
+# # mse = mean_squared_error(y, clf.predict(x))
+# # print(mse)
 #
-# mse = mean_squared_error(y, reg.predict(x))
-# print("The mean squared error (MSE) on test set: {:.4f}".format(mse))
+# params = {'n_estimators': 1000,
+#           'max_depth': 2,
+#           'min_samples_split': 3,
+#           'learning_rate': 0.01,
+#           'verbose': True,
+#           'loss': 'ls'}
+#
+# reg = at_boostree_model_train(X=x, y=y, params=params)
+# # pickle_file_name = 'tree.pkl'
+# # # save_sklearn_pickle_model(reg, pickle_file_name)
+# # # load_reg = load_sklearn_pickle_model(pickle_file_name)
+# # #
+# # # print(load_reg.predict(x))
+# #
+# # mse = mean_squared_error(y, reg.predict(x))
+# # print("The mean squared error (MSE) on test set: {:.4f}".format(mse))
 

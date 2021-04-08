@@ -1,7 +1,9 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
     parse_args, feat_label_extraction, save_numpy_array, load_npz_data
+from adaptive_threshold.ATModel import at_boostree_model_train
 from os.path import join
+from sklearn.metrics import mean_squared_error
 import json
 
 if __name__ == '__main__':
@@ -25,3 +27,13 @@ if __name__ == '__main__':
     # print(dev_score_file_name)
     x, y = load_npz_data(npz_file_name=dev_npz_file_name)
     print(x.shape, y.shape)
+
+    params = {'n_estimators': 1000,
+              'max_depth': 2,
+              'min_samples_split': 3,
+              'learning_rate': 0.01,
+              'verbose': True,
+              'loss': 'ls'}
+    reg = at_boostree_model_train(X=x, y=y, params=params)
+    mse = mean_squared_error(y, reg.predict(x))
+    print(mse)
