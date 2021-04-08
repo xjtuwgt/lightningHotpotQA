@@ -1,5 +1,6 @@
 import numpy as np
-from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, parse_args, feat_label_extraction
+from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
+    parse_args, feat_label_extraction, save_numpy_array
 from os.path import join
 import json
 
@@ -15,7 +16,9 @@ if __name__ == '__main__':
     args = parse_args()
     dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
     dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
-    feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
+    x_feats, y_value = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    save_numpy_array(x_feats=x_feats, y=y_value, npz_file_name=dev_npz_file_name)
     # with open(dev_score_file_name, 'r', encoding='utf-8') as reader:
     #     dev_score_data = json.load(reader)
     # print(len(dev_score_data))

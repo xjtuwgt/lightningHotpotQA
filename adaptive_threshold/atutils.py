@@ -22,6 +22,9 @@ def parse_args(args=None):
     parser.add_argument("--dev_score_name", type=str, default='dev_score.json')
     parser.add_argument("--train_score_name", type=str, default='train_score.json')
 
+    parser.add_argument("--dev_feat_name", type=str, default='dev_np_data.npz')
+    parser.add_argument("--train_feat_name", type=str, default='train_np_data.npz')
+
     return parser.parse_args(args)
 
 
@@ -137,4 +140,10 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         y_n_value_list.append(y_n)
     assert len(x_feats_list) == len(y_p_value_list)
     print('Get {} features'.format(len(x_feats_list)))
-    return x_feats_list, y_p_value_list
+    x_feats_np = np.array(x_feats_list)
+    y_p_np = np.array(y_p_value_list)
+    return x_feats_np, y_p_np
+
+def save_numpy_array(x_feats: ndarray, y: ndarray, npz_file_name):
+    np.savez(npz_file_name, x=x_feats, y=y)
+    print('Saving {} records as x, and {} records as y into {}'.format(x_feats.shape, y.shape, npz_file_name))
