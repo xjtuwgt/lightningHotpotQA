@@ -60,7 +60,8 @@ def prediction(args):
     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     pred_y = load_reg.predict(dev_x)
-    print(type(pred_y))
+    for i in range(dev_y.shape[0]):
+        print(i + 1, dev_y[i], pred_y[i])
     mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
     print('Evaluation mse on loaded model = {}'.format(mse))
 
