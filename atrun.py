@@ -86,7 +86,7 @@ if __name__ == '__main__':
     #     print(i, dev_y[i], dev_y_np[i])
 
     params = {'n_estimators': 1000,
-              'max_depth': 3,
+              'max_depth': 4,
               'min_samples_split': 5,
               'learning_rate': 0.005,
               'verbose': True,
