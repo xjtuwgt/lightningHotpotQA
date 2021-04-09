@@ -80,11 +80,16 @@ if __name__ == '__main__':
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
 
-    params = {'n_estimators': 2500,
-              'max_depth': 4,
-              'min_samples_split': 5,
-              'learning_rate': 0.002,
-              'verbose': True,
-              'random_state': 1,
-              'loss': 'ls'}
-    train_and_evaluation_at(args=args, params=params, train_filter=True)
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+    for i in range(dev_y.shape[0]):
+        print(i, dev_y[i], dev_y_np[i])
+
+    # params = {'n_estimators': 2500,
+    #           'max_depth': 4,
+    #           'min_samples_split': 5,
+    #           'learning_rate': 0.002,
+    #           'verbose': True,
+    #           'random_state': 1,
+    #           'loss': 'ls'}
+    # train_and_evaluation_at(args=args, params=params, train_filter=True)
