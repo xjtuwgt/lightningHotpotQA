@@ -81,10 +81,14 @@ def json_prediction(args):
     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     count = 0
+    pred_threshold_dict = {}
     for row_idx, row in enumerate(json_data):
-        # print(row_idx, json_data[row])
         x_feat = np.array(json_data[row]).reshape(1, -1)
-        print(load_reg.predict(x_feat))
+        pred_threshold = load_reg.predict(x_feat)
+        pred_threshold_dict[row] = pred_threshold[0]
+        if pred_threshold < 0.45:
+            count = count + 1
+    print(count)
 
     # for i in range(dev_y_np.shape[0]):
     #     print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
