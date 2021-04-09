@@ -11,8 +11,10 @@ path = '/Users/xjtuwgt/Desktop'
 dev_json_file_name = 'dev_error_res.json'
 train_json_file_name = 'hgn_low_saeerror_train_res.json'
 
-npz_data = os.path.join(path, 'HotPotQA/filter_train_np_data.npz')
-x, y, y_np = load_npz_data(npz_data)
+npz_data = os.path.join(path, 'HotPotQA/train_np_data.npz')
+dev_npz_data = os.path.join(path, 'HotPotQA/dev_np_data.npz')
+x, y, y_n, y_np = load_npz_data(npz_data)
+d_x, d_y, d_y_n, d_y_np = load_npz_data(dev_npz_data)
 
 
 dev_error_df = pd.read_json(os.path.join(path, dev_json_file_name))
@@ -26,16 +28,12 @@ def hist_plot(dev_data, train_data):
     dev_max_negative_scores = dev_data['max_n'].to_numpy()
 
     dev_diff_score = dev_min_positive_scores - dev_max_negative_scores
-
     train_min_positive_scores = train_data['min_p'].to_numpy()
     train_max_negative_scores = train_data['max_n'].to_numpy()
 
     train_diff_score = train_min_positive_scores - train_max_negative_scores
-
-
     plt.hist(x=train_diff_score, bins='auto', color='b',
                                 alpha=0.7, rwidth=0.85)
-
     plt.hist(x=dev_diff_score, bins='auto', color='r',
                                 alpha=0.7, rwidth=0.85)
     # plt.grid(axis='y', alpha=0.75)
@@ -99,24 +97,46 @@ def dev_plot(dev_data: DataFrame):
     pred_threshold = pred_threshold[sorted_idxes]
 
     x = np.arange(0, min_positive.shape[0])
-    plt.plot(x, min_positive, label="min_p")
+    plt.plot(x, min_positive, color='r')
     # plt.plot(x, max_negative, label="max_n")
-    plt.plot(x, pred_threshold, label="max_n")
+    plt.plot(x, pred_threshold, '.')
 
     plt.show()
 
 
-def train_plot(y, y_np):
+def train_plot(y, y_n):
     x = np.arange(0, y.shape[0])
 
-    # sorted_idxes = np.argsort(y)
-    # y = y[sorted_idxes]
-    # y_np = y_np[sorted_idxes]
+    sorted_idxes = np.argsort(y)
+    y = y[sorted_idxes]
+    y_n = y_n[sorted_idxes]
     #
     # plt.plot(x, y)
+    # plt.plot(x, y_n, '.')
     # plt.plot(x, y_np)
-    plt.plot(y, y_np, '.')
+    # plt.plot(y, y_np, '.')
+
+    diff_y = y - y_n
+    sorted_y = np.sort(diff_y)
+    plt.plot(x, sorted_y)
     plt.show()
+
+
+def my_hist_plot(y):
+    plt.hist(x=y, bins=10, color='b',
+             alpha=0.7, rwidth=0.85)
+
+    # plt.hist(x=d_y, bins='auto', color='r',
+    #          alpha=0.7, rwidth=0.85)
+    # plt.grid(axis='y', alpha=0.75)
+    # plt.xlabel('Diff Value')
+    # plt.ylabel('Frequency')
+    # maxfreq = n.max()
+    # Set a clean upper y-axis limit.
+    # plt.ylim(ymax=np.ceil(maxfreq / 10) * 10 if maxfreq % 10 else maxfreq + 10)
+    plt.show()
+
+
 
 # hist_plot(data=dev_error_df)
 # hist_plot(dev_data=dev_error_df, train_data=train_error_df)
@@ -127,8 +147,10 @@ def train_plot(y, y_np):
 
 # dev_plot(dev_data=dev_error_df)
 
-train_plot(y, y_np)
+train_plot(y, y_n)
 
+# train_plot(y=d_y, y_np=d_y_np)
+# my_hist_plot(y=y)
 
 # dist_plot(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
 # dist_plot_min_p(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
