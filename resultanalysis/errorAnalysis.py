@@ -945,8 +945,6 @@ def prediction_score_analysis_adaptive_threshold(raw_data, predictions, predicti
                 threshold_score = 0.45
             if sp_scores[i] > threshold_score:
                 threshold_names.append(names[i])
-
-
         return flag, min_positive, max_negative, num_candidates, num_golds, min_p_names, max_n_names, threshold_names
 
     threshold_metric_dict = {}
@@ -1008,7 +1006,7 @@ def prediction_score_analysis_adaptive_threshold(raw_data, predictions, predicti
         # for key, value in sp_scores.items():
         #     print(key, value)
         # print('{}\t{}\t{}\t{:.5f}\t{:.5f}'.format(question_type, sp_sent_type, flag, min_positive, max_negative))
-        analysis_result_list.append((qid, question_type, sp_sent_type, flag, min_positive, max_negative, num_candidates, num_golds, answer_type))
+        analysis_result_list.append((qid, question_type, sp_sent_type, flag, min_positive, max_negative, threshold_score, num_candidates, num_golds, answer_type))
 
     for key, value in threshold_metric_dict.items():
         print('threshold type = {}'.format(key))
@@ -1045,7 +1043,7 @@ def prediction_score_analysis_adaptive_threshold(raw_data, predictions, predicti
         print('joint em ', all_joint_em / type_count)
         print('joint f1 ', all_joint_f1 / type_count)
 
-    df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'cand_num', 'gold_num', 'ans_type'])
+    df = pd.DataFrame(analysis_result_list, columns=['id', 'q_type', 'sp_sent_type', 'flag', 'min_p', 'max_n', 'threshold', 'cand_num', 'gold_num', 'ans_type'])
 
     print('prune = {}, complete = {}'.format(prune_gold_num, len(raw_data) - prune_gold_num))
     return df
