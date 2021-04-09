@@ -57,7 +57,8 @@ def train_and_evaluation_at(args, params, train_filter):
 def prediction(args):
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     dev_x, dev_y = load_npz_data(npz_file_name=dev_npz_file_name)
-    load_reg = load_sklearn_pickle_model(pkl_filename=args.pickle_model_file_name)
+    pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
+    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     print(load_reg.predict(dev_x))
     mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
     print('Evaluation mse on loaded model = {}'.format(mse))
