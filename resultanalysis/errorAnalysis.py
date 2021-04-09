@@ -943,8 +943,6 @@ def prediction_score_analysis_adaptive_threshold(raw_data, predictions, predicti
                 max_n_names.append(names[i])
             if threshold_score > 0.45:
                 threshold_score = 0.45
-            else:
-                threshold_score = 0.35
             if sp_scores[i] > threshold_score:
                 threshold_names.append(names[i])
 
