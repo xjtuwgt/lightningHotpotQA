@@ -140,7 +140,7 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         x_feats = row_x_feat_extraction(row=score_row)
         flag, y_p, y_n = row_y_label_extraction(raw_row=row, score_row=score_row)
         if train and train_filter:
-            if y_p <= y_n:
+            if y_p < y_n:
                 continue
         x_feats_list.append(x_feats)
         y_p_value_list.append(y_p)
