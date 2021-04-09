@@ -129,6 +129,7 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     x_feats_list = []
     y_p_value_list = []
     y_n_value_list = []
+    y_np_value_list = []
     for row_idx, row in tqdm(enumerate(raw_data)):
         qid = row['_id']
         if train:
@@ -144,18 +145,21 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         x_feats_list.append(x_feats)
         y_p_value_list.append(y_p)
         y_n_value_list.append(y_n)
+        y_np_value_list.append((y_p + y_n)/2)
     assert len(x_feats_list) == len(y_p_value_list)
     print('Get {} features'.format(len(x_feats_list)))
     x_feats_np = np.array(x_feats_list)
     y_p_np = np.array(y_p_value_list)
-    return x_feats_np, y_p_np
+    y_np_np = np.array(y_np_value_list)
+    return x_feats_np, y_p_np, y_np_np
 
-def save_numpy_array(x_feats: ndarray, y: ndarray, npz_file_name):
-    np.savez(npz_file_name, x=x_feats, y=y)
+def save_numpy_array(x_feats: ndarray, y: ndarray, y_np: ndarray, npz_file_name):
+    np.savez(npz_file_name, x=x_feats, y=y, y_np=y)
     print('Saving {} records as x, and {} records as y into {}'.format(x_feats.shape, y.shape, npz_file_name))
 
 def load_npz_data(npz_file_name):
     with np.load(npz_file_name) as data:
         x = data['x']
         y = data['y']
-    return x, y
+        y_np = data['y_np']
+    return x, y, y_np
