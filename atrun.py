@@ -81,7 +81,8 @@ def json_prediction(args):
     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     count = 0
-    # for row_idx, row in enumerate(json_data):
+    for row_idx, row in enumerate(json_data):
+        print(row_idx, row)
 
     # for i in range(dev_y_np.shape[0]):
     #     print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
@@ -96,9 +97,10 @@ def json_prediction(args):
 if __name__ == '__main__':
 
     args = parse_args()
-    # args.pickle_model_check_point_name = 'filter_n_est_1000_depth_3at_pred_model.pkl'
+    args.pickle_model_check_point_name = 'filter_n_est_1000_depth_3at_pred_model.pkl'
     # prediction(args=args)
-    dev_data_collection(args=args)
+    json_prediction(args=args)
+    # dev_data_collection(args=args)
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
 
