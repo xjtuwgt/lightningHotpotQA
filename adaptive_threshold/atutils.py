@@ -130,6 +130,7 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     y_p_value_list = []
     y_n_value_list = []
     y_np_value_list = []
+    x_feat_dict = {}
     for row_idx, row in tqdm(enumerate(raw_data)):
         qid = row['_id']
         if train:
@@ -150,12 +151,13 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         else:
             y_np = y_p
         y_np_value_list.append(y_np)
+        x_feat_dict[qid] = np.array(x_feats)
     assert len(x_feats_list) == len(y_p_value_list)
     print('Get {} features'.format(len(x_feats_list)))
     x_feats_np = np.array(x_feats_list)
     y_p_np = np.array(y_p_value_list)
     y_np_np = np.array(y_np_value_list)
-    return x_feats_np, y_p_np, y_np_np
+    return x_feats_np, y_p_np, y_np_np, x_feat_dict
 
 def save_numpy_array(x_feats: ndarray, y: ndarray, y_np: ndarray, npz_file_name):
     np.savez(npz_file_name, x=x_feats, y=y, y_np=y_np)
