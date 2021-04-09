@@ -62,6 +62,8 @@ def prediction(args):
     pred_y = load_reg.predict(dev_x)
     for i in range(dev_y.shape[0]):
         print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y[i], pred_y[i]))
+        if pred_y[i] < 0.45:
+            print('*' * 100)
     mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
     print('Evaluation mse on loaded model = {}'.format(mse))
 
