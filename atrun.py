@@ -74,6 +74,23 @@ def prediction(args):
     print(count)
     print('Evaluation mse on loaded model = {}'.format(mse))
 
+def prediction_analysis(args):
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_x, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+    pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
+    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
+    pred_y = load_reg.predict(dev_x)
+    count = 0
+    for i in range(dev_y_np.shape[0]):
+        print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
+        if pred_y[i] < 0.45:
+            count = count + 1
+            print('*' * 100)
+    mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
+    print(np.mean(pred_y), np.mean(dev_y_np))
+    print(count)
+    print('Evaluation mse on loaded model = {}'.format(mse))
+
 def json_prediction(args):
     dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
     with open(dev_json_file_name, 'r', encoding='utf-8') as reader:
