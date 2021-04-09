@@ -83,7 +83,7 @@ if __name__ == '__main__':
     params = {'n_estimators': 2500,
               'max_depth': 4,
               'min_samples_split': 5,
-              'learning_rate': 0.005,
+              'learning_rate': 0.002,
               'verbose': True,
               'random_state': 1,
               'loss': 'ls'}
