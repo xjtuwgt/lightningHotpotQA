@@ -146,7 +146,7 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         y_p_value_list.append(y_p)
         y_n_value_list.append(y_n)
         if y_p > y_n:
-            y_np = (y_p + y_n)/2
+            y_np = (y_p + y_n)/2.0
         else:
             y_np = y_p
         y_np_value_list.append(y_np)
