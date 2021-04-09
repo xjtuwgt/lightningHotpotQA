@@ -60,12 +60,15 @@ def prediction(args):
     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     pred_y = load_reg.predict(dev_x)
+    count = 0
     for i in range(dev_y.shape[0]):
         print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y[i], pred_y[i]))
         if pred_y[i] < 0.45:
+            count = count + 1
             print('*' * 100)
     mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
     print(np.mean(pred_y), np.mean(dev_y))
+    print(count)
     print('Evaluation mse on loaded model = {}'.format(mse))
 
 if __name__ == '__main__':
