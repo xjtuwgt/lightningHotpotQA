@@ -154,7 +154,7 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     return x_feats_np, y_p_np, y_np_np
 
 def save_numpy_array(x_feats: ndarray, y: ndarray, y_np: ndarray, npz_file_name):
-    np.savez(npz_file_name, x=x_feats, y=y, y_np=y)
+    np.savez(npz_file_name, x=x_feats, y=y, y_np=y_np)
     print('Saving {} records as x, and {} records as y into {}'.format(x_feats.shape, y.shape, npz_file_name))
 
 def load_npz_data(npz_file_name):

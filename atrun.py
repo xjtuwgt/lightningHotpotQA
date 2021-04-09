@@ -76,14 +76,14 @@ if __name__ == '__main__':
     args = parse_args()
     # args.pickle_model_check_point_name = 'n_est_1000_at_pred_model.pkl'
     # prediction(args=args)
-    # dev_data_collection(args=args)
-    # train_data_collection(args=args, train_filter=False)
-    # train_data_collection(args=args, train_filter=True)
+    dev_data_collection(args=args)
+    train_data_collection(args=args, train_filter=False)
+    train_data_collection(args=args, train_filter=True)
 
-    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
-    for i in range(dev_y.shape[0]):
-        print(i, dev_y[i], dev_y_np[i])
+    # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    # dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+    # for i in range(dev_y.shape[0]):
+    #     print(i, dev_y[i], dev_y_np[i])
 
     # params = {'n_estimators': 2500,
     #           'max_depth': 4,
