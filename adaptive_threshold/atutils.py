@@ -23,6 +23,7 @@ def parse_args(args=None):
     parser.add_argument("--train_score_name", type=str, default='train_score.json')
 
     parser.add_argument("--dev_feat_name", type=str, default='dev_np_data.npz')
+    parser.add_argument("--dev_feat_json_name", type=str, default='dev_json_data.json')
     parser.add_argument("--train_feat_name", type=str, default='train_np_data.npz')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')

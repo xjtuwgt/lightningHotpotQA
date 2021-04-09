@@ -11,8 +11,11 @@ def dev_data_collection(args):
     dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
     x_feats, y_value, y_np_value, x_feat_dict = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
     save_numpy_array(x_feats=x_feats, y=y_value, y_np=y_np_value, npz_file_name=dev_npz_file_name)
     print('Saving dev data into {}'.format(dev_npz_file_name))
+    json.dump(x_feat_dict, open(dev_json_file_name, 'w'))
+    print('Saving dev data into {}'.format(dev_json_file_name))
 
 def train_data_collection(args, train_filter):
     train_raw_data_file_name = join(args.input_dir, args.raw_train_data)
@@ -71,11 +74,30 @@ def prediction(args):
     print(count)
     print('Evaluation mse on loaded model = {}'.format(mse))
 
+def json_prediction(args):
+    dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
+    with open(dev_json_file_name, 'r', encoding='utf-8') as reader:
+        json_data = json.load(reader)
+    pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
+    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
+    count = 0
+    # for row_idx, row in enumerate(json_data):
+
+    # for i in range(dev_y_np.shape[0]):
+    #     print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
+    #     if pred_y[i] < 0.45:
+    #         count = count + 1
+    #         print('*' * 100)
+    # mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
+    # print(np.mean(pred_y), np.mean(dev_y_np))
+    # print(count)
+    # print('Evaluation mse on loaded model = {}'.format(mse))
+
 if __name__ == '__main__':
 
     args = parse_args()
-    args.pickle_model_check_point_name = 'filter_n_est_1000_depth_3at_pred_model.pkl'
-    prediction(args=args)
+    # args.pickle_model_check_point_name = 'filter_n_est_1000_depth_3at_pred_model.pkl'
+    # prediction(args=args)
     dev_data_collection(args=args)
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
