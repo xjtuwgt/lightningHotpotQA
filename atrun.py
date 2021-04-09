@@ -44,10 +44,10 @@ def train_and_evaluation_at(args, params, train_filter):
     print('Evaluation mse = {}'.format(mse))
 
     if train_filter:
-        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_n_est_' + str(params['n_estimators']) + '_' + args.pickle_model_name)
+        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
     else:
         pickle_model_file_name = join(args.pred_dir, args.model_name_or_path,
-                                      'n_est_' + str(params['n_estimators']) + '_' + args.pickle_model_name)
+                                      'n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
     save_sklearn_pickle_model(model=reg, pkl_filename=pickle_model_file_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
     mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # for i in range(dev_y.shape[0]):
     #     print(i, dev_y[i], dev_y_np[i])
 
-    params = {'n_estimators': 2500,
+    params = {'n_estimators': 1000,
               'max_depth': 4,
               'min_samples_split': 5,
               'learning_rate': 0.002,
