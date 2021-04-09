@@ -76,7 +76,7 @@ if __name__ == '__main__':
     args = parse_args()
     # args.pickle_model_check_point_name = 'n_est_1000_at_pred_model.pkl'
     # prediction(args=args)
-    # dev_data_collection(args=args)
+    dev_data_collection(args=args)
     train_data_collection(args=args, train_filter=False)
     train_data_collection(args=args, train_filter=True)
 
@@ -85,11 +85,11 @@ if __name__ == '__main__':
     # for i in range(dev_y.shape[0]):
     #     print(i, dev_y[i], dev_y_np[i])
 
-    params = {'n_estimators': 1000,
-              'max_depth': 4,
-              'min_samples_split': 5,
-              'learning_rate': 0.005,
-              'verbose': True,
-              'random_state': 1,
-              'loss': 'ls'}
-    train_and_evaluation_at(args=args, params=params, train_filter=True)
+    # params = {'n_estimators': 1000,
+    #           'max_depth': 4,
+    #           'min_samples_split': 5,
+    #           'learning_rate': 0.005,
+    #           'verbose': True,
+    #           'random_state': 1,
+    #           'loss': 'ls'}
+    # train_and_evaluation_at(args=args, params=params, train_filter=True)
