@@ -83,7 +83,7 @@ def json_prediction(args):
     count = 0
     for row_idx, row in enumerate(json_data):
         # print(row_idx, json_data[row])
-        x_feat = np.array(json_data[row].reshape(1, -1))
+        x_feat = np.array(json_data[row]).reshape(1, -1)
         print(load_reg.predict(x_feat))
 
     # for i in range(dev_y_np.shape[0]):
