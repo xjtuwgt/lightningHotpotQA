@@ -158,11 +158,12 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     print('Get {} features'.format(len(x_feats_list)))
     x_feats_np = np.array(x_feats_list)
     y_p_np = np.array(y_p_value_list)
+    y_n_np = np.array(y_n_value_list)
     y_np_np = np.array(y_np_value_list)
-    return x_feats_np, y_p_np, y_np_np, x_feat_dict
+    return x_feats_np, y_p_np, y_n_np, y_np_np, x_feat_dict
 
-def save_numpy_array(x_feats: ndarray, y: ndarray, y_np: ndarray, npz_file_name):
-    np.savez(npz_file_name, x=x_feats, y=y, y_np=y_np)
+def save_numpy_array(x_feats: ndarray, y: ndarray, y_n: ndarray, y_np: ndarray, npz_file_name):
+    np.savez(npz_file_name, x=x_feats, y=y, y_n=y_n, y_np=y_np)
     print('Saving {} records as x, and {} records as y into {}'.format(x_feats.shape, y.shape, npz_file_name))
 
 def load_npz_data(npz_file_name):
