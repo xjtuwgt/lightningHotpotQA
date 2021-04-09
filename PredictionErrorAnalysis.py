@@ -87,8 +87,8 @@ if __name__ == '__main__':
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
     #     print("{} = {}".format(key, val))
-    # df = prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
-    df = prediction_score_gap_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
+    df = prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
+    # df = prediction_score_gap_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
 
     error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
     df.to_json(error_res_results_file)
