@@ -145,7 +145,11 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
         x_feats_list.append(x_feats)
         y_p_value_list.append(y_p)
         y_n_value_list.append(y_n)
-        y_np_value_list.append((y_p + y_n)/2)
+        if y_p > y_n:
+            y_np = (y_p + y_n)/2
+        else:
+            y_np = y_p
+        y_np_value_list.append(y_np)
     assert len(x_feats_list) == len(y_p_value_list)
     print('Get {} features'.format(len(x_feats_list)))
     x_feats_np = np.array(x_feats_list)
