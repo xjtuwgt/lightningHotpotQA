@@ -5,10 +5,15 @@ import numpy as np
 import seaborn as sns
 from scipy import stats
 from pandas import DataFrame
+from adaptive_threshold.atutils import load_npz_data
 
 path = '/Users/xjtuwgt/Desktop'
 dev_json_file_name = 'dev_error_res.json'
 train_json_file_name = 'hgn_low_saeerror_train_res.json'
+
+npz_data = os.path.join(path, 'HotPotQA/filter_train_np_data.npz')
+x, y, y_np = load_npz_data(npz_data)
+
 
 dev_error_df = pd.read_json(os.path.join(path, dev_json_file_name))
 train_error_df = pd.read_json(os.path.join(path, train_json_file_name))
@@ -100,6 +105,19 @@ def dev_plot(dev_data: DataFrame):
 
     plt.show()
 
+
+def train_plot(y, y_np):
+    x = np.arange(0, y.shape[0])
+
+    # sorted_idxes = np.argsort(y)
+    # y = y[sorted_idxes]
+    # y_np = y_np[sorted_idxes]
+    #
+    # plt.plot(x, y)
+    # plt.plot(x, y_np)
+    plt.plot(y, y_np, '.')
+    plt.show()
+
 # hist_plot(data=dev_error_df)
 # hist_plot(dev_data=dev_error_df, train_data=train_error_df)
 # dist_plot(dev_data=dev_error_df, train_data=train_error_df)
@@ -107,7 +125,10 @@ def dev_plot(dev_data: DataFrame):
 # dist_plot_min_p(dev_data=dev_error_df, train_data=train_error_df)
 # dist_plot_max_n(dev_data=dev_error_df, train_data=train_error_df)
 
-dev_plot(dev_data=dev_error_df)
+# dev_plot(dev_data=dev_error_df)
+
+train_plot(y, y_np)
+
 
 # dist_plot(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
 # dist_plot_min_p(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
