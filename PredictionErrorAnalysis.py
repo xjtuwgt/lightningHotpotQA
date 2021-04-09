@@ -7,7 +7,8 @@ import pandas as pd
 
 from model_envs import MODEL_CLASSES
 from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
-from resultanalysis.errorAnalysis import error_analysis, data_analysis, error_analysis_question_type, prediction_score_analysis, prediction_score_gap_analysis
+from resultanalysis.errorAnalysis import error_analysis, data_analysis, error_analysis_question_type, \
+    prediction_score_analysis, prediction_score_gap_analysis, prediction_score_analysis_adaptive_threshold
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 
 if __name__ == '__main__':
@@ -32,6 +33,8 @@ if __name__ == '__main__':
     parser.add_argument("--pred_score_name", default='dev_score.json', type=str, help="Prediction result")
 
     parser.add_argument("--error_res_name", default='error_res.json', type=str, help="error analysis result")
+
+    parser.add_argument("--pred_threshold_json_name", type=str, default='pred_thresholds.json')
 
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
@@ -75,6 +78,10 @@ if __name__ == '__main__':
     with open(pred_score_results_file, 'r', encoding='utf-8') as reader:
         pred_score_data = json.load(reader)
 
+    pred_threshold_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.pred_threshold_json_name)
+    with open(pred_threshold_results_file, 'r', encoding='utf-8') as reader:
+        pred_thresholds = json.load(reader)
+
     print('Loading predictions from: {}'.format(pred_results_file))
     print('Loading raw data from: {}'.format(args.raw_data))
     # print("Loading examples from: {}".format(cached_examples_file))
@@ -87,7 +94,8 @@ if __name__ == '__main__':
     # metrics = hotpot_eval(pred_file, args.raw_data)
     # for key, val in metrics.items():
     #     print("{} = {}".format(key, val))
-    df = prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
+    df = prediction_score_analysis_adaptive_threshold(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data, at_thresholds=pred_thresholds)
+    # df = prediction_score_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
     # df = prediction_score_gap_analysis(raw_data=raw_data, predictions=pred_data, prediction_scores=pred_score_data)
 
     error_res_results_file = os.path.join(args.pred_dir, args.model_name_or_path, args.error_res_name)
