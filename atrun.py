@@ -95,7 +95,7 @@ def json_prediction(args):
 if __name__ == '__main__':
 
     args = parse_args()
-    args.pickle_model_check_point_name = 'filter_n_est_1000_depth_3at_pred_model.pkl'
+    args.pickle_model_check_point_name = 'n_est_1500_at_pred_model.pkl'
     # prediction(args=args)
     json_prediction(args=args)
     # dev_data_collection(args=args)

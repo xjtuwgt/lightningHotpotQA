@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from scipy import stats
+from pandas import DataFrame
 
 path = '/Users/xjtuwgt/Desktop'
-dev_json_file_name = 'error_res.json'
+dev_json_file_name = 'dev_error_res.json'
 train_json_file_name = 'hgn_low_saeerror_train_res.json'
 
 dev_error_df = pd.read_json(os.path.join(path, dev_json_file_name))
@@ -82,6 +83,22 @@ def dist_plot_max_n(dev_data, train_data):
     plt.ylabel('Density')
     plt.show()
 
+def dev_plot(dev_data: DataFrame):
+    min_positive = dev_data['min_p'].to_numpy()
+    max_negative = dev_data['max_n'].to_numpy()
+    pred_threshold = dev_data['threshold'].to_numpy()
+
+    sorted_idxes = np.argsort(min_positive)
+    min_positive = min_positive[sorted_idxes]
+    max_negative = max_negative[sorted_idxes]
+    pred_threshold = pred_threshold[sorted_idxes]
+
+    x = np.arange(0, min_positive.shape[0])
+    plt.plot(x, min_positive, label="min_p")
+    # plt.plot(x, max_negative, label="max_n")
+    plt.plot(x, pred_threshold, label="max_n")
+
+    plt.show()
 
 # hist_plot(data=dev_error_df)
 # hist_plot(dev_data=dev_error_df, train_data=train_error_df)
@@ -90,9 +107,11 @@ def dist_plot_max_n(dev_data, train_data):
 # dist_plot_min_p(dev_data=dev_error_df, train_data=train_error_df)
 # dist_plot_max_n(dev_data=dev_error_df, train_data=train_error_df)
 
+dev_plot(dev_data=dev_error_df)
+
 # dist_plot(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
 # dist_plot_min_p(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
-dist_plot_max_n(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
+# dist_plot_max_n(dev_data=dev_error_df[dev_error_df['q_type']=='comparison'], train_data=train_error_df[train_error_df['q_type']=='comparison'])
 
 # dist_plot(dev_data=dev_error_df[dev_error_df['q_type']=='bridge'], train_data=train_error_df[train_error_df['q_type']=='bridge'])
 # dist_plot_min_p(dev_data=dev_error_df[dev_error_df['q_type']=='bridge'], train_data=train_error_df[train_error_df['q_type']=='bridge'])
