@@ -53,18 +53,28 @@ def train_and_evaluation_at(args, params, train_filter):
     mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
     print('Evaluation mse on loaded model = {}'.format(mse))
 
+
+def prediction(args):
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_x, dev_y = load_npz_data(npz_file_name=dev_npz_file_name)
+    load_reg = load_sklearn_pickle_model(pkl_filename=args.pickle_model_file_name)
+    print(load_reg.predict(dev_x))
+    mse = mean_squared_error(dev_y, load_reg.predict(dev_x))
+    print('Evaluation mse on loaded model = {}'.format(mse))
+
 if __name__ == '__main__':
 
     args = parse_args()
+    args.pickle_model_check_point_name = 'n_est_1000_at_pred_model.pkl'
     # dev_data_collection(args=args)
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
 
-    params = {'n_estimators': 1500,
-              'max_depth': 4,
-              'min_samples_split': 5,
-              'learning_rate': 0.005,
-              'verbose': True,
-              'random_state': 1,
-              'loss': 'ls'}
-    train_and_evaluation_at(args=args, params=params, train_filter=True)
+    # params = {'n_estimators': 1500,
+    #           'max_depth': 4,
+    #           'min_samples_split': 5,
+    #           'learning_rate': 0.005,
+    #           'verbose': True,
+    #           'random_state': 1,
+    #           'loss': 'ls'}
+    # train_and_evaluation_at(args=args, params=params, train_filter=True)

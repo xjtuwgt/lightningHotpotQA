@@ -26,6 +26,7 @@ def parse_args(args=None):
     parser.add_argument("--train_feat_name", type=str, default='train_np_data.npz')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
+    parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
 
     return parser.parse_args(args)
 
