@@ -89,6 +89,7 @@ def json_prediction(args):
         if pred_threshold < 0.45:
             count = count + 1
     threshold_pred_json_name = join(args.pred_dir, args.model_name_or_path, args.pred_threshold_json_name)
+    print(count)
     json.dump(pred_threshold_dict, open(threshold_pred_json_name, 'w'))
     print('Saving threshold data {} into {}'.format(len(pred_threshold_dict), threshold_pred_json_name))
 
