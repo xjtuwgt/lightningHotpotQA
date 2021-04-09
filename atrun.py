@@ -66,6 +66,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     args.pickle_model_check_point_name = 'n_est_1000_at_pred_model.pkl'
+    prediction(args=args)
     # dev_data_collection(args=args)
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
