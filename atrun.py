@@ -88,17 +88,9 @@ def json_prediction(args):
         pred_threshold_dict[row] = pred_threshold[0]
         if pred_threshold < 0.45:
             count = count + 1
-    print(count)
-
-    # for i in range(dev_y_np.shape[0]):
-    #     print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
-    #     if pred_y[i] < 0.45:
-    #         count = count + 1
-    #         print('*' * 100)
-    # mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
-    # print(np.mean(pred_y), np.mean(dev_y_np))
-    # print(count)
-    # print('Evaluation mse on loaded model = {}'.format(mse))
+    threshold_pred_json_name = join(args.pred_dir, args.model_name_or_path, args.pred_threshold_json_name)
+    json.dump(pred_threshold_dict, open(threshold_pred_json_name, 'w'))
+    print('Saving threshold data {} into {}'.format(len(pred_threshold_dict), threshold_pred_json_name))
 
 if __name__ == '__main__':
 

@@ -25,6 +25,7 @@ def parse_args(args=None):
     parser.add_argument("--dev_feat_name", type=str, default='dev_np_data.npz')
     parser.add_argument("--dev_feat_json_name", type=str, default='dev_json_data.json')
     parser.add_argument("--train_feat_name", type=str, default='train_np_data.npz')
+    parser.add_argument("--pred_threshold_json_name", type=str, default='pred_thresholds.json')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
