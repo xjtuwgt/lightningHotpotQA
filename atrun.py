@@ -38,9 +38,9 @@ def train_and_evaluation_at(args, params, train_filter):
     else:
         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    train_x, _, train_y_np = load_npz_data(npz_file_name=train_npz_file_name)
+    train_x, _, _, train_y_np = load_npz_data(npz_file_name=train_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_np.shape, train_npz_file_name))
-    dev_x, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+    dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_np.shape, dev_npz_file_name))
     reg = at_boostree_model_train(X=train_x, y=train_y_np, params=params)
     mse = mean_squared_error(dev_y_np, reg.predict(dev_x))
@@ -59,7 +59,7 @@ def train_and_evaluation_at(args, params, train_filter):
 
 def prediction(args):
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    dev_x, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+    dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     pred_y = load_reg.predict(dev_x)
@@ -76,7 +76,7 @@ def prediction(args):
 
 def prediction_analysis(args):
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    dev_x, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+    dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
     pred_y = load_reg.predict(dev_x)

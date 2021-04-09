@@ -170,5 +170,6 @@ def load_npz_data(npz_file_name):
     with np.load(npz_file_name) as data:
         x = data['x']
         y = data['y']
+        y_n = data['y_n']
         y_np = data['y_np']
-    return x, y, y_np
+    return x, y, y_n, y_np
