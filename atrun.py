@@ -117,7 +117,7 @@ if __name__ == '__main__':
     args.pickle_model_check_point_name = 'filter_n_est_2000_depth_4at_pred_model.pkl'
     # prediction(args=args)
     json_prediction(args=args)
-    # dev_data_collection(args=args)
+    dev_data_collection(args=args)
     # train_data_collection(args=args, train_filter=False)
     # train_data_collection(args=args, train_filter=True)
 

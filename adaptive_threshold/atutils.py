@@ -32,6 +32,20 @@ def parse_args(args=None):
 
     return parser.parse_args(args)
 
+def over_lap_ratio(ht_pair1, ref_ht_pair2):
+    h, t = ht_pair1
+    r_h, r_t = ref_ht_pair2
+    if t < r_h or h > r_t: ## no overlap
+        return 0.0, 1
+    if r_h >= h and r_t <= t: ## subset: ref is a subset of given pair
+        return 1.0, 2
+    if r_h <= h and r_t >= t:
+        return (t - h) / (r_t - r_h), 3 ## superset: ref is a superset of given pair
+    if h >= r_h and h < r_t:
+        return (r_t - h) / (r_t - r_h), 4
+    if r_h >= h and r_h < t:
+        return (t - r_h) / (r_t - r_h), 4
+
 
 def distribution_feat_extraction(scores: ndarray, keep_num=False):
     ##     min, max, mean, median, 1/4, 3/4 score, std, num
@@ -84,46 +98,6 @@ def row_y_label_extraction(raw_row, score_row):
             max_negative = 1.0
         else:
             max_negative = max(negative_scores)
-
-        return flag, min_positive, max_negative
-
-    sp_golds = raw_row['supporting_facts']
-    sp_golds = [(x[0], x[1]) for x in sp_golds]
-    sp_scores = score_row['sp_score']
-    sp_mask = score_row['sp_mask']
-    sp_names = score_row['sp_names']
-    sp_names = [(x[0], x[1]) for x in sp_names]
-    flag, min_positive, max_negative = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds)
-    return flag, min_positive, max_negative
-
-def row_y_range_extraction_best_f1(raw_row, score_row):
-    def best_f1_score_range(scores, mask, names, gold_names):
-        assert len(scores) == len(mask)
-        mask_sum_num = int(sum(mask))
-        prune_names = names[:mask_sum_num]
-        gold_name_set = set(gold_names)
-        if (gold_name_set.issubset(set(prune_names))):
-            flag = True
-        else:
-            flag = False
-        positive_scores = []
-        negative_scores = []
-        for idx in range(mask_sum_num):
-            name_i = prune_names[idx]
-            if name_i in gold_name_set:
-                positive_scores.append(scores[idx])
-            else:
-                negative_scores.append(scores[idx])
-
-        if len(positive_scores) > 0:
-            min_positive = min(positive_scores)
-        else:
-            min_positive = 0.0
-        if len(negative_scores) == 0:
-            max_negative = 1.0
-        else:
-            max_negative = max(negative_scores)
-
         return flag, min_positive, max_negative
 
     sp_golds = raw_row['supporting_facts']
@@ -171,6 +145,7 @@ def feat_label_extraction(raw_data_name, score_data_name, train_type, train=Fals
     y_p_value_list = []
     y_n_value_list = []
     y_np_value_list = []
+
     x_feat_dict = {}
     for row_idx, row in tqdm(enumerate(raw_data)):
         qid = row['_id']
@@ -212,3 +187,36 @@ def load_npz_data(npz_file_name):
         y_n = data['y_n']
         y_np = data['y_np']
     return x, y, y_n, y_np
+
+
+def threshold_map_to_label(y_p: ndarray, y_n: ndarray, threshold_category):
+    over_lap_res = []
+    for i in range(y_p.shape[0]):
+        p_i = y_p[i]
+        n_i = y_n[i]
+        p_flag = True
+        if p_i > n_i:
+            ht_pair_i = (n_i, p_i)
+        else:
+            ht_pair_i = (p_i, n_i)
+            p_flag = False
+        over_lap_list = []
+        for b_idx, bound in enumerate(threshold_category):
+            over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
+            over_lap_list.append((over_lap_value, over_lap_type))
+        over_lap_res.append((over_lap_list, p_flag))
+
+    flag_list = []
+    flag_label_freq = {}
+    for i in range(y_p.shape[0]):
+        three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
+        if over_lap_res[i][1]:
+            flag_label = 'T_' + str(three_types)
+        else:
+            flag_label = 'F_' + str(three_types)
+        if flag_label not in flag_label_freq:
+            flag_label_freq[flag_label] = 1
+        else:
+            flag_label_freq[flag_label] = flag_label_freq[flag_label] + 1
+        flag_list.append(flag_label)
+    return flag_list, flag_label_freq
