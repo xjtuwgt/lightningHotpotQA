@@ -2,7 +2,7 @@ import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
     parse_args, feat_label_extraction, save_numpy_array, load_npz_data_for_classification, load_npz_data, adaptive_threshold_to_classification
 from adaptive_threshold.ATModel import xgboost_model_train
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
 from os.path import join
 import json
 
@@ -100,8 +100,11 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     xgbc = xgboost_model_train(X=dev_x, y=dev_y_label, params=params)
 
     ypred = xgbc.predict(dev_x)
-    cm = confusion_matrix(dev_y_label, ypred)
+    cm = confusion_matrix(ypred, dev_y_label)
     print(cm)
+    print(type(cm))
+    accuracy = accuracy_score(ypred, dev_y_label)
+    print(accuracy)
 
 
 # def prediction(args):
