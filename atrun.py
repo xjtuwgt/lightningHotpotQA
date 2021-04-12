@@ -55,113 +55,133 @@ def train_dev_map_to_classification(args, train_filter, threshold_category):
     json.dump(class_label_dict, open(class_label_dict_file_name, 'w'))
 
 
-def train_and_evaluation_at(args, params, train_filter):
+# def train_and_evaluation_at(args, params, train_filter):
+#     for key, value in params.items():
+#         print('Parameter {} = {}'.format(key, value))
+#     print('*' * 75)
+#     if train_filter:
+#         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+#     else:
+#         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+#     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+#     train_x, _, _, train_y_np = load_npz_data(npz_file_name=train_npz_file_name)
+#     print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_np.shape, train_npz_file_name))
+#     dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+#     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_np.shape, dev_npz_file_name))
+#     reg = at_boostree_model_train(X=train_x, y=train_y_np, params=params)
+#     mse = mean_squared_error(dev_y_np, reg.predict(dev_x))
+#     print('Evaluation mse = {}'.format(mse))
+#
+#     if train_filter:
+#         pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
+#     else:
+#         pickle_model_file_name = join(args.pred_dir, args.model_name_or_path,
+#                                       'n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
+#     save_sklearn_pickle_model(model=reg, pkl_filename=pickle_model_file_name)
+#     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
+#     mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
+#     print('Evaluation mse on loaded model = {}'.format(mse))
+
+
+def xgboost_train_and_evaluation(args, params, train_filter):
     for key, value in params.items():
         print('Parameter {} = {}'.format(key, value))
     print('*' * 75)
     if train_filter:
-        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_class_feat_name)
     else:
-        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
-    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    train_x, _, _, train_y_np = load_npz_data(npz_file_name=train_npz_file_name)
-    print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_np.shape, train_npz_file_name))
-    dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
-    print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_np.shape, dev_npz_file_name))
-    reg = at_boostree_model_train(X=train_x, y=train_y_np, params=params)
-    mse = mean_squared_error(dev_y_np, reg.predict(dev_x))
-    print('Evaluation mse = {}'.format(mse))
-
-    if train_filter:
-        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
-    else:
-        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path,
-                                      'n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
-    save_sklearn_pickle_model(model=reg, pkl_filename=pickle_model_file_name)
-    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
-    mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
-    print('Evaluation mse on loaded model = {}'.format(mse))
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_class_feat_name)
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_class_feat_name)
+    train_x, _, _, _, train_y_label = load_npz_data(npz_file_name=train_npz_file_name)
+    print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_label.shape, train_npz_file_name))
+    dev_x, _, _, _, dev_y_label = load_npz_data(npz_file_name=dev_npz_file_name)
+    print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_label.shape, dev_npz_file_name))
 
 
-def prediction(args):
-    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
-    pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
-    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
-    pred_y = load_reg.predict(dev_x)
-    count = 0
-    for i in range(dev_y_np.shape[0]):
-        print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
-        if pred_y[i] < 0.45:
-            count = count + 1
-            print('*' * 100)
-    mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
-    print(np.mean(pred_y), np.mean(dev_y_np))
-    print(count)
-    print('Evaluation mse on loaded model = {}'.format(mse))
-
-def prediction_analysis(args):
-    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
-    dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
-    pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
-    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
-    pred_y = load_reg.predict(dev_x)
-    count = 0
-    for i in range(dev_y_np.shape[0]):
-        print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
-        if pred_y[i] < 0.45:
-            count = count + 1
-            print('*' * 100)
-    mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
-    print(np.mean(pred_y), np.mean(dev_y_np))
-    print(count)
-    print('Evaluation mse on loaded model = {}'.format(mse))
-
-def json_prediction(args):
-    dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
-    with open(dev_json_file_name, 'r', encoding='utf-8') as reader:
-        json_data = json.load(reader)
-    pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
-    load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
-    count = 0
-    pred_threshold_dict = {}
-    for row_idx, row in enumerate(json_data):
-        x_feat = np.array(json_data[row]).reshape(1, -1)
-        pred_threshold = load_reg.predict(x_feat)
-        pred_threshold_dict[row] = pred_threshold[0]
-        if pred_threshold < 0.45:
-            count = count + 1
-    threshold_pred_json_name = join(args.pred_dir, args.model_name_or_path, args.pred_threshold_json_name)
-    print(count)
-    json.dump(pred_threshold_dict, open(threshold_pred_json_name, 'w'))
-    print('Saving threshold data {} into {}'.format(len(pred_threshold_dict), threshold_pred_json_name))
+# def prediction(args):
+#     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+#     dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+#     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
+#     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
+#     pred_y = load_reg.predict(dev_x)
+#     count = 0
+#     for i in range(dev_y_np.shape[0]):
+#         print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
+#         if pred_y[i] < 0.45:
+#             count = count + 1
+#             print('*' * 100)
+#     mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
+#     print(np.mean(pred_y), np.mean(dev_y_np))
+#     print(count)
+#     print('Evaluation mse on loaded model = {}'.format(mse))
+#
+# def prediction_analysis(args):
+#     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+#     dev_x, _, _, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
+#     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
+#     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
+#     pred_y = load_reg.predict(dev_x)
+#     count = 0
+#     for i in range(dev_y_np.shape[0]):
+#         print('{}\t{:.5f}\t{:.5f}'.format(i + 1, dev_y_np[i], pred_y[i]))
+#         if pred_y[i] < 0.45:
+#             count = count + 1
+#             print('*' * 100)
+#     mse = mean_squared_error(dev_y_np, load_reg.predict(dev_x))
+#     print(np.mean(pred_y), np.mean(dev_y_np))
+#     print(count)
+#     print('Evaluation mse on loaded model = {}'.format(mse))
+#
+# def json_prediction(args):
+#     dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
+#     with open(dev_json_file_name, 'r', encoding='utf-8') as reader:
+#         json_data = json.load(reader)
+#     pickle_model_name = join(args.pred_dir, args.model_name_or_path, args.pickle_model_check_point_name)
+#     load_reg = load_sklearn_pickle_model(pkl_filename=pickle_model_name)
+#     count = 0
+#     pred_threshold_dict = {}
+#     for row_idx, row in enumerate(json_data):
+#         x_feat = np.array(json_data[row]).reshape(1, -1)
+#         pred_threshold = load_reg.predict(x_feat)
+#         pred_threshold_dict[row] = pred_threshold[0]
+#         if pred_threshold < 0.45:
+#             count = count + 1
+#     threshold_pred_json_name = join(args.pred_dir, args.model_name_or_path, args.pred_threshold_json_name)
+#     print(count)
+#     json.dump(pred_threshold_dict, open(threshold_pred_json_name, 'w'))
+#     print('Saving threshold data {} into {}'.format(len(pred_threshold_dict), threshold_pred_json_name))
 
 if __name__ == '__main__':
 
     args = parse_args()
     ### step 1: data collection
-    threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-    # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
-    dev_data_collection(args=args)
-    train_data_collection(args=args, train_filter=False)
-    train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
+    # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+    # # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
+    # dev_data_collection(args=args)
+    # train_data_collection(args=args, train_filter=False)
+    # train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
+    #
+    # train_data_collection(args=args, train_filter=True)
+    # train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
 
-    train_data_collection(args=args, train_filter=True)
-    train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
+    ### step 2: model training and evaluation
+    param = {
+        'max_depth': 3,  # the maximum depth of each tree
+        'n_estimators': 1000,
+        'learning_rate': 0.01,
+        'eta': 0.3,  # the training step for each iteration
+        'verbosity': 0,  # logging mode - quiet
+        'use_label_encoder': False,
+        'objective': 'multi:softprob',  # error evaluation for multiclass training
+        'eval_metric': 'mlogloss',
+        'num_class': 30}  # the number of classes that exist in this datset
+    xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     # dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
     # for i in range(dev_y.shape[0]):
     #     print(i, dev_y[i], dev_y_np[i])
-    ### step 2: model training
-    # params = {'n_estimators': 2000,
-    #           'max_depth': 4,
-    #           'min_samples_split': 5,
-    #           'learning_rate': 0.01,
-    #           'verbose': True,
-    #           'random_state': 1,
-    #           'loss': 'ls'}
-    # train_and_evaluation_at(args=args, params=params, train_filter=True)
+
 
     # # args.pickle_model_check_point_name = 'n_est_1500_at_pred_model.pkl'
     # args.pickle_model_check_point_name = 'filter_n_est_2000_depth_4at_pred_model.pkl'

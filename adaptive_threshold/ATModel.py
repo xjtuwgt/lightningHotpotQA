@@ -1,5 +1,7 @@
 from sklearn import linear_model
 from sklearn import ensemble
+from xgboost.sklearn import XGBClassifier
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import mean_squared_error
 import pickle
 
@@ -12,6 +14,11 @@ def at_boostree_model_train(X, y, params):
     reg = ensemble.GradientBoostingRegressor(**params)
     reg.fit(X, y)
     return reg
+
+def xgboost_model_train(X, y, params):
+    xgbc = XGBClassifier(**params)
+    xgbc.fit(X, y, verbose=True)
+    return xgbc
 
 def save_sklearn_pickle_model(model, pkl_filename):
     with open(pkl_filename, 'wb') as file:
