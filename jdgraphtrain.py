@@ -147,19 +147,19 @@ if args.fp16:
 
 # Distributed training (should be after apex fp16 initialization)
 if args.local_rank != -1:
-    # encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
-    #                                                     output_device=args.local_rank,
-    #                                                     find_unused_parameters=True)
-    #
-    # model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
-    #                                                   output_device=args.local_rank,
-    #                                                   find_unused_parameters=True)
-
     encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
-                                                        output_device=args.local_rank)
+                                                        output_device=args.local_rank,
+                                                        find_unused_parameters=True)
 
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
-                                                      output_device=args.local_rank)
+                                                      output_device=args.local_rank,
+                                                      find_unused_parameters=True)
+
+    # encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
+    #                                                     output_device=args.local_rank)
+    #
+    # model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
+    #                                                   output_device=args.local_rank)
 
 
 if args.lr_scheduler == 'linear':
