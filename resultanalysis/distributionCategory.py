@@ -6,8 +6,8 @@ import seaborn as sns
 from numpy import ndarray
 from scipy import stats
 from pandas import DataFrame
-from adaptive_threshold.atutils import load_npz_data
-from adaptive_threshold.atutils import threshold_map_to_label
+from adaptive_threshold.atutils import load_npz_data, load_npz_data_for_classification
+from adaptive_threshold.atutils import threshold_map_to_label, adaptive_threshold_to_classification
 
 path = '/Users/xjtuwgt/Desktop'
 dev_json_file_name = 'dev_error_res.json'
@@ -15,8 +15,15 @@ train_json_file_name = 'hgn_low_saeerror_train_res.json'
 
 npz_data = os.path.join(path, 'HotPotQA/train_np_data.npz')
 dev_npz_data = os.path.join(path, 'HotPotQA/dev_np_data.npz')
-train_x, train_y_p, train_y_n, train_y_np = load_npz_data(npz_data)
-dev_x, dev_y_p, dev_y_n, dev_y_np = load_npz_data(dev_npz_data)
+
+train_npz_class_data = os.path.join(path, 'HotPotQA/train_class_np_data.npz')
+dev_npz_class_data = os.path.join(path, 'HotPotQA/dev_class_np_data.npz')
+
+# train_x, train_y_p, train_y_n, train_y_np = load_npz_data(npz_data)
+# dev_x, dev_y_p, dev_y_n, dev_y_np = load_npz_data(dev_npz_data)
+
+train_x, train_y_p, train_y_n, train_y_np, train_y_labels = load_npz_data_for_classification(npz_file_name=train_npz_class_data)
+dev_x, dev_y_p, dev_y_n, dev_y_np, dev_y_labels = load_npz_data_for_classification(npz_file_name=dev_npz_class_data)
 
 conf_category = [(0.0, 0.5), (0.5, 0.85), (0.85, 1.0)]
 threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
@@ -113,15 +120,28 @@ def deep_analysis(y_p, y_n, conf_prob=0.85):
 #
 # threshold_distribution(y_p=dev_y_p, y_n=dev_y_n)
 
-_, flag_label_freq = threshold_map_to_label(y_p=train_y_p, y_n=train_y_n, threshold_category=threshold_category)
+# _, train_flag_label_freq = threshold_map_to_label(y_p=train_y_p, y_n=train_y_n, threshold_category=threshold_category)
+#
+# keys = sorted(list(train_flag_label_freq.keys()))
+# for k_idx, key in enumerate(keys):
+#     print('{}\t{}'.format(key, train_flag_label_freq[key] * 1.0 / train_y_p.shape[0]))
+# print('Number of itemsets = {}'.format(len(train_flag_label_freq)))
+#
+# _, dev_flag_label_freq = threshold_map_to_label(y_p=dev_y_p, y_n=dev_y_n, threshold_category=threshold_category)
+# keys = sorted(list(dev_flag_label_freq.keys()))
+# for k_idx, key in enumerate(keys):
+#     print('{}\t{}'.format(key, dev_flag_label_freq[key] * 1.0 / dev_y_p.shape[0]))
+# print('Number of itemsets = {}'.format(len(dev_flag_label_freq)))
+#
+# flag_label_keys = sorted(list({**train_flag_label_freq, **dev_flag_label_freq}.keys()))
+# for k_idx, key in enumerate(flag_label_keys):
+#     print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq[key] * 1.0 / train_y_p.shape[0], dev_flag_label_freq[key] * 1.0 / dev_y_p.shape[0]))
 
-keys = sorted(list(flag_label_freq.keys()))
-for k_idx, key in enumerate(keys):
-    print('{}\t{}'.format(key, flag_label_freq[key] * 1.0 / train_y_p.shape[0]))
-print('Number of itemsets = {}'.format(len(flag_label_freq)))
 
-_, flag_label_freq = threshold_map_to_label(y_p=dev_y_p, y_n=dev_y_n, threshold_category=threshold_category)
-keys = sorted(list(flag_label_freq.keys()))
-for k_idx, key in enumerate(keys):
-    print('{}\t{}'.format(key, flag_label_freq[key] * 1.0 / dev_y_p.shape[0]))
-print('Number of itemsets = {}'.format(len(flag_label_freq)))
+# adaptive_threshold_to_classification(train_npz_file_name=npz_data, dev_npz_file_name=dev_npz_data,
+#                                      threshold_category=threshold_category, train_npz_class_file_name=train_npz_class_data,
+#                                      dev_npz_class_file_name=dev_npz_class_data)
+
+for i in range(30):
+    print('{}\t{}\t{}'.format(i, (train_y_labels == i).sum()/train_y_labels.shape[0], (dev_y_labels == i).sum()/dev_y_labels.shape[0]))
+

@@ -23,8 +23,11 @@ def parse_args(args=None):
     parser.add_argument("--train_score_name", type=str, default='train_score.json')
 
     parser.add_argument("--dev_feat_name", type=str, default='dev_np_data.npz')
+    parser.add_argument("--dev_feat_class_name", type=str, default='dev_class_np_data.npz')
     parser.add_argument("--dev_feat_json_name", type=str, default='dev_json_data.json')
     parser.add_argument("--train_feat_name", type=str, default='train_np_data.npz')
+    parser.add_argument("--train_feat_class_name", type=str, default='train_class_np_data.npz')
+    parser.add_argument("--class_label_map_name", type=str, default='class_label_dict.json')
     parser.add_argument("--pred_threshold_json_name", type=str, default='pred_thresholds.json')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
@@ -188,6 +191,18 @@ def load_npz_data(npz_file_name):
         y_np = data['y_np']
     return x, y, y_n, y_np
 
+def save_numpy_array_for_classification(x_feats: ndarray, y: ndarray, y_n: ndarray, y_np: ndarray, y_labels, npz_file_name):
+    np.savez(npz_file_name, x=x_feats, y=y, y_n=y_n, y_np=y_np, y_label=y_labels)
+    print('Saving {} records as x, and {} records as y into {}'.format(x_feats.shape, y_labels.shape, npz_file_name))
+
+def load_npz_data_for_classification(npz_file_name):
+    with np.load(npz_file_name) as data:
+        x = data['x']
+        y = data['y']
+        y_n = data['y_n']
+        y_np = data['y_np']
+        y_labels = data['y_label']
+    return x, y, y_n, y_np, y_labels
 
 def threshold_map_to_label(y_p: ndarray, y_n: ndarray, threshold_category):
     over_lap_res = []
@@ -220,3 +235,19 @@ def threshold_map_to_label(y_p: ndarray, y_n: ndarray, threshold_category):
             flag_label_freq[flag_label] = flag_label_freq[flag_label] + 1
         flag_list.append(flag_label)
     return flag_list, flag_label_freq
+
+def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name, threshold_category, train_npz_class_file_name, dev_npz_class_file_name):
+    train_x, train_y_p, train_y_n, train_y_np = load_npz_data(train_npz_file_name)
+    dev_x, dev_y_p, dev_y_n, dev_y_np = load_npz_data(dev_npz_file_name)
+    train_label_list, train_flag_label_freq_dict = threshold_map_to_label(y_p=train_y_p, y_n=train_y_n, threshold_category=threshold_category)
+    dev_label_list, dev_flag_label_freq_dict = threshold_map_to_label(y_p=dev_y_p, y_n=dev_y_n, threshold_category=threshold_category)
+    flag_label_keys = sorted(list({**train_flag_label_freq_dict, **dev_flag_label_freq_dict}.keys()))
+    for k_idx, key in enumerate(flag_label_keys):
+        print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0],
+                                      dev_flag_label_freq_dict[key] * 1.0 / dev_y_p.shape[0]))
+    label_key_to_idx_dict = dict([(key, k_idx) for k_idx, key in enumerate(flag_label_keys)])
+    train_class_labels = np.array([label_key_to_idx_dict[_] for _ in train_label_list])
+    dev_class_labels = np.array([label_key_to_idx_dict[_] for _ in dev_label_list])
+    save_numpy_array_for_classification(x_feats=train_x, y=train_y_p, y_n=train_y_n, y_np=train_y_np, y_labels=train_class_labels, npz_file_name=train_npz_class_file_name)
+    save_numpy_array_for_classification(x_feats=dev_x, y=dev_y_p, y_n=dev_y_n, y_np=train_y_np, y_labels=dev_class_labels, npz_file_name=dev_npz_class_file_name)
+    return label_key_to_idx_dict

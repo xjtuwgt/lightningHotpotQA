@@ -1,6 +1,6 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
-    parse_args, feat_label_extraction, save_numpy_array, load_npz_data
+    parse_args, feat_label_extraction, save_numpy_array, load_npz_data, adaptive_threshold_to_classification
 from adaptive_threshold.ATModel import at_boostree_model_train, save_sklearn_pickle_model, load_sklearn_pickle_model
 from os.path import join
 from sklearn.metrics import mean_squared_error
@@ -28,6 +28,32 @@ def train_data_collection(args, train_filter):
                                              train_type=args.train_type, train=True, train_filter=train_filter)
     save_numpy_array(x_feats=x_feats, y=y_value, y_n=y_n_np_value, y_np=y_np_value, npz_file_name=train_npz_file_name)
     print('Saving train data into {}'.format(train_npz_file_name))
+
+
+def train_dev_map_to_classification(args, train_filter, threshold_category):
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    if train_filter:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+    else:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+
+    dev_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_class_name)
+    if train_filter:
+        train_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_class_name)
+    else:
+        train_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_class_name)
+
+    class_label_dict = adaptive_threshold_to_classification(train_npz_file_name=train_npz_file_name, dev_npz_file_name=dev_npz_file_name,
+                                         threshold_category=threshold_category, train_npz_class_file_name=train_class_npz_file_name,
+                                         dev_npz_class_file_name=dev_class_npz_file_name)
+    if train_filter:
+        class_label_dict_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.class_label_map_name)
+    else:
+        class_label_dict_file_name = join(args.pred_dir, args.model_name_or_path, args.class_label_map_name)
+    for key, value in class_label_dict.items():
+        print(key, value)
+    json.dump(class_label_dict, open(class_label_dict_file_name, 'w'))
+
 
 def train_and_evaluation_at(args, params, train_filter):
     for key, value in params.items():
@@ -113,19 +139,20 @@ def json_prediction(args):
 if __name__ == '__main__':
 
     args = parse_args()
-    # args.pickle_model_check_point_name = 'n_est_1500_at_pred_model.pkl'
-    args.pickle_model_check_point_name = 'filter_n_est_2000_depth_4at_pred_model.pkl'
-    # prediction(args=args)
-    json_prediction(args=args)
+    ### step 1: data collection
     dev_data_collection(args=args)
-    # train_data_collection(args=args, train_filter=False)
-    # train_data_collection(args=args, train_filter=True)
+    train_data_collection(args=args, train_filter=False)
+    train_data_collection(args=args, train_filter=True)
+    threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+    # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
+    train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
+    train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     # dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
     # for i in range(dev_y.shape[0]):
     #     print(i, dev_y[i], dev_y_np[i])
-
+    ### step 2: model training
     # params = {'n_estimators': 2000,
     #           'max_depth': 4,
     #           'min_samples_split': 5,
@@ -134,3 +161,8 @@ if __name__ == '__main__':
     #           'random_state': 1,
     #           'loss': 'ls'}
     # train_and_evaluation_at(args=args, params=params, train_filter=True)
+
+    # # args.pickle_model_check_point_name = 'n_est_1500_at_pred_model.pkl'
+    # args.pickle_model_check_point_name = 'filter_n_est_2000_depth_4at_pred_model.pkl'
+    # # prediction(args=args)
+    # json_prediction(args=args)
