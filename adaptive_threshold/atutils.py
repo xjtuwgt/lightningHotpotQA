@@ -240,7 +240,11 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
     train_x, train_y_p, train_y_n, train_y_np = load_npz_data(train_npz_file_name)
     dev_x, dev_y_p, dev_y_n, dev_y_np = load_npz_data(dev_npz_file_name)
     train_label_list, train_flag_label_freq_dict = threshold_map_to_label(y_p=train_y_p, y_n=train_y_n, threshold_category=threshold_category)
+    for key, value in train_flag_label_freq_dict.items():
+        print(key, value)
     dev_label_list, dev_flag_label_freq_dict = threshold_map_to_label(y_p=dev_y_p, y_n=dev_y_n, threshold_category=threshold_category)
+    for key, value in dev_flag_label_freq_dict.items():
+        print(key, value)
     flag_label_keys = sorted(list({**train_flag_label_freq_dict, **dev_flag_label_freq_dict}.keys()))
     for k_idx, key in enumerate(flag_label_keys):
         print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0],
