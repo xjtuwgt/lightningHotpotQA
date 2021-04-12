@@ -96,6 +96,45 @@ def row_y_label_extraction(raw_row, score_row):
     flag, min_positive, max_negative = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds)
     return flag, min_positive, max_negative
 
+def row_y_range_extraction_best_f1(raw_row, score_row):
+    def best_f1_score_range(scores, mask, names, gold_names):
+        assert len(scores) == len(mask)
+        mask_sum_num = int(sum(mask))
+        prune_names = names[:mask_sum_num]
+        gold_name_set = set(gold_names)
+        if (gold_name_set.issubset(set(prune_names))):
+            flag = True
+        else:
+            flag = False
+        positive_scores = []
+        negative_scores = []
+        for idx in range(mask_sum_num):
+            name_i = prune_names[idx]
+            if name_i in gold_name_set:
+                positive_scores.append(scores[idx])
+            else:
+                negative_scores.append(scores[idx])
+
+        if len(positive_scores) > 0:
+            min_positive = min(positive_scores)
+        else:
+            min_positive = 0.0
+        if len(negative_scores) == 0:
+            max_negative = 1.0
+        else:
+            max_negative = max(negative_scores)
+
+        return flag, min_positive, max_negative
+
+    sp_golds = raw_row['supporting_facts']
+    sp_golds = [(x[0], x[1]) for x in sp_golds]
+    sp_scores = score_row['sp_score']
+    sp_mask = score_row['sp_mask']
+    sp_names = score_row['sp_names']
+    sp_names = [(x[0], x[1]) for x in sp_names]
+    flag, min_positive, max_negative = positive_neg_score(scores=sp_scores, mask=sp_mask, names=sp_names, gold_names=sp_golds)
+    return flag, min_positive, max_negative
+
 def row_x_feat_extraction(row):
     x_feats = row['cls_emb']
     #++++++++++++++
