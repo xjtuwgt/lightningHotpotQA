@@ -242,6 +242,7 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
     train_label_list, train_flag_label_freq_dict = threshold_map_to_label(y_p=train_y_p, y_n=train_y_n, threshold_category=threshold_category)
     for key, value in train_flag_label_freq_dict.items():
         print(key, value)
+    print('*' * 75)
     dev_label_list, dev_flag_label_freq_dict = threshold_map_to_label(y_p=dev_y_p, y_n=dev_y_n, threshold_category=threshold_category)
     for key, value in dev_flag_label_freq_dict.items():
         print(key, value)
@@ -250,8 +251,8 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
         print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0],
                                       dev_flag_label_freq_dict[key] * 1.0 / dev_y_p.shape[0]))
     label_key_to_idx_dict = dict([(key, k_idx) for k_idx, key in enumerate(flag_label_keys)])
-    train_class_labels = np.array([label_key_to_idx_dict[_] for _ in train_label_list])
-    dev_class_labels = np.array([label_key_to_idx_dict[_] for _ in dev_label_list])
+    train_class_labels = np.array([label_key_to_idx_dict[_] for _ in train_label_list if _ in train_flag_label_freq_dict])
+    dev_class_labels = np.array([label_key_to_idx_dict[_] for _ in dev_label_list if _ in dev_flag_label_freq_dict] )
     save_numpy_array_for_classification(x_feats=train_x, y=train_y_p, y_n=train_y_n, y_np=train_y_np, y_labels=train_class_labels, npz_file_name=train_npz_class_file_name)
     save_numpy_array_for_classification(x_feats=dev_x, y=dev_y_p, y_n=dev_y_n, y_np=train_y_np, y_labels=dev_class_labels, npz_file_name=dev_npz_class_file_name)
     return label_key_to_idx_dict
