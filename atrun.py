@@ -1,9 +1,8 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
     parse_args, feat_label_extraction, save_numpy_array, load_npz_data_for_classification, load_npz_data, adaptive_threshold_to_classification
-from adaptive_threshold.ATModel import at_boostree_model_train, save_sklearn_pickle_model, load_sklearn_pickle_model
+from adaptive_threshold.ATModel import xgboost_model_train
 from os.path import join
-from sklearn.metrics import mean_squared_error
 import json
 
 def dev_data_collection(args):
@@ -96,6 +95,8 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_label.shape, train_npz_file_name))
     dev_x, _, _, _, dev_y_label = load_npz_data_for_classification(npz_file_name=dev_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_label.shape, dev_npz_file_name))
+
+    xgboost_model_train(X=dev_x, y=dev_y_label, params=params)
 
 
 # def prediction(args):
