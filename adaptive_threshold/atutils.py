@@ -250,8 +250,11 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
     print('Number of key words = {}'.format(len(dev_flag_label_freq_dict)))
     flag_label_keys = sorted(list({**train_flag_label_freq_dict, **dev_flag_label_freq_dict}.keys()))
     for k_idx, key in enumerate(flag_label_keys):
-        print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0],
+        if key in train_flag_label_freq_dict:
+            print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0],
                                       dev_flag_label_freq_dict[key] * 1.0 / dev_y_p.shape[0]))
+        else:
+            print('{}\t{}\t{}\t{}'.format(k_idx, key, 0, dev_flag_label_freq_dict[key] * 1.0 / dev_y_p.shape[0]))
     label_key_to_idx_dict = dict([(key, k_idx) for k_idx, key in enumerate(flag_label_keys)])
     train_class_labels = np.array([label_key_to_idx_dict[_] for _ in train_label_list if _ in train_flag_label_freq_dict])
     dev_class_labels = np.array([label_key_to_idx_dict[_] for _ in dev_label_list if _ in dev_flag_label_freq_dict] )
