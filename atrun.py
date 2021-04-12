@@ -1,6 +1,6 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
-    parse_args, feat_label_extraction, save_numpy_array, load_npz_data, adaptive_threshold_to_classification
+    parse_args, feat_label_extraction, save_numpy_array, load_npz_data_for_classification, load_npz_data, adaptive_threshold_to_classification
 from adaptive_threshold.ATModel import at_boostree_model_train, save_sklearn_pickle_model, load_sklearn_pickle_model
 from os.path import join
 from sklearn.metrics import mean_squared_error
@@ -92,9 +92,9 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     else:
         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_class_name)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_class_name)
-    train_x, _, _, _, train_y_label = load_npz_data(npz_file_name=train_npz_file_name)
+    train_x, _, _, _, train_y_label = load_npz_data_for_classification(npz_file_name=train_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_label.shape, train_npz_file_name))
-    dev_x, _, _, _, dev_y_label = load_npz_data(npz_file_name=dev_npz_file_name)
+    dev_x, _, _, _, dev_y_label = load_npz_data_for_classification(npz_file_name=dev_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_label.shape, dev_npz_file_name))
 
 
