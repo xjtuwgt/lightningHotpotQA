@@ -2,6 +2,7 @@ import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
     parse_args, feat_label_extraction, save_numpy_array, load_npz_data_for_classification, load_npz_data, adaptive_threshold_to_classification
 from adaptive_threshold.ATModel import xgboost_model_train
+from sklearn.metrics import confusion_matrix
 from os.path import join
 import json
 
@@ -96,7 +97,11 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     dev_x, _, _, _, dev_y_label = load_npz_data_for_classification(npz_file_name=dev_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_label.shape, dev_npz_file_name))
 
-    xgboost_model_train(X=dev_x, y=dev_y_label, params=params)
+    xgbc = xgboost_model_train(X=dev_x, y=dev_y_label, params=params)
+
+    ypred = xgbc.predict(dev_x)
+    cm = confusion_matrix(dev_y_label, ypred)
+    print(cm)
 
 
 # def prediction(args):
@@ -168,10 +173,10 @@ if __name__ == '__main__':
     ### step 2: model training and evaluation
     param = {
         'max_depth': 3,  # the maximum depth of each tree
-        'n_estimators': 1000,
+        'n_estimators': 100,
         'learning_rate': 0.01,
         'eta': 0.3,  # the training step for each iteration
-        'verbosity': 0,  # logging mode - quiet
+        'verbosity': 2,  # logging mode - quiet
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
         'eval_metric': 'mlogloss',
