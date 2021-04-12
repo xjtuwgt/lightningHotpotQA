@@ -1,0 +1,87 @@
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from scipy import stats
+from pandas import DataFrame
+from adaptive_threshold.atutils import load_npz_data
+
+path = '/Users/xjtuwgt/Desktop'
+dev_json_file_name = 'dev_error_res.json'
+train_json_file_name = 'hgn_low_saeerror_train_res.json'
+
+npz_data = os.path.join(path, 'HotPotQA/train_np_data.npz')
+dev_npz_data = os.path.join(path, 'HotPotQA/dev_np_data.npz')
+train_x, train_y_p, train_y_n, train_y_np = load_npz_data(npz_data)
+dev_x, dev_y_p, dev_y_n, dev_y_np = load_npz_data(dev_npz_data)
+
+conf_category = [(0.0, 0.5), (0.5, 0.85), (0.85, 1.0)]
+threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+
+
+# dev_error_df = pd.read_json(os.path.join(path, dev_json_file_name))
+# train_error_df = pd.read_json(os.path.join(path, train_json_file_name))
+
+# plt.plot(train_y_p-train_y_n, '.')
+# plt.hist(x=train_y_p, bins='auto', color='b',
+#          alpha=0.7, rwidth=0.85)
+# print(((train_y_p-train_y_n) > 0.9).sum())
+# plt.show()
+
+def y_p_distribution(y_p):
+    cate_freq = [0] * len(conf_category)
+    # for idx, bound in enumerate(conf_category):
+    #     low_bound, up_bound = bound
+    #     freq_i = (y_p[(y_p >= low_bound)] < up_bound).sum()
+    #     cate_freq[idx] = freq_i/y_p.shape[0]
+    print(cate_freq)
+
+def over_lap_ratio(ht_pair1, ref_ht_pair2):
+    h, t = ht_pair1
+    r_h, r_t = ref_ht_pair2
+    if t < r_h or h > r_t: ## no overlap
+        return 0.0, 1
+    if r_h >= h and r_t <= t: ## subset: ref is a subset of given pair
+        return 1.0, 2
+
+    if r_h <= h and r_t >= t:
+        return (t - h) / (r_t - r_h), 3 ## superset: ref is a superset of given pair
+
+    if t >= r_h:
+        return r_t - h
+
+
+
+
+
+def threshold_distribution(y_p, y_n):
+    def find_threshold_category_(p_i, n_i):
+        p_flag = False
+        if p_i > n_i:
+            p_flag = True
+        threshold_map = [0] * len(threshold_category)
+        for b_idx, bound in enumerate(threshold_category):
+            low_bound, high_bound = bound
+
+
+    return
+
+
+def deep_analysis(y_p, y_n, conf_prob=0.85):
+    y_diff = y_p - y_n
+    #
+    # conf_pred_ratio = (y_diff[y_p > 0.9] > conf_prob).sum()/y_diff.shape[0]
+    # print(conf_pred_ratio)
+    # conf_pred_ratio = (y_p > 0.9).sum() / y_diff.shape[0]
+    # print(conf_pred_ratio)
+
+
+
+# deep_analysis(y_p=train_y_p, y_n=train_y_n)
+#
+# deep_analysis(y_p=dev_y_p, y_n=dev_y_n)
+
+y_p_distribution(y_p=train_y_p)
+
+y_p_distribution(y_p=dev_y_p)

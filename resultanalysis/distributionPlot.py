@@ -107,9 +107,9 @@ def dev_plot(dev_data: DataFrame):
 def train_plot(y, y_n):
     x = np.arange(0, y.shape[0])
 
-    sorted_idxes = np.argsort(y)
-    y = y[sorted_idxes]
-    y_n = y_n[sorted_idxes]
+    # sorted_idxes = np.argsort(y)
+    # y = y[sorted_idxes]
+    # y_n = y_n[sorted_idxes]
     #
     # plt.plot(x, y)
     # plt.plot(x, y_n, '.')
@@ -117,8 +117,10 @@ def train_plot(y, y_n):
     # plt.plot(y, y_np, '.')
 
     diff_y = y - y_n
-    sorted_y = np.sort(diff_y)
-    plt.plot(x, sorted_y)
+    # sorted_y = np.sort(diff_y)
+    # plt.plot(x, sorted_y)
+    plt.plot(diff_y, y, '.')
+    print((diff_y > 0).sum())
     plt.show()
 
 
@@ -147,7 +149,7 @@ def my_hist_plot(y):
 
 # dev_plot(dev_data=dev_error_df)
 
-train_plot(y, y_n)
+train_plot(d_y, d_y_n)
 
 # train_plot(y=d_y, y_np=d_y_np)
 # my_hist_plot(y=y)
