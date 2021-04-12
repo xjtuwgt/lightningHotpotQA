@@ -88,10 +88,10 @@ def xgboost_train_and_evaluation(args, params, train_filter):
         print('Parameter {} = {}'.format(key, value))
     print('*' * 75)
     if train_filter:
-        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_class_feat_name)
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_class_name)
     else:
-        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_class_feat_name)
-    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_class_feat_name)
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_class_name)
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_class_name)
     train_x, _, _, _, train_y_label = load_npz_data(npz_file_name=train_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(train_x.shape, train_y_label.shape, train_npz_file_name))
     dev_x, _, _, _, dev_y_label = load_npz_data(npz_file_name=dev_npz_file_name)
