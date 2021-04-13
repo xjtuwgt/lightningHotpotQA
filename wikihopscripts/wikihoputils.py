@@ -67,7 +67,7 @@ def data_stats(wiki_data_name):
         distinct_ner_num = len(ner_dict)
         all_ner_num = sum([value for key, value in ner_dict.items()])
 
-        if distinct_ner_num > 512:
+        if distinct_ner_num > 590:
             for key, value in row.items():
                 print('{}\n{}'.format(key, value, len(value)))
                 print('-' * 35)
