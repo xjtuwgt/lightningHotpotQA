@@ -14,9 +14,12 @@ def get_contents_with_ner(wiki_data_name):
     print('Loading {} data from {}'.format(len(wiki_data), wiki_data_name))
     documents = []
     for row_idx, row in tqdm(enumerate(wiki_data)):
-        for key, value in row.items():
-            print(key, type(value))
-        break
+        _text_ner = []
+        for sent in row['supports']:
+            ent_list = [(ent.text, ent.start_char, ent.end_char, ent.label_) for ent in nlp(sent).ents]
+            _text_ner.append(ent_list)
+        row['supports_ner'] = _text_ner
+        documents.append(row)
     return documents
 
 def data_stats(wiki_data_name):
