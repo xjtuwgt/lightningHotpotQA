@@ -22,12 +22,15 @@ def get_contents_with_ner(wiki_data_name):
         documents.append(row)
     return documents
 
+
+
 def data_stats(wiki_data_name):
     with open(wiki_data_name, 'r', encoding='utf-8') as reader:
         wiki_data = json.load(reader)
     print('Loading {} data from {}'.format(len(wiki_data), wiki_data_name))
     relation_dict = {}
     num_sents_dict = {}
+    num_ents_dict = {}
     def relation_entity_split(query: str):
         first_space_idx = query.index(' ')
         relation = query[:first_space_idx]
@@ -47,6 +50,11 @@ def data_stats(wiki_data_name):
         else:
             num_sents_dict[sent_num] = num_sents_dict[sent_num] + 1
 
+        ent_num = row['supports_ner']
+        if ent_num not in num_ents_dict:
+            num_ents_dict[ent_num] = 1
+        else:
+            num_ents_dict[ent_num] = num_ents_dict[ent_num] + 1
         # print(relation)
         # print(entity)
         # print(row_idx)
@@ -59,4 +67,8 @@ def data_stats(wiki_data_name):
     print('Number of relations = {}'.format(len(relation_dict)))
     for key, value in num_sents_dict.items():
         print('{}\t{}'.format(key, value))
-    print('Number of relations = {}'.format(len(relation_dict)))
+    print('Number of sentences = {}'.format(len(relation_dict)))
+
+    for key, value in num_ents_dict.items():
+        print('{}\t{}'.format(key, value))
+    print('Number of entities = {}'.format(len(num_ents_dict)))
