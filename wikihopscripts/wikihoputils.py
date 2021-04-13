@@ -25,8 +25,9 @@ def get_contents_with_ner(wiki_data_name):
 def ner_processer(ner_sent_list: list):
     ner_dict = {}
     for sent_idx, ners_in_sent in enumerate(ner_sent_list):
-        for ner in ners_in_sent:
-            if ner[0] not in ner_dict:
+        for ner_tup in ners_in_sent:
+            ner = ner_tup[0]
+            if ner not in ner_dict:
                 ner_dict[ner] = 1
             else:
                 ner_dict[ner] = ner_dict[ner] + 1
