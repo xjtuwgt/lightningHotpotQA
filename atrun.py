@@ -1,7 +1,8 @@
 import numpy as np
 from adaptive_threshold.atutils import distribution_feat, distribution_feat_extraction, \
-    parse_args, feat_label_extraction, save_numpy_array, load_npz_data_for_classification, load_npz_data, adaptive_threshold_to_classification
-from adaptive_threshold.ATModel import xgboost_model_train
+    parse_args, feat_label_extraction, save_numpy_array, load_npz_data_for_classification, load_npz_data, \
+    adaptive_threshold_to_classification
+from adaptive_threshold.ATModel import xgboost_model_train, save_sklearn_pickle_model, load_sklearn_pickle_model
 from sklearn.metrics import confusion_matrix, accuracy_score
 from os.path import join
 import json
@@ -108,6 +109,17 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     for key, value in params.items():
         print('Parameter {} = {}'.format(key, value))
     print('*' * 75)
+
+    if train_filter:
+        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
+    else:
+        pickle_model_file_name = join(args.pred_dir, args.model_name_or_path,
+                                      'n_est_' + str(params['n_estimators']) + '_depth_' +str(params['max_depth']) + args.pickle_model_name)
+    save_sklearn_pickle_model(model=xgbc, pkl_filename=pickle_model_file_name)
+    xgbc_model = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
+    model_ypred = xgbc_model.predict(dev_x)
+    accuracy = accuracy_score(ypred, model_ypred)
+    print('Load model acc: {}'.format(accuracy))
 
 
 # def prediction(args):
