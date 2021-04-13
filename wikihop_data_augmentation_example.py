@@ -4,6 +4,14 @@ from os.path import join
 import json
 from envs import DATASET_FOLDER
 
+# step 1: wiki_hop ner extraction
+# wiki_data_file_name = join(data_folder, args.data_name)
+# data_with_ner = get_contents_with_ner(wiki_data_name=wiki_data_file_name)
+# # data_stats(wiki_data_name=wiki_data_file_name)
+# out_put_ner_file_name = join(args.output_path, 'ner_' + args.data_name)
+# with open(out_put_ner_file_name, 'w') as f:
+#     json.dump(data_with_ner, f)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Required parameters
@@ -16,13 +24,7 @@ if __name__ == '__main__':
     for key, value in vars(args).items():
         print('Parameter {}: {}'.format(key, value))
 
-    # step 1: wiki_hop ner extraction
-    # wiki_data_file_name = join(data_folder, args.data_name)
-    # data_with_ner = get_contents_with_ner(wiki_data_name=wiki_data_file_name)
-    # # data_stats(wiki_data_name=wiki_data_file_name)
-    # out_put_ner_file_name = join(args.output_path, 'ner_' + args.data_name)
-    # with open(out_put_ner_file_name, 'w') as f:
-    #     json.dump(data_with_ner, f)
+
 
     wiki_ner_data_file_name = join(args.output_path, args.data_name)
     data_stats(wiki_data_name=wiki_ner_data_file_name)
