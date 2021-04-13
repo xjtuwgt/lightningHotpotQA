@@ -1,7 +1,4 @@
-import os
 import torch
-import pandas as pd
-import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from adaptive_threshold.atutils import load_npz_data
 
@@ -18,12 +15,21 @@ class RangeDataset(Dataset):
     def __getitem__(self, idx):
         x_i = torch.from_numpy(self.x_feat[idx])
         y_p_i, y_n_i = self.y_p[idx], self.y_n[idx]
-        flag = True
+
         if y_p_i > y_n_i:
             y_min = torch.FloatTensor([y_n_i])
             y_max = torch.FloatTensor([y_p_i])
+            flag = torch.LongTensor([1])
         else:
             y_min = torch.FloatTensor([y_p_i])
             y_max = torch.FloatTensor([y_n_i])
-            flag = False
+            flag = torch.LongTensor([0])
         return x_i, y_min, y_max, flag
+
+    @staticmethod
+    def collate_fn(data):
+        x = torch.stack([_[0] for _ in data], dim=0)
+        y_min = torch.stack([_[1] for _ in data], dim=0)
+        y_max = torch.stack([_[2] for _ in data], dim=0)
+        flag = torch.stack([_[3] for _ in data], dim=0)
+        return x, y_min, y_max, flag
