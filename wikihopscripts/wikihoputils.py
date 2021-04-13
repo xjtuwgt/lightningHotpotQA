@@ -24,13 +24,16 @@ def data_stats(data):
             relation_dict[relation] = 1
         else:
             relation_dict[relation] = relation_dict[relation] + 1
-        print(relation)
-        print(entity)
+        # print(relation)
+        # print(entity)
         # print(row_idx)
         # print(row)
         # for key, value in row.items():
         #     print(key, value)
         # break
+    for key, value in relation_dict.items():
+        print('{}\t{}'.format(key, value))
+    print('Number of relations = {}'.format(len(relation_dict)))
 
 if __name__ == '__main__':
     data_stats(data=wiki_hop_train_data)
