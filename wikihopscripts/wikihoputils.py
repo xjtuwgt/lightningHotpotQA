@@ -22,7 +22,15 @@ def get_contents_with_ner(wiki_data_name):
         documents.append(row)
     return documents
 
-
+def ner_processer(ner_sent_list: list):
+    ner_dict = {}
+    for sent_idx, ners_in_sent in enumerate(ner_sent_list):
+        for ner in ners_in_sent:
+            if ner not in ner_dict:
+                ner_dict[ner] = 1
+            else:
+                ner_dict[ner] = ner_dict[ner] + 1
+    return ner_dict
 
 def data_stats(wiki_data_name):
     with open(wiki_data_name, 'r', encoding='utf-8') as reader:
@@ -30,7 +38,8 @@ def data_stats(wiki_data_name):
     print('Loading {} data from {}'.format(len(wiki_data), wiki_data_name))
     relation_dict = {}
     num_sents_dict = {}
-    num_ents_dict = {}
+    distinct_num_ents_dict = {}
+    all_num_ents_dict = {}
     def relation_entity_split(query: str):
         first_space_idx = query.index(' ')
         relation = query[:first_space_idx]
@@ -52,12 +61,20 @@ def data_stats(wiki_data_name):
 
         support_ners = row['supports_ner']
         assert len(supports) == len(support_ners)
-        print(support_ners)
+        # print(support_ners)
+        ner_dict = ner_processer(ner_sent_list=support_ners)
+        distinct_ner_num = len(ner_dict)
+        all_ner_num = sum([value for key, value in ner_dict.items()])
 
-        # if ent_num not in num_ents_dict:
-        #     num_ents_dict[ent_num] = 1
-        # else:
-        #     num_ents_dict[ent_num] = num_ents_dict[ent_num] + 1
+        if distinct_ner_num not in distinct_num_ents_dict:
+            distinct_num_ents_dict[distinct_ner_num] = 1
+        else:
+            distinct_num_ents_dict[distinct_ner_num] = distinct_num_ents_dict[distinct_ner_num] + 1
+
+        if all_ner_num not in all_num_ents_dict:
+            all_num_ents_dict[all_ner_num] = 1
+        else:
+            all_num_ents_dict[all_ner_num] = all_num_ents_dict[all_ner_num] + 1
         # print(relation)
         # print(entity)
         # print(row_idx)
@@ -72,6 +89,10 @@ def data_stats(wiki_data_name):
         print('{}\t{}'.format(key, value))
     print('Number of sentences = {}'.format(len(relation_dict)))
 
-    for key, value in num_ents_dict.items():
+    for key, value in distinct_num_ents_dict.items():
         print('{}\t{}'.format(key, value))
-    print('Number of entities = {}'.format(len(num_ents_dict)))
+    print('Number of entities = {}'.format(len(distinct_num_ents_dict)))
+
+    for key, value in all_num_ents_dict.items():
+        print('{}\t{}'.format(key, value))
+    print('Number of entities = {}'.format(len(all_num_ents_dict)))
