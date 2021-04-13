@@ -33,15 +33,13 @@ def train_data_collection(args, train_filter):
 
 def train_dev_map_to_classification(args, train_filter, threshold_category):
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_class_name)
+
     if train_filter:
         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
-    else:
-        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
-
-    dev_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_class_name)
-    if train_filter:
         train_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_class_name)
     else:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
         train_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_class_name)
 
     class_label_dict = adaptive_threshold_to_classification(train_npz_file_name=train_npz_file_name, dev_npz_file_name=dev_npz_file_name,
@@ -183,26 +181,26 @@ if __name__ == '__main__':
 
     args = parse_args()
     ### step 1: data collection
-    threshold_category = [(0.0, 0.25), (0.25, 0.5), (0.5, 0.75), (0.75, 1.0)]
-    dev_data_collection(args=args)
-    train_data_collection(args=args, train_filter=False)
-    train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
+    # threshold_category = [(0.0, 0.25), (0.25, 0.5), (0.5, 0.75), (0.75, 1.0)]
+    # dev_data_collection(args=args)
+    # train_data_collection(args=args, train_filter=False)
+    # train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
 
-    train_data_collection(args=args, train_filter=True)
-    train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
+    # train_data_collection(args=args, train_filter=True)
+    # train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
 
     ## step 2: model training and evaluation
-    # param = {
-    #     'max_depth': 6,  # the maximum depth of each tree
-    #     'n_estimators': 10,
-    #     'learning_rate': 0.001,
-    #     'eta': 0.3,  # the training step for each iteration
-    #     'verbosity': 2,  # logging mode - quiet
-    #     'use_label_encoder': False,
-    #     'objective': 'multi:softprob',  # error evaluation for multiclass training
-    #     'eval_metric': 'mlogloss',
-    #     'num_class': 24}  # the number of classes that exist in this datset
-    # xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
+    param = {
+        'max_depth': 6,  # the maximum depth of each tree
+        'n_estimators': 10,
+        'learning_rate': 0.001,
+        'eta': 0.3,  # the training step for each iteration
+        'verbosity': 2,  # logging mode - quiet
+        'use_label_encoder': False,
+        'objective': 'multi:softprob',  # error evaluation for multiclass training
+        'eval_metric': 'mlogloss',
+        'num_class': 24}  # the number of classes that exist in this datset
+    xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     # dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
