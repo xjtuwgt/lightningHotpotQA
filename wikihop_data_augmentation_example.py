@@ -1,5 +1,5 @@
 import argparse
-from wikihopscripts.wikihoputils import get_contents_with_ner, data_stats
+from wikihopscripts.wikihoputils import get_contents_with_ner, data_stats, read_wikihop_examples
 from os.path import join
 import json
 from envs import DATASET_FOLDER
@@ -27,4 +27,5 @@ if __name__ == '__main__':
 
 
     wiki_ner_data_file_name = join(args.output_path, args.data_name)
-    data_stats(wiki_data_name=wiki_ner_data_file_name)
+    # data_stats(wiki_data_name=wiki_ner_data_file_name)
+    read_wikihop_examples(full_file=wiki_ner_data_file_name)
