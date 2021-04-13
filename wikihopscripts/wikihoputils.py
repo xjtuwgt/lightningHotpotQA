@@ -134,8 +134,6 @@ def read_wikihop_examples(full_file):
     examples = []
     doc_token_num_dict = {}
     for case in tqdm(full_data):
-        key = case['id']
-        query = case['query']
         doc_tokens = []
         sents = case['supports']
         sents_ner = case['supports_ner']
@@ -149,6 +147,9 @@ def read_wikihop_examples(full_file):
             doc_token_num_dict[doc_token_num] = 1
         else:
             doc_token_num_dict[doc_token_num] = doc_token_num_dict[doc_token_num] + 1
+
+        case['tokens'] = doc_tokens
+        examples.append(case)
 
     for key, value in doc_token_num_dict.items():
         print('{}\t{}'.format(key, value))
