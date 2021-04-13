@@ -196,8 +196,6 @@ if __name__ == '__main__':
         'learning_rate': 0.005,
         'eta': 0.3,  # the training step for each iteration
         'verbosity': 2,  # logging mode - quiet
-        'rate_drop': 0.25,
-        'skip_drop': 0.25,
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
         'eval_metric': 'mlogloss',
