@@ -246,12 +246,12 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
     train_label_list, train_flag_label_freq_dict = threshold_map_to_label(y_p=train_y_p, y_n=train_y_n, threshold_category=threshold_category)
     for key, value in train_flag_label_freq_dict.items():
         print(key, value)
-    print('Number of key words = {}'.format(len(train_flag_label_freq_dict)))
+    print('Number of key words in train = {}'.format(len(train_flag_label_freq_dict)))
     print('*' * 75)
     dev_label_list, dev_flag_label_freq_dict = threshold_map_to_label(y_p=dev_y_p, y_n=dev_y_n, threshold_category=threshold_category)
     for key, value in dev_flag_label_freq_dict.items():
         print(key, value)
-    print('Number of key words = {}'.format(len(dev_flag_label_freq_dict)))
+    print('Number of key words in dev = {}'.format(len(dev_flag_label_freq_dict)))
     flag_label_keys = sorted(list({**train_flag_label_freq_dict, **dev_flag_label_freq_dict}.keys()))
     for k_idx, key in enumerate(flag_label_keys):
         if key in train_flag_label_freq_dict and key in dev_flag_label_freq_dict:
