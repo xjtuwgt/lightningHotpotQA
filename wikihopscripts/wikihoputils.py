@@ -97,3 +97,52 @@ def data_stats(wiki_data_name):
     for key, value in all_num_ents_dict.items():
         print('{}\t{}'.format(key, value))
     print('Number of entities = {}'.format(len(all_num_ents_dict)))
+
+
+def read_wikihop_examples(full_file):
+    with open(full_file, 'r', encoding='utf-8') as reader:
+        full_data = json.load(reader)
+
+    ## query, answer, candidate, supports, supports_ner
+    def split_sent(sent, offset=0):
+        nlp_doc = nlp(sent)
+        words, word_start_idx, char_to_word_offset = [], [], []
+        for token in nlp_doc:
+            # token match a-b, then split further
+            words.append(token.text)
+            word_start_idx.append(token.idx)
+
+        word_offset = 0
+        for c in range(len(sent)):
+            if word_offset >= len(word_start_idx) - 1 or c < word_start_idx[word_offset + 1]:
+                char_to_word_offset.append(word_offset + offset)
+            else:
+                char_to_word_offset.append(word_offset + offset + 1)
+                word_offset += 1
+        return words, char_to_word_offset, word_start_idx
+
+    max_sent_cnt, max_entity_cnt = 0, 0
+    examples = []
+    doc_token_num_dict = {}
+    for case in tqdm(full_data):
+        key = case['id']
+        query = case['query']
+        doc_tokens = []
+        sents = case['supports']
+        sents_ner = case['supports_ner']
+        assert len(sents) == len(sents_ner)
+        for local_sent_id, (sent, sent_ner) in enumerate(zip(sents, sents_ner)):
+            cur_sent_words, cur_sent_char_to_word_offset, cur_sent_words_start_idx = split_sent(sent, offset=len(
+                doc_tokens))
+            doc_tokens.extend(cur_sent_words)
+        doc_token_num = len(doc_tokens)
+        if doc_token_num not in doc_token_num_dict:
+            doc_token_num_dict[doc_token_num] = 1
+        else:
+            doc_token_num_dict[doc_token_num] = doc_token_num_dict[doc_token_num] + 1
+
+    for key, value in doc_token_num_dict.items():
+        print('{}\t{}'.format(key, value))
+
+    print('Doc token number = {}'.format(len(doc_token_num_dict)))
+    return examples
