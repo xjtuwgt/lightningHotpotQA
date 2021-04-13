@@ -199,7 +199,7 @@ if __name__ == '__main__':
         'n_estimators': 500,
         'learning_rate': 0.001,
         'eta': 0.3,  # the training step for each iteration
-        'alpha': 0.25,
+        'reg_alpha': 0.3,
         'verbosity': 2,  # logging mode - quiet
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
