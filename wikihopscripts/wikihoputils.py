@@ -2,17 +2,12 @@ import json
 from os.path import join
 from tqdm import tqdm
 import spacy
-from envs import DATASET_FOLDER
-path = '/Users/xjtuwgt/Downloads/qangaroo_v1.1/wikihop'
-
-train_data = 'train.json'
-
-
-
-
+# from envs import DATASET_FOLDER
+# path = '/Users/xjtuwgt/Downloads/qangaroo_v1.1/wikihop'
+#
+# train_data = 'train.json'
 
 nlp = spacy.load("en_core_web_lg", disable=['parser'])
-
 def get_contents_with_ner(wiki_data_name):
     with open(wiki_data_name, 'r', encoding='utf-8') as reader:
         wiki_data = json.load(reader)
@@ -20,7 +15,7 @@ def get_contents_with_ner(wiki_data_name):
     documents = []
     for row_idx, row in tqdm(enumerate(wiki_data)):
         for key, value in row.items():
-            print(key, value)
+            print(key, type(value))
         break
     return documents
 
@@ -29,6 +24,7 @@ def data_stats(wiki_data_name):
         wiki_data = json.load(reader)
     print('Loading {} data from {}'.format(len(wiki_data), wiki_data_name))
     relation_dict = {}
+    num_sents_dict = {}
     def relation_entity_split(query: str):
         first_space_idx = query.index(' ')
         relation = query[:first_space_idx]
@@ -41,6 +37,8 @@ def data_stats(wiki_data_name):
             relation_dict[relation] = 1
         else:
             relation_dict[relation] = relation_dict[relation] + 1
+        supports = row['supports']
+
         # print(relation)
         # print(entity)
         # print(row_idx)
