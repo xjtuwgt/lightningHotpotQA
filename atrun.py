@@ -97,7 +97,7 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     dev_x, _, _, _, dev_y_label = load_npz_data_for_classification(npz_file_name=dev_npz_file_name)
     print('Loading x: {} and y: {} from {}'.format(dev_x.shape, dev_y_label.shape, dev_npz_file_name))
 
-    xgbc = xgboost_model_train(X=dev_x, y=dev_y_label, params=params)
+    xgbc = xgboost_model_train(X=train_x, y=train_y_label, params=params)
 
     ypred = xgbc.predict(dev_x)
     cm = confusion_matrix(ypred, dev_y_label)
@@ -164,19 +164,19 @@ if __name__ == '__main__':
 
     args = parse_args()
     ### step 1: data collection
-    # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-    # # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
-    # dev_data_collection(args=args)
-    # train_data_collection(args=args, train_filter=False)
-    # train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
-    #
-    # train_data_collection(args=args, train_filter=True)
-    # train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
+    threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+    # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
+    dev_data_collection(args=args)
+    train_data_collection(args=args, train_filter=False)
+    train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
+
+    train_data_collection(args=args, train_filter=True)
+    train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
 
     ### step 2: model training and evaluation
     param = {
         'max_depth': 4,  # the maximum depth of each tree
-        'n_estimators': 800,
+        'n_estimators': 10,
         'learning_rate': 0.01,
         'eta': 0.3,  # the training step for each iteration
         'verbosity': 2,  # logging mode - quiet

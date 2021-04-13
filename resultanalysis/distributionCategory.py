@@ -26,7 +26,8 @@ train_x, train_y_p, train_y_n, train_y_np, train_y_labels = load_npz_data_for_cl
 dev_x, dev_y_p, dev_y_n, dev_y_np, dev_y_labels = load_npz_data_for_classification(npz_file_name=dev_npz_class_data)
 
 conf_category = [(0.0, 0.5), (0.5, 0.85), (0.85, 1.0)]
-threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+# threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+threshold_category = [(0.0, 0.25), (0.25, 0.5), (0.75, 1.0)]
 # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
 
 
@@ -138,10 +139,10 @@ def deep_analysis(y_p, y_n, conf_prob=0.85):
 #     print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq[key] * 1.0 / train_y_p.shape[0], dev_flag_label_freq[key] * 1.0 / dev_y_p.shape[0]))
 
 
-# adaptive_threshold_to_classification(train_npz_file_name=npz_data, dev_npz_file_name=dev_npz_data,
-#                                      threshold_category=threshold_category, train_npz_class_file_name=train_npz_class_data,
-#                                      dev_npz_class_file_name=dev_npz_class_data)
+adaptive_threshold_to_classification(train_npz_file_name=npz_data, dev_npz_file_name=dev_npz_data,
+                                     threshold_category=threshold_category, train_npz_class_file_name=train_npz_class_data,
+                                     dev_npz_class_file_name=dev_npz_class_data)
 
-for i in range(30):
-    print('{}\t{}\t{}'.format(i, (train_y_labels == i).sum()/train_y_labels.shape[0], (dev_y_labels == i).sum()/dev_y_labels.shape[0]))
+# for i in range(30):
+#     print('{}\t{}\t{}'.format(i, (train_y_labels == i).sum()/train_y_labels.shape[0], (dev_y_labels == i).sum()/dev_y_labels.shape[0]))
 
