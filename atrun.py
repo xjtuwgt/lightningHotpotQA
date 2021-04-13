@@ -192,7 +192,7 @@ if __name__ == '__main__':
     ## step 2: model training and evaluation
     param = {
         'max_depth': 4,  # the maximum depth of each tree
-        'n_estimators': 10,
+        'n_estimators': 100,
         'learning_rate': 0.005,
         'eta': 0.3,  # the training step for each iteration
         'verbosity': 2,  # logging mode - quiet
