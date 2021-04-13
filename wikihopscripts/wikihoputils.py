@@ -38,6 +38,11 @@ def data_stats(wiki_data_name):
         else:
             relation_dict[relation] = relation_dict[relation] + 1
         supports = row['supports']
+        sent_num = len(supports)
+        if sent_num not in num_sents_dict:
+            num_sents_dict[sent_num] = 1
+        else:
+            num_sents_dict[sent_num] = num_sents_dict[sent_num] + 1
 
         # print(relation)
         # print(entity)
@@ -47,5 +52,8 @@ def data_stats(wiki_data_name):
         #     print(key, value)
         # break
     for key, value in relation_dict.items():
+        print('{}\t{}'.format(key, value))
+    print('Number of relations = {}'.format(len(relation_dict)))
+    for key, value in num_sents_dict.items():
         print('{}\t{}'.format(key, value))
     print('Number of relations = {}'.format(len(relation_dict)))

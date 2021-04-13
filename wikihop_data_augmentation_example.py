@@ -1,5 +1,5 @@
 import argparse
-from wikihopscripts.wikihoputils import get_contents_with_ner
+from wikihopscripts.wikihoputils import get_contents_with_ner, data_stats
 from os.path import join
 from envs import DATASET_FOLDER
 
@@ -14,4 +14,5 @@ if __name__ == '__main__':
     for key, value in vars(args).items():
         print('Parameter {}: {}'.format(key, value))
     wiki_data_file_name = join(data_folder, args.data_name)
-    get_contents_with_ner(wiki_data_name=wiki_data_file_name)
+    # get_contents_with_ner(wiki_data_name=wiki_data_file_name)
+    data_stats(wiki_data_name=wiki_data_file_name)
