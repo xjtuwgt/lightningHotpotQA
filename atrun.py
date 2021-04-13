@@ -102,7 +102,11 @@ def xgboost_train_and_evaluation(args, params, train_filter):
 
     ypred = xgbc.predict(dev_x)
     cm = confusion_matrix(ypred, dev_y_label)
-    print(cm)
+    cm_list = cm.tolist()
+    for i in range(len(cm_list)):
+        cm_list_i = cm_list[i]
+        cm_list_str = ' | '.join([str(_) for _ in cm_list_i])
+    print('+' * 45)
     print(type(cm))
     accuracy = accuracy_score(ypred, dev_y_label)
     print(accuracy)
