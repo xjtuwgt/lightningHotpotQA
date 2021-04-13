@@ -83,12 +83,12 @@ def data_stats(wiki_data_name):
         # for key, value in row.items():
         #     print(key, value)
         # break
-    for key, value in relation_dict.items():
-        print('{}\t{}'.format(key, value))
-    print('Number of relations = {}'.format(len(relation_dict)))
-    for key, value in num_sents_dict.items():
-        print('{}\t{}'.format(key, value))
-    print('Number of sentences = {}'.format(len(relation_dict)))
+    # for key, value in relation_dict.items():
+    #     print('{}\t{}'.format(key, value))
+    # print('Number of relations = {}'.format(len(relation_dict)))
+    # for key, value in num_sents_dict.items():
+    #     print('{}\t{}'.format(key, value))
+    # print('Number of sentences = {}'.format(len(relation_dict)))
 
     for key, value in distinct_num_ents_dict.items():
         print('{}\t{}'.format(key, value))
