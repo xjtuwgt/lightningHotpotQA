@@ -183,9 +183,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     ### step 1: data collection
-    threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-    # threshold_category = [(0.0, 0.25), (0.25, 0.5), (0.5, 0.75), (0.75, 1.0)]
-    # # threshold_category = [(0.0, 0.1), (0.1, 0.2), (0.2, 0.3), (0.3, 0.4), (0.4, 0.5), (0.5, 0.6), (0.6, 0.7), (0.7, 0.8), (0.8, 0.9), (0.9, 1.0)]
+    threshold_category = [(0.0, 0.25), (0.25, 0.5), (0.5, 0.75), (0.75, 1.0)]
     dev_data_collection(args=args)
     train_data_collection(args=args, train_filter=False)
     train_dev_map_to_classification(args=args, train_filter=False, threshold_category=threshold_category)
