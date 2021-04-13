@@ -199,7 +199,7 @@ if __name__ == '__main__':
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
         'eval_metric': 'mlogloss',
-        'num_class': 24}  # the number of classes that exist in this datset
+        'num_class': 20}  # the number of classes that exist in this datset
     xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
