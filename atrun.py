@@ -118,7 +118,7 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     save_sklearn_pickle_model(model=xgbc, pkl_filename=pickle_model_file_name)
     xgbc_model = load_sklearn_pickle_model(pkl_filename=pickle_model_file_name)
     model_ypred = xgbc_model.predict(dev_x)
-    accuracy = accuracy_score(ypred, model_ypred)
+    accuracy = accuracy_score(model_ypred, dev_y_label)
     print('Load model acc: {}'.format(accuracy))
 
 
@@ -199,7 +199,7 @@ if __name__ == '__main__':
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
         'eval_metric': 'mlogloss',
-        'num_class': 30}  # the number of classes that exist in this datset
+        'num_class': 20}  # the number of classes that exist in this datset
     xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
