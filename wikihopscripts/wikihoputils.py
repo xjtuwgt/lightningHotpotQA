@@ -19,9 +19,11 @@ def data_stats(data):
         return relation, entity
     ## query, answer, candidate, supports
     for row_idx, row in tqdm(enumerate(data)):
-
-        print(row['query'])
         relation, entity = relation_entity_split(query=row['query'])
+        if relation not in relation_dict:
+            relation_dict[relation] = 1
+        else:
+            relation_dict[relation] = relation_dict[relation] + 1
         print(relation)
         print(entity)
         # print(row_idx)
