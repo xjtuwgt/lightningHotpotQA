@@ -67,6 +67,11 @@ def data_stats(wiki_data_name):
         distinct_ner_num = len(ner_dict)
         all_ner_num = sum([value for key, value in ner_dict.items()])
 
+        if distinct_ner_num > 512:
+            for key, value in row.items():
+                print(key, value)
+                print('-' * 35)
+
         if distinct_ner_num not in distinct_num_ents_dict:
             distinct_num_ents_dict[distinct_ner_num] = 1
         else:

@@ -219,12 +219,16 @@ def threshold_map_to_label(y_p: ndarray, y_n: ndarray, threshold_category):
         for b_idx, bound in enumerate(threshold_category):
             over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
             over_lap_list.append((over_lap_value, over_lap_type))
+        print('p_i={}, n_i={}'.format(p_i, n_i))
+        print(over_lap_list)
+        print('*' * 100)
         over_lap_res.append((over_lap_list, p_flag))
 
     flag_list = []
     flag_label_freq = {}
     for i in range(y_p.shape[0]):
-        three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
+        # three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
+        three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
         if over_lap_res[i][1]:
             flag_label = 'T_' + str(three_types)
         else:
@@ -250,11 +254,13 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
     print('Number of key words = {}'.format(len(dev_flag_label_freq_dict)))
     flag_label_keys = sorted(list({**train_flag_label_freq_dict, **dev_flag_label_freq_dict}.keys()))
     for k_idx, key in enumerate(flag_label_keys):
-        if key in train_flag_label_freq_dict:
+        if key in train_flag_label_freq_dict and key in dev_flag_label_freq_dict:
             print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0],
                                       dev_flag_label_freq_dict[key] * 1.0 / dev_y_p.shape[0]))
-        else:
+        elif key in dev_flag_label_freq_dict:
             print('{}\t{}\t{}\t{}'.format(k_idx, key, 0, dev_flag_label_freq_dict[key] * 1.0 / dev_y_p.shape[0]))
+        else:
+            print('{}\t{}\t{}\t{}'.format(k_idx, key, train_flag_label_freq_dict[key] * 1.0 / train_y_p.shape[0], 0))
     label_key_to_idx_dict = dict([(key, k_idx) for k_idx, key in enumerate(flag_label_keys)])
     train_class_labels = np.array([label_key_to_idx_dict[_] for _ in train_label_list if _ in train_flag_label_freq_dict])
     dev_class_labels = np.array([label_key_to_idx_dict[_] for _ in dev_label_list if _ in dev_flag_label_freq_dict] )
