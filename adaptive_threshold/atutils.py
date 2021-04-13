@@ -227,8 +227,8 @@ def threshold_map_to_label(y_p: ndarray, y_n: ndarray, threshold_category):
     flag_list = []
     flag_label_freq = {}
     for i in range(y_p.shape[0]):
-        # three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
-        three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
+        three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
+        # three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
         if over_lap_res[i][1]:
             flag_label = 'T_' + str(three_types)
         else:
