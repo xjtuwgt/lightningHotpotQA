@@ -105,6 +105,9 @@ def xgboost_train_and_evaluation(args, params, train_filter):
     print(type(cm))
     accuracy = accuracy_score(ypred, dev_y_label)
     print(accuracy)
+    for key, value in params.items():
+        print('Parameter {} = {}'.format(key, value))
+    print('*' * 75)
 
 
 # def prediction(args):
@@ -175,9 +178,9 @@ if __name__ == '__main__':
 
     ### step 2: model training and evaluation
     param = {
-        'max_depth': 5,  # the maximum depth of each tree
+        'max_depth': 4,  # the maximum depth of each tree
         'n_estimators': 1000,
-        'learning_rate': 0.01,
+        'learning_rate': 0.005,
         'eta': 0.3,  # the training step for each iteration
         'verbosity': 2,  # logging mode - quiet
         'use_label_encoder': False,
