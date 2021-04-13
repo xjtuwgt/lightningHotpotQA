@@ -50,11 +50,14 @@ def data_stats(wiki_data_name):
         else:
             num_sents_dict[sent_num] = num_sents_dict[sent_num] + 1
 
-        ent_num = row['supports_ner']
-        if ent_num not in num_ents_dict:
-            num_ents_dict[ent_num] = 1
-        else:
-            num_ents_dict[ent_num] = num_ents_dict[ent_num] + 1
+        support_ners = row['supports_ner']
+        assert len(supports) == len(support_ners)
+        print(support_ners)
+
+        # if ent_num not in num_ents_dict:
+        #     num_ents_dict[ent_num] = 1
+        # else:
+        #     num_ents_dict[ent_num] = num_ents_dict[ent_num] + 1
         # print(relation)
         # print(entity)
         # print(row_idx)
