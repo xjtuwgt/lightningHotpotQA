@@ -71,6 +71,10 @@ def data_stats(wiki_data_name):
             for key, value in row.items():
                 print('{}|{}\n{}'.format(key, len(value), value))
                 print('-' * 35)
+            temp_idx = 1
+            for key, value in ner_dict.items():
+                print('{}: {}\t{}'.format(temp_idx, key, value))
+                temp_idx = temp_idx + 1
 
         if distinct_ner_num not in distinct_num_ents_dict:
             distinct_num_ents_dict[distinct_ner_num] = 1
