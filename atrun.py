@@ -175,7 +175,7 @@ if __name__ == '__main__':
 
     ### step 2: model training and evaluation
     param = {
-        'max_depth': 4,  # the maximum depth of each tree
+        'max_depth': 3,  # the maximum depth of each tree
         'n_estimators': 50,
         'learning_rate': 0.01,
         'eta': 0.3,  # the training step for each iteration
