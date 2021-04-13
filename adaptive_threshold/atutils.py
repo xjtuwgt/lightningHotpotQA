@@ -219,9 +219,9 @@ def threshold_map_to_label(y_p: ndarray, y_n: ndarray, threshold_category):
         for b_idx, bound in enumerate(threshold_category):
             over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
             over_lap_list.append((over_lap_value, over_lap_type))
-        print('p_i={}, n_i={}'.format(p_i, n_i))
-        print(over_lap_list)
-        print('*' * 100)
+        # print('p_i={}, n_i={}'.format(p_i, n_i))
+        # print(over_lap_list)
+        # print('*' * 100)
         over_lap_res.append((over_lap_list, p_flag))
 
     flag_list = []
