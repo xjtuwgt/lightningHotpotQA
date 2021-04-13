@@ -69,7 +69,7 @@ def data_stats(wiki_data_name):
 
         if distinct_ner_num > 590:
             for key, value in row.items():
-                print('{}\n{}'.format(key, value, len(value)))
+                print('{}: {}\n{}'.format(key, len(value), value))
                 print('-' * 35)
 
         if distinct_ner_num not in distinct_num_ents_dict:
