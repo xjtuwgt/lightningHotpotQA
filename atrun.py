@@ -191,11 +191,13 @@ if __name__ == '__main__':
 
     ## step 2: model training and evaluation
     param = {
-        'max_depth': 5,  # the maximum depth of each tree
+        'max_depth': 6,  # the maximum depth of each tree
         'n_estimators': 500,
         'learning_rate': 0.005,
         'eta': 0.3,  # the training step for each iteration
         'verbosity': 2,  # logging mode - quiet
+        'rate_drop': 0.25,
+        'skip_drop': 0.25,
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
         'eval_metric': 'mlogloss',
