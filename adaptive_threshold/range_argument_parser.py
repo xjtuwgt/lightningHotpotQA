@@ -81,6 +81,8 @@ def train_parser():
 
     parser.add_argument("--epochs", default=5, type=int,
                         help="epochs")
+    parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
+                        help="evaluate every X updates steps.")
 
     parser.add_argument("--feat_drop", type=float, default=0.25, help='feature dropout ratio')
 
