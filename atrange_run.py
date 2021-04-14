@@ -15,7 +15,8 @@ def run(args):
                                    num_workers=args.cpu_number//2,
                                    batch_size=args.train_batch_size)
     for idx, x in enumerate(train_data_loader):
-        print(x)
+        for key, value in x.items():
+            print(key, value.shape)
 
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     dev_npz_data = RangeDataset(npz_file_name=dev_npz_file_name)

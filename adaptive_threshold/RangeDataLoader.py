@@ -32,4 +32,5 @@ class RangeDataset(Dataset):
         y_min = torch.stack([_[1] for _ in data], dim=0)
         y_max = torch.stack([_[2] for _ in data], dim=0)
         flag = torch.stack([_[3] for _ in data], dim=0)
-        return x, y_min, y_max, flag
+        sample = {'x_feat': x, 'y_min': y_min, 'y_max': y_max, 'flag': flag}
+        return sample
