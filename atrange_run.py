@@ -5,7 +5,7 @@ from adaptive_threshold.atutils import get_optimizer
 from os.path import join
 import torch
 from adaptive_threshold.RangeModel import RangeModel, loss_computation
-from tqdm import tqdm
+from tqdm import tqdm, trange
 from utils.gpu_utils import single_free_cuda
 
 
@@ -52,10 +52,14 @@ def run(args):
     eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
     print('Evaluate the model by = {} batches'.format(eval_batch_interval_num))
     ###++++++++++++++++++++++++++++++++++++++++++
-
+    start_epoch = 0
+    train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch",
+                            disable=args.local_rank not in [-1, 0])
     best_em_ratio = 0.0
-    for epoch in range(args.epochs):
-        for step, batch in tqdm(enumerate(train_data_loader)):
+    for epoch in train_iterator:
+        epoch_iterator = tqdm(train_data_loader, desc="Iteration", disable=args.local_rank not in [-1, 0])
+        for step, batch in enumerate(epoch_iterator):
+            model.train()
             #+++++++
             for key, value in batch.items():
                 batch[key] = value.to(device)
