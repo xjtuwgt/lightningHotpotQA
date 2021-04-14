@@ -29,8 +29,8 @@ class RangeDataset(Dataset):
     @staticmethod
     def collate_fn(data):
         x = torch.stack([_[0] for _ in data], dim=0)
-        y_min = torch.stack([_[1] for _ in data], dim=0)
-        y_max = torch.stack([_[2] for _ in data], dim=0)
-        flag = torch.stack([_[3] for _ in data], dim=0)
+        y_min = torch.cat([_[1] for _ in data], dim=0)
+        y_max = torch.cat([_[2] for _ in data], dim=0)
+        flag = torch.cat([_[3] for _ in data], dim=0)
         sample = {'x_feat': x, 'y_min': y_min, 'y_max': y_max, 'flag': flag}
         return sample
