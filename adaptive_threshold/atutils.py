@@ -190,6 +190,7 @@ def load_npz_data(npz_file_name):
         y = data['y']
         y_n = data['y_n']
         y_np = data['y_np']
+    print('Loading {} records from {}'.format(x.shape[0], npz_file_name))
     return x, y, y_n, y_np
 
 def save_numpy_array_for_classification(x_feats: ndarray, y: ndarray, y_n: ndarray, y_np: ndarray, y_labels, npz_file_name):
