@@ -30,7 +30,7 @@ def run(args):
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
     for batch_idx, batch in tqdm(enumerate(train_data_loader)):
-        scores = model(batch['x_feat']).unsqueeze(-1)
+        scores = model(batch['x_feat']).squeeze(-1)
         print(batch_idx, scores.shape)
     return
 
