@@ -6,20 +6,30 @@ import torch.nn.functional as F
 
 class PositionwiseFeedForward(nn.Module):
     "Implements FFN equation."
-    def __init__(self, model_dim, d_hidden, out_dim, dropout=0.25):
+    def __init__(self, model_dim, d_hidden, out_dim, dropout=0.1):
         super(PositionwiseFeedForward, self).__init__()
-        self.w_1 = nn.Linear(model_dim, d_hidden)
-        self.w_2 = nn.Linear(d_hidden, out_dim)
-        self.dropout = nn.Dropout(dropout)
-        self.init()
+        # self.w_1 = nn.Linear(model_dim, d_hidden)
+        # self.w_2 = nn.Linear(d_hidden, out_dim)
+        # self.dropout = nn.Dropout(dropout)
+        # self.init()
 
-    def forward(self, x):
-        return self.w_2(self.dropout(F.relu(self.w_1(x))))
+        self.output = nn.Sequential(
+            nn.Linear(model_dim, d_hidden * 2),
+            nn.ReLU(),
+            BertLayerNorm(d_hidden * 2, eps=1e-12),
+            nn.Dropout(dropout),
+            nn.Linear(d_hidden * 2, out_dim),
+        )
 
-    def init(self):
-        gain = nn.init.calculate_gain('relu')
-        nn.init.xavier_normal_(self.w_1.weight, gain=gain)
-        nn.init.xavier_normal_(self.w_2.weight, gain=gain)
+    def forward(self, hidden_states):
+        return self.output(hidden_states)
+    # def forward(self, x):
+    #     return self.w_2(self.dropout(F.relu(self.w_1(x))))
+    #
+    # def init(self):
+    #     gain = nn.init.calculate_gain('relu')
+    #     nn.init.xavier_normal_(self.w_1.weight, gain=gain)
+    #     nn.init.xavier_normal_(self.w_2.weight, gain=gain)
 
 class BertLayerNorm(nn.Module):
     def __init__(self, hidden_size, eps=1e-12):
