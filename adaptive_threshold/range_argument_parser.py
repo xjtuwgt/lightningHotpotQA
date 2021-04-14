@@ -61,7 +61,7 @@ def train_parser():
     parser.add_argument("--rand_seed", type=int, default=4321)
 
     parser.add_argument("--train_batch_size", type=int, default=128, help='training batch size')
-    parser.add_argument("--eval_batch_size", type=int, default=32, help='evaluation batch size')
+    parser.add_argument("--eval_batch_size", type=int, default=256, help='evaluation batch size')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=345, help='cls_emb_dim')
