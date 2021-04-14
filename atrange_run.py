@@ -29,7 +29,7 @@ def run(args):
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
     for batch_idx, batch in enumerate(train_data_loader):
-        scores = model(batch['x_feat'])
+        scores = model(batch['x_feat']).unsqueeze(-1)
         print(scores.shape)
     return
 
