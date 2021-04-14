@@ -38,10 +38,11 @@ def run(args):
     for batch_idx, batch in tqdm(enumerate(train_data_loader)):
         scores = model(batch['x_feat']).squeeze(-1)
         loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
-        print(batch_idx, scores.shape, loss)
         loss.backward()
         optimizer.step()
         model.zero_grad()
+        if batch_idx % 100 == 0:
+            print(loss)
     return
 
 if __name__ == '__main__':
