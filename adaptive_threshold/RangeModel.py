@@ -103,7 +103,8 @@ class RangeModel(nn.Module):
         x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
         # scores = self.threshold_score_func.forward(score_x)
         # scores = self.threshold_score_func.forward(x_emb)
-        scores = self.threshold_score_func.forward(score_map_emb)
+        # scores = self.threshold_score_func.forward(score_map_emb)
+        scores = self.threshold_score_func.forward(cls_map_emb)
         return scores
 
 def loss_computation(scores, y_min, y_max):
