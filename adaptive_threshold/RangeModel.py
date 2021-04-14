@@ -24,8 +24,8 @@ class LayerNorm(nn.Module):
         """Construct a layernorm module in the TF style (epsilon inside the square root).
         """
         super(LayerNorm, self).__init__()
-        self.weight = nn.Parameter(torch.ones(hidden_size))
-        self.bias = nn.Parameter(torch.zeros(hidden_size))
+        self.weight = nn.Parameter(torch.ones(hidden_size), requires_grad=True)
+        self.bias = nn.Parameter(torch.zeros(hidden_size), requires_grad=True)
         self.variance_epsilon = eps
 
     def forward(self, x):
