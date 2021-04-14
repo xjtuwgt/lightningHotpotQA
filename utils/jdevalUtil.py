@@ -107,6 +107,11 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
         support_para_mask_np = batch['para_mask'].data.cpu().numpy()
         cls_emb_np = cls_emb.data.cpu().numpy()
         ####################################################################
+        ####################################################################
+        predict_support_logit_np = sent[:, :, 1].data.cpu().numpy()
+        predict_support_para_logit_np = paras[:, :, 1].data.cpu().numpy()
+        ent_pre_logit_np = ent.data.cpu().numpy()
+        ####################################################################
 
         for i in range(predict_support_np.shape[0]):
             cur_sp_pred = [[] for _ in range(N_thresh)]
@@ -120,16 +125,25 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             if cut_sent_flag:
                 cut_sentence_count += 1
             ##+++++++++++++++++++++++++
-            sent_pred_ = {'sp_score': predict_support_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(), 'sp_names': example_dict[cur_id].sent_names}
-            para_pred_ = {'para_score': predict_support_para_np[i].tolist(), 'para_mask': support_para_mask_np[i].tolist(), 'para_names': example_dict[cur_id].para_names}
-            ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_prob[i].tolist(), 'ent_mask': ent_mask_np[i].tolist(),
-                         'query_entity': example_dict[cur_id].ques_entities_text, 'ctx_entity': example_dict[cur_id].ctx_entities_text,
-                         'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(), 'answer': answer_dict[cur_id]}
+            # sent_pred_ = {'sp_score': predict_support_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(), 'sp_names': example_dict[cur_id].sent_names}
+            # para_pred_ = {'para_score': predict_support_para_np[i].tolist(), 'para_mask': support_para_mask_np[i].tolist(), 'para_names': example_dict[cur_id].para_names}
+            # ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_prob[i].tolist(), 'ent_mask': ent_mask_np[i].tolist(),
+            #              'query_entity': example_dict[cur_id].ques_entities_text, 'ctx_entity': example_dict[cur_id].ctx_entities_text,
+            #              'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(), 'answer': answer_dict[cur_id]}
+            sent_pred_ = {'sp_score': predict_support_logit_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(),
+                          'sp_names': example_dict[cur_id].sent_names}
+            para_pred_ = {'para_score': predict_support_para_logit_np[i].tolist(),
+                          'para_mask': support_para_mask_np[i].tolist(), 'para_names': example_dict[cur_id].para_names}
+            ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_logit_np[i].tolist(),
+                         'ent_mask': ent_mask_np[i].tolist(),
+                         'query_entity': example_dict[cur_id].ques_entities_text,
+                         'ctx_entity': example_dict[cur_id].ctx_entities_text,
+                         'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(),
+                         'answer': answer_dict[cur_id]}
             cls_emb_= {'cls_emb': cls_emb_np[i].tolist()}
             res_pred = {**sent_pred_, **para_pred_, **ans_pred_, **cls_emb_}
             prediction_res_score_dict[cur_id] = res_pred
             ##+++++++++++++++++++++++++
-
             for j in range(predict_support_np.shape[1]):
                 if j >= len(example_dict[cur_id].sent_names):
                     break
