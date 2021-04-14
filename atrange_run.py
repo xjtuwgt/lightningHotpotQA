@@ -34,7 +34,7 @@ def run(args):
                                    shuffle=False,
                                    collate_fn=RangeDataset.collate_fn,
                                    num_workers=args.cpu_number // 2,
-                                   batch_size=args.train_batch_size)
+                                   batch_size=args.eval_batch_size)
 
     model = RangeModel(args=args)
     model.to(device)
