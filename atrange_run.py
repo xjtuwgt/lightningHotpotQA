@@ -27,11 +27,15 @@ def run(args):
     model = RangeModel(args=args)
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+
+    for batch_idx, batch in enumerate(train_data_loader):
+        scores = model(batch['x_feat'])
+        print(scores.shape)
     return
 
 if __name__ == '__main__':
     args = train_parser()
     for key, value in vars(args).items():
         print(key, value)
-
+    print('*' * 50)
     run(args=args)
