@@ -79,7 +79,7 @@ def train_parser():
     parser.add_argument("--max_grad_norm", default=1.0, type=float,
                         help="Max gradient norm.")
 
-    parser.add_argument("--epochs", default=5, type=int,
+    parser.add_argument("--num_train_epochs", default=5, type=int,
                         help="epochs")
     parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
