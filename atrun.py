@@ -193,13 +193,13 @@ if __name__ == '__main__':
     param = {
         'max_depth': 6,  # the maximum depth of each tree
         'n_estimators': 1000,
-        'learning_rate': 0.001,
+        'learning_rate': 0.002,
         'eta': 0.3,  # the training step for each iteration
         'verbosity': 2,  # logging mode - quiet
         'use_label_encoder': False,
         'objective': 'multi:softprob',  # error evaluation for multiclass training
         'eval_metric': 'mlogloss',
-        'num_class': 20}  # the number of classes that exist in this datset
+        'num_class': 24}  # the number of classes that exist in this datset
     xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
