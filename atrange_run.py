@@ -26,6 +26,9 @@ def run(args):
     #                                batch_size=args.train_batch_size)
 
     model = RangeModel(args=args)
+    model.zero_grad()
+    model.train()
+
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 

@@ -3,6 +3,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from numpy import ndarray
 import numpy as np
 from tqdm import tqdm
+from hgntransformers import AdamW
 import json
 
 def parse_args(args=None):
@@ -267,3 +268,15 @@ def adaptive_threshold_to_classification(train_npz_file_name, dev_npz_file_name,
     save_numpy_array_for_classification(x_feats=train_x, y=train_y_p, y_n=train_y_n, y_np=train_y_np, y_labels=train_class_labels, npz_file_name=train_npz_class_file_name)
     save_numpy_array_for_classification(x_feats=dev_x, y=dev_y_p, y_n=dev_y_n, y_np=train_y_np, y_labels=dev_class_labels, npz_file_name=dev_npz_class_file_name)
     return label_key_to_idx_dict
+
+
+def get_optimizer(model, args):
+    param_optimizer = list(model.named_parameters())
+
+    no_decay = ['bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': args.weight_decay},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0} ]
+    print('Learning rate = {}'.format(args.learning_rate))
+    optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
+    return optimizer

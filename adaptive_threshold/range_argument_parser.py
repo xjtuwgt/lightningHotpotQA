@@ -70,6 +70,15 @@ def train_parser():
     parser.add_argument("--train_filter", type=bool, default=False, help='whether performing train filter')
     parser.add_argument("--cpu_number", type=int, default=12, help='cpu number')
 
+    parser.add_argument("--learning_rate", default=1e-4, type=float,
+                        help="The initial learning rate for Adam.")
+    parser.add_argument("--weight_decay", default=0.0, type=float,
+                        help="Weight deay if we apply some.")
+    parser.add_argument("--adam_epsilon", default=1e-8, type=float,
+                        help="Epsilon for Adam optimizer.")
+    parser.add_argument("--max_grad_norm", default=1.0, type=float,
+                        help="Max gradient norm.")
+
     parser.add_argument("--feat_drop", type=float, default=0.25, help='feature dropout ratio')
 
     args = parser.parse_args()
