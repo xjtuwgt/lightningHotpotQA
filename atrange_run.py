@@ -66,7 +66,9 @@ def run(args):
             #+++++++
             scores = model(batch['x_feat']).squeeze(-1)
             loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            optimizer.zero_grad()
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             optimizer.step()
             model.zero_grad()
             if step % 100 == 0:
