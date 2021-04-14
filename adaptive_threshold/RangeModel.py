@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class PositionwiseFeedForward(nn.Module):
     "Implements FFN equation."
-    def __init__(self, model_dim, d_hidden, out_dim, dropout=0.1):
+    def __init__(self, model_dim, d_hidden, out_dim, dropout=0.25):
         super(PositionwiseFeedForward, self).__init__()
         self.w_1 = nn.Linear(model_dim, d_hidden)
         self.w_2 = nn.Linear(d_hidden, out_dim)
