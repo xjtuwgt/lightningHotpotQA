@@ -1,6 +1,7 @@
 from adaptive_threshold.range_argument_parser import train_parser
 from torch.utils.data import DataLoader
 from adaptive_threshold.RangeDataLoader import RangeDataset
+from adaptive_threshold.atutils import get_optimizer
 from os.path import join
 from adaptive_threshold.RangeModel import RangeModel, loss_computation
 from tqdm import tqdm
@@ -29,6 +30,8 @@ def run(args):
     model.zero_grad()
     model.train()
 
+    optimizer = get_optimizer(model=model, args=args)
+
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
@@ -36,6 +39,9 @@ def run(args):
         scores = model(batch['x_feat']).squeeze(-1)
         loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
         print(batch_idx, scores.shape, loss)
+        loss.backward()
+        optimizer.step()
+        model.zero_grad()
     return
 
 if __name__ == '__main__':
