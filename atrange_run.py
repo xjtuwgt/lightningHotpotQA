@@ -70,6 +70,7 @@ def run(args):
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             optimizer.step()
             model.zero_grad()
+
             if step % 100 == 0:
                 print('{}\t{}\t{:.5f}\n'.format(epoch, step, loss.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
