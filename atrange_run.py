@@ -86,22 +86,22 @@ def eval_model(model, data_loader, device):
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
             batch[key] = value.to(device)
-            with torch.no_grad():
-                scores = model(batch['x_feat']).squeeze(-1)
-                scores = torch.sigmoid(scores)
-                score_np = scores.data.cpu().numpy()
-                y_min_np = batch['y_min'].data.cpu().numpy()
-                y_max_np = batch['y_max'].data.cpu().numpy()
-                y_flag_np = batch['flag'].data.cpu().numpy()
+        with torch.no_grad():
+            scores = model(batch['x_feat']).squeeze(-1)
+            scores = torch.sigmoid(scores)
+            score_np = scores.data.cpu().numpy()
+            y_min_np = batch['y_min'].data.cpu().numpy()
+            y_max_np = batch['y_max'].data.cpu().numpy()
+            y_flag_np = batch['flag'].data.cpu().numpy()
 
-                for i in range(score_np.shape[0]):
-                    total_count = total_count + 1
-                    score_i = score_np[i]
-                    y_min_i = y_min_np[i]
-                    y_max_i = y_max_np[i]
-                    y_flag_i = y_flag_np[i]
-                    if score_i >= y_min_i and score_i <= y_max_i:
-                        em_count = em_count + 1
+            for i in range(score_np.shape[0]):
+                total_count = total_count + 1
+                score_i = score_np[i]
+                y_min_i = y_min_np[i]
+                y_max_i = y_max_np[i]
+                y_flag_i = y_flag_np[i]
+                if score_i >= y_min_i and score_i <= y_max_i:
+                    em_count = em_count + 1
     print(em_count, total_count)
     return em_count, total_count
 
