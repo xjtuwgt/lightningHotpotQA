@@ -88,6 +88,7 @@ def eval_model(model, data_loader, device):
             batch[key] = value.to(device)
             with torch.no_grad():
                 scores = model(batch['x_feat']).squeeze(-1)
+                scores = torch.sigmoid(scores)
                 score_np = scores.data.cpu().numpy()
                 y_min_np = batch['y_min'].data.cpu().numpy()
                 y_max_np = batch['y_max'].data.cpu().numpy()
