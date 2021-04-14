@@ -65,8 +65,6 @@ class RangeModel(nn.Module):
                                                d_hidden=1024, out_dim=self.hid_dim)
         self.score_map = PositionwiseFeedForward(model_dim=self.score_dim,
                                                d_hidden=1024, out_dim=self.hid_dim)
-
-
         self.threshold_score_func = OutputLayer(hidden_dim=2 * self.hid_dim,
                                            trans_drop=self.args.feat_drop,
                                            num_answer=1)
