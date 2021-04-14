@@ -70,9 +70,9 @@ def train_parser():
     parser.add_argument("--train_filter", type=bool, default=False, help='whether performing train filter')
     parser.add_argument("--cpu_number", type=int, default=12, help='cpu number')
 
-    parser.add_argument("--learning_rate", default=1e-3, type=float,
+    parser.add_argument("--learning_rate", default=5e-4, type=float,
                         help="The initial learning rate for Adam.")
-    parser.add_argument("--weight_decay", default=1e-3, type=float,
+    parser.add_argument("--weight_decay", default=1e-2, type=float,
                         help="Weight deay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float,
                         help="Epsilon for Adam optimizer.")
