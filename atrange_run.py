@@ -66,14 +66,16 @@ def run(args):
             optimizer.step()
             model.zero_grad()
             if step % 100 == 0:
-                print(epoch, step, loss.data.item())
+                print('{}\t{}\t{:.5f}\n'.format(epoch, step, loss.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, total_count = eval_model(model=model, data_loader=dev_data_loader, device=device)
                 em_ratio = em_count * 1.0/total_count
-                print('{}\t{}\t{}'.format(epoch, step, em_ratio))
+                print('*' * 35)
+                print('{}\t{}\t{:.5f}\n'.format(epoch, step, em_ratio))
+                print('*' * 35)
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio
-    print('Best em ratio = {}'.format(best_em_ratio))
+    print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio
 
 def eval_model(model, data_loader, device):
