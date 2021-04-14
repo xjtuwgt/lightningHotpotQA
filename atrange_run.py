@@ -53,11 +53,10 @@ def run(args):
     print('Evaluate the model by = {} batches'.format(eval_batch_interval_num))
     ###++++++++++++++++++++++++++++++++++++++++++
     start_epoch = 0
-    train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch",
-                            disable=args.local_rank not in [-1, 0])
+    train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch")
     best_em_ratio = 0.0
     for epoch in train_iterator:
-        epoch_iterator = tqdm(train_data_loader, desc="Iteration", disable=args.local_rank not in [-1, 0])
+        epoch_iterator = tqdm(train_data_loader, desc="Iteration")
         for step, batch in enumerate(epoch_iterator):
             model.train()
             #+++++++
