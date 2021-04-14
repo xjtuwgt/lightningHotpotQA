@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from adaptive_threshold.atutils import load_npz_data
 
 class RangeDataset(Dataset):
