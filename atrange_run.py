@@ -35,14 +35,15 @@ def run(args):
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
-    for batch_idx, batch in tqdm(enumerate(train_data_loader)):
-        scores = model(batch['x_feat']).squeeze(-1)
-        loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
-        loss.backward()
-        optimizer.step()
-        model.zero_grad()
-        if batch_idx % 100 == 0:
-            print(loss)
+    for epoch in range(args.epochs):
+        for batch_idx, batch in tqdm(enumerate(train_data_loader)):
+            scores = model(batch['x_feat']).squeeze(-1)
+            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            loss.backward()
+            optimizer.step()
+            model.zero_grad()
+            if batch_idx % 100 == 0:
+                print(epoch, batch_idx, loss.data.item())
     return
 
 if __name__ == '__main__':
