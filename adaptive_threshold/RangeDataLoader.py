@@ -13,7 +13,7 @@ class RangeDataset(Dataset):
         return self.x_feat.shape[0]
 
     def __getitem__(self, idx):
-        x_i = torch.from_numpy(self.x_feat[idx])
+        x_i = torch.from_numpy(self.x_feat[idx]).float()
         y_p_i, y_n_i = self.y_p[idx], self.y_n[idx]
 
         if y_p_i > y_n_i:
