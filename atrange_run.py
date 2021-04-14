@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 from adaptive_threshold.RangeDataLoader import RangeDataset
 from os.path import join
 from adaptive_threshold.RangeModel import RangeModel
+from tqdm import tqdm
 
 def run(args):
     if args.train_filter:
@@ -28,9 +29,9 @@ def run(args):
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 
-    for batch_idx, batch in enumerate(train_data_loader):
+    for batch_idx, batch in tqdm(enumerate(train_data_loader)):
         scores = model(batch['x_feat']).unsqueeze(-1)
-        print(scores.shape)
+        print(batch_idx, scores.shape)
     return
 
 if __name__ == '__main__':
