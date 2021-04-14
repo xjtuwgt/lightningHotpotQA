@@ -87,6 +87,10 @@ class RangeModel(nn.Module):
         self.threshold_score_func = OutputLayer(hidden_dim=self.score_dim,
                                                 trans_drop=self.args.feat_drop,
                                                 num_answer=1)
+
+        self.threshold_score_func = OutputLayer(hidden_dim=self.cls_emb_dim,
+                                                trans_drop=self.args.feat_drop,
+                                                num_answer=1)
     def forward(self, x: T):
         assert x.shape[1] == self.emb_dim
         cls_x = x[:,:self.cls_emb_dim]
@@ -94,8 +98,9 @@ class RangeModel(nn.Module):
         cls_map_emb = self.cls_map.forward(cls_x)
         score_map_emb = self.score_map.forward(score_x)
         x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
-        scores = self.threshold_score_func.forward(score_x)
+        # scores = self.threshold_score_func.forward(score_x)
         # scores = self.threshold_score_func.forward(x_emb)
+        scores = self.threshold_score_func.forward(cls_x)
         return scores
 
 def loss_computation(scores, y_min, y_max):
