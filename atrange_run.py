@@ -2,7 +2,7 @@ from adaptive_threshold.range_argument_parser import train_parser
 from torch.utils.data import DataLoader
 from adaptive_threshold.RangeDataLoader import RangeDataset
 from os.path import join
-from adaptive_threshold.RangeModel import RangeModel
+from adaptive_threshold.RangeModel import RangeModel, loss_computation
 from tqdm import tqdm
 
 def run(args):
@@ -31,7 +31,8 @@ def run(args):
 
     for batch_idx, batch in tqdm(enumerate(train_data_loader)):
         scores = model(batch['x_feat']).squeeze(-1)
-        print(batch_idx, scores.shape)
+        loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+        print(batch_idx, scores.shape, loss)
     return
 
 if __name__ == '__main__':
