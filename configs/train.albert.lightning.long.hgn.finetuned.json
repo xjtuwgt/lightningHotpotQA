@@ -1,5 +1,5 @@
 {
-    "exp_name": "HGN_SAE_Graph_albert_xxlarge_v2_long_docred_hgn_REC_COSINE_varied_lr",
+    "exp_name": "HGN_Graph_albert_xxlarge_v2_long_docred_hgn_REC_COSINE_varied_lr",
     "model_type": "albert",
     "num_train_epochs": 10,
     "encoder_name_or_path": "albert-xxlarge-v2",
