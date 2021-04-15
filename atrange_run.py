@@ -90,7 +90,7 @@ def eval_model(model, data_loader, device):
     em_count = 0
     total_count = 0
     # for batch in tqdm(data_loader):
-    for batch in tqdm(data_loader):
+    for batch in data_loader:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
             batch[key] = value.to(device)
