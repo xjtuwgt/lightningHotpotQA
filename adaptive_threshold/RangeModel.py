@@ -111,6 +111,9 @@ class RangeModel(nn.Module):
 def loss_computation(scores, y_min, y_max):
     # p_score = F.sigmoid(scores)
     p_score = scores
+    print(y_min)
+    print(y_max)
+    print(p_score)
     loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
     # loss = loss.mean()
     loss = loss.sum()
