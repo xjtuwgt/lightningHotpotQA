@@ -133,6 +133,6 @@ if __name__ == '__main__':
     ## step 1: train & dev data collection
     dev_data_collection(args=args)
     train_data_collection(args=args, train_filter=False)
-    # train_data_collection(args=args, train_filter=True)
+    train_data_collection(args=args, train_filter=True)
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # run(args=args)
