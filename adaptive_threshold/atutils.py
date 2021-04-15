@@ -289,6 +289,7 @@ def dev_data_collection(args):
     dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
     dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
     x_feats, y_value, y_n_np_value, y_np_value, x_feat_dict = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
+    print(y_value)
     dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
     save_numpy_array(x_feats=x_feats, y=y_value, y_n=y_n_np_value, y_np=y_np_value, npz_file_name=dev_npz_file_name)
