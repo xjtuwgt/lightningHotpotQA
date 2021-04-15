@@ -54,7 +54,8 @@ def run(args):
     start_epoch = 0
     train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch")
     best_em_ratio = 0.0
-    for epoch in train_iterator:
+    # for epoch in train_iterator:
+    for epoch in range(start_epoch, start_epoch + int(args.num_train_epochs)):
         # epoch_iterator = tqdm(train_data_loader, desc="Iteration")
         epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
