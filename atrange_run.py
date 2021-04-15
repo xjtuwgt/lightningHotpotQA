@@ -6,8 +6,11 @@ from os.path import join
 import torch
 from adaptive_threshold.RangeModel import RangeModel, loss_computation
 from tqdm import tqdm, trange
+import random
+import numpy as np
 from utils.gpu_utils import single_free_cuda
 from adaptive_threshold.atutils import dev_data_collection, train_data_collection
+from plmodels.jd_argument_parser import set_seed
 
 def run(args):
     if torch.cuda.is_available():
@@ -20,6 +23,14 @@ def run(args):
         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
     else:
         train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+
+    ##+++++++++
+    random_seed = args.rand_seed
+    random.seed(random_seed)
+    np.random.seed(random_seed)
+    torch.manual_seed(random_seed)
+    torch.cuda.manual_seed_all(random_seed)
+    ##+++++++++
     train_npz_data = RangeDataset(npz_file_name=train_npz_file_name)
     train_data_loader = DataLoader(dataset=train_npz_data,
                                    shuffle=True,
