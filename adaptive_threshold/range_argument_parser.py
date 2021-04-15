@@ -64,7 +64,7 @@ def train_parser():
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
-    parser.add_argument("--emb_dim", type=int, default=375, help='cls_emb_dim')
+    parser.add_argument("--emb_dim", type=int, default=345, help='cls_emb_dim')
     parser.add_argument("--hid_dim", type=int, default=1024, help='cls_emb_dim')
 
     parser.add_argument("--train_filter", type=bool, default=True, help='whether performing train filter')
