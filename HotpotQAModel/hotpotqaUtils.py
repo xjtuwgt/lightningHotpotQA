@@ -77,7 +77,6 @@ def find_sub_list(target: list, source: list) -> int:
             return i
     return -1
 ########################################################################################################################
-
 def selected_context_processing(row, tokenizer, selected_para_titles):
     question, supporting_facts, contexts, answer = row['question'], row['supporting_facts'], row['context'], row['answer']
     doc_title2doc_len = dict([(title, len(text)) for title, text in contexts])
@@ -129,7 +128,16 @@ def selected_context_processing(row, tokenizer, selected_para_titles):
     yes_no_flag = norm_answer.strip() in ['yes', 'no', 'noanswer']
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 
-def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
+#=======================================================================================================================
+def row_encoder(row, tokenizer, cls_token='[CLS]', sep_token='[SEP]'):
+
+    return
+
+
+def hotpot_answer_tokenizer(para_file, full_file,
+                            tokenizer, max_seq_length=512,
+                            cls_token='[CLS]',
+                            sep_token='[SEP]'):
     sel_para_data = json_loader(json_file_name=para_file)
     full_data = json_loader(json_file_name=full_file)
 
@@ -138,6 +146,11 @@ def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
     for row in tqdm(full_data):
         key = row['_id']
         qas_type = row['type']
+        sent_names = []
+        sup_facts_sent_id = []
+        para_names = []
+        sup_para_id = []
+
 
         sel_paras = sel_para_data[key]
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
@@ -145,3 +158,4 @@ def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
             selected_context_processing(row=row, tokenizer=tokenizer, selected_para_titles=selected_para_titles)
         if not answer_found_flag:
             answer_not_found_count = answer_not_found_count + 1
+        #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
