@@ -60,7 +60,7 @@ def train_parser():
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=4321)
 
-    parser.add_argument("--train_batch_size", type=int, default=2048, help='training batch size')
+    parser.add_argument("--train_batch_size", type=int, default=4096, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
@@ -72,7 +72,7 @@ def train_parser():
 
     parser.add_argument("--learning_rate", default=2e-5, type=float,
                         help="The initial learning rate for Adam.")
-    parser.add_argument("--weight_decay", default=1e-5, type=float,
+    parser.add_argument("--weight_decay", default=2e-5, type=float,
                         help="Weight deay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float,
                         help="Epsilon for Adam optimizer.")
