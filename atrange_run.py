@@ -7,6 +7,7 @@ import torch
 from adaptive_threshold.RangeModel import RangeModel, loss_computation
 from tqdm import tqdm, trange
 from utils.gpu_utils import single_free_cuda
+from adaptive_threshold.atutils import dev_data_collection, train_data_collection
 
 def run(args):
     if torch.cuda.is_available():
@@ -114,4 +115,9 @@ if __name__ == '__main__':
     for key, value in vars(args).items():
         print(key, value)
     print('*' * 50)
-    run(args=args)
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # step 1: train & dev data collection
+    dev_data_collection(args=args)
+    train_data_collection(args=args, train_filter=False)
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # run(args=args)
