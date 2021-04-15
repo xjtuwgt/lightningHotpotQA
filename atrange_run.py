@@ -55,7 +55,8 @@ def run(args):
     train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch")
     best_em_ratio = 0.0
     for epoch in train_iterator:
-        epoch_iterator = tqdm(train_data_loader, desc="Iteration")
+        # epoch_iterator = tqdm(train_data_loader, desc="Iteration")
+        epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
             model.train()
             #+++++++
@@ -70,7 +71,7 @@ def run(args):
             optimizer.step()
             model.zero_grad()
 
-            if step % 100 == 0:
+            if step % 10 == 0:
                 print('{}\t{}\t{:.5f}\n'.format(epoch, step, loss.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, total_count = eval_model(model=model, data_loader=dev_data_loader, device=device)
