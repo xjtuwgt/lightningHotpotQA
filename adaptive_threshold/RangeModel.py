@@ -91,9 +91,9 @@ class RangeModel(nn.Module):
         # self.threshold_score_func = OutputLayer(hidden_dim=self.cls_emb_dim,
         #                                         trans_drop=self.args.feat_drop,
         #                                         num_answer=1)
-        self.threshold_score_func = OutputLayer(hidden_dim=self.hid_dim,
-                                                trans_drop=self.args.feat_drop,
-                                                num_answer=1)
+        # self.threshold_score_func = OutputLayer(hidden_dim=self.hid_dim,
+        #                                         trans_drop=self.args.feat_drop,
+        #                                         num_answer=1)
     def forward(self, x: T):
         assert x.shape[1] == self.emb_dim
         cls_x = x[:,:self.cls_emb_dim]
