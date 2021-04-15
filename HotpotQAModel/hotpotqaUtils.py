@@ -78,7 +78,7 @@ def find_sub_list(target: list, source: list) -> int:
     return -1
 ########################################################################################################################
 
-def pos_neg_context_split(row, tokenizer, selected_para_titles):
+def selected_context_processing(row, tokenizer, selected_para_titles):
     question, supporting_facts, contexts, answer = row['question'], row['supporting_facts'], row['context'], row['answer']
     doc_title2doc_len = dict([(title, len(text)) for title, text in contexts])
     supporting_facts_filtered = [(supp_title, supp_sent_idx) for supp_title, supp_sent_idx in supporting_facts
@@ -134,6 +134,12 @@ def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
     full_data = json_loader(json_file_name=full_file)
 
     examples = []
+    answer_not_found_count = 0
     for row in tqdm(full_data):
         key = row['_id']
+        sel_paras = sel_para_data[key]
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
+        norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag = \
+            selected_context_processing(row=row, tokenizer=tokenizer, selected_para_titles=selected_para_titles)
+        if not answer_found_flag:
+            answer_not_found_count = answer_not_found_count + 1
