@@ -8,8 +8,6 @@ from adaptive_threshold.RangeModel import RangeModel, loss_computation
 from tqdm import tqdm, trange
 from utils.gpu_utils import single_free_cuda
 
-
-
 def run(args):
     if torch.cuda.is_available():
         device_ids, _ = single_free_cuda()

@@ -5,6 +5,8 @@ import numpy as np
 from tqdm import tqdm
 from hgntransformers import AdamW
 import json
+from os.path import join
+
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
@@ -281,3 +283,50 @@ def get_optimizer(model, args):
     print('Learning rate = {}'.format(args.learning_rate))
     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
     return optimizer
+
+
+def dev_data_collection(args):
+    dev_raw_data_file_name = join(args.input_dir, args.raw_dev_data)
+    dev_score_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_score_name)
+    x_feats, y_value, y_n_np_value, y_np_value, x_feat_dict = feat_label_extraction(raw_data_name=dev_raw_data_file_name, score_data_name=dev_score_file_name, train_type=args.train_type, train=False)
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_json_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_json_name)
+    save_numpy_array(x_feats=x_feats, y=y_value, y_n=y_n_np_value, y_np=y_np_value, npz_file_name=dev_npz_file_name)
+    print('Saving dev data into {}'.format(dev_npz_file_name))
+    json.dump(x_feat_dict, open(dev_json_file_name, 'w'))
+    print('Saving dev data into {}'.format(dev_json_file_name))
+
+def train_data_collection(args, train_filter):
+    train_raw_data_file_name = join(args.input_dir, args.raw_train_data)
+    train_score_file_name = join(args.pred_dir, args.model_name_or_path, args.train_type + '_' + args.train_score_name)
+    if train_filter:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+    else:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+    x_feats, y_value, y_n_np_value, y_np_value, _ = feat_label_extraction(raw_data_name=train_raw_data_file_name, score_data_name=train_score_file_name,
+                                             train_type=args.train_type, train=True, train_filter=train_filter)
+    save_numpy_array(x_feats=x_feats, y=y_value, y_n=y_n_np_value, y_np=y_np_value, npz_file_name=train_npz_file_name)
+    print('Saving train data into {}'.format(train_npz_file_name))
+
+
+def train_dev_map_to_classification(args, train_filter, threshold_category):
+    dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
+    dev_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_class_name)
+
+    if train_filter:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_name)
+        train_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.train_feat_class_name)
+    else:
+        train_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_name)
+        train_class_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.train_feat_class_name)
+
+    class_label_dict = adaptive_threshold_to_classification(train_npz_file_name=train_npz_file_name, dev_npz_file_name=dev_npz_file_name,
+                                         threshold_category=threshold_category, train_npz_class_file_name=train_class_npz_file_name,
+                                         dev_npz_class_file_name=dev_class_npz_file_name)
+    if train_filter:
+        class_label_dict_file_name = join(args.pred_dir, args.model_name_or_path, 'filter_' + args.class_label_map_name)
+    else:
+        class_label_dict_file_name = join(args.pred_dir, args.model_name_or_path, args.class_label_map_name)
+    for key, value in class_label_dict.items():
+        print(key, value)
+    json.dump(class_label_dict, open(class_label_dict_file_name, 'w'))
