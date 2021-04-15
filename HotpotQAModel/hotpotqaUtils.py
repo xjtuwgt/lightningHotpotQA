@@ -137,6 +137,8 @@ def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
     answer_not_found_count = 0
     for row in tqdm(full_data):
         key = row['_id']
+        qas_type = row['type']
+
         sel_paras = sel_para_data[key]
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
         norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag = \
