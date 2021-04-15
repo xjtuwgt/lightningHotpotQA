@@ -66,6 +66,12 @@ class OutputLayer(nn.Module):
             nn.ReLU(),
             LayerNorm(hidden_dim * 4, eps=1e-12),
             nn.Dropout(trans_drop),
+            nn.Linear(hidden_dim * 4, hidden_dim * 4),
+
+            nn.Linear(4 * hidden_dim, hidden_dim * 4),
+            nn.ReLU(),
+            LayerNorm(hidden_dim * 4, eps=1e-12),
+            nn.Dropout(trans_drop),
             nn.Linear(hidden_dim * 4, num_answer),
             #+++++++++
             # nn.Linear(hidden_dim*2, num_answer),
