@@ -190,17 +190,17 @@ if __name__ == '__main__':
     # train_dev_map_to_classification(args=args, train_filter=True, threshold_category=threshold_category)
 
     ## step 2: model training and evaluation
-    param = {
-        'max_depth': 6,  # the maximum depth of each tree
-        'n_estimators': 1000,
-        'learning_rate': 0.002,
-        'eta': 0.3,  # the training step for each iteration
-        'verbosity': 2,  # logging mode - quiet
-        'use_label_encoder': False,
-        'objective': 'multi:softprob',  # error evaluation for multiclass training
-        'eval_metric': 'mlogloss',
-        'num_class': 24}  # the number of classes that exist in this datset
-    xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
+    # param = {
+    #     'max_depth': 6,  # the maximum depth of each tree
+    #     'n_estimators': 1000,
+    #     'learning_rate': 0.002,
+    #     'eta': 0.3,  # the training step for each iteration
+    #     'verbosity': 2,  # logging mode - quiet
+    #     'use_label_encoder': False,
+    #     'objective': 'multi:softprob',  # error evaluation for multiclass training
+    #     'eval_metric': 'mlogloss',
+    #     'num_class': 24}  # the number of classes that exist in this datset
+    # xgboost_train_and_evaluation(args=args, params=param, train_filter=False)
 
     # dev_npz_file_name = join(args.pred_dir, args.model_name_or_path, args.dev_feat_name)
     # dev_x, dev_y, dev_y_np = load_npz_data(npz_file_name=dev_npz_file_name)
