@@ -107,7 +107,7 @@ def eval_model(model, data_loader, device):
                 y_flag_i = y_flag_np[i]
                 if score_i >= y_min_i and score_i <= y_max_i and y_flag_i == 1:
                     em_count = em_count + 1
-    print(em_count, total_count)
+    # print(em_count, total_count)
     return em_count, total_count
 
 if __name__ == '__main__':
