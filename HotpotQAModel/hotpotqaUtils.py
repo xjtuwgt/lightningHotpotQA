@@ -3,6 +3,7 @@ import pandas as pd
 from pandas import DataFrame
 from time import time
 from tqdm import tqdm
+import itertools
 
 def json_loader(json_file_name: str):
     with open(json_file_name, 'r', encoding='utf-8') as reader:
@@ -77,27 +78,29 @@ def find_sub_list(target: list, source: list) -> int:
     return -1
 ########################################################################################################################
 
-def pos_neg_context_split(row, tokenizer):
+def pos_neg_context_split(row, tokenizer, selected_para_titles):
     question, supporting_facts, contexts, answer = row['question'], row['supporting_facts'], row['context'], row['answer']
     doc_title2doc_len = dict([(title, len(text)) for title, text in contexts])
     supporting_facts_filtered = [(supp_title, supp_sent_idx) for supp_title, supp_sent_idx in supporting_facts
                                  if supp_sent_idx < doc_title2doc_len[supp_title]] ##some supporting facts are out of sentence index
     positive_titles = set([x[0] for x in supporting_facts_filtered]) ## get postive document titles
+    ################################################################################################################
     norm_answer = normalize_text(text=answer) ## normalize the answer (add a space between the answer)
     norm_question = normalize_question(question.lower()) ## normalize the question by removing the question mark
-    not_found_flag = False ## some answer might be not founded in supporting sentence
     ################################################################################################################
-    pos_doc_num = len(positive_titles) ## number of positive documents
-    pos_ctxs, neg_ctxs = [], []
-    for ctx_idx, ctx in enumerate(contexts): ## Original ctx index, record the original index order
-        title, text = ctx[0], ctx[1]
-        text_lower = [normalize_text(text=sent) for sent in text]
+    answer_found_flag = False ## some answer might be not founded in supporting sentence
+    ################################################################################################################
+    selected_contexts = []
+    context_dict = dict(row['context'])
+    for title in selected_para_titles:
+        para_text = context_dict[title]
+        para_text_lower = [normalize_text(text=sent) for sent in para_text]
         if title in positive_titles:
             count = 1
             supp_sent_flags = []
             for supp_title, supp_sent_idx in supporting_facts_filtered:
                 if title == supp_title:
-                    supp_sent = text_lower[supp_sent_idx]
+                    supp_sent = para_text_lower[supp_sent_idx]
                     if norm_answer.strip() not in ['yes', 'no', 'noanswer']:
                         has_answer = answer_span_checker(norm_answer.strip(), supp_sent)
                         if has_answer:
@@ -109,30 +112,22 @@ def pos_neg_context_split(row, tokenizer):
                                 else:
                                     supp_sent_flags.append((supp_sent_idx, True))
                                     count = count + 1
+                                    answer_found_flag = True
                             else:
                                 supp_sent_flags.append((supp_sent_idx, True))
                                 count = count + 1
+                                answer_found_flag = True
                         else:
                             supp_sent_flags.append((supp_sent_idx, False))
                     else:
                         supp_sent_flags.append((supp_sent_idx, False))
-            pos_ctxs.append([title.lower(), text_lower, count, supp_sent_flags, ctx_idx])  ## Identify the support document with answer
+            selected_contexts.append([title, para_text_lower, count, supp_sent_flags, True])  ## Identify the support document with answer
         else:
-            neg_ctxs.append([title.lower(), text_lower, 0, [], ctx_idx])
-    neg_doc_num = len(neg_ctxs)
-    pos_counts = [x[2] for x in pos_ctxs]
-    if norm_answer.strip() not in ['yes', 'no', 'noanswer']:
-        if sum(pos_counts) == 2:
-            not_found_flag = True
-    assert len(pos_counts) == 2
-    if not_found_flag:
+            selected_contexts.append([title, para_text_lower, 0, [], False])
+    if not answer_found_flag:
         norm_answer = 'noanswer'
-    if (pos_counts[0] > 1 and pos_counts[1] > 1) or (pos_counts[0] <= 1 and pos_counts[1] <= 1):
-        answer_type = False
-    else:
-        answer_type = True
     yes_no_flag = norm_answer.strip() in ['yes', 'no', 'noanswer']
-    return norm_question, norm_answer, pos_ctxs, neg_ctxs, supporting_facts_filtered, answer_type, pos_doc_num, neg_doc_num, yes_no_flag, not_found_flag
+    return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 
 def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
     sel_para_data = json_loader(json_file_name=para_file)
@@ -141,3 +136,4 @@ def hotpot_answer_tokenizer(para_file, full_file, tokenizer):
     examples = []
     for row in tqdm(full_data):
         key = row['_id']
+        selected_para_titles = itertools.chain.from_iterable(sel_paras)
