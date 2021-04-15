@@ -59,7 +59,7 @@ class OutputLayer(nn.Module):
         self.output = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim*2),
             nn.ReLU(),
-            # LayerNorm(hidden_dim*2, eps=1e-12),
+            LayerNorm(hidden_dim*2, eps=1e-12),
             nn.Dropout(trans_drop),
             nn.Linear(hidden_dim*2, num_answer),
         )
