@@ -58,13 +58,13 @@ def distribution_feat_extraction(scores: ndarray, keep_num=False):
     ##gap: min, max, mean, median, 1/4, 3/4 score, std
     min_value, max_value, mean_value, median_value, std_value = np.min(scores), np.max(scores), np.mean(scores), np.median(scores), np.std(scores)
     quartile_1, quartile_2 = np.percentile(scores, 25), np.percentile(scores, 75)
-    # quartile_3, quartile_4, quartile_5, quartile_6, quartile_7 = np.percentile(scores, 20), \
-    #                                                              np.percentile(scores, 40), \
-    #                                                              np.percentile(scores, 60), \
-    #                                                              np.percentile(scores, 80), \
-    #                                                              np.percentile(scores, 90)
-    # dist_feat = [min_value, max_value, mean_value, median_value, std_value, quartile_1, quartile_2, quartile_3, quartile_4, quartile_5, quartile_6, quartile_7]
-    dist_feat = [min_value, max_value, mean_value, median_value, std_value, quartile_1, quartile_2]
+    quartile_3, quartile_4, quartile_5, quartile_6, quartile_7 = np.percentile(scores, 20), \
+                                                                 np.percentile(scores, 40), \
+                                                                 np.percentile(scores, 60), \
+                                                                 np.percentile(scores, 80), \
+                                                                 np.percentile(scores, 90)
+    dist_feat = [min_value, max_value, mean_value, median_value, std_value, quartile_1, quartile_2, quartile_3, quartile_4, quartile_5, quartile_6, quartile_7]
+    # dist_feat = [min_value, max_value, mean_value, median_value, std_value, quartile_1, quartile_2]
     dist_feat = [x.tolist() for x in dist_feat]
     if keep_num:
         num = float(scores.shape[0])
@@ -79,7 +79,7 @@ def distribution_feat(scores: ndarray):
         gap_scores = np.array([reverse_score[i] - reverse_score[i+1] for i in range(scores.shape[0]-1)])
         gap_dist_feat = distribution_feat_extraction(scores=gap_scores, keep_num=False)
     else:
-        gap_dist_feat = [0.0] * 7
+        gap_dist_feat = [0.0] * (len(dist_feat) - 1)
     dist_feat.extend(gap_dist_feat)
     return dist_feat
 
