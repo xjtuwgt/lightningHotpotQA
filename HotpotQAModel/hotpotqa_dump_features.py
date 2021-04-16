@@ -59,7 +59,7 @@ if __name__ == '__main__':
         data_source_type = data_source_name
     else:
         data_source_type = None
-    print('data_type = {} \n data_source_id= {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))
+    print('data_type = {} \n data_source_id = {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))
     examples = hotpot_answer_tokenizer(para_file=args.para_path,
                                        full_file=args.full_data,
                                        tokenizer=tokenizer,
