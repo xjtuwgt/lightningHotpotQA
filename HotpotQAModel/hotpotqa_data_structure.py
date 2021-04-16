@@ -4,31 +4,33 @@ class Example(object):
                  qas_type,
                  question_text,
                  question_tokens,
+                 question_input_ids,
                  ctx_text,
-                 doc_tokens,
-                 sent_num,
+                 ctx_tokens,
+                 ctx_input_ids,
                  sent_names,
                  para_names,
-                 para_start_end_position,
-                 sent_start_end_position,
                  sup_fact_id=None,
                  sup_para_id=None,
-                 orig_answer_text=None,
-                 start_position=None,
-                 end_position=None):
+                 answer_text=None,
+                 answer_tokens=None,
+                 answer_input_ids=None,
+                 answer_positions=None,
+                 ctx_with_answer=None):
         self.qas_id = qas_id
         self.qas_type = qas_type
         self.question_tokens = question_tokens
-        self.doc_tokens = doc_tokens
+        self.ctx_tokens = ctx_tokens
         self.question_text = question_text
-        self.sent_num = sent_num
+        self.question_input_ids = question_input_ids
+        self.ctx_input_ids = ctx_input_ids
         self.sent_names = sent_names
         self.para_names = para_names
         self.sup_fact_id = sup_fact_id
         self.sup_para_id = sup_para_id
-        self.para_start_end_position = para_start_end_position
-        self.sent_start_end_position = sent_start_end_position
         self.ctx_text = ctx_text
-        self.orig_answer_text = orig_answer_text
-        self.start_position = start_position
-        self.end_position = end_position
+        self.answer_text = answer_text
+        self.answer_tokens = answer_tokens
+        self.answer_input_ids = answer_input_ids
+        self.answer_positions = answer_positions
+        self.ctx_with_answer = ctx_with_answer
