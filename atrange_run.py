@@ -55,7 +55,6 @@ def run(args):
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     print('*' * 75)
-
     ###++++++++++++++++++++++++++++++++++++++++++
     total_batch_num = len(train_data_loader)
     print('Total number of batches = {}'.format(total_batch_num))

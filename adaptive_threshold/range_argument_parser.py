@@ -67,7 +67,7 @@ def train_parser():
     parser.add_argument("--emb_dim", type=int, default=375, help='cls_emb_dim')
     parser.add_argument("--hid_dim", type=int, default=1024, help='cls_emb_dim')
 
-    parser.add_argument("--train_filter", type=bool, default=True, help='whether performing train filter')
+    parser.add_argument("--train_filter", type=bool, default=False, help='whether performing train filter')
     parser.add_argument("--cpu_number", type=int, default=12, help='cpu number')
 
     parser.add_argument("--learning_rate", default=2e-5, type=float,
