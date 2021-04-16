@@ -50,15 +50,15 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "1. Data preprocessing tokenizer (long)"
+        echo "1. Data preprocessing tokenizer (long lower case)"
         # Input: INPUT_FILE, enwiki_ner.db
         # Output: doc_link_ner.json
-        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
+        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --do_lower_case --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
 
-        echo "2. Data preprocessing tokenizer (HGN)"
+        echo "2. Data preprocessing tokenizer (HGN lower case)"
         # Input: INPUT_FILE, enwiki_ner.db
         # Output: doc_link_ner.json
-        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
+        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --do_lower_case --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
 
     done
 

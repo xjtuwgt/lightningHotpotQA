@@ -131,7 +131,8 @@ def hotpot_answer_tokenizer(para_file: str,
                             tokenizer,
                             cls_token='[CLS]',
                             sep_token='[SEP]',
-                            is_roberta=False):
+                            is_roberta=False,
+                            data_source_type=None):
     sel_para_data = json_loader(json_file_name=para_file)
     full_data = json_loader(json_file_name=full_file)
     examples = []
@@ -235,6 +236,10 @@ def hotpot_answer_tokenizer(para_file: str,
             assert len(para_names) == para_num
             assert len(sent_names) == sent_num
             assert len(ctx_token_list) == para_num and len(ctx_input_id_list) == para_num
+            ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++diff the rankers
+            if data_source_type is not None:
+                key = key + "_" + data_source_type
+            ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             example = Example(qas_id=key,
                               qas_type=qas_type,
                               ctx_text=selected_contexts,

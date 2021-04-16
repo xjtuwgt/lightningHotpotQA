@@ -1,6 +1,13 @@
 import argparse
 from model_envs import MODEL_CLASSES
 from HotpotQAModel.hotpotqaUtils import hotpot_answer_tokenizer
+from os.path import join
+
+
+def get_cached_filename(f_type, config):
+    f_type_set = {'long_hotpotqa_tokenized_examples', 'hgn_hotpotqa_tokenized_examples'}
+    assert f_type in f_type_set
+    return f"cached_{f_type}_{config.model_type}.pkl.gz"
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -45,10 +52,7 @@ if __name__ == '__main__':
     data_type = args.data_type
     if args.do_lower_case:
         ranker = ranker + '_low'
-    if args.reverse:
-        data_source_name = "{}_reverse".format(ranker)
-    else:
-        data_source_name = "{}".format(ranker)
+    data_source_name = "{}".format(ranker)
     if "train" in data_type:
         data_source_type = data_source_name
     else:
@@ -60,3 +64,5 @@ if __name__ == '__main__':
                                        cls_token=tokenizer.cls_token,
                                        sep_token=tokenizer.sep_token,
                                        is_roberta=bool(args.model_type in ['roberta']))
+    cached_examples_file = join(args.output_dir,
+                                        get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
