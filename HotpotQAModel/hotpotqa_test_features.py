@@ -19,17 +19,22 @@ from eval.hotpot_evaluate_v1 import normalize_answer
 def consist_checker(para_file: str,
                     full_file: str,
                     example_file: str,
-                    tokenizer):
+                    tokenizer,
+                    data_source_type=None):
     sel_para_data = json_loader(json_file_name=para_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
+    example_dict = {e.qas_id: e for e in examples}
     assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
-    for example in tqdm(examples):
-        key = example.qas_id
-        if '_' in key:
-            key = key.split[0]
-        print(key)
+    for row in tqdm(full_data):
+        key = row['_id']
+        if data_source_type is not None:
+            exam_key = key + '_' + data_source_type
+        else:
+            exam_key = key
+        print('{}\t{}'.format(key, exam_key))
+
 
     return
     # answer_dict = dict()
