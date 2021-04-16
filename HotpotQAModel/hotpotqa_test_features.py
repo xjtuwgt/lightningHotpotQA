@@ -33,7 +33,12 @@ def consist_checker(para_file: str,
             exam_key = key + '_' + data_source_type
         else:
             exam_key = key
+        raw_question = row['question']
+        example_i = example_dict[exam_key]
+        exm_question = example_i.question_text
         print('{}\t{}'.format(key, exam_key))
+        print(raw_question)
+        print(exm_question)
 
 
     return
