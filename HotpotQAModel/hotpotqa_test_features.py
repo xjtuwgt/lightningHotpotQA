@@ -58,7 +58,9 @@ def consist_checker(para_file: str,
             print('*' * 75)
             print('exm tokens: ', exm_ctx_token_list)
             print('*' * 75)
-            print('exm decode: ', tokenizer.decode(exm_ctx_input_ids))
+            for x in exm_ctx_input_ids:
+                for y in x:
+                    print('exm decode: ', tokenizer.decode(y))
 
     print(no_answer_count)
     return
