@@ -148,7 +148,7 @@ def hotpot_answer_tokenizer(para_file: str,
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
         norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag = \
             ranked_context_processing(row=row, tokenizer=tokenizer, selected_para_titles=selected_para_titles, is_roberta=is_roberta)
-        if not answer_found_flag:
+        if not answer_found_flag and yes_no_flag:
             answer_not_found_count = answer_not_found_count + 1
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_tokens = [cls_token]
