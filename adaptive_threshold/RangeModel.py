@@ -9,11 +9,11 @@ class PositionwiseFeedForward(nn.Module):
     def __init__(self, model_dim, d_hidden, out_dim, dropout=0.1):
         super(PositionwiseFeedForward, self).__init__()
         self.output = nn.Sequential(
-            nn.Linear(model_dim, d_hidden * 2),
+            nn.Linear(model_dim, d_hidden * 4),
             nn.ReLU(),
-            LayerNorm(d_hidden * 2, eps=1e-12),
+            LayerNorm(d_hidden * 4, eps=1e-12),
             nn.Dropout(dropout),
-            nn.Linear(d_hidden * 2, out_dim),
+            nn.Linear(d_hidden * 4, out_dim),
         )
 
     def forward(self, hidden_states):
