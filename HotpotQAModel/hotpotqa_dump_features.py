@@ -2,6 +2,8 @@ import argparse
 from model_envs import MODEL_CLASSES
 from HotpotQAModel.hotpotqaUtils import hotpot_answer_tokenizer
 from os.path import join
+import gzip
+import pickle
 
 
 def get_cached_filename(f_type, config):
@@ -66,3 +68,6 @@ if __name__ == '__main__':
                                        is_roberta=bool(args.model_type in ['roberta']))
     cached_examples_file = join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
+    with gzip.open(cached_examples_file, 'wb') as fout:
+        pickle.dump(examples, fout)
+    print('Saving {} examples in {}'.format(len(examples), cached_examples_file))
