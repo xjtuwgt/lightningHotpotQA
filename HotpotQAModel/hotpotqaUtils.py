@@ -10,7 +10,6 @@ import re
 nlp = spacy.load("en_core_web_lg", disable=['tagger', 'parser'])
 infix_re = re.compile(r'''[-—–~]''')
 nlp.tokenizer.infix_finditer = infix_re.finditer
-
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def json_loader(json_file_name: str):
     with open(json_file_name, 'r', encoding='utf-8') as reader:

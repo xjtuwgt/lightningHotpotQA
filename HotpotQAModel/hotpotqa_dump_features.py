@@ -5,7 +5,6 @@ from os.path import join
 import gzip
 import pickle
 
-
 def get_cached_filename(f_type, config):
     f_type_set = {'long_low_hotpotqa_tokenized_examples', 'hgn_low_hotpotqa_tokenized_examples'}
     assert f_type in f_type_set
