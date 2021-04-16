@@ -27,6 +27,7 @@ def consist_checker(para_file: str,
     example_dict = {e.qas_id: e for e in examples}
     assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
+    no_answer_count = 0
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -39,11 +40,16 @@ def consist_checker(para_file: str,
         exm_question = example_i.question_text
         exm_answer = example_i.answer_text
         print('{}\t{}'.format(key, exam_key))
-        print('raw question:', raw_question)
-        print('exm question:', exm_question)
-        print('raw answer:', raw_answer)
-        print('exm answer:', exm_answer)
+        # print('raw question:', raw_question)
+        # print('exm question:', exm_question)
+        # print('raw answer:', raw_answer)
+        # print('exm answer:', exm_answer)
+        if exm_answer.strip() in ['noanswer']:
+            print('raw answer:', raw_answer)
+            print('exm answer:', exm_answer)
+            no_answer_count = no_answer_count + 1
 
+    print(no_answer_count)
     return
     # answer_dict = dict()
     # sp_dict = dict()
