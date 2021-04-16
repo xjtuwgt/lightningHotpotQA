@@ -35,10 +35,12 @@ def consist_checker(para_file: str,
         else:
             exam_key = key
         raw_question = row['question']
+        raw_context = row['context']
         raw_answer = row['answer']
         example_i = example_dict[exam_key]
         exm_question = example_i.question_text
         exm_answer = example_i.answer_text
+        exm_context = example_i.ctx_text
         print('{}\t{}'.format(key, exam_key))
         # print('raw question:', raw_question)
         # print('exm question:', exm_question)
@@ -48,6 +50,8 @@ def consist_checker(para_file: str,
             print('raw answer:', raw_answer)
             print('exm answer:', exm_answer)
             no_answer_count = no_answer_count + 1
+            print('raw context:', raw_context)
+            print('exm context:', exm_context)
 
     print(no_answer_count)
     return
