@@ -30,12 +30,16 @@ def answer_span_checker(answer, sentence):
     if find_idx < 0:
         return False
     return True
-def find_answer_span(norm_answer, sentence, tokenizer):
-    answer_encode_ids = tokenizer.text_encode(text=norm_answer, add_special_tokens=False)
-    sentence_encode_ids = tokenizer.text_encode(text=sentence, add_special_tokens=False)
-    idx = sub_list_match_idx(target=answer_encode_ids, source=sentence_encode_ids)
+def find_answer_span(norm_answer, sentence, tokenizer, is_roberta):
+    if is_roberta:
+        ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
+        sent_sub_tokens = tokenizer.tokenize(sentence, add_prefix_space=True)
+    else:
+        ans_sub_tokens = tokenizer.tokenize(norm_answer)
+        sent_sub_tokens = tokenizer.tokenize(sentence)
+    idx = sub_list_match_idx(target=ans_sub_tokens, source=sent_sub_tokens)
     flag = idx >= 0
-    return flag, answer_encode_ids, sentence_encode_ids
+    return flag, ans_sub_tokens, sent_sub_tokens
 def find_sub_list_fuzzy(target: list, source: list) -> int:
     if len(target) > len(source):
         return -1
@@ -71,7 +75,7 @@ def find_sub_list(target: list, source: list) -> int:
             return i
     return -1
 ########################################################################################################################
-def ranked_context_processing(row, tokenizer, selected_para_titles):
+def ranked_context_processing(row, tokenizer, selected_para_titles, is_roberta):
     question, supporting_facts, contexts, answer = row['question'], row['supporting_facts'], row['context'], row['answer']
     doc_title2doc_len = dict([(title, len(text)) for title, text in contexts])
     supporting_facts_filtered = [(supp_title, supp_sent_idx) for supp_title, supp_sent_idx in supporting_facts
@@ -97,9 +101,9 @@ def ranked_context_processing(row, tokenizer, selected_para_titles):
                     if norm_answer.strip() not in ['yes', 'no', 'noanswer']:
                         has_answer = answer_span_checker(norm_answer.strip(), supp_sent)
                         if has_answer:
-                            encode_has_answer, X, Y = find_answer_span(norm_answer.strip(), supp_sent, tokenizer)
+                            encode_has_answer, X, Y = find_answer_span(norm_answer.strip(), supp_sent, tokenizer, is_roberta)
                             if not encode_has_answer:
-                                encode_has_answer, X, Y = find_answer_span(norm_answer, supp_sent, tokenizer)
+                                encode_has_answer, X, Y = find_answer_span(norm_answer, supp_sent, tokenizer, is_roberta)
                                 if not encode_has_answer:
                                     supp_sent_flags.append((supp_sent_idx, False))
                                 else:
@@ -203,14 +207,20 @@ def hotpot_answer_tokenizer(para_file: str,
                 ans_sub_tokens = None
                 ans_input_ids = None
             else:
-                ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
+                if is_roberta:
+                    ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
+                else:
+                    ans_sub_tokens = tokenizer.tokenize(norm_answer)
                 ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
                 for sup_sent_idx, supp_sent_flag in answer_sent_flags:
                     supp_sent_encode_ids = sent_input_id_list[sup_sent_idx]
                     if supp_sent_flag:
                         answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
                         if answer_start_idx < 0:
-                            ans_sub_tokens = tokenizer.tokenize(norm_answer.strip(), add_prefix_space=True)
+                            if is_roberta:
+                                ans_sub_tokens = tokenizer.tokenize(norm_answer.strip(), add_prefix_space=True)
+                            else:
+                                ans_sub_tokens = tokenizer.tokenize(norm_answer.strip())
                             ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
                             answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
                         answer_len = len(ans_input_ids)
