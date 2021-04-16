@@ -3,7 +3,7 @@ from HotpotQAModel.hotpotqa_data_structure import Example
 from torch.utils.data import DataLoader
 
 class HotpotDataset(Dataset):
-    def __init__(self, examples, max_para_num=4, max_sent_num=150, max_seq_num=512, sent_drop_ratio=0.25):
+    def __init__(self, examples, max_para_num=4, max_sent_num=100, max_seq_num=512, sent_drop_ratio=0.25):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
