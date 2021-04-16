@@ -39,10 +39,10 @@ def consist_checker(para_file: str,
         exm_question = example_i.question_text
         exm_answer = example_i.answer_text
         print('{}\t{}'.format(key, exam_key))
-        print('raw question', raw_question)
-        print('exm question', exm_question)
-        print('raw answer', raw_question)
-        print('exm answer', exm_question)
+        print('raw question:', raw_question)
+        print('exm question:', exm_question)
+        print('raw answer:', raw_answer)
+        print('exm answer:', exm_answer)
 
     return
     # answer_dict = dict()
