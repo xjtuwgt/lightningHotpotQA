@@ -9,7 +9,9 @@ class Example(object):
                  ctx_tokens,
                  ctx_input_ids,
                  sent_names,
+                 sent_num,
                  para_names,
+                 para_num,
                  sup_fact_id=None,
                  sup_para_id=None,
                  answer_text=None,
@@ -34,3 +36,5 @@ class Example(object):
         self.answer_input_ids = answer_input_ids
         self.answer_positions = answer_positions
         self.ctx_with_answer = ctx_with_answer
+        self.para_num = para_num
+        self.sent_num = sent_num

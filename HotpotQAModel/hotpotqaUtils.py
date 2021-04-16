@@ -16,8 +16,7 @@ def loadWikiData(json_file_name: str)->DataFrame:
     data_frame = pd.read_json(json_file_name, orient='records')
     print('Loading {} in {:.4f} seconds'.format(data_frame.shape, time() - start_time))
     return data_frame
-
-#########+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def normalize_question(question: str) -> str:
     question = question
     if question[-1] == '?':
@@ -121,17 +120,20 @@ def selected_context_processing(row, tokenizer, selected_para_titles):
                             supp_sent_flags.append((supp_sent_idx, False))
                     else:
                         supp_sent_flags.append((supp_sent_idx, False))
-            selected_contexts.append([title, para_text_lower, count, supp_sent_flags, True])  ## Identify the support document with answer
+            selected_contexts.append([title, para_text_lower, count, supp_sent_flags, True])  ## support para
         else:
-            selected_contexts.append([title, para_text_lower, 0, [], False])
+            selected_contexts.append([title, para_text_lower, 0, [], False]) ## no support para
     if not answer_found_flag:
         norm_answer = 'noanswer'
     yes_no_flag = norm_answer.strip() in ['yes', 'no', 'noanswer']
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 #=======================================================================================================================
-def hotpot_answer_tokenizer(para_file, full_file,
-                            tokenizer, cls_token='[CLS]',
-                            sep_token='[SEP]', is_roberta=False):
+def hotpot_answer_tokenizer(para_file: str,
+                            full_file: str,
+                            tokenizer,
+                            cls_token='[CLS]',
+                            sep_token='[SEP]',
+                            is_roberta=False):
     sel_para_data = json_loader(json_file_name=para_file)
     full_data = json_loader(json_file_name=full_file)
     examples = []
@@ -167,8 +169,11 @@ def hotpot_answer_tokenizer(para_file, full_file,
         sent_to_id, sent_id = {}, 0
         ctx_token_list = []
         ctx_input_id_list = []
+        sent_num = 0
+        para_num = 0
         for para_idx, para_tuple in enumerate(selected_contexts):
-            title, sents, count, answer_sent_flags, supp_para_flag = para_tuple
+            para_num += 1
+            title, sents, _, answer_sent_flags, supp_para_flag = para_tuple
             para_names.append(title)
             if supp_para_flag:
                 sup_para_id.append(para_idx)
@@ -176,6 +181,7 @@ def hotpot_answer_tokenizer(para_file, full_file,
             sent_tokens_list = []
             sent_input_id_list = []
             for local_sent_id, sent_text in enumerate(sents):
+                sent_num += 1
                 local_sent_name = (title, local_sent_id)
                 sent_to_id[local_sent_name] = sent_id
                 sent_names.append(local_sent_name)
@@ -199,7 +205,7 @@ def hotpot_answer_tokenizer(para_file, full_file,
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             ctx_with_answer = False
             answer_positions = []  ## answer position
-            if norm_answer.strip() in ['yes', 'no', 'noanswer']:
+            if norm_answer.strip() in ['yes', 'no', 'noanswer'] or (not answer_found_flag):
                 ans_sub_tokens = None
                 ans_input_ids = None
             else:
@@ -214,13 +220,16 @@ def hotpot_answer_tokenizer(para_file, full_file,
                             ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
                             answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
                         answer_len = len(ans_input_ids)
-                        assert answer_start_idx >= 0, "supp sent {} \n answer={} \n answer={} \n {} \n {}".format(
+                        assert answer_start_idx >= 0, "supp sent={} \n answer={} \n answer={} \n {} \n {}".format(
                             tokenizer.tokenizer.decode(supp_sent_encode_ids),
                             tokenizer.tokenizer.decode(ans_input_ids), norm_answer, supp_sent_encode_ids,
                             ans_sub_tokens)
                         ctx_with_answer = True
                         answer_positions.append((para_idx, sup_sent_idx, answer_start_idx, answer_start_idx + answer_len - 1))
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            assert len(para_names) == para_num
+            assert len(sent_names) == sent_num
+            assert len(ctx_token_list) == para_num and len(ctx_input_id_list) == para_num
             example = Example(qas_id=key,
                               qas_type=qas_type,
                               ctx_text=selected_contexts,
@@ -229,6 +238,8 @@ def hotpot_answer_tokenizer(para_file, full_file,
                               para_names=para_names,
                               sup_para_id=sup_para_id,
                               sent_names=sent_names,
+                              para_num=para_num,
+                              sent_num=sent_num,
                               sup_fact_id=sup_facts_sent_id,
                               question_text=norm_question,
                               question_tokens=query_tokens,
