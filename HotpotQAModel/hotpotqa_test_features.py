@@ -48,19 +48,26 @@ def consist_checker(para_file: str,
         # print('exm question:', exm_question)
         # print('raw answer:', raw_answer)
         # print('exm answer:', exm_answer)
-        if exm_answer.strip() in ['noanswer']:
-            print('raw answer:', raw_answer)
-            print('exm answer:', exm_answer)
-            no_answer_count = no_answer_count + 1
-            print('raw context:', raw_context)
-            print('*' * 75)
-            print('exm context:', exm_context)
-            print('*' * 75)
-            print('exm tokens: ', exm_ctx_token_list)
-            print('*' * 75)
-            for x in exm_ctx_input_ids:
-                for y in x:
-                    print('exm decode: ', tokenizer.decode(y))
+        answer_positions = example_i.answer_positions
+        encode_answer = ''
+        for para_i, sent_i, start_i, end_i in answer_positions:
+            sent_ids = exm_ctx_input_ids[para_i][sent_i]
+            encode_answer = tokenizer.decode(sent_ids[start_i:end_i])
+
+        print('{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer))
+        # if exm_answer.strip() in ['noanswer']:
+        #     print('raw answer:', raw_answer)
+        #     print('exm answer:', exm_answer)
+        #     no_answer_count = no_answer_count + 1
+        #     print('raw context:', raw_context)
+        #     print('*' * 75)
+        #     print('exm context:', exm_context)
+        #     print('*' * 75)
+        #     print('exm tokens: ', exm_ctx_token_list)
+        #     print('*' * 75)
+        #     for x in exm_ctx_input_ids:
+        #         for y in x:
+        #             print('exm decode: ', tokenizer.decode(y))
 
     print(no_answer_count)
     return
