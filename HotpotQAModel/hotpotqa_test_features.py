@@ -12,10 +12,20 @@ from tqdm import tqdm
 
 from model_envs import MODEL_CLASSES
 from HotpotQAModel.hotpotqa_dump_features import get_cached_filename
+from HotpotQAModel.hotpotqaUtils import json_loader
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 
-def consist_checker(raw_data, selected_para, examples, tokenizer):
+def consist_checker(para_file: str,
+                    full_file: str,
+                    example_file: str,
+                    tokenizer):
+    sel_para_data = json_loader(json_file_name=para_file)
+    full_data = json_loader(json_file_name=full_file)
+    examples = pickle.load(gzip.open(example_file, 'rb'))
+    for example in tqdm(examples):
+        print(example.qas_id)
+
     return
     # answer_dict = dict()
     # sp_dict = dict()
@@ -145,4 +155,4 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    examples = pickle.load(gzip.open(cached_examples_file, 'rb'))
+    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer)
