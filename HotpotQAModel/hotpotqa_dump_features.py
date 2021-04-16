@@ -7,7 +7,7 @@ import pickle
 
 
 def get_cached_filename(f_type, config):
-    f_type_set = {'long_hotpotqa_tokenized_examples', 'hgn_hotpotqa_tokenized_examples'}
+    f_type_set = {'long_low_hotpotqa_tokenized_examples', 'hgn_low_hotpotqa_tokenized_examples'}
     assert f_type in f_type_set
     return f"cached_{f_type}_{config.model_type}.pkl.gz"
 
