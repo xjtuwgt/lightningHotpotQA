@@ -122,7 +122,7 @@ def ranked_context_processing(row, tokenizer, selected_para_titles, is_roberta):
         else:
             selected_contexts.append([title, para_text_lower, 0, [], False]) ## no support para
     yes_no_flag = norm_answer.strip() in ['yes', 'no', 'noanswer']
-    if not answer_found_flag:
+    if not answer_found_flag and (norm_answer.strip() not in ['yes', 'no']):
         norm_answer = 'noanswer'
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 #=======================================================================================================================
