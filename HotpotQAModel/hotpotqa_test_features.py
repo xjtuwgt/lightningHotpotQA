@@ -23,8 +23,13 @@ def consist_checker(para_file: str,
     sel_para_data = json_loader(json_file_name=para_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
+    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    print('Number of examples = {}'.format(len(examples)))
     for example in tqdm(examples):
-        print(example.qas_id)
+        key = example.qas_id
+        if '_' in key:
+            key = key.split[0]
+        print(key)
 
     return
     # answer_dict = dict()
