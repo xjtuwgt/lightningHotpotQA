@@ -129,7 +129,7 @@ def selected_context_processing(row, tokenizer, selected_para_titles):
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 
 #=======================================================================================================================
-def row_encoder(row, tokenizer, cls_token='[CLS]', sep_token='[SEP]'):
+def row_encoder(query, answer, sents, tokenizer, cls_token='[CLS]', sep_token='[SEP]'):
 
     return
 
@@ -151,11 +151,30 @@ def hotpot_answer_tokenizer(para_file, full_file,
         para_names = []
         sup_para_id = []
 
-
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        query_tokens = []
+        query_input_ids = []
+        all_sent_tokens = []
+        all_sent_input_ids = []
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         sel_paras = sel_para_data[key]
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
         norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag = \
             selected_context_processing(row=row, tokenizer=tokenizer, selected_para_titles=selected_para_titles)
         if not answer_found_flag:
             answer_not_found_count = answer_not_found_count + 1
-        #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        sent_to_id, sent_id = {}, 0
+        for para_idx, para_tuple in enumerate(selected_contexts):
+            title, sents, count, supp_sent_flags, supp_para_flag = para_tuple
+            para_names.append(title)
+            if supp_para_flag:
+                sup_para_id.append(para_idx)
+            for local_sent_id, sent in enumerate(sents):
+                local_sent_name = (title, local_sent_id)
+                sent_to_id[local_sent_name] = sent_id
+                if local_sent_name in supporting_facts_filtered:
+                    sup_facts_sent_id.append(sent_id)
+                sent_id = sent_id + 1
