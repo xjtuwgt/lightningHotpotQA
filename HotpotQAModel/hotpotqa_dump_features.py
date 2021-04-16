@@ -59,13 +59,14 @@ if __name__ == '__main__':
         data_source_type = data_source_name
     else:
         data_source_type = None
-    print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
+    print('data_type = {} \n data_source_id= {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
     examples = hotpot_answer_tokenizer(para_file=args.para_path,
                                        full_file=args.full_data,
                                        tokenizer=tokenizer,
                                        cls_token=tokenizer.cls_token,
                                        sep_token=tokenizer.sep_token,
-                                       is_roberta=bool(args.model_type in ['roberta']))
+                                       is_roberta=bool(args.model_type in ['roberta']),
+                                       data_source_type=data_source_type)
     cached_examples_file = join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
     with gzip.open(cached_examples_file, 'wb') as fout:
