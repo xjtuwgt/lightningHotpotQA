@@ -49,7 +49,7 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "1. Extract Wiki Link & NER from DB"
+        echo "1. Data preprocessing tokenizer"
         # Input: INPUT_FILE, enwiki_ner.db
         # Output: doc_link_ner.json
         python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
