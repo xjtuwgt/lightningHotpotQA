@@ -34,8 +34,8 @@ download() {
 }
 
 preprocess() {
-#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
+    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
 #    INPUTS=("hotpot_train_v1.1.json;train")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
@@ -55,7 +55,7 @@ preprocess() {
         # Output: doc_link_ner.json
         python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
 
-        echo "1. Data preprocessing tokenizer (HGN)"
+        echo "2. Data preprocessing tokenizer (HGN)"
         # Input: INPUT_FILE, enwiki_ner.db
         # Output: doc_link_ner.json
         python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --ranker long --data_type $DATA_TYPE
