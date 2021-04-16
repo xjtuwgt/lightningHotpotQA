@@ -45,9 +45,6 @@ if __name__ == '__main__':
     data_type = args.data_type
     if args.do_lower_case:
         ranker = ranker + '_low'
-    if args.sae_graph:
-        ranker = ranker + '_sae'
-
     if args.reverse:
         data_source_name = "{}_reverse".format(ranker)
     else:
