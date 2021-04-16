@@ -171,6 +171,11 @@ def hotpot_answer_tokenizer(para_file: str,
         ctx_input_id_list = []
         sent_num = 0
         para_num = 0
+        ctx_with_answer = False
+        answer_positions = []  ## answer position
+        ans_sub_tokens = []
+        ans_input_ids = []
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for para_idx, para_tuple in enumerate(selected_contexts):
             para_num += 1
             title, sents, _, answer_sent_flags, supp_para_flag = para_tuple
@@ -203,12 +208,7 @@ def hotpot_answer_tokenizer(para_file: str,
             ctx_token_list.append(sent_tokens_list)
             ctx_input_id_list.append(sent_input_id_list)
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            ctx_with_answer = False
-            answer_positions = []  ## answer position
-            if norm_answer.strip() in ['yes', 'no', 'noanswer'] or (not answer_found_flag):
-                ans_sub_tokens = None
-                ans_input_ids = None
-            else:
+            if (norm_answer.strip() not in ['yes', 'no', 'noanswer']) and answer_found_flag:
                 if is_roberta:
                     ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
                 else:
@@ -236,33 +236,33 @@ def hotpot_answer_tokenizer(para_file: str,
             assert len(para_names) == para_num
             assert len(sent_names) == sent_num
             assert len(ctx_token_list) == para_num and len(ctx_input_id_list) == para_num
-            ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++diff the rankers
-            if data_source_type is not None:
-                key = key + "_" + data_source_type
-            ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            example = Example(qas_id=key,
-                              qas_type=qas_type,
-                              ctx_text=selected_contexts,
-                              ctx_tokens=ctx_token_list,
-                              ctx_input_ids=ctx_input_id_list,
-                              para_names=para_names,
-                              sup_para_id=sup_para_id,
-                              sent_names=sent_names,
-                              para_num=para_num,
-                              sent_num=sent_num,
-                              sup_fact_id=sup_facts_sent_id,
-                              question_text=norm_question,
-                              question_tokens=query_tokens,
-                              question_input_ids=query_input_ids,
-                              answer_text=norm_answer,
-                              answer_tokens=ans_sub_tokens,
-                              answer_input_ids=ans_input_ids,
-                              answer_positions=answer_positions,
-                              ctx_with_answer=ctx_with_answer)
-            # for key, value in example.__dict__.items():
-            #     print(key)
-            #     print(value)
-            #     print('*' * 100)
-            examples.append(example)
+        ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++diff the rankers
+        if data_source_type is not None:
+            key = key + "_" + data_source_type
+        ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        example = Example(qas_id=key,
+                          qas_type=qas_type,
+                          ctx_text=selected_contexts,
+                          ctx_tokens=ctx_token_list,
+                          ctx_input_ids=ctx_input_id_list,
+                          para_names=para_names,
+                          sup_para_id=sup_para_id,
+                          sent_names=sent_names,
+                          para_num=para_num,
+                          sent_num=sent_num,
+                          sup_fact_id=sup_facts_sent_id,
+                          question_text=norm_question,
+                          question_tokens=query_tokens,
+                          question_input_ids=query_input_ids,
+                          answer_text=norm_answer,
+                          answer_tokens=ans_sub_tokens,
+                          answer_input_ids=ans_input_ids,
+                          answer_positions=answer_positions,
+                          ctx_with_answer=ctx_with_answer)
+        # for key, value in example.__dict__.items():
+        #     print(key)
+        #     print(value)
+        #     print('*' * 100)
+        examples.append(example)
     print('Answer not found = {}'.format(answer_not_found_count))
     return examples
