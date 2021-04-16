@@ -11,9 +11,7 @@ from os.path import join
 from utils.gpu_utils import gpu_id_setting
 
 from envs import DATASET_FOLDER, OUTPUT_FOLDER, PRETRAINED_MODEL_FOLDER
-
 logger = logging.getLogger(__name__)
-
 
 def boolean_string(s):
     if s.lower() not in {'false', 'true'}:
@@ -27,7 +25,6 @@ def json_to_argv(json_file):
         new_v = str(v) if v is not None else None
         argv.extend(['--' + k, new_v])
     return argv
-
 
 def train_parser():
     parser = argparse.ArgumentParser(
@@ -78,12 +75,10 @@ def train_parser():
                         help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float,
                         help="Max gradient norm.")
-
     parser.add_argument("--num_train_epochs", default=30, type=int,
                         help="epochs")
     parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
-
     parser.add_argument("--feat_drop", type=float, default=0.3, help='feature dropout ratio')
 
     args = parser.parse_args()
