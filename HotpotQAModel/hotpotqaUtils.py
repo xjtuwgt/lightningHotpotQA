@@ -6,40 +6,36 @@ from tqdm import tqdm
 import itertools
 from HotpotQAModel.hotpotqa_data_structure import Example
 
+###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def json_loader(json_file_name: str):
     with open(json_file_name, 'r', encoding='utf-8') as reader:
         json_data = json.load(reader)
     return json_data
-
 def loadWikiData(json_file_name: str)->DataFrame:
     start_time = time()
     data_frame = pd.read_json(json_file_name, orient='records')
     print('Loading {} in {:.4f} seconds'.format(data_frame.shape, time() - start_time))
     return data_frame
-###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def normalize_question(question: str) -> str:
     question = question
     if question[-1] == '?':
         question = question[:-1]
     return question
-
 def normalize_text(text: str) -> str:
     text = ' ' + text.lower().strip() ###adding the ' ' is important to make the consist encoder, for roberta tokenizer
     return text
-
 def answer_span_checker(answer, sentence):
     find_idx = sentence.find(answer)
     if find_idx < 0:
         return False
     return True
-
 def find_answer_span(norm_answer, sentence, tokenizer):
     answer_encode_ids = tokenizer.text_encode(text=norm_answer, add_special_tokens=False)
     sentence_encode_ids = tokenizer.text_encode(text=sentence, add_special_tokens=False)
     idx = sub_list_match_idx(target=answer_encode_ids, source=sentence_encode_ids)
     flag = idx >= 0
     return flag, answer_encode_ids, sentence_encode_ids
-
 def find_sub_list_fuzzy(target: list, source: list) -> int:
     if len(target) > len(source):
         return -1
@@ -54,13 +50,11 @@ def find_sub_list_fuzzy(target: list, source: list) -> int:
         else:
             temp_idx = temp_idx - 1
     return temp_idx
-
 def sub_list_match_idx(target: list, source: list) -> int:
     idx = find_sub_list(target, source)
     if idx < 0:
         idx = find_sub_list_fuzzy(target, source)
     return idx
-
 def find_sub_list(target: list, source: list) -> int:
     if len(target) > len(source):
         return -1
