@@ -129,7 +129,52 @@ def selected_context_processing(row, tokenizer, selected_para_titles):
     return norm_question, norm_answer, selected_contexts, supporting_facts_filtered, yes_no_flag, answer_found_flag
 
 #=======================================================================================================================
-def row_encoder(query, answer, sents, tokenizer, cls_token='[CLS]', sep_token='[SEP]'):
+def row_encoder(norm_query: str, norm_answer: str, answer_sent_flag_list: list,  sents: list, tokenizer, cls_token='[CLS]', sep_token='[SEP]', is_roberta=False):
+    all_query_tokens = [cls_token]
+    if is_roberta:
+        sub_tokens = tokenizer.tokenize(norm_query, add_prefix_space=True)
+    else:
+        sub_tokens = tokenizer.tokenize(norm_query)
+    all_query_tokens += sub_tokens
+    if is_roberta:
+        all_query_tokens += [sep_token, sep_token]
+    else:
+        all_query_tokens += [sep_token]
+    query_input_ids = tokenizer.convert_tokens_to_ids(all_query_tokens)
+    assert len(all_query_tokens) == len(query_input_ids)
+
+    sent_tokens_list = []
+    sent_input_id_list = []
+    for sent_idx, sent_text in enumerate(sents):
+        if is_roberta:
+            sub_tokens = tokenizer.tokenize(sent_text, add_prefix_space=True)
+            sub_tokens.append(sep_token)
+        else:
+            sub_tokens = tokenizer.tokenize(sent_text)
+        sub_input_ids = tokenizer.convert_tokens_to_ids(sub_tokens)
+        assert len(sub_input_ids) == len(sub_tokens)
+        sent_tokens_list.append(sub_tokens)
+        sent_input_id_list.append(sub_input_ids)
+
+    ctx_with_answer = False
+    answer_positions = []  ## answer position
+    ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
+    ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
+    for sup_sent_idx, supp_sent_flag in answer_sent_flag_list:
+        supp_sent_encode_ids = sent_input_id_list[sup_sent_idx]
+        if supp_sent_flag:
+            answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
+            if answer_start_idx < 0:
+                ans_sub_tokens = tokenizer.tokenize(norm_answer.strip(), add_prefix_space=True)
+                ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
+                answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
+            answer_len = len(ans_input_ids)
+            assert answer_start_idx >= 0, "supp sent {} \n answer={} \n answer={} \n {} \n {}".format(
+                tokenizer.tokenizer.decode(supp_sent_encode_ids),
+                tokenizer.tokenizer.decode(ans_input_ids), norm_answer, supp_sent_encode_ids,
+                ans_sub_tokens)
+            ctx_with_answer = True
+            answer_positions.append((sup_sent_idx, answer_start_idx, answer_start_idx + answer_len - 1))
 
     return
 
@@ -152,10 +197,10 @@ def hotpot_answer_tokenizer(para_file, full_file,
         sup_para_id = []
 
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        query_tokens = []
-        query_input_ids = []
-        all_sent_tokens = []
-        all_sent_input_ids = []
+        # query_tokens = []
+        # query_input_ids = []
+        # all_sent_tokens = []
+        # all_sent_input_ids = []
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         sel_paras = sel_para_data[key]
         selected_para_titles = itertools.chain.from_iterable(sel_paras)
@@ -168,7 +213,7 @@ def hotpot_answer_tokenizer(para_file, full_file,
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         sent_to_id, sent_id = {}, 0
         for para_idx, para_tuple in enumerate(selected_contexts):
-            title, sents, count, supp_sent_flags, supp_para_flag = para_tuple
+            title, sents, count, answer_sent_flags, supp_para_flag = para_tuple
             para_names.append(title)
             if supp_para_flag:
                 sup_para_id.append(para_idx)
