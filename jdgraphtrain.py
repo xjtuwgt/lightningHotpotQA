@@ -12,7 +12,10 @@ from plmodels.jd_argument_parser import default_train_parser, complete_default_t
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from utils.jdutils import get_lr_with_optimizer
-from csr_mhqa.utils import *
+import os
+from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES, compute_loss
+# from csr_mhqa.utils import *
+from utils.jdevalUtil import jd_tune_eval_model
 
 from jdmodels.jdHGN import HierarchicalGraphNetwork
 from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
@@ -118,10 +121,14 @@ tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
 if encoder_path is not None and model_path is not None:
     output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
     output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
-    prev_metrics, prev_threshold = eval_model(args, encoder, model,
+    prev_metrics, prev_threshold = jd_tune_eval_model(args, encoder, model,
                                               dev_dataloader, dev_example_dict, dev_feature_dict,
                                               output_pred_file, output_eval_file, args.dev_gold_file)
     logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
+    # prev_metrics, prev_threshold = eval_model(args, encoder, model,
+    #                                           dev_dataloader, dev_example_dict, dev_feature_dict,
+    #                                           output_pred_file, output_eval_file, args.dev_gold_file)
+    # logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
     for key, val in prev_metrics.items():
         logger.info("{} = {}".format(key, val))
 
@@ -277,9 +284,12 @@ for epoch in train_iterator:
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
                 output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step + 1}.json')
                 output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step + 1}.txt')
-                metrics, threshold = eval_model(args, encoder, model,
+                metrics, threshold = jd_tune_eval_model(args, encoder, model,
                                                 dev_dataloader, dev_example_dict, dev_feature_dict,
                                                 output_pred_file, output_eval_file, args.dev_gold_file)
+                # metrics, threshold = eval_model(args, encoder, model,
+                #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
+                #                                 output_pred_file, output_eval_file, args.dev_gold_file)
 
                 if metrics['joint_f1'] >= best_joint_f1:
                     best_joint_f1 = metrics['joint_f1']
@@ -307,9 +317,12 @@ for epoch in train_iterator:
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
         output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch+1}.json')
         output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch+1}.txt')
-        metrics, threshold = eval_model(args, encoder, model,
+        metrics, threshold = jd_tune_eval_model(args, encoder, model,
                                         dev_dataloader, dev_example_dict, dev_feature_dict,
                                         output_pred_file, output_eval_file, args.dev_gold_file)
+        # metrics, threshold = eval_model(args, encoder, model,
+        #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
+        #                                 output_pred_file, output_eval_file, args.dev_gold_file)
 
         if metrics['joint_f1'] >= best_joint_f1:
             best_joint_f1 = metrics['joint_f1']
