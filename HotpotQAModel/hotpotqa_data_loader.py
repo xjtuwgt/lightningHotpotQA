@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 from HotpotQAModel.hotpotqa_data_structure import Example
+import numpy as np
 from numpy import random
 from torch.utils.data import DataLoader
 
@@ -77,6 +78,10 @@ def case_to_features(case: Example):
             para_len_ = para_len_ + sent_len_i
         para_len_list.append(para_len_)
     assert sent_num == len(sent_len_list) - 1 and para_num == len(para_len_list) - 1
+    sent_cum_sum_len_list = np.cumsum(sent_len_list).tolist()
+    para_
+    sent_spans = np.cumsum(sent_len_list).tolist()
+    para_spans = np.cumsum(para_len_list).tolist()
 
 
 def _largest_valid_index(spans, limit):

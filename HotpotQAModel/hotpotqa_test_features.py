@@ -199,4 +199,4 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer)
+    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
