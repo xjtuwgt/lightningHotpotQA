@@ -249,9 +249,9 @@ def jd_tune_eval_model(args, encoder, model, dataloader, example_dict, feature_d
         # print('ent_mask', batch['ans_cand_mask'])
         # print('gold_ent', batch['is_gold_ent'])
         ent_pre_prob = torch.sigmoid(ent).data.cpu().numpy()
-        ent_mask_np = batch['ent_mask'].data.cpu().numpy()
-        ans_cand_mask_np = batch['ans_cand_mask'].data.cpu().numpy()
-        is_gold_ent_np = batch['is_gold_ent'].data.cpu().numpy()
+        # ent_mask_np = batch['ent_mask'].data.cpu().numpy()
+        # ans_cand_mask_np = batch['ans_cand_mask'].data.cpu().numpy()
+        # is_gold_ent_np = batch['is_gold_ent'].data.cpu().numpy()
 
         _, _, answer_sent_name_dict_ = convert_answer_to_sent_names(example_dict, feature_dict, batch,
                                                                                     yp1.data.cpu().numpy().tolist(),
