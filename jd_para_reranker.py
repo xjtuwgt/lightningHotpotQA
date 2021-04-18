@@ -12,7 +12,6 @@ from plmodels.jd_argument_parser import json_to_argv
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import load_encoder_model
 
-# from models.HGN import HierarchicalGraphNetwork
 from jdmodels.jdHGN import HierarchicalGraphNetwork
 from model_envs import MODEL_CLASSES
 
