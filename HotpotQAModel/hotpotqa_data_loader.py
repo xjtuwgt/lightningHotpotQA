@@ -49,9 +49,8 @@ class HotpotDevDataset(Dataset):
         doc_len = len(doc_input_ids)
         query_len = len(question_input_ids)
 
-
 #######################################################################
-def case_to_features(case: Example):
+def case_to_features(case: Example, train_dev=True):
     question_input_ids = case.question_input_ids
     ctx_input_ids = case.ctx_input_ids
     sent_num = case.sent_num
@@ -59,15 +58,12 @@ def case_to_features(case: Example):
     para_names = case.para_names
     sent_names = case.sent_names
     assert len(ctx_input_ids) == para_num and sent_num == len(sent_names)
-    sent_spans = []
-    para_spans = []
-    query_spans = []
-
     doc_input_ids = question_input_ids
     para_len_list = [len(question_input_ids)]
     sent_len_list = [len(question_input_ids)]
     query_len = len(question_input_ids)
-    query_spans.append([0, query_len])
+    query_spans = [(0, query_len)]
+    para_sent_pair_to_sent_id, sent_id = {}, 0
     for para_idx, para_name in enumerate(para_names):
         para_sent_ids = ctx_input_ids[para_idx]
         para_len_ = 0
@@ -76,29 +72,48 @@ def case_to_features(case: Example):
             sent_len_i = len(sent_ids)
             sent_len_list.append(sent_len_i)
             para_len_ = para_len_ + sent_len_i
+            para_sent_pair_to_sent_id[(para_idx, sent_idx)] = sent_id
+            sent_id = sent_id + 1
         para_len_list.append(para_len_)
     assert sent_num == len(sent_len_list) - 1 and para_num == len(para_len_list) - 1
+    assert sent_id == sent_num
     sent_cum_sum_len_list = np.cumsum(sent_len_list).tolist()
-    para_
-    sent_spans = np.cumsum(sent_len_list).tolist()
-    para_spans = np.cumsum(para_len_list).tolist()
-
-
+    para_cum_sum_len_list = np.cumsum(para_len_list).tolist()
+    sent_spans = [(sent_cum_sum_len_list[i], sent_cum_sum_len_list[i+1]) for i in range(sent_num)]
+    para_spans = [(para_cum_sum_len_list[i], para_cum_sum_len_list[i+1]) for i in range(para_num)]
+    assert len(sent_spans) == sent_num
+    assert len(para_spans) == para_num
+    if train_dev:
+        answer_positions = case.answer_positions
+        ans_spans = []
+        for ans_position in answer_positions:
+            doc_id, sent_id, ans_start, ans_end = ans_position
+            sent_idx = para_sent_pair_to_sent_id[(doc_id, sent_id)]
+            sent_start_idx = sent_spans[sent_idx][0]
+            ans_spans.append((sent_start_idx + ans_start, sent_start_idx + ans_end))
+        return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans
+    else:
+        return doc_input_ids, query_spans, para_spans, sent_spans
+#######################################################################
 def _largest_valid_index(spans, limit):
     for idx in range(len(spans)):
         if spans[idx][1] >= limit:
             return idx
     return len(spans)
+#######################################################################
 
 class HotpotTestDataset(Dataset):
-    def __init__(self, examples, max_para_num=4, max_sent_num=100,
+    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
                  max_seq_num=512):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
         self.max_seq_length = max_seq_num
+        self.sep_token_id = sep_token_id
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
+        doc_input_ids, query_spans, para_spans, sent_spans = case_to_features(case=case, train_dev=False)
+        # if len(doc_input_ids) >= self.
 
 
