@@ -23,22 +23,6 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
-# 0. Build Database from Wikipedia
-download() {
-    [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/dataset/data_raw; mkdir -p $DATA_ROOT/knowledge
-
-    wget -P $DATA_ROOT/dataset/data_raw/ http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json
-    wget -P $DATA_ROOT/dataset/data_raw/ http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json
-    wget -P $DATA_ROOT/dataset/data_raw http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_fullwiki_v1.json
-    wget -P $DATA_ROOT/dataset/data_raw/ http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_test_fullwiki_v1.json
-    if [[ ! -f $DATA_ROOT/knowledge/enwiki_ner.db ]]; then
-        wget -P $DATA_ROOT/knowledge/ https://nlp.stanford.edu/projects/hotpotqa/enwiki-20171001-pages-meta-current-withlinks-abstracts.tar.bz2
-        tar -xjvf $DATA_ROOT/knowledge/enwiki-20171001-pages-meta-current-withlinks-abstracts.tar.bz2 -C $DATA_ROOT/knowledge
-        # Required: DrQA and Spacy
-        python scripts/0_build_db.py $DATA_ROOT/knowledge/enwiki-20171001-pages-meta-current-withlinks-abstracts $DATA_ROOT/knowledge/enwiki_ner.db
-    fi
-}
-
 preprocess() {
     INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
 #    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
@@ -56,61 +40,17 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-#        echo "1. Extract Wiki Link & NER from DB"
-#        # Input: INPUT_FILE, enwiki_ner.db
-#        # Output: doc_link_ner.json
-#        python scripts/1_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner.json
-#
-#        echo "2. Extract NER for Question and Context"
-#        # Input: doc_link_ner.json
-#        # Output: ner.json
-#        python scripts/2_extract_ner.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
-#
-#        echo "3. Paragraph ranking (2): longformer retrieval data preprocess"
-#        # Output: para_ranking.json
-#        python longformerscripts/3_longformer_prepare_para_sel.py $INPUT_FILE $OUTPUT_PROCESSED/para_ir_combined.json
-#
-#        echo "3. Paragraph ranking (3): longformer retrieval ranking scores"
-#        # switch to Longformer for final leaderboard, PYTORCH LIGHTING + '1.0.8' TRANSFORMER (3.3.1)
-#        python longformerscripts/3_longformer_paragraph_ranking.py --data_dir $OUTPUT_PROCESSED --eval_ckpt $DATA_ROOT/models/finetuned/PS/longformer_pytorchlighting_model.ckpt --raw_data $INPUT_FILE --input_data $OUTPUT_PROCESSED/para_ir_combined.json
 
-#        echo "4. MultiHop Paragraph Selection (4)"
-#        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
-#        # Output: long_multihop_para.json
-#        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
-#
-#        echo "4. MultiHop Paragraph Selection (reverse for more data)"
-#        python dataugmentation/reverse_para_order.py $INPUT_FILE $OUTPUT_PROCESSED/long_multihop_para.json $OUTPUT_PROCESSED/reverse_long_multihop_para.json
+        echo "4. HGN re-ranker model (4)"
+        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
+        # Output: long_multihop_para.json
+        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
 
-#        echo "5. Dump features for reberta (5)"
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --reverse --data_type $DATA_TYPE
-
-#        echo "5. Dump features for reberta (5) do_lower_case"
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
-##        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data --do_lower_case $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --reverse --data_type $DATA_TYPE
-#
-##        echo "5. Dump features for reberta (5) (SAE graph)"
-##        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --sae_graph
-##        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --reverse --data_type $DATA_TYPE --sae_graph
-#
-#        echo "5. Dump features for reberta (5) (SAE graph) do_lower_case"
-#        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --sae_graph
-##        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --reverse --data_type $DATA_TYPE --sae_graph
-
+        echo "5. Dump features for reberta (5) do_lower_case"
+        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE#
 
         echo "5. Dump features for albert (5) do_lower_case"
         python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
-#        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker long --data_type $DATA_TYPE
-
-#        echo "5. Dump features for albert (5) (SAE graph) do_lower_case"
-#        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --sae_graph
-
-#        echo "5. Dump features for electra (5) do_lower_case"
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
-#
-#        echo "5. Dump features for electra (5) (SAE graph) do_lower_case"
-#        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --sae_graph
 
     done
 

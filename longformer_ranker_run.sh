@@ -23,22 +23,6 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
-# 0. Build Database from Wikipedia
-download() {
-    [[ -d $DATA_ROOT ]] || mkdir -p $DATA_ROOT/dataset/data_raw; mkdir -p $DATA_ROOT/knowledge
-
-    wget -P $DATA_ROOT/dataset/data_raw/ http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_train_v1.1.json
-    wget -P $DATA_ROOT/dataset/data_raw/ http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_distractor_v1.json
-    wget -P $DATA_ROOT/dataset/data_raw http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_dev_fullwiki_v1.json
-    wget -P $DATA_ROOT/dataset/data_raw/ http://curtis.ml.cmu.edu/datasets/hotpot/hotpot_test_fullwiki_v1.json
-    if [[ ! -f $DATA_ROOT/knowledge/enwiki_ner.db ]]; then
-        wget -P $DATA_ROOT/knowledge/ https://nlp.stanford.edu/projects/hotpotqa/enwiki-20171001-pages-meta-current-withlinks-abstracts.tar.bz2
-        tar -xjvf $DATA_ROOT/knowledge/enwiki-20171001-pages-meta-current-withlinks-abstracts.tar.bz2 -C $DATA_ROOT/knowledge
-        # Required: DrQA and Spacy
-        python scripts/0_build_db.py $DATA_ROOT/knowledge/enwiki-20171001-pages-meta-current-withlinks-abstracts $DATA_ROOT/knowledge/enwiki_ner.db
-    fi
-}
-
 preprocess() {
     INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
 #    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
@@ -77,7 +61,7 @@ preprocess() {
         echo "4. MultiHop Paragraph Selection (4)"
         # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
         # Output: long_multihop_para.json
-        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
+        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/5_long_multihop_para.json $SELECTEED_DOC_NUM
 #
 #        echo "4. MultiHop Paragraph Selection (reverse for more data)"
 #        python dataugmentation/reverse_para_order.py $INPUT_FILE $OUTPUT_PROCESSED/long_multihop_para.json $OUTPUT_PROCESSED/reverse_long_multihop_para.json
@@ -99,8 +83,8 @@ preprocess() {
 ##        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --reverse --data_type $DATA_TYPE --sae_graph
 
 
-        echo "5. Dump features for albert (5) do_lower_case"
-        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
+#        echo "5. Dump features for albert (5) do_lower_case"
+#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
 #        python jdscripts/5_ext_graph_dump_features.py --para_path $OUTPUT_PROCESSED/reverse_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --reverse --ranker long --data_type $DATA_TYPE
 
 #        echo "5. Dump features for albert (5) (SAE graph) do_lower_case"
@@ -116,7 +100,7 @@ preprocess() {
 
 }
 
-for proc in "download" "preprocess"
+for proc in "preprocess"
 do
     if [[ ${PROCS:-"download"} =~ $proc ]]; then
         $proc
