@@ -196,7 +196,7 @@ def default_parser():
     # check point path or name
     parser.add_argument("--encoder_name", type=str, default=None)
     parser.add_argument("--model_name", type=str, default=None)
-    parser.add_argument("-topk_para_num", type=int, default=2)
+    parser.add_argument("--topk_para_num", type=int, default=2)
     return parser
 
 def complete_default_parser(args):
