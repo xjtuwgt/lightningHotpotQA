@@ -26,7 +26,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             batch['context_encoding'] = outputs[0]
             ####++++++++++++++++++++++++++++++++++++++
             batch['context_mask'] = batch['context_mask'].float().to(args.device)
-            _, paras, _, _, _, _, _ = model(batch, return_yp=True, return_cls=True)
+            _, _, _, paras, _, _, _, _ = model(batch, return_yp=True, return_cls=True)
         ####################################################################
         predict_support_para_np = torch.sigmoid(paras[:, :, 1]).data.cpu().numpy()
         support_para_mask_np = batch['para_mask'].data.cpu().numpy()
@@ -63,5 +63,3 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
         print('Recall = {}'.format(sum(recall_list)*1.0/len(prediction_para_dict)))
 
     return prediction_para_dict
-
-
