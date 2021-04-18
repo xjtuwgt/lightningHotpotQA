@@ -42,12 +42,25 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             sorted_idxes = np.argsort(para_score_i)[::-1]
             # print(sorted_idxes)
             sorted_idxes = sorted_idxes.tolist()[:para_num]
-            if topk == 2:
-                sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
-            elif topk == 3:
-                sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]]])
+            if para_num < 2:
+                sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
             else:
-                sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]], para_names_i[sorted_idxes[3]]])
+                topk_paras = []
+                for i in range(para_num):
+                    sel_idx = sorted_idxes[i]
+                    if len(topk_paras) < topk:
+                        topk_paras.append(para_names_i[sel_idx])
+                sel_paras=[topk_paras[:2], [], topk_paras[2:]]
+                # if topk == 2 and para_num >=2:
+                #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
+                # elif topk == 3:
+                #     if para_num > 2:
+                #         sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]]])
+                #     else:
+                #         sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
+                # else:
+                #     if
+                #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]], para_names_i[sorted_idxes[3]]])
             prediction_para_dict[cur_id] = sel_paras
 
     recall_list = []
