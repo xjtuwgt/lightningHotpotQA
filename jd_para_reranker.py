@@ -103,6 +103,7 @@ output_pred_para_file = join(args.exp_name, 'Rerank_' + str(args.topk_para_num) 
 selected_para_dict = para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
 
 json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
 # metrics, threshold = jd_eval_model(args, encoder, model,
 #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
 #                                 output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
