@@ -4,7 +4,8 @@ import torch
 import json
 import itertools
 
-def para_ranker_model(args, encoder, model, dataloader, example_dict, prediction_file, topk=2, gold_file=None):
+def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, gold_file=None):
+    #### model_type, device
     encoder.eval()
     model.eval()
     ##++++++
@@ -46,19 +47,21 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, prediction
                 sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]], para_names_i[sorted_idxes[3]]])
             prediction_para_dict[cur_id] = sel_paras
 
-        recall_list = []
-        if gold_file is not None:
-            with open(gold_file) as f:
-                gold = json.load(f)
-            for idx, case in enumerate(gold):
-                key = case['_id']
-                supp_title_set = set([x[0] for x in case['supporting_facts']])
-                pred_paras = prediction_para_dict[key]
-                sel_para_names = set(itertools.chain.from_iterable(pred_paras))
-                if supp_title_set.issubset(sel_para_names):
-                    recall_list.append(1)
-                else:
-                    recall_list.append(0)
-            print('Recall = {}'.format(sum(recall_list)*1.0/len(prediction_para_dict)))
-        with open(prediction_file, 'w') as f:
-            json.dump(prediction_para_dict, f)
+    recall_list = []
+    if gold_file is not None:
+        with open(gold_file) as f:
+            gold = json.load(f)
+        for idx, case in enumerate(gold):
+            key = case['_id']
+            supp_title_set = set([x[0] for x in case['supporting_facts']])
+            pred_paras = prediction_para_dict[key]
+            sel_para_names = set(itertools.chain.from_iterable(pred_paras))
+            if supp_title_set.issubset(sel_para_names):
+                recall_list.append(1)
+            else:
+                recall_list.append(0)
+        print('Recall = {}'.format(sum(recall_list)*1.0/len(prediction_para_dict)))
+
+    return prediction_para_dict
+
+
