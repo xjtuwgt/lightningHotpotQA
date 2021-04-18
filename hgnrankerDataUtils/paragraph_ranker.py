@@ -36,11 +36,11 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             para_names_i = example_dict[cur_id].para_names
             para_score_i = predict_support_para_np[i]
             para_mask_i = support_para_mask_np[i]
-            para_num = para_mask_i.sum()
-            print(para_num)
+            para_num = int(para_mask_i.sum())
+            # print(para_num)
             para_score_i[para_mask_i == 0] = -1e6
             sorted_idxes = np.argsort(para_score_i)[::-1]
-            print(sorted_idxes)
+            # print(sorted_idxes)
             sorted_idxes = sorted_idxes.tolist()[:para_num]
             if topk == 2:
                 sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
