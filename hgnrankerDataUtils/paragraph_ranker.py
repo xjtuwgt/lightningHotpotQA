@@ -41,17 +41,27 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             para_score_i[para_mask_i == 0] = -1e6
             sorted_idxes = np.argsort(para_score_i)[::-1]
             # print(sorted_idxes)
-            sorted_idxes = sorted_idxes.tolist()[:para_num]
-            if para_num < 2:
-                sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
+            sorted_idxes = sorted_idxes.tolist()[:para_num][:topk]
+            selected_idxes = [0] * para_names_i
+            for s_idx in sorted_idxes:
+                selected_idxes[s_idx] = 1
+            selected_para_names = [para_names_i[_] for _ in selected_idxes if selected_idxes[_] == 1]
+            if len(selected_para_names) < 2:
+                sel_paras = ([selected_para_names[0], selected_para_names[0]], [], [])
             else:
-                topk_paras = []
-                for i in range(para_num):
-                    sel_idx = sorted_idxes[i]
-                    if len(topk_paras) < topk:
-                        topk_paras.append(para_names_i[sel_idx])
-                assert len(topk_paras) <= topk and len(topk_paras) <= para_num and para_num <=4
-                sel_paras=[topk_paras[:2], [], topk_paras[2:]]
+                sel_paras = ([selected_para_names[:2]], [], [selected_para_names[2:]])
+            print(sel_paras)
+
+            # if para_num < 2:
+            #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
+            # else:
+            #     topk_paras = []
+            #     for i in range(para_num):
+            #         sel_idx = sorted_idxes[i]
+            #         if len(topk_paras) < topk:
+            #             topk_paras.append(para_names_i[sel_idx])
+            #     assert len(topk_paras) <= topk and len(topk_paras) <= para_num and para_num <=4
+            #     sel_paras=[topk_paras[:2], [], topk_paras[2:]]
 
                 # if topk == 2 and para_num >=2:
                 #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
