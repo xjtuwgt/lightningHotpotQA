@@ -39,7 +39,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             para_mask_i = support_para_mask_np[i]
             para_num = int(para_mask_i.sum())
             selected_idxes = [0] * len(para_names_i)
-            print('para num = {}'.format(para_num))
+            # print('para num = {}'.format(para_num))
             para_score_i[para_mask_i == 0] = -1e6
             sorted_idxes = np.argsort(para_score_i)[::-1].tolist()
             if para_num < 2:
@@ -52,21 +52,17 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             for x_idx, x in enumerate(selected_idxes):
                 if x == 1:
                     selected_para_names.append(para_names_i[x_idx])
-            # # print(sorted_idxes)
-            # sorted_idxes = sorted_idxes.tolist()[:para_num][:topk]
-            # # print('sorted idxes {}'.format(sorted_idxes))
-            # selected_idxes = [0] * len(para_names_i)
-            #
-            # for s_idx in sorted_idxes:
-            #     selected_idxes[s_idx] = 1
-            # print(selected_idxes)
-            print('selected para names = {}'.format(selected_para_names))
+            # print('selected para names = {}'.format(selected_para_names))
+            sel_paras = []
             if len(selected_para_names) < 2:
-                sel_paras = ([selected_para_names[0], selected_para_names[0]], [], [])
+                sel_paras.append([selected_para_names[0], selected_para_names[0]])
+                sel_paras.append([])
+                sel_paras.append([])
             else:
-                sel_paras = ([selected_para_names[:2]], [], [selected_para_names[2:]])
-            print('tuple result = {}'.format(sel_paras))
-
+                sel_paras.append(selected_para_names[:2])
+                sel_paras.append([])
+                sel_paras.append(selected_para_names[2:])
+            # print('tuple result = {}'.format(sel_paras))
             # if para_num < 2:
             #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
             # else:
@@ -88,7 +84,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
                 # else:
                 #     if
                 #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]], para_names_i[sorted_idxes[3]]])
-            prediction_para_dict[cur_id] = sel_paras
+            prediction_para_dict[cur_id] = (sel_paras[0], sel_paras[1], sel_paras[2])
 
     recall_list = []
     if gold_file is not None:
