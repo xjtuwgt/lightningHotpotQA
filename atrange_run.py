@@ -129,9 +129,9 @@ if __name__ == '__main__':
         print(key, value)
     print('*' * 50)
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    ## step 1: train & dev data collection
-    # dev_data_collection(args=args)
-    # train_data_collection(args=args, train_filter=False)
-    # train_data_collection(args=args, train_filter=True)
+    # step 1: train & dev data collection
+    dev_data_collection(args=args)
+    train_data_collection(args=args, train_filter=False)
+    train_data_collection(args=args, train_filter=True)
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    run(args=args)
+    # run(args=args)

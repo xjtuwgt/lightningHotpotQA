@@ -10,6 +10,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
     model.eval()
     ##++++++
     prediction_para_dict = {}
+    rank_paras_dict = {}
     ##++++++
     for batch in tqdm(dataloader):
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -38,6 +39,13 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             para_score_i = predict_support_para_np[i]
             para_mask_i = support_para_mask_np[i]
             para_num = int(para_mask_i.sum())
+            ##+++++++++
+            ctx_titles = para_names_i[:para_num]
+            predicted_scores = para_score_i[:para_num]
+            title_score_pair_list = list(zip(ctx_titles, predicted_scores))
+            title_score_pair_list.sort(key=lambda x: x[1], reverse=True)
+            rank_paras_dict[cur_id] = title_score_pair_list
+            ##+++++++++
             selected_idxes = [0] * len(para_names_i)
             # print('para num = {}'.format(para_num))
             para_score_i[para_mask_i == 0] = -1e6
@@ -52,7 +60,6 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
                 # print(topk_sorted_idxes, para_num)
                 for x in topk_sorted_idxes:
                     selected_idxes[x] = 1
-
             selected_para_names = []
             for x_idx, x in enumerate(selected_idxes):
                 if x == 1:
@@ -109,4 +116,4 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
                 recall_list.append(0)
         print('Recall = {}'.format(sum(recall_list)*1.0/len(prediction_para_dict)))
 
-    return prediction_para_dict
+    return prediction_para_dict, rank_paras_dict
