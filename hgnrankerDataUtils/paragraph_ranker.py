@@ -42,7 +42,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             sorted_idxes = np.argsort(para_score_i)[::-1]
             # print(sorted_idxes)
             sorted_idxes = sorted_idxes.tolist()[:para_num][:topk]
-            selected_idxes = [0] * para_names_i
+            selected_idxes = [0] * len(para_names_i)
             for s_idx in sorted_idxes:
                 selected_idxes[s_idx] = 1
             selected_para_names = [para_names_i[_] for _ in selected_idxes if selected_idxes[_] == 1]
