@@ -111,9 +111,17 @@ output_pred_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str
 json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
 
+output_rank_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
+json.dump(para_rank_dict, open(output_rank_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(para_rank_dict), output_rank_para_file))
+
 data_processed_pred_para_file = join(DATASET_FOLDER, 'data_processed/dev_distractor', 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
 json.dump(selected_para_dict, open(data_processed_pred_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_file))
+
+data_processed_rank_para_file = join(DATASET_FOLDER, 'data_processed/dev_distractor', 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
+json.dump(para_rank_dict, open(data_processed_rank_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_rank_para_file))
 # metrics, threshold = jd_eval_model(args, encoder, model,
 #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
 #                                 output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
