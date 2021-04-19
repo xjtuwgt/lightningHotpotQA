@@ -14,6 +14,7 @@ from csr_mhqa.utils import load_encoder_model
 
 from jdmodels.jdHGN import HierarchicalGraphNetwork
 from model_envs import MODEL_CLASSES
+from envs import DATASET_FOLDER
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -109,6 +110,10 @@ selected_para_dict = para_ranker_model(args=args, encoder=encoder, model=model, 
 
 json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
+
+data_processed_pred_para_file = join(DATASET_FOLDER, 'data_processed/dev_distractor', 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
+json.dump(selected_para_dict, open(data_processed_pred_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_file))
 # metrics, threshold = jd_eval_model(args, encoder, model,
 #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
 #                                 output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
