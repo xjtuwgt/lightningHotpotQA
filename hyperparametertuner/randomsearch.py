@@ -59,7 +59,7 @@ def HypeParameterSpace():
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [8]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_docred_low']} #
-    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [9]} # if SAE, then this number should be 9
+    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # if SAE, then this number should be 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
     learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['layer_decay']}
