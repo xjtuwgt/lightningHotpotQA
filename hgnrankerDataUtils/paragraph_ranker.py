@@ -39,9 +39,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             para_mask_i = support_para_mask_np[i]
             para_num = int(para_mask_i.sum())
             selected_idxes = [0] * len(para_names_i)
-
-
-            print(para_num)
+            print('para num = {}'.format(para_num))
             para_score_i[para_mask_i == 0] = -1e6
             sorted_idxes = np.argsort(para_score_i)[::-1].tolist()
             if para_num < 2:
@@ -62,7 +60,6 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             # for s_idx in sorted_idxes:
             #     selected_idxes[s_idx] = 1
             # print(selected_idxes)
-            selected_para_names = [para_names_i[_] for _ in selected_idxes if selected_idxes[_] == 1]
             print('selected para names = {}'.format(selected_para_names))
             if len(selected_para_names) < 2:
                 sel_paras = ([selected_para_names[0], selected_para_names[0]], [], [])
