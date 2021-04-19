@@ -34,26 +34,29 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
         for i in range(predict_support_para_np.shape[0]):
             cur_id = batch['ids'][i]
             para_names_i = example_dict[cur_id].para_names
-            print('origninal para names {}'.format(para_names_i))
+            # print('original para names {}'.format(para_names_i))
             para_score_i = predict_support_para_np[i]
             para_mask_i = support_para_mask_np[i]
             para_num = int(para_mask_i.sum())
-            # print(para_num)
+
+            print(para_num)
             para_score_i[para_mask_i == 0] = -1e6
             sorted_idxes = np.argsort(para_score_i)[::-1]
+
             # print(sorted_idxes)
             sorted_idxes = sorted_idxes.tolist()[:para_num][:topk]
-            print('sorted idxes {}'.format(sorted_idxes))
+            # print('sorted idxes {}'.format(sorted_idxes))
             selected_idxes = [0] * len(para_names_i)
+
             for s_idx in sorted_idxes:
                 selected_idxes[s_idx] = 1
             selected_para_names = [para_names_i[_] for _ in selected_idxes if selected_idxes[_] == 1]
-            print('selected para names = {}'.format(selected_para_names))
+            # print('selected para names = {}'.format(selected_para_names))
             if len(selected_para_names) < 2:
                 sel_paras = ([selected_para_names[0], selected_para_names[0]], [], [])
             else:
                 sel_paras = ([selected_para_names[:2]], [], [selected_para_names[2:]])
-            print(sel_paras)
+            # print(sel_paras)
 
             # if para_num < 2:
             #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
