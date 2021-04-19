@@ -61,7 +61,7 @@ def save_hgn_hotpotqa_model(encoder, model_type, model_name):
     model_type_folder = join(PRETRAINED_MODEL_FOLDER, model_type)
     if not os.path.exists(model_type_folder):
         os.makedirs(model_type_folder)
-    model_type_name_folder = join(model_type_folder, model_name + '_hgn')
+    model_type_name_folder = join(model_type_folder, model_name + '_hgn_hotpotqa')
     if not os.path.exists(model_type_name_folder):
         os.makedirs(model_type_name_folder)
     pickle_model_name = join(model_type_name_folder, f'encoder.pkl')
