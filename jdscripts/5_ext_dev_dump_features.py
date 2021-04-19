@@ -691,8 +691,7 @@ if __name__ == '__main__':
                         help="The ranker for paragraph ranking")
     parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
-
-    parser.add_argument("--reranker", type='str', default='reranker',
+    parser.add_argument("--reranker", type=str, default='reranker',
                         help="Set this flag if you are using reverse data.")
 
     args = parser.parse_args()
