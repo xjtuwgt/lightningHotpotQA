@@ -103,7 +103,7 @@ if args.exp_name is not None:
     model_name = args.exp_name[idx:]
 else:
     model_name = ''
-output_pred_para_file = join(args.exp_name, 'rerank_' + model_name + str(args.topk_para_num) + '_' + args.devf_type + '_long_multihop_para.json.json')
+output_pred_para_file = join(args.exp_name, 'rerank_' + model_name + str(args.topk_para_num) + '_' + args.devf_type + '_long_multihop_para.json')
 
 selected_para_dict = para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
 
