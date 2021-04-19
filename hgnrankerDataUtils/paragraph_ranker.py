@@ -50,7 +50,9 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
                     sel_idx = sorted_idxes[i]
                     if len(topk_paras) < topk:
                         topk_paras.append(para_names_i[sel_idx])
+                assert len(topk_paras) <= topk and len(topk_paras) < para_num
                 sel_paras=[topk_paras[:2], [], topk_paras[2:]]
+
                 # if topk == 2 and para_num >=2:
                 #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
                 # elif topk == 3:
