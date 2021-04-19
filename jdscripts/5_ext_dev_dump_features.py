@@ -692,6 +692,9 @@ if __name__ == '__main__':
     parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
 
+    parser.add_argument("--reranker", type='str', default='reranker',
+                        help="Set this flag if you are using reverse data.")
+
     args = parser.parse_args()
     print('*' * 75)
     for key, value in vars(args).items():
@@ -708,22 +711,16 @@ if __name__ == '__main__':
         ranker = ranker + '_low'
     if args.sae_graph:
         ranker = ranker + '_sae'
+    data_source_name = "{}".format(ranker)
+    if args.reranker is not None:
+        data_source_name = '{}_{}'.format(data_source_name, args.reranker)
 
-    if args.reverse:
-        data_source_name = "{}_reverse".format(ranker)
-    else:
-        data_source_name = "{}".format(ranker)
-
-    if "train" in data_type:
-        data_source_type = data_source_name
-    else:
-        data_source_type = None
-    print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
+    print('data type = {} \n data source name = {}'.format(data_type, data_source_name))
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
                                     doc_link_file=args.doc_link_ner,
-                                    data_source_type=data_source_type)
+                                    data_source_type=None)
 
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_examples'.format(data_source_name), args))
