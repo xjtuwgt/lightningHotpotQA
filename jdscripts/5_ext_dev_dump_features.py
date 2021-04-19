@@ -726,6 +726,7 @@ if __name__ == '__main__':
 
     with gzip.open(cached_examples_file, 'wb') as fout:
         pickle.dump(examples, fout)
+    print('save {} records into {}'.format(len(examples), cached_examples_file))
 
     features = convert_examples_to_features(examples, tokenizer,
                                             max_seq_length=args.max_seq_length,
@@ -741,6 +742,7 @@ if __name__ == '__main__':
 
     with gzip.open(cached_features_file, 'wb') as fout:
         pickle.dump(features, fout)
+    print('save {} records into {}'.format(len(features), cached_features_file))
 
     # build graphs
     cached_graph_file = os.path.join(args.output_dir,
@@ -749,3 +751,4 @@ if __name__ == '__main__':
     graphs = build_graph(args, examples, features, args.max_entity_num)
     with gzip.open(cached_graph_file, 'wb') as fout:
         pickle.dump(graphs, fout)
+    print('save {} records into {}'.format(len(graphs), cached_graph_file))
