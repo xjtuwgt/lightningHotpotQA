@@ -1,0 +1,12 @@
+{
+    "exp_name": "train.graph.roberta.bs2.as1.lr2e-05.lrslayer_decay.lrd0.9.gnngat1.4.datahgn_docred_low_saeRecAdam.cosine.seed103",
+    "encoder_name": "encoder_4.step_11316.pkl",
+    "model_name": "model_4.step_11316.pkl",
+    "model_type": "roberta",
+    "encoder_name_or_path": "roberta-large",
+    "fp16": "True",
+    "devf_type": "oracle",
+    "bi_attn_drop": 0.3,
+    "trans_drop": 0.2,
+    "gnn_drop": 0.3
+}
