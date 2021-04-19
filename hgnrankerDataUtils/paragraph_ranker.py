@@ -46,6 +46,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             for s_idx in sorted_idxes:
                 selected_idxes[s_idx] = 1
             selected_para_names = [para_names_i[_] for _ in selected_idxes if selected_idxes[_] == 1]
+            print('selected para names = {}'.format(selected_para_names))
             if len(selected_para_names) < 2:
                 sel_paras = ([selected_para_names[0], selected_para_names[0]], [], [])
             else:
