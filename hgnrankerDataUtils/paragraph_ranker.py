@@ -46,8 +46,10 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
                 selected_idxes[sorted_idxes[0]] = 1
             else:
                 topk_sorted_idxes = sorted_idxes[:topk]
+                print(topk_sorted_idxes, para_num)
                 for x in topk_sorted_idxes:
                     selected_idxes[x] = 1
+
             selected_para_names = []
             for x_idx, x in enumerate(selected_idxes):
                 if x == 1:
