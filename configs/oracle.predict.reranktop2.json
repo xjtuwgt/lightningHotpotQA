@@ -5,7 +5,7 @@
     "encoder_name": "encoder.pkl",
     "model_name": "model.pkl",
     "fp16": "True",
-    "devf_type": "hgn_low_reranker2",
+    "devf_type": "hgn_low_reranker3",
     "bi_attn_drop": 0.3,
     "trans_drop": 0.2,
     "gnn_drop": 0.3
