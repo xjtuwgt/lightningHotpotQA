@@ -34,6 +34,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
         for i in range(predict_support_para_np.shape[0]):
             cur_id = batch['ids'][i]
             para_names_i = example_dict[cur_id].para_names
+            print('origninal para names {}'.format(para_names_i))
             para_score_i = predict_support_para_np[i]
             para_mask_i = support_para_mask_np[i]
             para_num = int(para_mask_i.sum())
