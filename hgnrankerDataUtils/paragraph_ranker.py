@@ -74,6 +74,8 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             supp_title_set = set([x[0] for x in case['supporting_facts']])
             pred_paras = prediction_para_dict[key]
             sel_para_names = set(itertools.chain.from_iterable(pred_paras))
+            print('selected para {}'.format(sel_para_names))
+            print('Gold para {}'.format(supp_title_set))
             if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
                 recall_list.append(1)
             else:
