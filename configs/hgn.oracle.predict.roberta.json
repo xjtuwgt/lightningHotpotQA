@@ -5,6 +5,8 @@
     "model_type": "roberta",
     "encoder_name_or_path": "roberta-large",
     "fp16": "True",
+    "gnn": "gat:1,4",
+    "num_edge_type": 9,
     "devf_type": "oracle",
     "bi_attn_drop": 0.3,
     "trans_drop": 0.2,
