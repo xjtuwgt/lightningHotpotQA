@@ -57,7 +57,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             for x_idx, x in enumerate(selected_idxes):
                 if x == 1:
                     selected_para_names.append(para_names_i[x_idx])
-            # print('selected para names = {}'.format(selected_para_names))
+            print('selected para names = {}'.format(selected_para_names))
             sel_paras = []
             if len(selected_para_names) < 2:
                 sel_paras.append([selected_para_names[0], selected_para_names[0]])
@@ -67,7 +67,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
                 sel_paras.append(selected_para_names[:2])
                 sel_paras.append([])
                 sel_paras.append(selected_para_names[2:])
-            # print('tuple result = {}'.format(sel_paras))
+            print('tuple result = {}'.format(sel_paras))
             # if para_num < 2:
             #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
             # else:
