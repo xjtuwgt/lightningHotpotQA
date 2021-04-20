@@ -5,6 +5,7 @@ import re
 import torch
 import numpy as np
 import sys
+import itertools
 
 from tqdm import tqdm
 from collections import Counter
@@ -113,6 +114,7 @@ para_num = []
 selected_para_dict = {}
 #####++++++++++++++++++++++++++++++++++++
 selected_para_score_threshold_dict = {}
+recall_list = []
 #####++++++++++++++++++++++++++++++++++++
 
 for case in tqdm(raw_data):
@@ -218,6 +220,15 @@ for case in tqdm(raw_data):
     selected_para_score_threshold_dict[guid].append(other_scores)
     #++++++++++++++++++++++++++++++++++++++++++++
     para_num.append(sum(sel_para_idx))
+    ####++++++++++++
+    supp_title_set = set([x[0] for x in case['supporting_facts']])
+    sel_para_names = set(itertools.chain.from_iterable(selected_para_dict[guid]))
+    if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
+        recall_list.append(1)
+    else:
+        recall_list.append(0)
+    ####++++++++++++
 
+print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
 json.dump(selected_para_dict, open(output_file, 'w'))
 print('Saving {} into {}'.format(len(selected_para_dict), output_file))
