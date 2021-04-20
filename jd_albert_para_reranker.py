@@ -101,8 +101,11 @@ model.eval()
 # Evaluation
 ##########################################################################
 if args.exp_name is not None:
-    idx = args.exp_name.index('seed')
-    model_name = args.exp_name[idx:] + args.model_type
+    if 'seed' in args.exp_name:
+        idx = args.exp_name.index('seed')
+        model_name = args.exp_name[idx:] + args.model_type
+    else:
+        model_name = args.model_type
 else:
     model_name = '' + args.model_type
 
