@@ -10,6 +10,8 @@
     "bi_attn_drop": 0.3,
     "daug_type": "long_low",
     "devf_type": "long_low",
+    "optimizer": "RecAdam",
+    "lr_scheduler": "cosine",
     "trans_drop": 0.2,
     "sent_lambda": 5,
     "learning_rate": 6e-6,
