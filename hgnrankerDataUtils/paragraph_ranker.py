@@ -159,7 +159,7 @@ def albert_para_ranker_model(args, encoder, model, dataloader, example_dict, top
             predicted_scores = para_score_i[:para_num]
             title_score_pair_list = list(zip(ctx_titles, predicted_scores))
             title_score_pair_list.sort(key=lambda x: x[1], reverse=True)
-            rank_paras_dict[cur_id] = title_score_pair_list
+            rank_paras_dict[cur_id] = tuple(title_score_pair_list)
             ##+++++++++
             selected_idxes = [0] * len(para_names_i)
             # print('para num = {}'.format(para_num))
