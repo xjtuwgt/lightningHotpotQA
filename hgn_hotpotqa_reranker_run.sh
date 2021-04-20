@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # DEFINE data related (please make changes according to your configurations)
+# Re-rank the paragraphs according to the trained HGN models
 # DATA ROOT folder where you put data files
 DATA_ROOT=./data/
 
