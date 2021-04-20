@@ -210,7 +210,7 @@ for case in tqdm(raw_data):
             sel_para_idx[ind] = 1
             other_titles.append(para)
             ######+++++++++++++++++++++++++++++++
-            other_scores.append(score)
+            other_scores.append(float(score))
             ######+++++++++++++++++++++++++++++++
     ######+++++++++++++++++++++++++++++++
     selected_para_dict[guid].append(other_titles)
