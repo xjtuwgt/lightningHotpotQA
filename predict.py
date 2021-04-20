@@ -9,6 +9,7 @@ from plmodels.jd_argument_parser import default_train_parser, complete_default_t
 # from csr_mhqa.data_processing import Example, InputFeatures, DataHelper
 from plmodels.pldata_processing import Example, InputFeatures, DataHelper
 from csr_mhqa.utils import *
+from utils.jdevalUtil import jd_eval_model
 
 from models.HGN import *
 from model_envs import MODEL_CLASSES
@@ -82,7 +83,10 @@ model.eval()
 output_pred_file = join(args.exp_name, 'pred.json')
 output_eval_file = join(args.exp_name, 'eval.txt')
 
-metrics, threshold = eval_model(args, encoder, model,
+# metrics, threshold = eval_model(args, encoder, model,
+#                                 dev_dataloader, dev_example_dict, dev_feature_dict,
+#                                 output_pred_file, output_eval_file, args.dev_gold_file)
+metrics, threshold = jd_eval_model(args, encoder, model,
                                 dev_dataloader, dev_example_dict, dev_feature_dict,
                                 output_pred_file, output_eval_file, args.dev_gold_file)
 print("Best threshold: {}".format(threshold))
