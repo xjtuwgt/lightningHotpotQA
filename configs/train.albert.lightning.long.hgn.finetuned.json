@@ -1,7 +1,7 @@
 {
     "exp_name": "HGN_Graph_albert_xxlarge_v2_long_hgn_REC_COSINE_varied_lr",
     "model_type": "albert",
-    "num_train_epochs": 10,
+    "num_train_epochs": 3,
     "encoder_name_or_path": "albert-xxlarge-v2",
     "per_gpu_train_batch_size": 4,
     "gradient_accumulation_steps": 1,
