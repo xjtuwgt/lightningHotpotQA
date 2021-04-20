@@ -609,7 +609,7 @@ def jd_eval_post_model(args, encoder, model, dataloader, example_dict, feature_d
                 batch['context_encoding'] = outputs[0]
             ####++++++++++++++++++++++++++++++++++++++
             batch['context_mask'] = batch['context_mask'].float().to(args.device)
-            start, end, q_type, paras, sent, ent, yp1, yp2 = model(batch, return_yp=True, return_cls=True)
+            start, end, q_type, paras, sent, ent, yp1, yp2 = model(batch, return_yp=True)
 
         type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
         answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(example_dict, feature_dict, batch['ids'],
