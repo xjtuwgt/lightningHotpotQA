@@ -213,10 +213,8 @@ for epoch in train_iterator:
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(args.device)
         start, end, q_type, paras, sents, ents, _, _ = model(batch, return_yp=True)
-
         loss_list = compute_loss(args, batch, start, end, paras, sents, ents, q_type)
         del batch
-
         if args.n_gpu > 1:
             for loss in loss_list:
                 loss = loss.mean() # mean() to average on multi-gpu parallel training
