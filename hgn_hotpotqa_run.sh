@@ -18,8 +18,36 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
-     echo "HGN re-ranker model long topk = 2"
+
+     echo "HGN roberta 103 re-ranker model hgn topk = 2"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.json --topk_para_num 2
+     echo "HGN re-ranker model hgn topk = 3"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.json --topk_para_num 3
+
+     echo "HGN roberta 103 re-ranker model long topk = 2"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdlong.json --topk_para_num 2
+     echo "HGN roberta 103 re-ranker model long topk = 3"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdlong.json --topk_para_num 3
+
+     echo "HGN roberta 3901  re-ranker model long topk = 3"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.long.json --topk_para_num 3
+     echo "HGN roberta 3901 re-ranker model long topk = 2"
      python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.long.json --topk_para_num 2
+
+     echo "HGN roberta 3901 roberta 103 re-ranker model hgn topk = 3"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.hgn.json --topk_para_num 3
+     echo "HGN re-ranker model hgn topk = 2"
+     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.hgn.json --topk_para_num 2
+
+     echo "HGN albert re-ranker model hgn topk = 2"
+     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.hgn.orig.json --topk_para_num 2
+     echo "HGN albert re-ranker model hgn topk = 3"
+     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.hgn.orig.json --topk_para_num 3
+
+     echo "HGN albert re-ranker model long topk = 2"
+     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.long.orig.json --topk_para_num 2
+     echo "HGN albert re-ranker model long topk = 3"
+     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.long.orig.json --topk_para_num 3
 }
 
 for proc in "preprocess"
