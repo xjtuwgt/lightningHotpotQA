@@ -1,5 +1,5 @@
 {
-    "exp_name": "HGN_Graph_albert_xxlarge_v2_long_docred_hgn_REC_COSINE_varied_lr",
+    "exp_name": "HGN_Graph_albert_xxlarge_v2_long_hgn_REC_COSINE_varied_lr",
     "model_type": "albert",
     "num_train_epochs": 10,
     "encoder_name_or_path": "albert-xxlarge-v2",
@@ -8,7 +8,7 @@
     "gnn": "gat:1,4",
     "fine_tuned_encoder": "albert/albert-xxlarge-v2_hotpotqa",
     "bi_attn_drop": 0.3,
-    "daug_type": "hgn_long_docred_low",
+    "daug_type": "hgn_long_low",
     "devf_type": "long_low",
     "num_edge_type": 8,
     "trans_drop": 0.2,
