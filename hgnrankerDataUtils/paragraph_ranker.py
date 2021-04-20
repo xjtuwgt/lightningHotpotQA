@@ -45,6 +45,7 @@ def para_ranker_model(args, encoder, model, dataloader, example_dict, topk=2, go
             title_score_pair_list = list(zip(ctx_titles, predicted_scores))
             title_score_pair_list.sort(key=lambda x: x[1], reverse=True)
             rank_paras_dict[cur_id] = tuple([(x[0], str(x[1]))for x in title_score_pair_list])
+            print(rank_paras_dict[cur_id])
             ##+++++++++
             selected_idxes = [0] * len(para_names_i)
             # print('para num = {}'.format(para_num))
