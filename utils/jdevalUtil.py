@@ -119,7 +119,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
             ##+++++++++++++++++++++++++
             orig_supp_fact_id = example_dict[cur_id].sup_fact_id
             prune_supp_fact_id = feature_dict[cur_id].sup_fact_ids
-            print('original supp fact id {}'.format(orig_supp_fact_id))
+            print('origi supp fact id {}'.format(orig_supp_fact_id))
             print('prune supp fact id {}'.format(prune_supp_fact_id))
             ##+++++++++++++++++++++++++
             topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras = \
