@@ -570,3 +570,164 @@ def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob,
         # print('answer_sent_name', answer_sent_name, answer_text)
         answer2sent_name_dict[qid] = answer_sent_name
     return answer_dict, answer_type_dict, answer2sent_name_dict
+
+
+
+def jd_eval_post_model(args, encoder, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file, output_score_file=None):
+    encoder.eval()
+    model.eval()
+
+    answer_dict = {}
+    answer_type_dict = {}
+    answer_type_prob_dict = {}
+    ##++++++
+    prediction_res_score_dict = {}
+    ##++++++
+    # dataloader.refresh()
+    #++++++
+    cut_sentence_count = 0
+    #++++++
+
+    thresholds = np.arange(0.1, 1.0, 0.05)
+    N_thresh = len(thresholds)
+    total_sp_dict = [{} for _ in range(N_thresh)]
+
+    for batch in tqdm(dataloader):
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for key, value in batch.items():
+            if key not in {'ids'}:
+                batch[key] = value.to(args.device)
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        with torch.no_grad():
+            inputs = {'input_ids':      batch['context_idxs'],
+                      'attention_mask': batch['context_mask'],
+                      'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
+            outputs = encoder(**inputs)
+            ####++++++++++++++++++++++++++++++++++++++
+            if args.model_type == 'electra':
+                batch['context_encoding'] = outputs.last_hidden_state
+            else:
+                batch['context_encoding'] = outputs[0]
+            ####++++++++++++++++++++++++++++++++++++++
+            batch['context_mask'] = batch['context_mask'].float().to(args.device)
+            start, end, q_type, paras, sent, ent, yp1, yp2 = model(batch, return_yp=True, return_cls=True)
+
+        type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
+        answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(example_dict, feature_dict, batch['ids'],
+                                                                                    yp1.data.cpu().numpy().tolist(),
+                                                                                    yp2.data.cpu().numpy().tolist(),
+                                                                                    type_prob)
+        ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # print('ent_prediction', ent.shape)
+        # print('ent_mask', batch['ans_cand_mask'])
+        # print('gold_ent', batch['is_gold_ent'])
+        ent_pre_prob = torch.sigmoid(ent).data.cpu().numpy()
+        ent_mask_np = batch['ent_mask'].data.cpu().numpy()
+        ans_cand_mask_np = batch['ans_cand_mask'].data.cpu().numpy()
+        is_gold_ent_np = batch['is_gold_ent'].data.cpu().numpy()
+
+        _, _, answer_sent_name_dict_ = convert_answer_to_sent_names(example_dict, feature_dict, batch,
+                                                                                    yp1.data.cpu().numpy().tolist(),
+                                                                                    yp2.data.cpu().numpy().tolist(),
+                                                                                    type_prob, ent_pre_prob)
+        ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        answer_type_dict.update(answer_type_dict_)
+        answer_type_prob_dict.update(answer_type_prob_dict_)
+        answer_dict.update(answer_dict_)
+
+        predict_support_np = torch.sigmoid(sent[:, :, 1]).data.cpu().numpy()
+        ####################################################################
+        support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
+        predict_support_para_np = torch.sigmoid(paras[:, :, 1]).data.cpu().numpy()
+        support_para_mask_np = batch['para_mask'].data.cpu().numpy()
+        ####################################################################
+        ####################################################################
+        predict_support_logit_np = sent[:, :, 1].data.cpu().numpy()
+        predict_support_para_logit_np = paras[:, :, 1].data.cpu().numpy()
+        ent_pre_logit_np = ent.data.cpu().numpy()
+        ####################################################################
+
+        for i in range(predict_support_np.shape[0]):
+            cur_sp_pred = [[] for _ in range(N_thresh)]
+            cur_id = batch['ids'][i]
+            ##+++++++++++++++++++++++++
+            topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras = \
+                post_process_sent_para(cur_id=cur_id, example_dict=example_dict, feature_dict=feature_dict,
+                                       sent_scores_np_i=predict_support_np[i], sent_mask_np_i=support_sent_mask_np[i],
+                                       para_scores_np_i=predict_support_para_np[i], para_mask_np_i=support_para_mask_np[i])
+            ans_sent_name = answer_sent_name_dict_[cur_id]
+            if cut_sent_flag:
+                cut_sentence_count += 1
+            ##+++++++++++++++++++++++++
+            # sent_pred_ = {'sp_score': predict_support_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(), 'sp_names': example_dict[cur_id].sent_names}
+            # para_pred_ = {'para_score': predict_support_para_np[i].tolist(), 'para_mask': support_para_mask_np[i].tolist(), 'para_names': example_dict[cur_id].para_names}
+            # ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_prob[i].tolist(), 'ent_mask': ent_mask_np[i].tolist(),
+            #              'query_entity': example_dict[cur_id].ques_entities_text, 'ctx_entity': example_dict[cur_id].ctx_entities_text,
+            #              'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(), 'answer': answer_dict[cur_id]}
+            sent_pred_ = {'sp_score': predict_support_logit_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(),
+                          'sp_names': example_dict[cur_id].sent_names}
+            para_pred_ = {'para_score': predict_support_para_logit_np[i].tolist(),
+                          'para_mask': support_para_mask_np[i].tolist(), 'para_names': example_dict[cur_id].para_names}
+            ans_pred_ = {'ans_type': type_prob[i].tolist(), 'ent_score': ent_pre_logit_np[i].tolist(),
+                         'ent_mask': ent_mask_np[i].tolist(),
+                         'query_entity': example_dict[cur_id].ques_entities_text,
+                         'ctx_entity': example_dict[cur_id].ctx_entities_text,
+                         'ans_ent_mask': ans_cand_mask_np[i].tolist(), 'is_gold_ent': is_gold_ent_np[i].tolist(),
+                         'answer': answer_dict[cur_id]}
+            res_pred = {**sent_pred_, **para_pred_, **ans_pred_}
+            prediction_res_score_dict[cur_id] = res_pred
+            ##+++++++++++++++++++++++++
+            for j in range(predict_support_np.shape[1]):
+                if j >= len(example_dict[cur_id].sent_names):
+                    break
+
+                for thresh_i in range(N_thresh):
+                    # if predict_support_np[i, j] > thresholds[thresh_i]:
+                    if predict_support_np[i, j] > thresholds[thresh_i] * topk_score_ref:
+                        cur_sp_pred[thresh_i].append(example_dict[cur_id].sent_names[j])
+
+            for thresh_i in range(N_thresh):
+                if cur_id not in total_sp_dict[thresh_i]:
+                    total_sp_dict[thresh_i][cur_id] = []
+                ##+++++
+                # +++++++++++++++++++++++++++
+                post_process_thresh_i_sp_pred = post_process_technique(cur_sp_pred=cur_sp_pred[thresh_i],
+                                                               topk_pred_paras=topk_pred_paras,
+                                                               topk_pred_sent_names=topk_pred_sent_names,
+                                                               diff_para_sent_names=diff_para_sent_names,
+                                                               ans_sent_name=ans_sent_name)
+                total_sp_dict[thresh_i][cur_id].extend(post_process_thresh_i_sp_pred)
+                # # +++++++++++++++++++++++++++
+                # total_sp_dict[thresh_i][cur_id].extend(cur_sp_pred[thresh_i])
+
+    def choose_best_threshold(ans_dict, pred_file):
+        best_joint_f1 = 0
+        best_metrics = None
+        best_threshold = 0
+        for thresh_i in range(N_thresh):
+            prediction = {'answer': ans_dict,
+                          'sp': total_sp_dict[thresh_i],
+                          'type': answer_type_dict,
+                          'type_prob': answer_type_prob_dict}
+            tmp_file = os.path.join(os.path.dirname(pred_file), 'tmp.json')
+            with open(tmp_file, 'w') as f:
+                json.dump(prediction, f)
+            metrics = hotpot_eval(tmp_file, dev_gold_file)
+            if metrics['joint_f1'] >= best_joint_f1:
+                best_joint_f1 = metrics['joint_f1']
+                best_threshold = thresholds[thresh_i]
+                best_metrics = metrics
+                shutil.move(tmp_file, pred_file)
+
+        return best_metrics, best_threshold
+
+    best_metrics, best_threshold = choose_best_threshold(answer_dict, prediction_file)
+    json.dump(best_metrics, open(eval_file, 'w'))
+
+    if output_score_file is not None:
+        with open(output_score_file, 'w') as f:
+            json.dump(prediction_res_score_dict, f)
+
+    print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
+    return best_metrics, best_threshold
