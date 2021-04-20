@@ -2,7 +2,7 @@ import logging
 import sys
 import json
 from utils.gpu_utils import single_free_cuda
-from hgnrankerDataUtils.paragraph_ranker import para_ranker_model
+from hgnrankerDataUtils.paragraph_ranker import albert_para_ranker_model
 from hgnrankerDataUtils.reranker_argument_parser import default_parser, complete_default_parser
 
 from os.path import join
@@ -109,7 +109,7 @@ if args.exp_name is not None:
 else:
     model_name = '' + args.model_type
 
-selected_para_dict, para_rank_dict = para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
+selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
 
 output_pred_para_file = join(args.exp_name, 'rerank_' + model_name +'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
 json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
