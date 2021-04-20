@@ -102,13 +102,13 @@ model.eval()
 ##########################################################################
 if args.exp_name is not None:
     idx = args.exp_name.index('seed')
-    model_name = args.exp_name[idx:]
+    model_name = args.exp_name[idx:] + args.model_type
 else:
-    model_name = ''
+    model_name = '' + args.model_type
 
 selected_para_dict, para_rank_dict = para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
 
-output_pred_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
+output_pred_para_file = join(args.exp_name, 'rerank_' + model_name +'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
 json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
 
