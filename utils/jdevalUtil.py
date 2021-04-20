@@ -572,7 +572,6 @@ def convert_answer_to_sent_names(examples, features, batch, y1, y2, q_type_prob,
     return answer_dict, answer_type_dict, answer2sent_name_dict
 
 
-
 def jd_eval_post_model(args, encoder, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file, output_score_file=None):
     encoder.eval()
     model.eval()
