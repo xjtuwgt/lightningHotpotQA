@@ -196,6 +196,20 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
     best_metrics, best_threshold = choose_best_threshold(answer_dict, prediction_file)
     json.dump(best_metrics, open(eval_file, 'w'))
 
+    #####+++++++++++
+    with open(dev_gold_file) as f:
+        gold = json.load(f)
+    for row in gold:
+        key = row['_id']
+        print('support facts = {}'.format(row['supporting_facts']))
+        score_case = prediction_res_score_dict[key]
+        sp_names = score_case['sp_names']
+        sup_fact_id=   score_case['sup_fact_id']
+        trim_sup_fact_id = score_case['trim_sup_fact_id']
+        print('orig', [sp_names[_] for _ in sup_fact_id])
+        print('trim', [sp_names[_] for _ in trim_sup_fact_id])
+    #####+++++++++++
+
     if output_score_file is not None:
         with open(output_score_file, 'w') as f:
             json.dump(prediction_res_score_dict, f)
