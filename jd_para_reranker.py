@@ -100,10 +100,13 @@ model.eval()
 # Evaluation
 ##########################################################################
 if args.exp_name is not None:
-    idx = args.exp_name.index('seed')
-    model_name = args.exp_name[idx:]
+    if 'seed' in args.exp_name:
+        idx = args.exp_name.index('seed')
+        model_name = args.exp_name[idx:] + args.model_type
+    else:
+        model_name = args.model_type
 else:
-    model_name = ''
+    model_name = '' + args.model_type
 
 selected_para_dict, para_rank_dict = para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
 
