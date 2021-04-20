@@ -34,9 +34,9 @@ preprocess() {
      echo "HGN roberta 3901 re-ranker model long topk = 2"
      python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.long.json --topk_para_num 2
 
-     echo "HGN roberta 3901 roberta 103 re-ranker model hgn topk = 3"
+     echo "HGN roberta 3901 re-ranker model hgn topk = 3"
      python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.hgn.json --topk_para_num 3
-     echo "HGN re-ranker model hgn topk = 2"
+     echo "HGN roberta 3901 re-ranker model hgn topk = 2"
      python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.hgn.json --topk_para_num 2
 
      echo "HGN albert re-ranker model hgn topk = 2"
