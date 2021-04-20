@@ -201,7 +201,7 @@ def jd_eval_model(args, encoder, model, dataloader, example_dict, feature_dict, 
         gold = json.load(f)
     for row in gold:
         key = row['_id']
-        print('support facts = {}'.format(row['supporting_facts']))
+        print('suppo = {}'.format(row['supporting_facts']))
         score_case = prediction_res_score_dict[key]
         sp_names = score_case['sp_names']
         sup_fact_id=   score_case['sup_fact_id']

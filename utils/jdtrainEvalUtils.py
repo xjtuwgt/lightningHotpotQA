@@ -217,5 +217,19 @@ def jd_train_eval_model(args, encoder, model, dataloader, example_dict, feature_
         with open(output_score_file, 'w') as f:
             json.dump(prediction_res_score_dict, f)
 
+    #####+++++++++++
+    with open(train_gold_file) as f:
+        gold = json.load(f)
+    for row in gold:
+        key = row['_id']
+        print('suppo = {}'.format(row['supporting_facts']))
+        score_case = prediction_res_score_dict[key]
+        sp_names = score_case['sp_names']
+        sup_fact_id = score_case['sup_fact_id']
+        trim_sup_fact_id = score_case['trim_sup_fact_id']
+        print('orig', [sp_names[_] for _ in sup_fact_id])
+        print('trim', [sp_names[_] for _ in trim_sup_fact_id])
+    #####+++++++++++
+
     print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
     return best_metrics, best_threshold
