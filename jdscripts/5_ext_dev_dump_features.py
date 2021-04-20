@@ -714,6 +714,8 @@ if __name__ == '__main__':
     if args.reranker is not None:
         data_source_name = '{}_{}'.format(data_source_name, args.reranker)
 
+    data_source_name = "{}_{}".format(args.model_type, data_source_name)
+
     print('data type = {} \n data source name = {}'.format(data_type, data_source_name))
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,

@@ -64,6 +64,19 @@ def get_cached_filename(f_type, config):
 
                   'long_low_sae_reranker2_examples', 'long_low_sae_reranker2_features', 'long_low_sae_reranker2_graphs',
                   'long_low_sae_reranker3_examples', 'long_low_sae_reranker3_features', 'long_low_sae_reranker3_graphs',
+                  #++++
+
+                  'roberta_hgn_low_reranker2_examples', 'hgn_low_reranker2_features', 'hgn_low_reranker2_graphs',
+                  'roberta_hgn_low_reranker3_examples', 'hgn_low_reranker3_features', 'hgn_low_reranker3_graphs',
+
+                  'roberta_hgn_low_sae_reranker2_examples', 'hgn_low_sae_reranker2_features', 'hgn_low_sae_reranker2_graphs',
+                  'roberta_hgn_low_sae_reranker3_examples', 'hgn_low_sae_reranker3_features', 'hgn_low_sae_reranker3_graphs',
+
+                  'albert_long_low_reranker2_examples', 'long_low_reranker2_features', 'long_low_reranker2_graphs',
+                  'albert_long_low_reranker3_examples', 'long_low_reranker3_features', 'long_low_reranker3_graphs',
+
+                  'albert_long_low_sae_reranker2_examples', 'long_low_sae_reranker2_features', 'long_low_sae_reranker2_graphs',
+                  'albert_long_low_sae_reranker3_examples', 'long_low_sae_reranker3_features', 'long_low_sae_reranker3_graphs',
 
                   } #### ranker: hgn, longformer; case: lowercase, cased; graph: whether sae-graph
     assert f_type in f_type_set
