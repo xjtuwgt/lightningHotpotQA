@@ -1,0 +1,11 @@
+{
+    "exp_name": "albert",
+    "model_type": "albert",
+    "devf_type": "hgn_low",
+    "encoder_name_or_path": "albert-xxlarge-v2",
+    "encoder_name": "encoder.pkl",
+    "model_name": "model.pkl",
+    "fp16": "True",
+    "bi_attn_drop": 0.1,
+    "trans_drop": 0.2
+}
