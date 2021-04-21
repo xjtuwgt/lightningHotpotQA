@@ -25,7 +25,6 @@ def init_sent_para_feature(batch, input_state, hidden_dim):
     sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)  # N x max_sent x 2d
     return sent_state
 
-
 class ParaSentPredictionLayer(nn.Module):
     def __init__(self, config, hidden_dim):
         super(ParaSentPredictionLayer, self).__init__()
