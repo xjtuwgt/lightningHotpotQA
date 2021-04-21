@@ -230,5 +230,5 @@ for case in tqdm(raw_data):
     ####++++++++++++
 
 print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
-json.dump(selected_para_dict, open(output_file, 'w'))
-print('Saving {} into {}'.format(len(selected_para_dict), output_file))
+# json.dump(selected_para_dict, open(output_file, 'w'))
+# print('Saving {} into {}'.format(len(selected_para_dict), output_file))
