@@ -225,12 +225,13 @@ def jd_train_eval_model(args, encoder, model, dataloader, example_dict, feature_
     for row in gold:
         key = row['_id']
         print('suppo = {}'.format(row['supporting_facts']))
-        score_case = prediction_res_score_dict[key]
-        sp_names = score_case['sp_names']
-        sup_fact_id = score_case['sup_fact_id']
-        trim_sup_fact_id = score_case['trim_sup_fact_id']
-        print('orig', [sp_names[_] for _ in sup_fact_id])
-        print('trim', [sp_names[_] for _ in trim_sup_fact_id])
+        if key in prediction_res_score_dict:
+            score_case = prediction_res_score_dict[key]
+            sp_names = score_case['sp_names']
+            sup_fact_id = score_case['sup_fact_id']
+            trim_sup_fact_id = score_case['trim_sup_fact_id']
+            print('orig', [sp_names[_] for _ in sup_fact_id])
+            print('trim', [sp_names[_] for _ in trim_sup_fact_id])
     #####+++++++++++
 
     print('Number of examples with cutted sentences = {}'.format(cut_sentence_count))
