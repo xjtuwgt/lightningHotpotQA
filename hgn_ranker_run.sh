@@ -56,7 +56,7 @@ preprocess() {
 
 }
 
-for proc in "download" "preprocess"
+for proc in "preprocess"
 do
     if [[ ${PROCS:-"download"} =~ $proc ]]; then
         $proc
