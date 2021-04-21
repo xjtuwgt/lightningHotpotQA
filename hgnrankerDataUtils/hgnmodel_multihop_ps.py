@@ -200,6 +200,7 @@ for case in tqdm(raw_data):
     other_titles = []
     ######+++++++++++++++++++++++++++++++
     other_scores = []
+    print(para_scores)
     ######+++++++++++++++++++++++++++++++
     for para, score in para_scores:
         if para not in title_to_id:
@@ -231,6 +232,6 @@ for case in tqdm(raw_data):
         recall_list.append(0)
     ####++++++++++++
 
-print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
+# print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
 # json.dump(selected_para_dict, open(output_file, 'w'))
 # print('Saving {} into {}'.format(len(selected_para_dict), output_file))
