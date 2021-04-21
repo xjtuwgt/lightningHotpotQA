@@ -44,7 +44,7 @@ preprocess() {
         echo "4. HGN re-ranker model (4)"
         # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
         # Output: long_multihop_para.json
-        python hgnrankerDataUtils/hgnmodel_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/rerank_alberttopk_2_hgn_low_para_ranking.json $OUTPUT_PROCESSED/rerank_alberttopk_2_hgn_low_multihop_para.json $SELECTEED_DOC_NUM
+        python hgnrankerDataUtils/hgnmodel_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/rerank_alberttopk_2_hgn_low_para_ranking.json $OUTPUT_PROCESSED/rerank_alberttopk_2_hgn_low_multihop_para.json $SELECTEED_DOC_NUM 2
 
 #        echo "5. Dump features for reberta (5) do_lower_case"
 #        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE#
