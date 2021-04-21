@@ -3,8 +3,26 @@
 # DEFINE data related (please make changes according to your configurations)
 # DATA ROOT folder where you put data files
 DATA_ROOT=./data/
+
+
+LONG_FORMER_ROOT=allenai
+ELECTRA_ROOT=google
 SELECTEED_DOC_NUM=4
 
+
+# PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,preprocess,train" or "preprocess" only
+
+# define precached BERT MODEL path
+# ROBERTA_LARGE=$DATA_ROOT/models/pretrained/roberta-large
+# pip install -U spacy
+# python -m spacy download en_core_web_lg
+
+# Add current pwd to PYTHONPATH
+export DIR_TMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export PYTHONPATH=$PYTHONPATH:$DIR_TMP:$DIR_TMP/hgntransformers
+export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
+
+mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
 #    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
