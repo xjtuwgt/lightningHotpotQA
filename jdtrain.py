@@ -212,7 +212,7 @@ for epoch in train_iterator:
             batch['context_encoding'] = encoder(**inputs)[0]
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(args.device)
-        start, end, q_type, paras, sents, ents, _, _ = model(batch, return_yp=True)
+        start, end, q_type, paras, sents, ents, y1, y2 = model(batch, return_yp=True)
         loss_list = compute_loss(args, batch, start, end, paras, sents, ents, q_type)
         del batch
         if args.n_gpu > 1:
