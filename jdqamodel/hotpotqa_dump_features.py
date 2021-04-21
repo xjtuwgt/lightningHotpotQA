@@ -3,11 +3,11 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqaUtils import hotpot_answer_tokenizer
 from os.path import join
 import gzip
 import pickle
+from model_envs import MODEL_CLASSES
 
 def get_cached_filename(f_type, config):
     f_type_set = {'long_low_hotpotqa_tokenized_examples', 'hgn_low_hotpotqa_tokenized_examples'}
