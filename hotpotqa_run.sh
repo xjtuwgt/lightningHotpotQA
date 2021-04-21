@@ -3,6 +3,7 @@
 # DEFINE data related (please make changes according to your configurations)
 # DATA ROOT folder where you put data files
 DATA_ROOT=./data/
+SELECTEED_DOC_NUM=4
 
 
 preprocess() {
@@ -25,6 +26,7 @@ preprocess() {
         # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
         # Output: long_multihop_para.json
         python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
+
 
 
         echo "2. Tokenized example extraction (Roberta low)"
