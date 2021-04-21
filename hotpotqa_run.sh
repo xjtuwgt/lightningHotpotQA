@@ -22,14 +22,14 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "1. MultiHop Paragraph Selection (long)"
-        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
-        # Output: long_multihop_para.json
-        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
+#        echo "1. MultiHop Paragraph Selection (long)"
+#        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
+#        # Output: long_multihop_para.json
+#        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
 
 
         echo "2. Tokenized example extraction (Roberta low)"
-        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+        python jdqamodel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
 #        echo "3. Tokenized example extraction (Albert low)"
 #        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
