@@ -10,7 +10,7 @@ import itertools
 from tqdm import tqdm
 from collections import Counter
 
-assert len(sys.argv) == 7
+assert len(sys.argv) == 8
 
 raw_data = json.load(open(sys.argv[1], 'r'))
 doc_link_data = json.load(open(sys.argv[2], 'r'))
@@ -19,7 +19,8 @@ para_data = json.load(open(sys.argv[4], 'r'))
 output_file = sys.argv[5]
 ###################################################
 num_selected_docs = int(sys.argv[6])
-print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs)))
+topk = int(sys.argv[7])
+print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
 ###################################################
 
 def select_titles(question_text, question_entities):
@@ -202,7 +203,10 @@ for case in tqdm(raw_data):
     other_scores = []
     print(para_scores)
     ######+++++++++++++++++++++++++++++++
-    for para, score in para_scores:
+    for idx, para_score in enumerate(para_scores):
+        para, score = para_score
+        if idx >= topk:
+            break
         if para not in title_to_id:
             continue
         if sum(sel_para_idx) == 4:
