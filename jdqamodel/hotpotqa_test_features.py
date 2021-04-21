@@ -11,8 +11,8 @@ from collections import Counter
 from tqdm import tqdm
 
 from model_envs import MODEL_CLASSES
-from HotpotQAModel.hotpotqa_dump_features import get_cached_filename
-from HotpotQAModel.hotpotqaUtils import json_loader
+from jdqamodel.hotpotqa_dump_features import get_cached_filename
+from jdqamodel.hotpotqaUtils import json_loader
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 

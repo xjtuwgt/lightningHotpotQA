@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from HotpotQAModel.hotpotqa_data_structure import Example
+from jdqamodel.hotpotqa_data_structure import Example
 import numpy as np
 from numpy import random
 from torch.utils.data import DataLoader

@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import argparse
 from model_envs import MODEL_CLASSES
-from HotpotQAModel.hotpotqaUtils import hotpot_answer_tokenizer
+from jdqamodel.hotpotqaUtils import hotpot_answer_tokenizer
 from os.path import join
 import gzip
 import pickle

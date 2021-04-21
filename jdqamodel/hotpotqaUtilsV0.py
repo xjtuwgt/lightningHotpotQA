@@ -4,12 +4,13 @@ from pandas import DataFrame
 from time import time
 from tqdm import tqdm
 import itertools
-from HotpotQAModel.hotpotqa_data_structure import Example
+from jdqamodel.hotpotqa_data_structure import Example
 import spacy
 import re
 nlp = spacy.load("en_core_web_lg", disable=['tagger', 'parser'])
 infix_re = re.compile(r'''[-—–~]''')
 nlp.tokenizer.infix_finditer = infix_re.finditer
+
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def json_loader(json_file_name: str):
     with open(json_file_name, 'r', encoding='utf-8') as reader:
@@ -26,16 +27,16 @@ def split_sent(sent: str):
     for token in nlp_doc:
         words.append(token.text)
     return words
+
 def tokenize_text(text: str, tokenizer, is_roberta):
     words = split_sent(sent=text)
     sub_tokens = []
     for word in words:
         if is_roberta:
-            sub_toks = tokenizer.tokenize(word, add_prefix_space=True)
-        else:
             sub_toks = tokenizer.tokenize(word)
-        sub_tokens += sub_toks
-    return words, sub_tokens
+            sub_tokens += sub_toks
+    sub_input_ids = tokenizer.convert_tokens_to_ids(sub_tokens)
+    return words, sub_tokens, sub_input_ids
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def normalize_question(question: str) -> str:
     question = question
@@ -51,8 +52,12 @@ def answer_span_checker(answer, sentence):
         return False
     return True
 def find_answer_span(norm_answer, sentence, tokenizer, is_roberta):
-    _, ans_sub_tokens = tokenize_text(text=norm_answer, tokenizer=tokenizer, is_roberta=is_roberta)
-    _, sent_sub_tokens = tokenize_text(text=sentence, tokenizer=tokenizer, is_roberta=is_roberta)
+    if is_roberta:
+        ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
+        sent_sub_tokens = tokenizer.tokenize(sentence, add_prefix_space=True)
+    else:
+        ans_sub_tokens = tokenizer.tokenize(norm_answer)
+        sent_sub_tokens = tokenizer.tokenize(sentence)
     idx = sub_list_match_idx(target=ans_sub_tokens, source=sent_sub_tokens)
     flag = idx >= 0
     return flag, ans_sub_tokens, sent_sub_tokens
@@ -170,8 +175,11 @@ def hotpot_answer_tokenizer(para_file: str,
             answer_not_found_count = answer_not_found_count + 1
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_tokens = [cls_token]
-        query_words, query_sub_tokens = tokenize_text(text=norm_question, tokenizer=tokenizer, is_roberta=is_roberta)
-        query_tokens += query_sub_tokens
+        if is_roberta:
+            sub_tokens = tokenizer.tokenize(norm_question, add_prefix_space=True)
+        else:
+            sub_tokens = tokenizer.tokenize(norm_question)
+        query_tokens += sub_tokens
         if is_roberta:
             query_tokens += [sep_token, sep_token]
         else:
@@ -206,36 +214,45 @@ def hotpot_answer_tokenizer(para_file: str,
                 if local_sent_name in supporting_facts_filtered:
                     sup_facts_sent_id.append(sent_id)
                 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                sent_words, sent_sub_tokens = tokenize_text(text=sent_text, tokenizer=tokenizer, is_roberta=is_roberta)
                 if is_roberta:
-                    sent_sub_tokens.append(sep_token)
-                sub_input_ids = tokenizer.convert_tokens_to_ids(sent_sub_tokens)
-                assert len(sub_input_ids) == len(sent_sub_tokens)
-                sent_tokens_list.append(sent_sub_tokens)
+                    sub_tokens = tokenizer.tokenize(sent_text, add_prefix_space=True)
+                    sub_tokens.append(sep_token)
+                else:
+                    sub_tokens = tokenizer.tokenize(sent_text)
+                sub_input_ids = tokenizer.convert_tokens_to_ids(sub_tokens)
+                assert len(sub_input_ids) == len(sub_tokens)
+                sent_tokens_list.append(sub_tokens)
                 sent_input_id_list.append(sub_input_ids)
-                assert len(sent_sub_tokens) == len(sub_input_ids)
+                assert len(sub_tokens) == len(sub_input_ids)
                 sent_id = sent_id + 1
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             ctx_token_list.append(sent_tokens_list)
             ctx_input_id_list.append(sent_input_id_list)
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             if (norm_answer.strip() not in ['yes', 'no', 'noanswer']) and answer_found_flag:
-                ans_words, ans_sub_tokens = tokenize_text(text=norm_answer, tokenizer=tokenizer, is_roberta=is_roberta)
+                if is_roberta:
+                    ans_sub_tokens = tokenizer.tokenize(norm_answer, add_prefix_space=True)
+                else:
+                    ans_sub_tokens = tokenizer.tokenize(norm_answer)
                 ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
                 for sup_sent_idx, supp_sent_flag in answer_sent_flags:
                     supp_sent_encode_ids = sent_input_id_list[sup_sent_idx]
                     if supp_sent_flag:
                         answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
                         if answer_start_idx < 0:
-                            ans_words, ans_sub_tokens = tokenize_text(text=norm_answer.strip(), tokenizer=tokenizer,
-                                                                      is_roberta=is_roberta)
+                            if is_roberta:
+                                ans_sub_tokens = tokenizer.tokenize(norm_answer.strip(), add_prefix_space=True)
+                            else:
+                                ans_sub_tokens = tokenizer.tokenize(norm_answer.strip())
                             ans_input_ids = tokenizer.convert_tokens_to_ids(ans_sub_tokens)
                             answer_start_idx = sub_list_match_idx(target=ans_input_ids, source=supp_sent_encode_ids)
                         answer_len = len(ans_input_ids)
-                        assert answer_start_idx >= 0, "supp sent={} \n answer={} \n answer={} \n {} \n {}".format(tokenizer.decode(supp_sent_encode_ids),
-                            tokenizer.decode(ans_input_ids), norm_answer, supp_sent_encode_ids, ans_sub_tokens)
+                        assert answer_start_idx >= 0, "supp sent={} \n answer={} \n answer={} \n {} \n {}".format(
+                            tokenizer.tokenizer.decode(supp_sent_encode_ids),
+                            tokenizer.tokenizer.decode(ans_input_ids), norm_answer, supp_sent_encode_ids,
+                            ans_sub_tokens)
                         ctx_with_answer = True
-                        answer_positions.append((para_idx, sup_sent_idx, answer_start_idx, answer_start_idx + answer_len))
+                        answer_positions.append((para_idx, sup_sent_idx, answer_start_idx, answer_start_idx + answer_len - 1))
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             assert len(para_names) == para_num
             assert len(sent_names) == sent_num
@@ -263,6 +280,10 @@ def hotpot_answer_tokenizer(para_file: str,
                           answer_input_ids=ans_input_ids,
                           answer_positions=answer_positions,
                           ctx_with_answer=ctx_with_answer)
+        # for key, value in example.__dict__.items():
+        #     print(key)
+        #     print(value)
+        #     print('*' * 100)
         examples.append(example)
     print('Answer not found = {}'.format(answer_not_found_count))
     return examples
