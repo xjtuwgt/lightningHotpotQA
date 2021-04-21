@@ -201,7 +201,7 @@ for case in tqdm(raw_data):
     other_titles = []
     ######+++++++++++++++++++++++++++++++
     other_scores = []
-    print(para_scores)
+    # print(para_scores)
     ######+++++++++++++++++++++++++++++++
     for idx, para_score in enumerate(para_scores):
         para, score = para_score
@@ -227,15 +227,15 @@ for case in tqdm(raw_data):
     para_num.append(sum(sel_para_idx))
     ####++++++++++++
     supp_title_set = set([x[0] for x in case['supporting_facts']])
-    # print('gold {}'.format(supp_title_set))
+    print('gold {}'.format(supp_title_set))
     sel_para_names = set(itertools.chain.from_iterable(selected_para_dict[guid]))
-    # print('selected para {}'.format(sel_para_names))
+    print('selected para {}'.format(sel_para_names))
     if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
         recall_list.append(1)
     else:
         recall_list.append(0)
     ####++++++++++++
 
-# print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
+print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
 # json.dump(selected_para_dict, open(output_file, 'w'))
 # print('Saving {} into {}'.format(len(selected_para_dict), output_file))
