@@ -203,13 +203,10 @@ for epoch in train_iterator:
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         inputs = {'input_ids':      batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
-                  'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
+                  'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
 
         ####++++++++++++++++++++++++++++++++++++++
-        if args.model_type == 'electra':
-            batch['context_encoding'] = encoder(**inputs).last_hidden_state
-        else:
-            batch['context_encoding'] = encoder(**inputs)[0]
+        batch['context_encoding'] = encoder(**inputs)[0]
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(args.device)
         start, end, q_type, paras, sents, ents, y1, y2 = model(batch, return_yp=True)
