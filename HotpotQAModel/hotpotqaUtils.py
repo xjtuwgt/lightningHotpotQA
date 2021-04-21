@@ -263,10 +263,6 @@ def hotpot_answer_tokenizer(para_file: str,
                           answer_input_ids=ans_input_ids,
                           answer_positions=answer_positions,
                           ctx_with_answer=ctx_with_answer)
-        # for key, value in example.__dict__.items():
-        #     print(key)
-        #     print(value)
-        #     print('*' * 100)
         examples.append(example)
     print('Answer not found = {}'.format(answer_not_found_count))
     return examples
