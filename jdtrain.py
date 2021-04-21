@@ -206,7 +206,8 @@ for epoch in train_iterator:
                   'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
 
         ####++++++++++++++++++++++++++++++++++++++
-        batch['context_encoding'] = encoder(**inputs)[0]
+        outputs = encoder(**inputs)
+        batch['context_encoding'] = outputs[0]
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(args.device)
         start, end, q_type, paras, sents, ents, y1, y2 = model(batch, return_yp=True)
