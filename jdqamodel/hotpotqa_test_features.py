@@ -220,14 +220,14 @@ def case_to_feature_checker(para_file: str,
             all_sents += ctx_dict[para_name]
 
 
-        for s_idx, sent_span in enumerate(sent_spans):
-            sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
-            # print(sent_inp_ids)
-            decoded_sent = tokenizer.decode(sent_inp_ids)
-            print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
-            print('{} deco sent: {}'.format(s_idx, decoded_sent))
-            print('$' * 10)
-        print('-' * 75)
+        # for s_idx, sent_span in enumerate(sent_spans):
+        #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+        #     # print(sent_inp_ids)
+        #     decoded_sent = tokenizer.decode(sent_inp_ids)
+        #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+        #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
+        #     print('$' * 10)
+        # print('-' * 75)
 
         # for ans_idx, ans_span in enumerate(ans_spans):
         #     # print(ans_span)
@@ -240,6 +240,12 @@ def case_to_feature_checker(para_file: str,
         #     print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
         # print('*' * 75)
 
+        for p_idx, para_span in enumerate(para_spans):
+            para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
+            decoded_para = tokenizer.decode(para_inp_ids)
+            print('{} orig sent: {}'.format(p_idx, contex_text[p_idx]))
+            print('{} deco sent: {}'.format(p_idx, decoded_para))
+        print('-' * 75)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
