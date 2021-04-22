@@ -269,6 +269,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     miss_supp_count = 0
     larger_512 = 0
     drop_larger_512 = 0
+    max_query_len = 0
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -286,6 +287,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('orig', example_i.ctx_input_ids)
         drop_example_i = example_sent_drop(case=example_i, drop_ratio=1.0)
         # print('drop', drop_example_i.ctx_input_ids)
+        if max_query_len < query_spans[0][1]:
+            max_query_len = query_spans[0][1]
 
         # print('orig q ids {}'.format(example_i.question_input_ids))
         # print('drop q ids {}'.format(drop_example_i.question_input_ids))
@@ -377,6 +380,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('Miss support sent count = {}'.format(miss_supp_count))
     print('Larger than 512 count = {}'.format(larger_512))
     print('Larger than 512 count after drop = {}'.format(drop_larger_512))
+    print('Max query len = {}'.format(max_query_len))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
