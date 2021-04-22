@@ -494,7 +494,7 @@ def trim_case_to_feature_checker(para_file: str,
         for para_name in example_i.para_names:
             contex_text.append(ctx_dict[para_name])
             all_sents += ctx_dict[para_name]
-
+        ans_count_list.append(len(ans_spans))
         if ans_type_label == 2 and len(ans_spans) == 0:
             no_answer_count = no_answer_count + 1
 
@@ -532,7 +532,7 @@ def trim_case_to_feature_checker(para_file: str,
         # #     print('{} deco para: {}'.format(p_idx, decoded_para))
         # # print('-' * 75)
         #
-        ans_count_list.append(len(ans_spans))
+
 
     print('Sum of ans count = {}'.format(sum(ans_count_list)))
     print('Sum of trim ans count = {}'.format(sum(ans_count_list)))
