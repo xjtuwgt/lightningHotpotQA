@@ -198,7 +198,7 @@ def case_to_feature_checker(para_file: str,
     #     sel_para_names = sel_para_data[key]
     #     print('selected para names: ', sel_para_names)
     #     print('example para names: ', example_i.para_names)
-    #     doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
+    #     doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
     #         case_to_features(case=example_i, train_dev=True)
     #     orig_query = row['question']
     #     query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
@@ -293,10 +293,10 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # sel_para_names = sel_para_data[key]
         # print('selected para names: ', sel_para_names)
         # print('example para names: ', example_i.para_names)
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
 
-        print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
+        # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
         # orig_query = row['question']
         # query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
         # decoded_query = tokenizer.decode(query_input_ids)
@@ -305,8 +305,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # # print('para number {}'.format(len(para_spans)))
         # # print('sent number {}'.format(len(sent_spans)))
         # # print('ans_spans number {}'.format(len(ans_spans)))
-        # orig_answer = row['answer']
-        # exm_answer = example_i.answer_text
+        orig_answer = row['answer']
+        exm_answer = example_i.answer_text
         #
         # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
         # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
@@ -329,16 +329,16 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # # print('-' * 75)
         #
         #
-        # for ans_idx, ans_span in enumerate(ans_spans):
-        #     # print(ans_span)
-        #     # print(len(doc_input_ids))
-        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-        #     #     print(ans_span)
-        #     #     print(len(doc_input_ids))
-        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-        #     decoded_ans = tokenizer.decode(ans_inp_ids)
-        #     print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
-        # print('*' * 75)
+        for ans_idx, ans_span in enumerate(ans_spans):
+            # print(ans_span)
+            # print(len(doc_input_ids))
+            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+            #     print(ans_span)
+            #     print(len(doc_input_ids))
+            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+            decoded_ans = tokenizer.decode(ans_inp_ids)
+            print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
+        print('*' * 75)
         #
         # # for p_idx, para_span in enumerate(para_spans):
         # #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]

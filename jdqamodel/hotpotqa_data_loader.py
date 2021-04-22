@@ -71,6 +71,13 @@ def case_to_features(case: Example, train_dev=True):
     assert len(sent_spans) == sent_num
     assert len(para_spans) == para_num
     if train_dev:
+        answer_text = case.answer_text
+        if answer_text in ['yes']:
+            answer_type_label = [0]
+        elif answer_text in ['no', 'noanswer']:
+            answer_type_label = [1]
+        else:
+            answer_type_label = [2]
         answer_positions = case.answer_positions
         ans_spans = []
         for ans_position in answer_positions:
@@ -78,7 +85,7 @@ def case_to_features(case: Example, train_dev=True):
             sent_idx = para_sent_pair_to_sent_id[(doc_title, sent_id)]
             sent_start_idx = sent_spans[sent_idx][0]
             ans_spans.append((sent_start_idx + ans_start, sent_start_idx + ans_end))
-        return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans
+        return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, answer_type_label
     else:
         return doc_input_ids, query_spans, para_spans, sent_spans
 #######################################################################
