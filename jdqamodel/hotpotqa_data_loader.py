@@ -5,12 +5,13 @@ from numpy import random
 from torch.utils.data import DataLoader
 
 class HotpotTrainDataset(Dataset):
-    def __init__(self, examples, max_para_num=4, max_sent_num=100,
+    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
                  max_seq_num=512, sent_drop_ratio=0.25):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
         self.max_seq_length = max_seq_num
+        self.sep_token_id = sep_token_id
         self.sent_drop_ratio = sent_drop_ratio
 
     def __len__(self):
@@ -18,39 +19,27 @@ class HotpotTrainDataset(Dataset):
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
-        question_input_ids = case.question_input_ids
-        ctx_input_ids = case.ctx_input_ids
-        sent_num = case.sent_num
-        para_num = case.para_num
-        assert len(ctx_input_ids) == para_num
+        if self.sent_drop_ratio > 0:
+            case = _example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case, sep_id=self.sep_token_id, train_dev=True)
 
 
 class HotpotDevDataset(Dataset):
-    def __init__(self, examples, max_para_num=4, max_sent_num=100,
+    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
                  max_seq_num=512):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
         self.max_seq_length = max_seq_num
+        self.sep_token_id = sep_token_id
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
-        question_input_ids = case.question_input_ids
-        ctx_input_ids = case.ctx_input_ids
-        sent_num = case.sent_num
-        para_num = case.para_num
-        para_names = case.para_names
-        sent_names = case.sent_names
-        sup_para_ids = case.sup_para_id
-        sup_sent_ids = case.sup_fact_id
-        assert len(ctx_input_ids) == para_num
-
-        doc_input_ids = question_input_ids
-        doc_len = len(doc_input_ids)
-        query_len = len(question_input_ids)
-
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case,
+                                                                                         sep_id=self.sep_token_id,
+                                                                                         train_dev=True)
 #######################################################################
-def case_to_features(case: Example, train_dev=True):
+def case_to_features(case: Example, sep_id, train_dev=True):
     question_input_ids = case.question_input_ids
     ctx_input_ids = case.ctx_input_ids
     sent_num = case.sent_num
@@ -68,6 +57,9 @@ def case_to_features(case: Example, train_dev=True):
         para_sent_ids = ctx_input_ids[para_idx]
         para_len_ = 0
         for sent_idx, sent_ids in enumerate(para_sent_ids):
+            ##++++++++++++++++++++++++++++
+            sent_ids = sent_ids + [sep_id]
+            ##++++++++++++++++++++++++++++
             doc_input_ids += sent_ids
             sent_len_i = len(sent_ids)
             sent_len_list.append(sent_len_i)
@@ -101,7 +93,6 @@ def _largest_valid_index(spans, limit):
             return idx
     return len(spans)
 #######################################################################
-
 def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
     qas_id = case.qas_id
     qas_type = case.qas_type
@@ -124,8 +115,7 @@ def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
     sent_num = case.sent_num
     assert para_num == len(ctx_tokens) and para_num == len(ctx_input_ids) and para_num == len(para_names)
     assert sent_num == len(sent_names)
-
-    # drop_sent_idxes = []
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     sent_name_to_id_dict = dict([((x[1][0], x[1][1]), x[0]) for x in enumerate(sent_names)])
     keep_sent_idxs = []
     drop_ctx_tokens = []
@@ -176,38 +166,33 @@ def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
         orig_abs_sent_idx = sent_name_to_id_dict[orig_sent_name]
         drop_abs_sent_idx = keep_sent_idx_remap_dict[orig_abs_sent_idx]
         drop_sent_name = drop_sent_names[drop_abs_sent_idx]
+        assert drop_sent_name[0] == title
         drop_answer_positions.append((drop_sent_name[0], drop_sent_name[1], start_pos, end_pos))
-
-
-
-
-
-
-    # for sent_idx, sent_name in enumerate(sent_names):
-    #     if sent_idx not in sup_fact_id:
-    #         rand_s_i = random.rand()
-    #         if rand_s_i < drop_ratio:
-    #             drop_sent_idxes.append((sent_idx, sent_name[0], sent_name[1]))
-
-
-
-
-
-
-
-    ctx_input_ids = case.ctx_input_ids
-    sent_num = case.sent_num
-    para_num = case.para_num
-    para_names = case.para_names
-    sent_names = case.sent_names
-    sup_para_id = case.sup_para_id
-    sup_sent_id = case.sup_fact_id
-
-
+    drop_example = Example(
+        qas_id=qas_id,
+        qas_type=qas_type,
+        ctx_text=ctx_text,
+        ctx_tokens=drop_ctx_tokens,
+        ctx_input_ids=drop_ctx_input_ids,
+        para_names=drop_para_names,
+        sup_para_id=drop_para_fact_id,
+        sent_names=drop_sent_names,
+        para_num=drop_para_num,
+        sent_num=drop_sent_num,
+        sup_fact_id=drop_supp_fact_ids,
+        question_text=question_text,
+        question_tokens=question_tokens,
+        question_input_ids=question_input_ids,
+        answer_text=answer_text,
+        answer_tokens=answer_tokens,
+        answer_input_ids=answer_input_ids,
+        answer_positions=drop_answer_positions,
+        ctx_with_answer=ctx_with_answer)
+    return drop_example
 
 class HotpotTestDataset(Dataset):
     def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=60,
-                 max_seq_num=512, sent_drop_ratio=0.1):
+                 max_seq_num=512):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
@@ -216,7 +201,5 @@ class HotpotTestDataset(Dataset):
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
-        doc_input_ids, query_spans, para_spans, sent_spans = case_to_features(case=case, train_dev=False)
-        # if len(doc_input_ids) >= self.
-
+        doc_input_ids, query_spans, para_spans, sent_spans = case_to_features(case=case, sep_id=self.sep_token_id, train_dev=False)
 
