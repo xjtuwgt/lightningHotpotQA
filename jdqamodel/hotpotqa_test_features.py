@@ -58,7 +58,8 @@ def consist_checker(para_file: str,
             sent_ids = exm_ctx_input_ids[para_idx][sent_i]
             encode_answer = tokenizer.decode(sent_ids[start_i:end_i])
 
-        print('{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer))
+        print('{}\t{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
+
         # if exm_answer.strip() in ['noanswer']:
         #     print('raw answer:', raw_answer)
         #     print('exm answer:', exm_answer)
