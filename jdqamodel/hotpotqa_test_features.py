@@ -279,6 +279,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
         print(len(doc_input_ids))
+        print(len(sent_spans))
         if len(doc_input_ids) > 512:
             larger_512 += 1
         drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
@@ -306,6 +307,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         drop_doc_input_ids, drop_query_spans, drop_para_spans, drop_sent_spans, drop_ans_spans, drop_ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
         print(len(drop_doc_input_ids))
+        print(len(drop_sent_spans))
         if len(drop_doc_input_ids) > 512:
             drop_larger_512 += 1
 
