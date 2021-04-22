@@ -276,8 +276,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        # doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
-        #     case_to_features(case=example_i, train_dev=True)
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
+            case_to_features(case=example_i, train_dev=True)
         # # print(len(doc_input_ids))
         # # print('orig', doc_input_ids)
         # # print(len(sent_spans))
