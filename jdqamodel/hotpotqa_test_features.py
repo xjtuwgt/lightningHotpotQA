@@ -413,6 +413,7 @@ def trim_case_to_feature_checker(para_file: str,
     miss_supp_count = 0
     larger_512 = 0
     drop_larger_512 = 0
+    trim_larger_512 = 0
     max_query_len = 0
     query_len_list = []
 
@@ -436,8 +437,8 @@ def trim_case_to_feature_checker(para_file: str,
         # # print(len(doc_input_ids))
         # # print('orig', doc_input_ids)
         # # print(len(sent_spans))
-        # if len(doc_input_ids) > 512:
-        #     larger_512 += 1
+        if len(doc_input_ids) > 512:
+            larger_512 += 1
         # # print('orig', example_i.ctx_input_ids)
         drop_example_i = example_sent_drop(case=example_i, drop_ratio=0.25)
         # # print('drop', drop_example_i.ctx_input_ids)
@@ -477,8 +478,8 @@ def trim_case_to_feature_checker(para_file: str,
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
-        # if len(doc_input_ids) > 512:
-        #     drop_larger_512 += 1
+        if len(doc_input_ids) > 512:
+            drop_larger_512 += 1
 
 
         # # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
@@ -511,6 +512,8 @@ def trim_case_to_feature_checker(para_file: str,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
         # print('after trim {}\n{}'.format(len(trim_sent_spans), trim_sent_spans))
         print('after trim {}'.format(len(trim_sent_spans)))
+        if len(trim_doc_input_ids) > 512:
+            trim_larger_512 +=0
         # print('trim ans {}'.format(ans_spans))
         # print('*' * 75)
         # trim_ans_count_list.append(len(trim_ans_spans))
@@ -524,7 +527,7 @@ def trim_case_to_feature_checker(para_file: str,
         #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
         #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
         #     print('$' * 10)
-        # print('-' * 75)
+        print('-' * 75)
 
     #     orig_answer = row['answer']
     #     exm_answer = example_i.answer_text
@@ -553,8 +556,9 @@ def trim_case_to_feature_checker(para_file: str,
     # print('Sum of trim ans count = {}'.format(sum(ans_count_list)))
     # # print('One support sent count = {}'.format(one_supp_sent))
     # print('Miss support sent count = {}'.format(miss_supp_count))
-    # print('Larger than 512 count = {}'.format(larger_512))
-    # print('Larger than 512 count after drop = {}'.format(drop_larger_512))
+    print('Larger than 512 count = {}'.format(larger_512))
+    print('Larger than 512 count after drop = {}'.format(drop_larger_512))
+    print('Trim Larger than 512 count after drop = {}'.format(trim_larger_512))
     # print('Max query len = {}'.format(max_query_len))
     # query_len_array = np.array(query_len_list)
     #
