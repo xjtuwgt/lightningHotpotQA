@@ -498,12 +498,12 @@ def trim_case_to_feature_checker(para_file: str,
         if ans_type_label == 2 and len(ans_spans) == 0:
             no_answer_count = no_answer_count + 1
         # print('orig ans {}'.format(ans_spans))
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
+        trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
         # print('trim ans {}'.format(ans_spans))
         print('*' * 75)
-        trim_ans_count_list.append(len(ans_spans))
-        if ans_type_label == 2 and len(ans_spans) == 0:
+        trim_ans_count_list.append(len(trim_ans_spans))
+        if ans_type_label == 2 and len(trim_ans_spans) == 0:
             trim_no_answer_count = trim_no_answer_count + 1
 
         # for s_idx, sent_span in enumerate(sent_spans):
