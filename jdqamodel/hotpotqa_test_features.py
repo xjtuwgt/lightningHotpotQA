@@ -270,6 +270,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
 
     ans_count_list = []
     one_supp_sent = 0
+    miss_supp_count = 0
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -279,6 +280,9 @@ def sent_drop_case_to_feature_checker(para_file: str,
         example_i: Example = example_dict[exam_key]
         drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
         print(example_i.sent_num, drop_example_i.sent_num)
+        orig_supp_count = len(row['supporting_facts'])
+        if drop_example_i.sent_num < orig_supp_count:
+            miss_supp_count +=1
         if drop_example_i.sent_num < 2:
             one_supp_sent += 1
     #     sel_para_names = sel_para_data[key]
@@ -336,6 +340,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     #
     # print('Sum of ans count = {}'.format(sum(ans_count_list)))
     print('One support sent count = {}'.format(one_supp_sent))
+    print('Miss support sent count = {}'.format(miss_supp_count))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
