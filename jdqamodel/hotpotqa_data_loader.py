@@ -47,6 +47,7 @@ def case_to_features(case: Example, train_dev=True):
     sent_names = case.sent_names
     assert len(ctx_input_ids) == para_num and sent_num == len(sent_names)
     doc_input_ids = question_input_ids
+    print('question input ids: {}'.format(question_input_ids))
     para_len_list = [len(question_input_ids)]
     sent_len_list = [len(question_input_ids)]
     query_len = len(question_input_ids)
