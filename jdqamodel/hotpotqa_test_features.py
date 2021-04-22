@@ -274,6 +274,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
+        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
         supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
@@ -282,7 +283,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         print('exam {}'.format(exam_para_names))
         print('drop exam {}'.format(drop_exam_para_names))
 
-        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
+
         print(example_i.sent_num, drop_example_i.sent_num)
         orig_supp_count = len(row['supporting_facts'])
         if drop_example_i.sent_num < orig_supp_count:
