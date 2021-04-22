@@ -287,8 +287,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
         drop_example_i = example_sent_drop(case=example_i, drop_ratio=1.0)
         # print('drop', drop_example_i.ctx_input_ids)
 
-        print('orig q ids {}'.format(example_i.question_input_ids))
-        print('drop q ids {}'.format(drop_example_i.question_input_ids))
+        # print('orig q ids {}'.format(example_i.question_input_ids))
+        # print('drop q ids {}'.format(drop_example_i.question_input_ids))
         # supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         # exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         # drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
@@ -310,12 +310,12 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('selected para names: ', sel_para_names)
         # print('example para names: ', example_i.para_names)
 
-        drop_doc_input_ids, drop_query_spans, drop_para_spans, drop_sent_spans, drop_ans_spans, drop_ans_type_label = \
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
-        if len(drop_doc_input_ids) > 512:
+        if len(doc_input_ids) > 512:
             drop_larger_512 += 1
 
         # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
@@ -334,21 +334,21 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
         # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
         # ##+++++++
-        # all_sents = []
-        # ctx_dict = dict(row['context'])
-        # contex_text = []
-        # for para_name in example_i.para_names:
-        #     contex_text.append(ctx_dict[para_name])
-        #     all_sents += ctx_dict[para_name]
+        all_sents = []
+        ctx_dict = dict(row['context'])
+        contex_text = []
+        for para_name in example_i.para_names:
+            contex_text.append(ctx_dict[para_name])
+            all_sents += ctx_dict[para_name]
 
 
-        # for s_idx, sent_span in enumerate(sent_spans):
-        #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
-        #     # print(sent_inp_ids)
-        #     decoded_sent = tokenizer.decode(sent_inp_ids)
-        #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
-        #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
-        #     print('$' * 10)
+        for s_idx, sent_span in enumerate(sent_spans):
+            sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+            # print(sent_inp_ids)
+            decoded_sent = tokenizer.decode(sent_inp_ids)
+            print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+            print('{} deco sent: {}'.format(s_idx, decoded_sent))
+            print('$' * 10)
         print('-' * 75)
 
 
