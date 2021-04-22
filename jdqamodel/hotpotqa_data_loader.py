@@ -89,17 +89,17 @@ def case_to_features(case: Example, train_dev=True):
     else:
         return doc_input_ids, query_spans, para_spans, sent_spans
 #######################################################################
-def _largest_valid_index(spans, limit):
+def largest_valid_index(spans, limit):
     for idx in range(len(spans)):
         if spans[idx][1] >= limit:
             return idx
     return len(spans)
 
-def _trim_inputs(doc_input_ids, query_spans, para_spans, sent_spans, limit, ans_spans=None):
+def trim_inputs(doc_input_ids, query_spans, para_spans, sent_spans, limit, ans_spans=None):
 
     return
 #######################################################################
-def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
+def example_sent_drop(case: Example, drop_ratio:float = 0.1):
     qas_id = case.qas_id
     qas_type = case.qas_type
     question_tokens = case.question_tokens

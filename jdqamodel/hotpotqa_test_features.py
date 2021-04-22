@@ -15,7 +15,7 @@ from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
 from jdqamodel.hotpotqaUtils import json_loader
 from jdqamodel.hotpotqa_data_structure import Example
-from jdqamodel.hotpotqa_data_loader import case_to_features, _example_sent_drop
+from jdqamodel.hotpotqa_data_loader import case_to_features, example_sent_drop
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 
@@ -282,7 +282,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         print(len(sent_spans))
         if len(doc_input_ids) > 512:
             larger_512 += 1
-        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
+        drop_example_i = example_sent_drop(case=example_i, drop_ratio=1.0)
         # supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         # exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         # drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
