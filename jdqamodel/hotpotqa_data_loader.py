@@ -71,7 +71,7 @@ def case_to_features(case: Example, train_dev=True):
     assert len(sent_spans) == sent_num
     assert len(para_spans) == para_num
     if train_dev:
-        answer_text = case.answer_text
+        answer_text = case.answer_text.strip()
         if answer_text in ['yes']:
             answer_type_label = [0]
         elif answer_text in ['no', 'noanswer']:
