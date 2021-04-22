@@ -43,6 +43,7 @@ def case_to_features(case: Example, train_dev=True):
     sent_num = case.sent_num
     para_num = case.para_num
     para_names = case.para_names
+    print('para names', para_names)
     sent_names = case.sent_names
     assert len(ctx_input_ids) == para_num and sent_num == len(sent_names)
     doc_input_ids = question_input_ids
@@ -86,7 +87,7 @@ def case_to_features(case: Example, train_dev=True):
             sent_start_idx = sent_spans[sent_idx][0]
             ans_spans.append((sent_start_idx + ans_start, sent_start_idx + ans_end))
 
-        print(len(doc_input_ids))
+        print('in', len(doc_input_ids))
         return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, answer_type_label
     else:
         return doc_input_ids, query_spans, para_spans, sent_spans
