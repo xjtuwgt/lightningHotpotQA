@@ -276,10 +276,10 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        # doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
-        #     case_to_features(case=example_i, train_dev=True)
-        # if len(doc_input_ids) > 512:
-        #     larger_512 += 1
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
+            case_to_features(case=example_i, train_dev=True)
+        if len(doc_input_ids) > 512:
+            larger_512 += 1
         drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
         # supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         # exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
