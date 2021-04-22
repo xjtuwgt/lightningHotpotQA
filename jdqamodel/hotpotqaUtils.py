@@ -235,7 +235,9 @@ def hotpot_answer_tokenizer(para_file: str,
                         assert answer_start_idx >= 0, "supp sent={} \n answer={} \n answer={} \n {} \n {}".format(tokenizer.decode(supp_sent_encode_ids),
                             tokenizer.decode(ans_input_ids), norm_answer, supp_sent_encode_ids, ans_sub_tokens)
                         ctx_with_answer = True
-                        answer_positions.append((para_idx, sup_sent_idx, answer_start_idx, answer_start_idx + answer_len))
+                        # answer_positions.append((para_idx, sup_sent_idx, answer_start_idx, answer_start_idx + answer_len))
+                        answer_positions.append(
+                            (title, sup_sent_idx, answer_start_idx, answer_start_idx + answer_len))
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             assert len(para_names) == para_num
             assert len(sent_names) == sent_num

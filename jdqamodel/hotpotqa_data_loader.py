@@ -102,9 +102,111 @@ def _largest_valid_index(spans, limit):
     return len(spans)
 #######################################################################
 
+def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
+    qas_id = case.qas_id
+    qas_type = case.qas_type
+    question_tokens = case.question_tokens
+    ctx_tokens = case.ctx_tokens
+    question_text = case.question_text
+    question_input_ids = case.question_input_ids
+    ctx_input_ids = case.ctx_input_ids
+    sent_names = case.sent_names
+    para_names = case.para_names
+    sup_fact_id = case.sup_fact_id
+    sup_para_id = case.sup_para_id
+    ctx_text = case.ctx_text
+    answer_text = case.answer_text
+    answer_tokens = case.answer_tokens
+    answer_input_ids = case.answer_input_ids
+    answer_positions = case.answer_positions
+    ctx_with_answer = case.ctx_with_answer
+    para_num = case.para_num
+    sent_num = case.sent_num
+    assert para_num == len(ctx_tokens) and para_num == len(ctx_input_ids) and para_num == len(para_names)
+    assert sent_num == len(sent_names)
+
+    # drop_sent_idxes = []
+    sent_name_to_id_dict = dict([((x[1][0], x[1][1]), x[0]) for x in enumerate(sent_names)])
+    keep_sent_idxs = []
+    drop_ctx_tokens = []
+    drop_ctx_input_ids = []
+    for para_idx, para_name in enumerate(para_names):
+        para_ctx_tokens, para_input_ids = [], []
+        for sent_idx, (sent_sub_token, sent_inp_ids) in enumerate(zip(ctx_tokens[para_idx], ctx_input_ids[para_idx])):
+            abs_sent_idx = sent_name_to_id_dict[(para_name, sent_idx)]
+            if abs_sent_idx not in sup_fact_id:
+                rand_s_i = random.rand()
+                if rand_s_i > drop_ratio:
+                    para_ctx_tokens.append(sent_sub_token)
+                    para_input_ids.append(sent_inp_ids)
+                    keep_sent_idxs.append(abs_sent_idx)
+            else:
+                para_ctx_tokens.append(sent_sub_token)
+                para_input_ids.append(sent_inp_ids)
+                keep_sent_idxs.append(abs_sent_idx)
+        drop_ctx_tokens.append(para_ctx_tokens)
+        drop_ctx_input_ids.append(para_input_ids)
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    keep_sent_idx_remap_dict = dict([(x[1], x[0]) for x in enumerate(keep_sent_idxs)]) ## for answer map
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    drop_para_names = []
+    for para_idx, para_name in enumerate(para_names):
+        assert len(drop_ctx_input_ids[para_idx]) == len(drop_ctx_tokens[para_idx])
+        if len(drop_ctx_tokens[para_idx]) > 0:
+            drop_para_names.append(para_name)
+    drop_ctx_tokens = [_ for _ in drop_ctx_tokens if len(_) > 0]
+    drop_ctx_input_ids = [_ for _ in drop_ctx_input_ids if len(_) > 0]
+    drop_sent_names = []
+    for para_idx, para_name in enumerate(para_names):
+        for sent_idx in range(len(drop_ctx_input_ids[para_idx])):
+            drop_sent_names.append((para_name, sent_idx))
+    drop_supp_fact_ids = [keep_sent_idx_remap_dict[_] for _ in sup_fact_id]
+    supp_para_names = [para_names[_] for _ in sup_para_id]
+    drop_para_fact_id = []
+    for para_idx, para_name in enumerate(drop_para_names):
+        if para_name in supp_para_names:
+            drop_para_fact_id.append(para_idx)
+    drop_para_num = len(drop_para_names)
+    drop_sent_num = len(drop_sent_names)
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    drop_answer_positions = []
+    for answer_position in answer_positions:
+        title, sent_idx, start_pos, end_pos = answer_position
+        orig_sent_name = (title, sent_idx)
+        orig_abs_sent_idx = sent_name_to_id_dict[orig_sent_name]
+        drop_abs_sent_idx = keep_sent_idx_remap_dict[orig_abs_sent_idx]
+        drop_sent_name = drop_sent_names[drop_abs_sent_idx]
+        drop_answer_positions.append((drop_sent_name[0], drop_sent_name[1], start_pos, end_pos))
+
+
+
+
+
+    # for sent_idx, sent_name in enumerate(sent_names):
+    #     if sent_idx not in sup_fact_id:
+    #         rand_s_i = random.rand()
+    #         if rand_s_i < drop_ratio:
+    #             drop_sent_idxes.append((sent_idx, sent_name[0], sent_name[1]))
+
+
+
+
+
+
+
+    ctx_input_ids = case.ctx_input_ids
+    sent_num = case.sent_num
+    para_num = case.para_num
+    para_names = case.para_names
+    sent_names = case.sent_names
+    sup_para_id = case.sup_para_id
+    sup_sent_id = case.sup_fact_id
+
+
+
 class HotpotTestDataset(Dataset):
-    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
-                 max_seq_num=512):
+    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=60,
+                 max_seq_num=512, sent_drop_ratio=0.1):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
