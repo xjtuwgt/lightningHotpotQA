@@ -19,7 +19,7 @@ class HotpotTrainDataset(Dataset):
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
         if self.sent_drop_ratio > 0:
-            case = _example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
+            case = example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = case_to_features(case=case, train_dev=True)
 
 
