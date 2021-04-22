@@ -387,5 +387,7 @@ if __name__ == '__main__':
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
     # consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
-    case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
-                    tokenizer=tokenizer, data_source_type=data_source_type)
+    # case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+    #                 tokenizer=tokenizer, data_source_type=data_source_type)
+    sent_drop_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+                            tokenizer=tokenizer, data_source_type=data_source_type)
