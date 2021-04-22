@@ -123,7 +123,9 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
         trim_sent_spans[largest_sent_idx][1] = limit
         trim_sent_spans = [(_[0], _[1]) for _ in trim_sent_spans]
 
-        print('Trim here')
+        print('Para Trim here, {}'.format(trim_para_spans))
+        print('Sent Trim here, {}'.format(trim_sent_spans))
+
 
         if ans_spans is not None:
             largest_ans_idx = largest_valid_index(ans_spans, limit)
