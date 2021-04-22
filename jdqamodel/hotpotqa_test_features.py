@@ -72,9 +72,7 @@ def consist_checker(para_file: str,
         for para_name in para_names:
             contex_text.append(ctx_dict[para_name])
 
-
         for para_idx, ctx_token_list in enumerate(exm_ctx_token_list):
-
             ctx_inp_id_list = exm_ctx_input_ids[para_idx]
             orig_context = contex_text[para_idx]
             for sent_idx, sent_inp_ids in enumerate(ctx_inp_id_list):
@@ -276,6 +274,14 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
+        supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
+        exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
+        drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
+
+        print('orig {}'.format(supp_para_names))
+        print('exam {}'.format(exam_para_names))
+        print('drop exam {}'.format(drop_exam_para_names))
+
         drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
         print(example_i.sent_num, drop_example_i.sent_num)
         orig_supp_count = len(row['supporting_facts'])
