@@ -13,6 +13,7 @@ from tqdm import tqdm
 from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
 from jdqamodel.hotpotqaUtils import json_loader
+from jdqamodel.hotpotqa_data_structure import Example
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 
@@ -37,7 +38,7 @@ def consist_checker(para_file: str,
         raw_question = row['question']
         raw_context = row['context']
         raw_answer = row['answer']
-        example_i = example_dict[exam_key]
+        example_i: Example = example_dict[exam_key]
         exm_question = example_i.question_text
         exm_answer = example_i.answer_text
         exm_context = example_i.ctx_text
@@ -49,9 +50,12 @@ def consist_checker(para_file: str,
         # print('raw answer:', raw_answer)
         # print('exm answer:', exm_answer)
         answer_positions = example_i.answer_positions
+        para_names = example_i.para_names
+        para_name_dict = dict([(x[1], x[0]) for x in enumerate(para_names)])
         encode_answer = ''
         for para_i, sent_i, start_i, end_i in answer_positions:
-            sent_ids = exm_ctx_input_ids[para_i][sent_i]
+            para_idx = para_name_dict[para_i]
+            sent_ids = exm_ctx_input_ids[para_idx][sent_i]
             encode_answer = tokenizer.decode(sent_ids[start_i:end_i])
 
         print('{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer))
