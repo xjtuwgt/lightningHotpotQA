@@ -544,6 +544,9 @@ def trim_case_to_feature_checker(para_file: str,
     # print('99 = {}'.format(np.percentile(query_len_array, 99)))
     # print('97.5 = {}'.format(np.percentile(query_len_array, 97.5)))
 
+    print('No answer count = {}'.format(no_answer_count))
+    print('Trim no answer count = {}'.format(trim_no_answer_count))
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
