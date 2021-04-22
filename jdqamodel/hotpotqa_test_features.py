@@ -466,6 +466,7 @@ def trim_case_to_feature_checker(para_file: str,
 
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
+        print('after drop para {}'.format(para_spans))
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
