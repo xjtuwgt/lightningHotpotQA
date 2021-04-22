@@ -529,19 +529,19 @@ def trim_case_to_feature_checker(para_file: str,
         #     print('$' * 10)
         print('-' * 75)
 
-    #     orig_answer = row['answer']
-    #     exm_answer = example_i.answer_text
-    #     for ans_idx, ans_span in enumerate(ans_spans):
-    #         # print(ans_span)
-    #         # print(len(doc_input_ids))
-    #         # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-    #         #     print(ans_span)
-    #         #     print(len(doc_input_ids))
-    #         print(ans_span[1])
-    #         ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-    #         decoded_ans = tokenizer.decode(ans_inp_ids)
-    #         print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
-    #     print('*' * 75)
+        orig_answer = row['answer']
+        exm_answer = example_i.answer_text
+        for ans_idx, ans_span in enumerate(trim_ans_spans):
+            # print(ans_span)
+            # print(len(doc_input_ids))
+            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+            #     print(ans_span)
+            #     print(len(doc_input_ids))
+            # print(ans_span[1])
+            ans_inp_ids = trim_doc_input_ids[ans_span[0]:ans_span[1]]
+            decoded_ans = tokenizer.decode(ans_inp_ids)
+            print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
+        print('*' * 75)
     #     #
     #     # # for p_idx, para_span in enumerate(para_spans):
     #     # #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
