@@ -190,7 +190,7 @@ def case_to_feature_checker(para_file: str,
         # print('ans_spans number {}'.format(len(ans_spans)))
         orig_answer = row['answer']
         exm_answer = example_i.answer_text
-        all_sents = itertools.chain.from_iterable([x[1] for x in row['context']])
+        all_sents = list(itertools.chain.from_iterable([x[1] for x in row['context']]))
         for s_idx, sent_span in enumerate(sent_spans):
             sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
             # print(sent_inp_ids)
