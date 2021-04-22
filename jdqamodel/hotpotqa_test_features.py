@@ -66,12 +66,21 @@ def consist_checker(para_file: str,
         if not example_i.ctx_with_answer and raw_answer not in ['yes', 'no']:
             no_answer_count = no_answer_count + 1
 
+        contex_text = []
+        ctx_dict = dict(raw_context)
+        contex_text = []
+        for para_name in para_names:
+            contex_text.append(ctx_dict[para_name])
+
 
         for para_idx, ctx_token_list in enumerate(exm_ctx_token_list):
+
             ctx_inp_id_list = exm_ctx_input_ids[para_idx]
+            orig_context = contex_text[para_idx]
             for sent_idx, sent_inp_ids in enumerate(ctx_inp_id_list):
                 print(ctx_token_list[sent_idx])
                 print(tokenizer.decode(sent_inp_ids))
+                print(orig_context[sent_idx])
         print('*' * 75)
 
         # if exm_answer.strip() in ['noanswer']:
