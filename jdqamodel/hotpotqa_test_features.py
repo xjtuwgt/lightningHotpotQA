@@ -268,6 +268,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     one_supp_sent = 0
     miss_supp_count = 0
     larger_512 = 0
+    drop_larger_512 = 0
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -295,7 +296,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('selected para names: ', sel_para_names)
         # print('example para names: ', example_i.para_names)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
-            case_to_features(case=example_i, train_dev=True)
+            case_to_features(case=drop_example_i, train_dev=True)
 
         if len(doc_input_ids) > 512:
             larger_512 += 1
@@ -316,34 +317,34 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
         # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
         # ##+++++++
-        # all_sents = []
-        # ctx_dict = dict(row['context'])
-        # contex_text = []
-        # for para_name in example_i.para_names:
-        #     contex_text.append(ctx_dict[para_name])
-        #     all_sents += ctx_dict[para_name]
-        #
-        #
-        # # for s_idx, sent_span in enumerate(sent_spans):
-        # #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
-        # #     # print(sent_inp_ids)
-        # #     decoded_sent = tokenizer.decode(sent_inp_ids)
-        # #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
-        # #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
-        # #     print('$' * 10)
-        # # print('-' * 75)
-        #
-        #
-        for ans_idx, ans_span in enumerate(ans_spans):
-            # print(ans_span)
-            # print(len(doc_input_ids))
-            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-            #     print(ans_span)
-            #     print(len(doc_input_ids))
-            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-            decoded_ans = tokenizer.decode(ans_inp_ids)
-            print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
-        print('*' * 75)
+        all_sents = []
+        ctx_dict = dict(row['context'])
+        contex_text = []
+        for para_name in example_i.para_names:
+            contex_text.append(ctx_dict[para_name])
+            all_sents += ctx_dict[para_name]
+
+
+        for s_idx, sent_span in enumerate(sent_spans):
+            sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+            # print(sent_inp_ids)
+            decoded_sent = tokenizer.decode(sent_inp_ids)
+            print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+            print('{} deco sent: {}'.format(s_idx, decoded_sent))
+            print('$' * 10)
+        print('-' * 75)
+
+
+        # for ans_idx, ans_span in enumerate(ans_spans):
+        #     # print(ans_span)
+        #     # print(len(doc_input_ids))
+        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+        #     #     print(ans_span)
+        #     #     print(len(doc_input_ids))
+        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+        #     decoded_ans = tokenizer.decode(ans_inp_ids)
+        #     print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
+        # print('*' * 75)
         #
         # # for p_idx, para_span in enumerate(para_spans):
         # #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
