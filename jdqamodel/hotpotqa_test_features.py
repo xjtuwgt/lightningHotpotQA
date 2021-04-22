@@ -267,6 +267,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     ans_count_list = []
     one_supp_sent = 0
     miss_supp_count = 0
+    larger_512 = 0
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -295,6 +296,9 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('example para names: ', example_i.para_names)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
+
+        if len(doc_input_ids) > 512:
+            larger_512 += 0
 
         # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
         # orig_query = row['question']
@@ -353,6 +357,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('Sum of ans count = {}'.format(sum(ans_count_list)))
     print('One support sent count = {}'.format(one_supp_sent))
     print('Miss support sent count = {}'.format(miss_supp_count))
+    print('Larger than 512 count = {}'.format(larger_512))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

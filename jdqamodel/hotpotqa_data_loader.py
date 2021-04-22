@@ -20,7 +20,7 @@ class HotpotTrainDataset(Dataset):
         case: Example = self.examples[idx]
         if self.sent_drop_ratio > 0:
             case = _example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case, train_dev=True)
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = case_to_features(case=case, train_dev=True)
 
 
 class HotpotDevDataset(Dataset):
@@ -34,7 +34,7 @@ class HotpotDevDataset(Dataset):
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case,
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = case_to_features(case=case,
                                                                                          train_dev=True)
 #######################################################################
 def case_to_features(case: Example, train_dev=True):
@@ -94,6 +94,10 @@ def _largest_valid_index(spans, limit):
         if spans[idx][1] >= limit:
             return idx
     return len(spans)
+
+def _trim_inputs(doc_input_ids, query_spans, para_spans, sent_spans, limit, ans_spans=None):
+
+    return
 #######################################################################
 def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
     qas_id = case.qas_id
