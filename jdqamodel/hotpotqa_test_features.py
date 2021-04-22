@@ -189,6 +189,7 @@ def case_to_feature_checker(para_file: str,
     sep_id = tokenizer.encode(tokenizer.sep_token)
     print(sep_id)
 
+    ans_count_list = []
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -229,23 +230,27 @@ def case_to_feature_checker(para_file: str,
         #     print('$' * 10)
         # print('-' * 75)
 
-        # for ans_idx, ans_span in enumerate(ans_spans):
-        #     # print(ans_span)
-        #     # print(len(doc_input_ids))
-        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-        #     #     print(ans_span)
-        #     #     print(len(doc_input_ids))
-        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-        #     decoded_ans = tokenizer.decode(ans_inp_ids)
-        #     print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
-        # print('*' * 75)
 
-        for p_idx, para_span in enumerate(para_spans):
-            para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
-            decoded_para = tokenizer.decode(para_inp_ids)
-            print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
-            print('{} deco para: {}'.format(p_idx, decoded_para))
+        for ans_idx, ans_span in enumerate(ans_spans):
+            # print(ans_span)
+            # print(len(doc_input_ids))
+            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+            #     print(ans_span)
+            #     print(len(doc_input_ids))
+            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+            decoded_ans = tokenizer.decode(ans_inp_ids)
+            print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
+        print('*' * 75)
+
+        # for p_idx, para_span in enumerate(para_spans):
+        #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
+        #     decoded_para = tokenizer.decode(para_inp_ids)
+        #     print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
+        #     print('{} deco para: {}'.format(p_idx, decoded_para))
         print('-' * 75)
+        ans_count_list.append(len(ans_spans))
+
+    print('Sum of ans count = {}'.format(sum(ans_count_list)))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
