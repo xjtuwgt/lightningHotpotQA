@@ -129,6 +129,7 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
 
         if ans_spans is not None:
             largest_ans_idx = largest_valid_index(ans_spans, limit)
+            print('largest idx {}\t{}'.format(largest_ans_idx, len(ans_spans)))
             trim_ans_spans = []
             trim_ans_spans += ans_spans[:largest_ans_idx]
             if largest_ans_idx == 0:
