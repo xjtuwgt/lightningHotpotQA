@@ -44,7 +44,7 @@ def consist_checker(para_file: str,
         exm_context = example_i.ctx_text
         exm_ctx_token_list = example_i.ctx_tokens
         exm_ctx_input_ids = example_i.ctx_input_ids
-        print('{}\t{}'.format(key, exam_key))
+        # print('{}\t{}'.format(key, exam_key))
         # print('raw question:', raw_question)
         # print('exm question:', exm_question)
         # print('raw answer:', raw_answer)
