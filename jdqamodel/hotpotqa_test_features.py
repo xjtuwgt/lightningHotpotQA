@@ -291,6 +291,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         query_len_list.append(query_spans[0][1])
         if max_query_len < query_spans[0][1]:
             max_query_len = query_spans[0][1]
+            query_len_list.append(query_spans[0][1])
             print(max_query_len)
 
         # print('orig q ids {}'.format(example_i.question_input_ids))
