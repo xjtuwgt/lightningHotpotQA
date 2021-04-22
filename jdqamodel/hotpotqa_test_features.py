@@ -66,6 +66,14 @@ def consist_checker(para_file: str,
         if not example_i.ctx_with_answer and raw_answer not in ['yes', 'no']:
             no_answer_count = no_answer_count + 1
 
+
+        for para_idx, ctx_token_list in enumerate(exm_ctx_token_list):
+            ctx_inp_id_list = exm_ctx_input_ids[para_idx]
+            for sent_idx, sent_inp_ids in enumerate(ctx_inp_id_list):
+                print(ctx_token_list[sent_idx])
+                print(tokenizer.decode(sent_inp_ids))
+        print('*' * 75)
+
         # if exm_answer.strip() in ['noanswer']:
         #     print('raw answer:', raw_answer)
         #     print('exm answer:', exm_answer)
@@ -274,7 +282,7 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    # consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
+    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
-    case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
-                    tokenizer=tokenizer, data_source_type=data_source_type)
+    # case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+    #                 tokenizer=tokenizer, data_source_type=data_source_type)
