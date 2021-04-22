@@ -530,7 +530,7 @@ def trim_case_to_feature_checker(para_file: str,
             # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
             #     print(ans_span)
             #     print(len(doc_input_ids))
-            print(ans_spans[1])
+            print(ans_span[1])
             ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
             decoded_ans = tokenizer.decode(ans_inp_ids)
             print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
