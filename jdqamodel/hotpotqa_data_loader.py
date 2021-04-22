@@ -85,6 +85,8 @@ def case_to_features(case: Example, train_dev=True):
             sent_idx = para_sent_pair_to_sent_id[(doc_title, sent_id)]
             sent_start_idx = sent_spans[sent_idx][0]
             ans_spans.append((sent_start_idx + ans_start, sent_start_idx + ans_end))
+
+        print(len(doc_input_ids))
         return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, answer_type_label
     else:
         return doc_input_ids, query_spans, para_spans, sent_spans
