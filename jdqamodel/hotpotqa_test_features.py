@@ -385,7 +385,9 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('Larger than 512 count = {}'.format(larger_512))
     print('Larger than 512 count after drop = {}'.format(drop_larger_512))
     print('Max query len = {}'.format(max_query_len))
+    query_len_array = np.array(query_len_list)
 
+    print('95 = {}'.format(np.percentile(query_len_array, 95)))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
