@@ -331,12 +331,12 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
         # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
         # ##+++++++
-        all_sents = []
-        ctx_dict = dict(row['context'])
-        contex_text = []
-        for para_name in example_i.para_names:
-            contex_text.append(ctx_dict[para_name])
-            all_sents += ctx_dict[para_name]
+        # all_sents = []
+        # ctx_dict = dict(row['context'])
+        # contex_text = []
+        # for para_name in example_i.para_names:
+        #     contex_text.append(ctx_dict[para_name])
+        #     all_sents += ctx_dict[para_name]
 
 
         # for s_idx, sent_span in enumerate(sent_spans):
