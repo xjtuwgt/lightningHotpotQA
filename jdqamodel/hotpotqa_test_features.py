@@ -276,6 +276,10 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
+            case_to_features(case=example_i, train_dev=True)
+        if len(doc_input_ids) > 512:
+            larger_512 += 1
         drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
         supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
@@ -295,11 +299,12 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # sel_para_names = sel_para_data[key]
         # print('selected para names: ', sel_para_names)
         # print('example para names: ', example_i.para_names)
+
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
 
         if len(doc_input_ids) > 512:
-            larger_512 += 1
+            drop_larger_512 += 1
 
         # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
         # orig_query = row['question']
@@ -359,6 +364,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('One support sent count = {}'.format(one_supp_sent))
     print('Miss support sent count = {}'.format(miss_supp_count))
     print('Larger than 512 count = {}'.format(larger_512))
+    print('Larger than 512 count after drop = {}'.format(drop_larger_512))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
