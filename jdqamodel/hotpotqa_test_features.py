@@ -270,6 +270,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     larger_512 = 0
     drop_larger_512 = 0
     max_query_len = 0
+    query_len_list = []
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -287,8 +288,10 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('orig', example_i.ctx_input_ids)
         drop_example_i = example_sent_drop(case=example_i, drop_ratio=1.0)
         # print('drop', drop_example_i.ctx_input_ids)
+        query_len_list.append(query_spans[0][1])
         if max_query_len < query_spans[0][1]:
             max_query_len = query_spans[0][1]
+            print(max_query_len)
 
         # print('orig q ids {}'.format(example_i.question_input_ids))
         # print('drop q ids {}'.format(drop_example_i.question_input_ids))
@@ -352,19 +355,19 @@ def sent_drop_case_to_feature_checker(para_file: str,
         #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
         #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
         #     print('$' * 10)
-        print('-' * 75)
+        # print('-' * 75)
 
 
-        for ans_idx, ans_span in enumerate(ans_spans):
-            # print(ans_span)
-            # print(len(doc_input_ids))
-            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-            #     print(ans_span)
-            #     print(len(doc_input_ids))
-            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-            decoded_ans = tokenizer.decode(ans_inp_ids)
-            print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
-        print('*' * 75)
+        # for ans_idx, ans_span in enumerate(ans_spans):
+        #     # print(ans_span)
+        #     # print(len(doc_input_ids))
+        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+        #     #     print(ans_span)
+        #     #     print(len(doc_input_ids))
+        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+        #     decoded_ans = tokenizer.decode(ans_inp_ids)
+        #     print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
+        # print('*' * 75)
         #
         # # for p_idx, para_span in enumerate(para_spans):
         # #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
@@ -381,6 +384,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('Larger than 512 count = {}'.format(larger_512))
     print('Larger than 512 count after drop = {}'.format(drop_larger_512))
     print('Max query len = {}'.format(max_query_len))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
