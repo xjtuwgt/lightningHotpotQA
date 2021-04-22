@@ -57,7 +57,9 @@ def consist_checker(para_file: str,
             para_idx = para_name_dict[para_i]
             sent_ids = exm_ctx_input_ids[para_idx][sent_i]
             encode_answer = tokenizer.decode(sent_ids[start_i:end_i])
-        if raw_answer in ['yes', 'no']:
+        # if raw_answer in ['yes', 'no']:
+        #     print('{}\t{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
+        if raw_answer in ['no_answer']:
             print('{}\t{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
         if not example_i.ctx_with_answer and raw_answer not in ['yes', 'no']:
             no_answer_count = no_answer_count + 1
