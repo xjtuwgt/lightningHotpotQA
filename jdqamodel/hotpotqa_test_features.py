@@ -276,7 +276,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=0.25)
+        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=0.50)
         print(example_i.sent_num, drop_example_i.sent_num)
     #     sel_para_names = sel_para_data[key]
     #     print('selected para names: ', sel_para_names)
