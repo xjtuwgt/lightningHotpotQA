@@ -14,6 +14,7 @@ from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
 from jdqamodel.hotpotqaUtils import json_loader
 from jdqamodel.hotpotqa_data_structure import Example
+from jdqamodel.hotpotqa_data_loader import case_to_features
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 
@@ -155,6 +156,28 @@ def consist_checker(para_file: str,
     # print("Question type: {}".format(q_type_counter))
     # print("Answer doesnot match: {}".format(answer_no_match_cnt))
 
+def case_to_feature_checker(para_file: str,
+                    full_file: str,
+                    example_file: str,
+                    tokenizer,
+                    data_source_type=None):
+    sel_para_data = json_loader(json_file_name=para_file)
+    full_data = json_loader(json_file_name=full_file)
+    examples = pickle.load(gzip.open(example_file, 'rb'))
+    example_dict = {e.qas_id: e for e in examples}
+    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    print('Number of examples = {}'.format(len(examples)))
+    no_answer_count = 0
+    sep_id = tokenizer.encode(tokenizer.sep_token)
+    for row in tqdm(full_data):
+        key = row['_id']
+        if data_source_type is not None:
+            exam_key = key + '_' + data_source_type
+        else:
+            exam_key = key
+        example_i: Example = example_dict[exam_key]
+        case_to_features(case=example_i, sep_id=sep_id, train_dev=True)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
@@ -208,4 +231,7 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
+    # consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
+
+    case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+                    tokenizer=tokenizer, data_source_type=data_source_type)
