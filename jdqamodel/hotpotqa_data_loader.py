@@ -57,6 +57,7 @@ def case_to_features(case: Example, sep_id, train_dev=True):
         para_sent_ids = ctx_input_ids[para_idx]
         para_len_ = 0
         for sent_idx, sent_ids in enumerate(para_sent_ids):
+            print('sent_ids ', sent_ids)
             ##++++++++++++++++++++++++++++
             sent_ids = sent_ids + [sep_id]
             ##++++++++++++++++++++++++++++
