@@ -141,17 +141,18 @@ def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
             drop_para_names.append(para_name)
     drop_ctx_tokens = [_ for _ in drop_ctx_tokens if len(_) > 0]
     drop_ctx_input_ids = [_ for _ in drop_ctx_input_ids if len(_) > 0]
-    drop_sent_names = []
-    for para_idx, para_name in enumerate(para_names):
-        for sent_idx in range(len(drop_ctx_input_ids[para_idx])):
-            drop_sent_names.append((para_name, sent_idx))
-    drop_supp_fact_ids = [keep_sent_idx_remap_dict[_] for _ in sup_fact_id]
-    supp_para_names = [para_names[_] for _ in sup_para_id]
     drop_para_fact_id = []
+    supp_para_names = [para_names[_] for _ in sup_para_id]
     for para_idx, para_name in enumerate(drop_para_names):
         if para_name in supp_para_names:
             drop_para_fact_id.append(para_idx)
     drop_para_num = len(drop_para_names)
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    drop_sent_names = []
+    for para_idx, para_name in enumerate(drop_para_names):
+        for sent_idx in range(len(drop_ctx_input_ids[para_idx])):
+            drop_sent_names.append((para_name, sent_idx))
+    drop_supp_fact_ids = [keep_sent_idx_remap_dict[_] for _ in sup_fact_id]
     drop_sent_num = len(drop_sent_names)
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     drop_answer_positions = []
