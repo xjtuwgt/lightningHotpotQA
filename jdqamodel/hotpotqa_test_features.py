@@ -278,14 +278,17 @@ def sent_drop_case_to_feature_checker(para_file: str,
         example_i: Example = example_dict[exam_key]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
-        print(len(doc_input_ids))
+        # print(len(doc_input_ids))
         # print('orig', doc_input_ids)
-        print(len(sent_spans))
+        # print(len(sent_spans))
         if len(doc_input_ids) > 512:
             larger_512 += 1
-        print('orig', example_i.ctx_input_ids)
+        # print('orig', example_i.ctx_input_ids)
         drop_example_i = example_sent_drop(case=example_i, drop_ratio=1.0)
-        print('drop', drop_example_i.ctx_input_ids)
+        # print('drop', drop_example_i.ctx_input_ids)
+
+        print('orig {}'.format(example_i.question_input_ids))
+        print('drop {}'.format(drop_example_i.question_input_ids))
         # supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         # exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         # drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
@@ -307,13 +310,13 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('selected para names: ', sel_para_names)
         # print('example para names: ', example_i.para_names)
 
-        drop_doc_input_ids, drop_query_spans, drop_para_spans, drop_sent_spans, drop_ans_spans, drop_ans_type_label = \
-            case_to_features(case=drop_example_i, train_dev=True)
-        print(len(drop_doc_input_ids))
-        # print('drop', drop_doc_input_ids)
-        print(len(drop_sent_spans))
-        if len(drop_doc_input_ids) > 512:
-            drop_larger_512 += 1
+        # drop_doc_input_ids, drop_query_spans, drop_para_spans, drop_sent_spans, drop_ans_spans, drop_ans_type_label = \
+        #     case_to_features(case=drop_example_i, train_dev=True)
+        # print(len(drop_doc_input_ids))
+        # # print('drop', drop_doc_input_ids)
+        # print(len(drop_sent_spans))
+        # if len(drop_doc_input_ids) > 512:
+        #     drop_larger_512 += 1
 
         # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
         # orig_query = row['question']
