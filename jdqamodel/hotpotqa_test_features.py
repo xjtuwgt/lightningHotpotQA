@@ -197,7 +197,7 @@ def case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        sel_para_names = sel_para_data[exam_key]
+        sel_para_names = sel_para_data[key]
         print('selected para names: ', sel_para_names)
         print('example para names: ', example_i.para_names)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
