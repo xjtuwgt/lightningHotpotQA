@@ -213,9 +213,12 @@ def case_to_feature_checker(para_file: str,
         exm_answer = example_i.answer_text
         ##+++++++
         all_sents = []
-        for x in row['context']:
-            if x[0] in example_i.para_names:
-                all_sents += x[1]
+        ctx_dict = dict(row['context'])
+        contex_text = []
+        for para_name in example_i.para_names:
+            contex_text.append(ctx_dict[para_name])
+            all_sents += ctx_dict[para_name]
+
 
         for s_idx, sent_span in enumerate(sent_spans):
             sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
@@ -291,7 +294,7 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
+    # consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
-    #                 tokenizer=tokenizer, data_source_type=data_source_type)
+    case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+                    tokenizer=tokenizer, data_source_type=data_source_type)
