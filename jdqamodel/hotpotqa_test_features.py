@@ -336,7 +336,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
         #     print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
         #     print('{} deco para: {}'.format(p_idx, decoded_para))
         # print('-' * 75)
-        # ans_count_list.append(len(ans_spans))
+
+        ans_count_list.append(len(ans_spans))
 
     print('Sum of ans count = {}'.format(sum(ans_count_list)))
     print('One support sent count = {}'.format(one_supp_sent))
