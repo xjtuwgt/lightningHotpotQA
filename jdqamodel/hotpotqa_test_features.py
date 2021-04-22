@@ -300,6 +300,9 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('ans_spans number {}'.format(len(ans_spans)))
         orig_answer = row['answer']
         exm_answer = example_i.answer_text
+
+        assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
+        assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
         ##+++++++
         all_sents = []
         ctx_dict = dict(row['context'])
