@@ -131,8 +131,8 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
             largest_ans_idx = largest_valid_index(ans_spans, limit)
             trim_ans_spans = []
             trim_ans_spans += ans_spans[:largest_ans_idx]
-            if largest_ans_idx < len(ans_spans):
-                print('trim ans')
+            if largest_ans_idx == 0:
+                print('trim ans hhhhhhhhhhhhhhhhhhh')
             return trim_doc_input_ids, query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans
         else:
             return trim_doc_input_ids, query_spans, trim_para_spans, trim_sent_spans
