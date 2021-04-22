@@ -298,7 +298,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
             case_to_features(case=example_i, train_dev=True)
 
         if len(doc_input_ids) > 512:
-            larger_512 += 0
+            larger_512 += 1
 
         # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
         # orig_query = row['question']
