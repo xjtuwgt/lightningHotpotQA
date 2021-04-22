@@ -43,7 +43,7 @@ def case_to_features(case: Example, train_dev=True):
     sent_num = case.sent_num
     para_num = case.para_num
     para_names = case.para_names
-    print('para names', para_names)
+    # print('para names', para_names)
     sent_names = case.sent_names
     assert len(ctx_input_ids) == para_num and sent_num == len(sent_names)
     doc_input_ids = question_input_ids
@@ -54,6 +54,7 @@ def case_to_features(case: Example, train_dev=True):
     para_sent_pair_to_sent_id, sent_id = {}, 0
     for para_idx, para_name in enumerate(para_names):
         para_sent_ids = ctx_input_ids[para_idx]
+        print(para_sent_ids)
         para_len_ = 0
         for sent_idx, sent_ids in enumerate(para_sent_ids):
             doc_input_ids += sent_ids
