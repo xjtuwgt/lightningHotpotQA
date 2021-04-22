@@ -113,5 +113,4 @@ class HotPotQAModel(nn.Module):
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
 
-
         return
