@@ -301,10 +301,10 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # print('selected para names: ', sel_para_names)
         # print('example para names: ', example_i.para_names)
 
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
+        drop_doc_input_ids, drop_query_spans, drop_para_spans, drop_sent_spans, drop_ans_spans, drop_ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
-        print(len(doc_input_ids))
-        if len(doc_input_ids) > 512:
+        print(len(drop_doc_input_ids))
+        if len(drop_doc_input_ids) > 512:
             drop_larger_512 += 1
 
         # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
