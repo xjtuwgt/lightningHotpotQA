@@ -243,8 +243,8 @@ def case_to_feature_checker(para_file: str,
         for p_idx, para_span in enumerate(para_spans):
             para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
             decoded_para = tokenizer.decode(para_inp_ids)
-            print('{} orig sent: {}'.format(p_idx, contex_text[p_idx]))
-            print('{} deco sent: {}'.format(p_idx, decoded_para))
+            print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
+            print('{} deco para: {}'.format(p_idx, decoded_para))
         print('-' * 75)
 
 if __name__ == '__main__':
