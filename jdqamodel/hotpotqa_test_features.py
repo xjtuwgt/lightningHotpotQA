@@ -431,7 +431,8 @@ def trim_case_to_feature_checker(para_file: str,
         # trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
         #     doc_input_ids, query_spans, para_spans, sent_spans,
         #     limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
-        print('before drop sent {}\n{}'.format(len(sent_spans), sent_spans))
+        # print('before drop sent {}\n{}'.format(len(sent_spans), sent_spans))
+        print('before drop sent {}'.format(len(sent_spans)))
         # # print(len(doc_input_ids))
         # # print('orig', doc_input_ids)
         # # print(len(sent_spans))
@@ -471,7 +472,8 @@ def trim_case_to_feature_checker(para_file: str,
 
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
-        print('after drop sent {}\n{}'.format(len(sent_spans), sent_spans))
+        # print('after drop sent {}\n{}'.format(len(sent_spans), sent_spans))
+        print('after drop sent {}'.format(len(sent_spans)))
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
@@ -507,7 +509,8 @@ def trim_case_to_feature_checker(para_file: str,
         # # print('orig ans {}'.format(ans_spans))
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
-        print('after trim {}\n{}'.format(len(trim_sent_spans), trim_sent_spans))
+        # print('after trim {}\n{}'.format(len(trim_sent_spans), trim_sent_spans))
+        print('after trim {}'.format(len(trim_sent_spans)))
         # print('trim ans {}'.format(ans_spans))
         # print('*' * 75)
         # trim_ans_count_list.append(len(trim_ans_spans))
