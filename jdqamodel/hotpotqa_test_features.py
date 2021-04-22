@@ -185,8 +185,14 @@ def case_to_feature_checker(para_file: str,
         print('Decoded query = {}'.format(decoded_query))
         print('para number {}'.format(len(para_spans)))
         print('sent number {}'.format(len(para_spans)))
-        print('ans_spans number{}'.format(len(ans_spans)))
-
+        print('ans_spans number {}'.format(len(ans_spans)))
+        orig_answer = row['answer']
+        exm_answer = example_i.answer_text
+        for ans_idx, ans_span in enumerate(ans_spans):
+            ans_inp_ids = doc_input_ids[ans_span[0]:ans_spans[1]]
+            decoded_ans = tokenizer.decode(ans_inp_ids)
+            print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
+        print('*' * 75)
 
 
 if __name__ == '__main__':
