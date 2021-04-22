@@ -127,21 +127,21 @@ def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
     drop_ctx_tokens = []
     drop_ctx_input_ids = []
     for para_idx, para_name in enumerate(para_names):
-        para_ctx_tokens, para_input_ids = [], []
+        drop_para_ctx_tokens, drop_para_input_ids = [], []
         for sent_idx, (sent_sub_token, sent_inp_ids) in enumerate(zip(ctx_tokens[para_idx], ctx_input_ids[para_idx])):
             abs_sent_idx = sent_name_to_id_dict[(para_name, sent_idx)]
             if abs_sent_idx not in sup_fact_id:
                 rand_s_i = random.rand()
                 if rand_s_i > drop_ratio:
-                    para_ctx_tokens.append(sent_sub_token)
-                    para_input_ids.append(sent_inp_ids)
+                    drop_para_ctx_tokens.append(sent_sub_token)
+                    drop_para_input_ids.append(sent_inp_ids)
                     keep_sent_idxs.append(abs_sent_idx)
             else:
-                para_ctx_tokens.append(sent_sub_token)
-                para_input_ids.append(sent_inp_ids)
+                drop_para_ctx_tokens.append(sent_sub_token)
+                drop_para_input_ids.append(sent_inp_ids)
                 keep_sent_idxs.append(abs_sent_idx)
-        drop_ctx_tokens.append(para_ctx_tokens)
-        drop_ctx_input_ids.append(para_input_ids)
+        drop_ctx_tokens.append(drop_para_ctx_tokens)
+        drop_ctx_input_ids.append(drop_para_input_ids)
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     keep_sent_idx_remap_dict = dict([(x[1], x[0]) for x in enumerate(keep_sent_idxs)]) ## for answer map
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
