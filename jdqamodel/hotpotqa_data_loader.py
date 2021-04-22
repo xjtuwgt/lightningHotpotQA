@@ -64,7 +64,7 @@ def case_to_features(case: Example, sep_id, train_dev=True):
             sent_len_i = len(sent_ids)
             sent_len_list.append(sent_len_i)
             para_len_ = para_len_ + sent_len_i
-            para_sent_pair_to_sent_id[(para_idx, sent_idx)] = sent_id
+            para_sent_pair_to_sent_id[(para_name, sent_idx)] = sent_id
             sent_id = sent_id + 1
         para_len_list.append(para_len_)
     assert sent_num == len(sent_len_list) - 1 and para_num == len(para_len_list) - 1
@@ -79,8 +79,8 @@ def case_to_features(case: Example, sep_id, train_dev=True):
         answer_positions = case.answer_positions
         ans_spans = []
         for ans_position in answer_positions:
-            doc_id, sent_id, ans_start, ans_end = ans_position
-            sent_idx = para_sent_pair_to_sent_id[(doc_id, sent_id)]
+            doc_title, sent_id, ans_start, ans_end = ans_position
+            sent_idx = para_sent_pair_to_sent_id[(doc_title, sent_id)]
             sent_start_idx = sent_spans[sent_idx][0]
             ans_spans.append((sent_start_idx + ans_start, sent_start_idx + ans_end))
         return doc_input_ids, query_spans, para_spans, sent_spans, ans_spans
