@@ -278,6 +278,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         example_i: Example = example_dict[exam_key]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
+        print(len(doc_input_ids))
         if len(doc_input_ids) > 512:
             larger_512 += 1
         drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=1.0)
@@ -302,7 +303,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
 
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=drop_example_i, train_dev=True)
-
+        print(len(doc_input_ids))
         if len(doc_input_ids) > 512:
             drop_larger_512 += 1
 
@@ -317,7 +318,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # # print('ans_spans number {}'.format(len(ans_spans)))
         orig_answer = row['answer']
         exm_answer = example_i.answer_text
-        print('{}\t{}'.format(exm_answer, ans_type_label))
+        # print('{}\t{}'.format(exm_answer, ans_type_label))
         #
         # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
         # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
@@ -330,13 +331,13 @@ def sent_drop_case_to_feature_checker(para_file: str,
             all_sents += ctx_dict[para_name]
 
 
-        for s_idx, sent_span in enumerate(sent_spans):
-            sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
-            # print(sent_inp_ids)
-            decoded_sent = tokenizer.decode(sent_inp_ids)
-            print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
-            print('{} deco sent: {}'.format(s_idx, decoded_sent))
-            print('$' * 10)
+        # for s_idx, sent_span in enumerate(sent_spans):
+        #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+        #     # print(sent_inp_ids)
+        #     decoded_sent = tokenizer.decode(sent_inp_ids)
+        #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+        #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
+        #     print('$' * 10)
         print('-' * 75)
 
 
