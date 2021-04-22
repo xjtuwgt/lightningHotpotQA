@@ -59,7 +59,7 @@ def consist_checker(para_file: str,
             encode_answer = tokenizer.decode(sent_ids[start_i:end_i])
 
         print('{}\t{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
-        if not example_i.ctx_with_answer and raw_answer in ['yes', 'no']:
+        if not example_i.ctx_with_answer and raw_answer not in ['yes', 'no']:
             no_answer_count = no_answer_count + 1
 
         # if exm_answer.strip() in ['noanswer']:
