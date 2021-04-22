@@ -43,7 +43,7 @@ def case_to_features(case: Example, train_dev=True):
     sent_num = case.sent_num
     para_num = case.para_num
     para_names = case.para_names
-    # print('para names', para_names)
+    print('para names', para_names)
     sent_names = case.sent_names
     assert len(ctx_input_ids) == para_num and sent_num == len(sent_names)
     doc_input_ids = question_input_ids
@@ -64,6 +64,7 @@ def case_to_features(case: Example, train_dev=True):
             para_sent_pair_to_sent_id[(para_name, sent_idx)] = sent_id
             sent_id = sent_id + 1
         para_len_list.append(para_len_)
+    print('In here {}'.format(doc_input_ids))
     assert sent_num == len(sent_len_list) - 1 and para_num == len(para_len_list) - 1
     assert sent_id == sent_num
     sent_cum_sum_len_list = np.cumsum(sent_len_list).tolist()
