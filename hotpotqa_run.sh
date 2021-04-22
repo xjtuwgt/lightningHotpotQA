@@ -48,8 +48,8 @@ preprocess() {
         echo "2. Tokenized example extraction (Roberta low)"
         python jdqamodel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
-#        echo "3. Tokenized example extraction (Albert low)"
-#        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+        echo "3. Tokenized example extraction (Albert low)"
+        python HotpotQAModel/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
 
         done
