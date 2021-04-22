@@ -278,7 +278,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=0.5)
+        drop_example_i: Example = _example_sent_drop(case=example_i, drop_ratio=0.25)
         print(example_i.sent_num, drop_example_i.sent_num)
         orig_supp_count = len(row['supporting_facts'])
         if drop_example_i.sent_num < orig_supp_count:
