@@ -195,13 +195,17 @@ def case_to_feature_checker(para_file: str,
         orig_answer = row['answer']
         exm_answer = example_i.answer_text
         ##+++++++
-        all_sents = list(itertools.chain.from_iterable([x[1] for x in row['context'] if x[0] in example_i.para_names]))
+        all_sents = []
+        for x in row['context']:
+            if x[0] in example_i.para_names:
+                all_sents += x[1]
+
         for s_idx, sent_span in enumerate(sent_spans):
             sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
             # print(sent_inp_ids)
             decoded_sent = tokenizer.decode(sent_inp_ids)
-            print('orig sent: {}'.format(all_sents[s_idx]))
-            print('deco sent: {}'.format(decoded_sent))
+            print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+            print('{} deco sent: {}'.format(s_idx, decoded_sent))
             print('$' * 10)
         print('-' * 75)
 
