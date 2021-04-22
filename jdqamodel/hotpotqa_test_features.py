@@ -171,6 +171,7 @@ def case_to_feature_checker(para_file: str,
     no_answer_count = 0
     sep_id = tokenizer.encode(tokenizer.sep_token)
     print(sep_id)
+
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -178,6 +179,9 @@ def case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
+        sel_para_names = sel_para_data[exam_key]
+        print('selected para names: ', sel_para_names)
+        print('example para names: ', example_i.para_names)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
             case_to_features(case=example_i, train_dev=True)
         orig_query = row['question']
@@ -191,7 +195,7 @@ def case_to_feature_checker(para_file: str,
         orig_answer = row['answer']
         exm_answer = example_i.answer_text
         ##+++++++
-        all_sents = list(itertools.chain.from_iterable([x[1] for x in row['context']]))
+        all_sents = list(itertools.chain.from_iterable([x[1] for x in row['context'] if x[0] in example_i.para_names]))
         for s_idx, sent_span in enumerate(sent_spans):
             sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
             # print(sent_inp_ids)
