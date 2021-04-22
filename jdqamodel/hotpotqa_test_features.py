@@ -309,26 +309,26 @@ def sent_drop_case_to_feature_checker(para_file: str,
             all_sents += ctx_dict[para_name]
 
 
-        # for s_idx, sent_span in enumerate(sent_spans):
-        #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
-        #     # print(sent_inp_ids)
-        #     decoded_sent = tokenizer.decode(sent_inp_ids)
-        #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
-        #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
-        #     print('$' * 10)
-        # print('-' * 75)
+        for s_idx, sent_span in enumerate(sent_spans):
+            sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+            # print(sent_inp_ids)
+            decoded_sent = tokenizer.decode(sent_inp_ids)
+            print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+            print('{} deco sent: {}'.format(s_idx, decoded_sent))
+            print('$' * 10)
+        print('-' * 75)
 
 
-        for ans_idx, ans_span in enumerate(ans_spans):
-            # print(ans_span)
-            # print(len(doc_input_ids))
-            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-            #     print(ans_span)
-            #     print(len(doc_input_ids))
-            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-            decoded_ans = tokenizer.decode(ans_inp_ids)
-            print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
-        print('*' * 75)
+        # for ans_idx, ans_span in enumerate(ans_spans):
+        #     # print(ans_span)
+        #     # print(len(doc_input_ids))
+        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+        #     #     print(ans_span)
+        #     #     print(len(doc_input_ids))
+        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+        #     decoded_ans = tokenizer.decode(ans_inp_ids)
+        #     print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
+        # print('*' * 75)
 
         # for p_idx, para_span in enumerate(para_spans):
         #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
@@ -336,7 +336,7 @@ def sent_drop_case_to_feature_checker(para_file: str,
         #     print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
         #     print('{} deco para: {}'.format(p_idx, decoded_para))
         print('-' * 75)
-        ans_count_list.append(len(ans_spans))
+        # ans_count_list.append(len(ans_spans))
 
     print('Sum of ans count = {}'.format(sum(ans_count_list)))
     print('One support sent count = {}'.format(one_supp_sent))
