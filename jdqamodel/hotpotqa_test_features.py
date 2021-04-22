@@ -408,6 +408,7 @@ def trim_case_to_feature_checker(para_file: str,
     print(sep_id)
 
     ans_count_list = []
+    trim_ans_count_list = []
     one_supp_sent = 0
     miss_supp_count = 0
     larger_512 = 0
@@ -499,7 +500,7 @@ def trim_case_to_feature_checker(para_file: str,
 
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
-
+        trim_ans_count_list.append(len(ans_spans))
         if ans_type_label == 2 and len(ans_spans) == 0:
             trim_no_answer_count = trim_no_answer_count + 1
 
@@ -533,7 +534,8 @@ def trim_case_to_feature_checker(para_file: str,
         #
         ans_count_list.append(len(ans_spans))
 
-    # print('Sum of ans count = {}'.format(sum(ans_count_list)))
+    print('Sum of ans count = {}'.format(sum(ans_count_list)))
+    print('Sum of trim ans count = {}'.format(sum(ans_count_list)))
     # print('One support sent count = {}'.format(one_supp_sent))
     # print('Miss support sent count = {}'.format(miss_supp_count))
     # print('Larger than 512 count = {}'.format(larger_512))
