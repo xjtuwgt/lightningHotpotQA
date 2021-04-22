@@ -170,6 +170,7 @@ def case_to_feature_checker(para_file: str,
     print('Number of examples = {}'.format(len(examples)))
     no_answer_count = 0
     sep_id = tokenizer.encode(tokenizer.sep_token)
+    print(sep_id)
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -178,7 +179,7 @@ def case_to_feature_checker(para_file: str,
             exam_key = key
         example_i: Example = example_dict[exam_key]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
-            case_to_features(case=example_i, sep_id=sep_id, train_dev=True)
+            case_to_features(case=example_i, train_dev=True)
         orig_query = row['question']
         query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
         decoded_query = tokenizer.decode(query_input_ids)

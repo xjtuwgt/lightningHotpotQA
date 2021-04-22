@@ -5,13 +5,12 @@ from numpy import random
 from torch.utils.data import DataLoader
 
 class HotpotTrainDataset(Dataset):
-    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
+    def __init__(self, examples, max_para_num=4, max_sent_num=100,
                  max_seq_num=512, sent_drop_ratio=0.25):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
         self.max_seq_length = max_seq_num
-        self.sep_token_id = sep_token_id
         self.sent_drop_ratio = sent_drop_ratio
 
     def __len__(self):
@@ -21,7 +20,7 @@ class HotpotTrainDataset(Dataset):
         case: Example = self.examples[idx]
         if self.sent_drop_ratio > 0:
             case = _example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case, sep_id=self.sep_token_id, train_dev=True)
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case, train_dev=True)
 
 
 class HotpotDevDataset(Dataset):
@@ -36,10 +35,9 @@ class HotpotDevDataset(Dataset):
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = case_to_features(case=case,
-                                                                                         sep_id=self.sep_token_id,
                                                                                          train_dev=True)
 #######################################################################
-def case_to_features(case: Example, sep_id, train_dev=True):
+def case_to_features(case: Example, train_dev=True):
     question_input_ids = case.question_input_ids
     ctx_input_ids = case.ctx_input_ids
     sent_num = case.sent_num
@@ -58,8 +56,6 @@ def case_to_features(case: Example, sep_id, train_dev=True):
         para_len_ = 0
         for sent_idx, sent_ids in enumerate(para_sent_ids):
             print('sent_ids ', sent_ids)
-            ##++++++++++++++++++++++++++++
-            sent_ids = sent_ids + [sep_id]
             ##++++++++++++++++++++++++++++
             doc_input_ids += sent_ids
             sent_len_i = len(sent_ids)
@@ -192,15 +188,14 @@ def _example_sent_drop(case: Example, drop_ratio:float = 0.1):
     return drop_example
 
 class HotpotTestDataset(Dataset):
-    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=60,
+    def __init__(self, examples, max_para_num=4, max_sent_num=60,
                  max_seq_num=512):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
         self.max_seq_length = max_seq_num
-        self.sep_token_id = sep_token_id
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
-        doc_input_ids, query_spans, para_spans, sent_spans = case_to_features(case=case, sep_id=self.sep_token_id, train_dev=False)
+        doc_input_ids, query_spans, para_spans, sent_spans = case_to_features(case=case, train_dev=False)
 
