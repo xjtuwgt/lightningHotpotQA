@@ -387,7 +387,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('Max query len = {}'.format(max_query_len))
     query_len_array = np.array(query_len_list)
 
-    print('95 = {}'.format(np.percentile(query_len_array, 95)))
+    print('99 = {}'.format(np.percentile(query_len_array, 99)))
+    print('97.5 = {}'.format(np.percentile(query_len_array, 97.5)))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
