@@ -60,7 +60,7 @@ def consist_checker(para_file: str,
         # if raw_answer in ['yes', 'no']:
         #     print('{}\t{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
         if exm_answer in ['noanswer']:
-            print('{}\t{}\t{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
+            print('{}\t{}\tencode:{}\t{}'.format(raw_answer, exm_answer, encode_answer, example_i.ctx_with_answer))
         if not example_i.ctx_with_answer and raw_answer not in ['yes', 'no']:
             no_answer_count = no_answer_count + 1
 
