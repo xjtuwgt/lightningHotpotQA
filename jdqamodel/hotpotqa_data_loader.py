@@ -177,6 +177,7 @@ def example_sent_drop(case: Example, drop_ratio:float = 0.1):
         drop_sent_name = drop_sent_names[drop_abs_sent_idx]
         assert drop_sent_name[0] == title
         drop_answer_positions.append((drop_sent_name[0], drop_sent_name[1], start_pos, end_pos))
+
     drop_example = Example(
         qas_id=qas_id,
         qas_type=qas_type,
