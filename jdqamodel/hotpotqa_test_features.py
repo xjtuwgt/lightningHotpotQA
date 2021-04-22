@@ -176,7 +176,9 @@ def case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        case_to_features(case=example_i, sep_id=sep_id, train_dev=True)
+        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
+            case_to_features(case=example_i, sep_id=sep_id, train_dev=True)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

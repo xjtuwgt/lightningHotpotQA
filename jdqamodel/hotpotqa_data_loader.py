@@ -51,7 +51,7 @@ def case_to_features(case: Example, sep_id, train_dev=True):
     para_len_list = [len(question_input_ids)]
     sent_len_list = [len(question_input_ids)]
     query_len = len(question_input_ids)
-    query_spans = [(0, query_len)]
+    query_spans = [(1, query_len)]
     para_sent_pair_to_sent_id, sent_id = {}, 0
     for para_idx, para_name in enumerate(para_names):
         para_sent_ids = ctx_input_ids[para_idx]
