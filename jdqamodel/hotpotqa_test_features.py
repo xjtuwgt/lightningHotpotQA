@@ -285,6 +285,8 @@ def sent_drop_case_to_feature_checker(para_file: str,
         # supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         # exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         # drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
+        print(example_i.para_names)
+        print(drop_example_i.para_names)
 
         # print('orig {}'.format(supp_para_names))
         # print('exam {}'.format(exam_para_names))
