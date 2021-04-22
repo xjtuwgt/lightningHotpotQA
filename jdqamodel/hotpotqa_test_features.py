@@ -9,6 +9,7 @@ import os
 from os.path import join
 from collections import Counter
 from tqdm import tqdm
+import itertools
 
 from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
@@ -188,6 +189,14 @@ def case_to_feature_checker(para_file: str,
         print('ans_spans number {}'.format(len(ans_spans)))
         orig_answer = row['answer']
         exm_answer = example_i.answer_text
+        all_sents = itertools.chain.from_iterable([x[1] for x in row['context']])
+        for s_idx, sent_span in enumerate(sent_spans):
+            sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+            decoded_sent = tokenizer.decode(sent_inp_ids)
+            print('orig sent: {}'.format(all_sents[s_idx]))
+            print('deco sent: {}'.format(decoded_sent))
+        print('-' * 75)
+
         for ans_idx, ans_span in enumerate(ans_spans):
             # print(ans_span)
             # print(len(doc_input_ids))
