@@ -2,7 +2,6 @@ from torch.utils.data import Dataset
 from jdqamodel.hotpotqa_data_structure import Example
 import numpy as np
 from numpy import random
-from copy import deepcopy
 from torch.utils.data import DataLoader
 
 class HotpotTrainDataset(Dataset):
