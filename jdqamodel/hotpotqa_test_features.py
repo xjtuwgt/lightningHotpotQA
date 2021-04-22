@@ -432,7 +432,7 @@ def trim_case_to_feature_checker(para_file: str,
         if len(doc_input_ids) > 512:
             larger_512 += 1
         # print('orig', example_i.ctx_input_ids)
-        drop_example_i = example_sent_drop(case=example_i, drop_ratio=0.25)
+        drop_example_i = example_sent_drop(case=example_i, drop_ratio=0.15)
         # print('drop', drop_example_i.ctx_input_ids)
         query_len_list.append(query_spans[0][1])
         if max_query_len < query_spans[0][1]:
