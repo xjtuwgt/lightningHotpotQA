@@ -178,6 +178,15 @@ def case_to_feature_checker(para_file: str,
         example_i: Example = example_dict[exam_key]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
             case_to_features(case=example_i, sep_id=sep_id, train_dev=True)
+        orig_query = row['question']
+        query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
+        decoded_query = tokenizer.decode(query_input_ids)
+        print('Orig query = {}'.format(orig_query))
+        print('Decoded query = {}'.format(decoded_query))
+        print('para number {}'.format(len(para_spans)))
+        print('sent number {}'.format(len(para_spans)))
+        print('ans_spans number{}'.format(len(ans_spans)))
+
 
 
 if __name__ == '__main__':
