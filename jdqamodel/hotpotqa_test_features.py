@@ -427,9 +427,10 @@ def trim_case_to_feature_checker(para_file: str,
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
 
-        trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
-            doc_input_ids, query_spans, para_spans, sent_spans,
-            limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
+
+        # trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
+        #     doc_input_ids, query_spans, para_spans, sent_spans,
+        #     limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
         # print('before drop para {}'.format(para_spans))
         # # print(len(doc_input_ids))
         # # print('orig', doc_input_ids)
@@ -474,8 +475,8 @@ def trim_case_to_feature_checker(para_file: str,
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
-        if len(doc_input_ids) > 512:
-            drop_larger_512 += 1
+        # if len(doc_input_ids) > 512:
+        #     drop_larger_512 += 1
 
 
         # # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
@@ -521,17 +522,19 @@ def trim_case_to_feature_checker(para_file: str,
         #     print('$' * 10)
         # print('-' * 75)
 
-
-        # for ans_idx, ans_span in enumerate(ans_spans):
-        #     # print(ans_span)
-        #     # print(len(doc_input_ids))
-        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-        #     #     print(ans_span)
-        #     #     print(len(doc_input_ids))
-        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-        #     decoded_ans = tokenizer.decode(ans_inp_ids)
-        #     print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
-        # print('*' * 75)
+        orig_answer = row['answer']
+        exm_answer = example_i.answer_text
+        for ans_idx, ans_span in enumerate(ans_spans):
+            # print(ans_span)
+            # print(len(doc_input_ids))
+            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+            #     print(ans_span)
+            #     print(len(doc_input_ids))
+            print(ans_spans[1])
+            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+            decoded_ans = tokenizer.decode(ans_inp_ids)
+            print('{} Orig\t{}\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans, ans_type_label[0]))
+        print('*' * 75)
         #
         # # for p_idx, para_span in enumerate(para_spans):
         # #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
