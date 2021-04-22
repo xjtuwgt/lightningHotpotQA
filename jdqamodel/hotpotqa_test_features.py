@@ -601,5 +601,9 @@ if __name__ == '__main__':
 
     # case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
     #                 tokenizer=tokenizer, data_source_type=data_source_type)
-    sent_drop_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
-                            tokenizer=tokenizer, data_source_type=data_source_type)
+    # sent_drop_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+    #                         tokenizer=tokenizer, data_source_type=data_source_type)
+
+    trim_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data,
+                                      example_file=cached_examples_file,
+                                      tokenizer=tokenizer, data_source_type=data_source_type)
