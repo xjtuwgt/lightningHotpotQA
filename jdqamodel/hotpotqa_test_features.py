@@ -426,19 +426,23 @@ def trim_case_to_feature_checker(para_file: str,
         example_i: Example = example_dict[exam_key]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
+
+        trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
+            doc_input_ids, query_spans, para_spans, sent_spans,
+            limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
         # print('before drop para {}'.format(para_spans))
         # # print(len(doc_input_ids))
         # # print('orig', doc_input_ids)
         # # print(len(sent_spans))
-        if len(doc_input_ids) > 512:
-            larger_512 += 1
-        # print('orig', example_i.ctx_input_ids)
-        drop_example_i = example_sent_drop(case=example_i, drop_ratio=0.0)
-        # print('drop', drop_example_i.ctx_input_ids)
-        query_len_list.append(query_spans[0][1])
-        if max_query_len < query_spans[0][1]:
-            max_query_len = query_spans[0][1]
-            query_len_list.append(query_spans[0][1])
+        # if len(doc_input_ids) > 512:
+        #     larger_512 += 1
+        # # print('orig', example_i.ctx_input_ids)
+        # drop_example_i = example_sent_drop(case=example_i, drop_ratio=0.0)
+        # # print('drop', drop_example_i.ctx_input_ids)
+        # query_len_list.append(query_spans[0][1])
+        # if max_query_len < query_spans[0][1]:
+        #     max_query_len = query_spans[0][1]
+        #     query_len_list.append(query_spans[0][1])
             # print(max_query_len)
 
         # print('orig q ids {}'.format(example_i.question_input_ids))
@@ -474,39 +478,39 @@ def trim_case_to_feature_checker(para_file: str,
             drop_larger_512 += 1
 
 
-        # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
-        # orig_query = row['question']
-        # query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
-        # decoded_query = tokenizer.decode(query_input_ids)
-        # # print('Orig query = {}'.format(orig_query))
-        # # print('Decoded query = {}'.format(decoded_query))
-        # # print('para number {}'.format(len(para_spans)))
-        # # print('sent number {}'.format(len(sent_spans)))
-        # # print('ans_spans number {}'.format(len(ans_spans)))
-        # orig_answer = row['answer']
-        # exm_answer = example_i.answer_text
-        # print('{}\t{}'.format(exm_answer, ans_type_label))
-        #
-        # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
-        # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
-        # ##+++++++
-        all_sents = []
-        ctx_dict = dict(row['context'])
-        contex_text = []
-        for para_name in example_i.para_names:
-            contex_text.append(ctx_dict[para_name])
-            all_sents += ctx_dict[para_name]
-        ans_count_list.append(len(ans_spans))
-        if ans_type_label == 2 and len(ans_spans) == 0:
-            no_answer_count = no_answer_count + 1
-        # print('orig ans {}'.format(ans_spans))
-        trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
-                                                                                        limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
-        # print('trim ans {}'.format(ans_spans))
-        print('*' * 75)
-        trim_ans_count_list.append(len(trim_ans_spans))
-        if ans_type_label == 2 and len(trim_ans_spans) == 0:
-            trim_no_answer_count = trim_no_answer_count + 1
+        # # print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
+        # # orig_query = row['question']
+        # # query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
+        # # decoded_query = tokenizer.decode(query_input_ids)
+        # # # print('Orig query = {}'.format(orig_query))
+        # # # print('Decoded query = {}'.format(decoded_query))
+        # # # print('para number {}'.format(len(para_spans)))
+        # # # print('sent number {}'.format(len(sent_spans)))
+        # # # print('ans_spans number {}'.format(len(ans_spans)))
+        # # orig_answer = row['answer']
+        # # exm_answer = example_i.answer_text
+        # # print('{}\t{}'.format(exm_answer, ans_type_label))
+        # #
+        # # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
+        # # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
+        # # ##+++++++
+        # all_sents = []
+        # ctx_dict = dict(row['context'])
+        # contex_text = []
+        # for para_name in example_i.para_names:
+        #     contex_text.append(ctx_dict[para_name])
+        #     all_sents += ctx_dict[para_name]
+        # ans_count_list.append(len(ans_spans))
+        # if ans_type_label == 2 and len(ans_spans) == 0:
+        #     no_answer_count = no_answer_count + 1
+        # # print('orig ans {}'.format(ans_spans))
+        # trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
+        #                                                                                 limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
+        # # print('trim ans {}'.format(ans_spans))
+        # print('*' * 75)
+        # trim_ans_count_list.append(len(trim_ans_spans))
+        # if ans_type_label == 2 and len(trim_ans_spans) == 0:
+        #     trim_no_answer_count = trim_no_answer_count + 1
 
         # for s_idx, sent_span in enumerate(sent_spans):
         #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
