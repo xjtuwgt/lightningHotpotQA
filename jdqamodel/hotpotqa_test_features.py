@@ -251,8 +251,6 @@ def case_to_feature_checker(para_file: str,
     #     ans_count_list.append(len(ans_spans))
     #
     # print('Sum of ans count = {}'.format(sum(ans_count_list)))
-
-
 def sent_drop_case_to_feature_checker(para_file: str,
                     full_file: str,
                     example_file: str,
