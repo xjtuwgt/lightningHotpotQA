@@ -276,19 +276,19 @@ def sent_drop_case_to_feature_checker(para_file: str,
         else:
             exam_key = key
         example_i: Example = example_dict[exam_key]
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
-            case_to_features(case=example_i, train_dev=True)
-        # print(len(doc_input_ids))
-        # print('orig', doc_input_ids)
-        # print(len(sent_spans))
-        if len(doc_input_ids) > 512:
-            larger_512 += 1
+        # doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
+        #     case_to_features(case=example_i, train_dev=True)
+        # # print(len(doc_input_ids))
+        # # print('orig', doc_input_ids)
+        # # print(len(sent_spans))
+        # if len(doc_input_ids) > 512:
+        #     larger_512 += 1
         # print('orig', example_i.ctx_input_ids)
         drop_example_i = example_sent_drop(case=example_i, drop_ratio=1.0)
         # print('drop', drop_example_i.ctx_input_ids)
 
-        print('orig {}'.format(example_i.question_input_ids))
-        print('drop {}'.format(drop_example_i.question_input_ids))
+        print('orig q ids {}'.format(example_i.question_input_ids))
+        print('drop q ids {}'.format(drop_example_i.question_input_ids))
         # supp_para_names = list(set([x[0] for x in row['supporting_facts']]))
         # exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         # drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
