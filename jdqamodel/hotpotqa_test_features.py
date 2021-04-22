@@ -403,6 +403,7 @@ def trim_case_to_feature_checker(para_file: str,
     assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
     no_answer_count = 0
+    trim_no_answer_count = 0
     sep_id = tokenizer.encode(tokenizer.sep_token)
     print(sep_id)
 
@@ -493,8 +494,14 @@ def trim_case_to_feature_checker(para_file: str,
             contex_text.append(ctx_dict[para_name])
             all_sents += ctx_dict[para_name]
 
+        if ans_type_label == 2 and len(ans_spans) == 0:
+            no_answer_count = no_answer_count + 1
+
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
+
+        if ans_type_label == 2 and len(ans_spans) == 0:
+            trim_no_answer_count = trim_no_answer_count + 1
 
         # for s_idx, sent_span in enumerate(sent_spans):
         #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
