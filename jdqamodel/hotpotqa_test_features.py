@@ -279,73 +279,75 @@ def sent_drop_case_to_feature_checker(para_file: str,
         exam_para_names = [example_i.para_names[x] for x in example_i.sup_para_id]
         drop_exam_para_names = [drop_example_i.para_names[x] for x in drop_example_i.sup_para_id]
 
-        print('orig {}'.format(supp_para_names))
-        print('exam {}'.format(exam_para_names))
-        print('drop exam {}'.format(drop_exam_para_names))
-
-
-        print(example_i.sent_num, drop_example_i.sent_num)
-        orig_supp_count = len(row['supporting_facts'])
-        if drop_example_i.sent_num < orig_supp_count:
-            miss_supp_count +=1
-        if drop_example_i.sent_num < 2:
-            one_supp_sent += 1
-        sel_para_names = sel_para_data[key]
-        print('selected para names: ', sel_para_names)
-        print('example para names: ', example_i.para_names)
+        # print('orig {}'.format(supp_para_names))
+        # print('exam {}'.format(exam_para_names))
+        # print('drop exam {}'.format(drop_exam_para_names))
+        #
+        #
+        # print(example_i.sent_num, drop_example_i.sent_num)
+        # orig_supp_count = len(row['supporting_facts'])
+        # if drop_example_i.sent_num < orig_supp_count:
+        #     miss_supp_count +=1
+        # if drop_example_i.sent_num < 2:
+        #     one_supp_sent += 1
+        # sel_para_names = sel_para_data[key]
+        # print('selected para names: ', sel_para_names)
+        # print('example para names: ', example_i.para_names)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans = \
             case_to_features(case=example_i, train_dev=True)
-        orig_query = row['question']
-        query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
-        decoded_query = tokenizer.decode(query_input_ids)
-        # print('Orig query = {}'.format(orig_query))
-        # print('Decoded query = {}'.format(decoded_query))
-        # print('para number {}'.format(len(para_spans)))
-        # print('sent number {}'.format(len(sent_spans)))
-        # print('ans_spans number {}'.format(len(ans_spans)))
-        orig_answer = row['answer']
-        exm_answer = example_i.answer_text
 
-        assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
-        assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
-        ##+++++++
-        all_sents = []
-        ctx_dict = dict(row['context'])
-        contex_text = []
-        for para_name in example_i.para_names:
-            contex_text.append(ctx_dict[para_name])
-            all_sents += ctx_dict[para_name]
-
-
-        # for s_idx, sent_span in enumerate(sent_spans):
-        #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
-        #     # print(sent_inp_ids)
-        #     decoded_sent = tokenizer.decode(sent_inp_ids)
-        #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
-        #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
-        #     print('$' * 10)
-        # print('-' * 75)
-
-
-        for ans_idx, ans_span in enumerate(ans_spans):
-            # print(ans_span)
-            # print(len(doc_input_ids))
-            # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
-            #     print(ans_span)
-            #     print(len(doc_input_ids))
-            ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
-            decoded_ans = tokenizer.decode(ans_inp_ids)
-            print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
-        print('*' * 75)
-
-        # for p_idx, para_span in enumerate(para_spans):
-        #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
-        #     decoded_para = tokenizer.decode(para_inp_ids)
-        #     print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
-        #     print('{} deco para: {}'.format(p_idx, decoded_para))
-        # print('-' * 75)
-
-        ans_count_list.append(len(ans_spans))
+        print(type(doc_input_ids), type(query_spans), type(para_spans), type(sent_spans), type(ans_spans))
+        # orig_query = row['question']
+        # query_input_ids = doc_input_ids[query_spans[0][0]:query_spans[0][1]]
+        # decoded_query = tokenizer.decode(query_input_ids)
+        # # print('Orig query = {}'.format(orig_query))
+        # # print('Decoded query = {}'.format(decoded_query))
+        # # print('para number {}'.format(len(para_spans)))
+        # # print('sent number {}'.format(len(sent_spans)))
+        # # print('ans_spans number {}'.format(len(ans_spans)))
+        # orig_answer = row['answer']
+        # exm_answer = example_i.answer_text
+        #
+        # assert len(example_i.sup_para_id) == len(drop_example_i.sup_para_id)
+        # assert len(example_i.sup_fact_id) == len(drop_example_i.sup_fact_id)
+        # ##+++++++
+        # all_sents = []
+        # ctx_dict = dict(row['context'])
+        # contex_text = []
+        # for para_name in example_i.para_names:
+        #     contex_text.append(ctx_dict[para_name])
+        #     all_sents += ctx_dict[para_name]
+        #
+        #
+        # # for s_idx, sent_span in enumerate(sent_spans):
+        # #     sent_inp_ids = doc_input_ids[sent_span[0]:sent_span[1]]
+        # #     # print(sent_inp_ids)
+        # #     decoded_sent = tokenizer.decode(sent_inp_ids)
+        # #     print('{} orig sent: {}'.format(s_idx, all_sents[s_idx]))
+        # #     print('{} deco sent: {}'.format(s_idx, decoded_sent))
+        # #     print('$' * 10)
+        # # print('-' * 75)
+        #
+        #
+        # for ans_idx, ans_span in enumerate(ans_spans):
+        #     # print(ans_span)
+        #     # print(len(doc_input_ids))
+        #     # if ans_span[0] < 0 or ans_span[0] >= len(doc_input_ids) or ans_span[1] >= len(doc_input_ids):
+        #     #     print(ans_span)
+        #     #     print(len(doc_input_ids))
+        #     ans_inp_ids = doc_input_ids[ans_span[0]:ans_span[1]]
+        #     decoded_ans = tokenizer.decode(ans_inp_ids)
+        #     print('{} Orig\t{}\t{}\t{}'.format(ans_idx, orig_answer, exm_answer, decoded_ans))
+        # print('*' * 75)
+        #
+        # # for p_idx, para_span in enumerate(para_spans):
+        # #     para_inp_ids = doc_input_ids[para_span[0]:para_span[1]]
+        # #     decoded_para = tokenizer.decode(para_inp_ids)
+        # #     print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
+        # #     print('{} deco para: {}'.format(p_idx, decoded_para))
+        # # print('-' * 75)
+        #
+        # ans_count_list.append(len(ans_spans))
 
     print('Sum of ans count = {}'.format(sum(ans_count_list)))
     print('One support sent count = {}'.format(one_supp_sent))
