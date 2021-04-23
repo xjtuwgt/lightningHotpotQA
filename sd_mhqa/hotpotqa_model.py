@@ -122,7 +122,8 @@ class SDModel(nn.Module):
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
         context_encoding = batch['context_encoding']
         input_state = self.linear_map(context_encoding)
-        input_state = self.transformer_encoder.forward(x=input_state, src_mask=batch['context_mask'])
+        batch_mask = batch['context_mask'].unsqueeze(1)
+        input_state = self.transformer_encoder.forward(x=input_state, src_mask=batch_mask)
         ####++++++++++++++++++++++++++++++++++++++
         cls_emb_state = input_state[:,0,:]
         ####++++++++++++++++++++++++++++++++++++++
