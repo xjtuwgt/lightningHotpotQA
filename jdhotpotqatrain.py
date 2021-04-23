@@ -209,21 +209,9 @@ for epoch in train_iterator:
             if key not in {'ids'}:
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#         # inputs = {'input_ids':      batch['context_idxs'],
-#         #           'attention_mask': batch['context_mask'],
-#         #           'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
-#         #
-#         # ####++++++++++++++++++++++++++++++++++++++
-#         # if args.model_type == 'electra':
-#         #     batch['context_encoding'] = encoder(**inputs).last_hidden_state
-#         # else:
-#         #     batch['context_encoding'] = encoder(**inputs)[0]
-#         # ####++++++++++++++++++++++++++++++++++++++
-#         # batch['context_mask'] = batch['context_mask'].float().to(args.device)
-#         start, end, q_type, paras, sents, yp1, yp2 = model(encoder, batch, return_yp=True)
-#
-#         loss_list = compute_loss(args, batch, start, end, paras, sents, q_type)
-#         del batch
+        start, end, q_type, paras, sents, yp1, yp2 = model(encoder, batch, return_yp=True)
+        loss_list = compute_loss(args, batch, start, end, paras, sents, q_type)
+        del batch
 #
 #         if args.n_gpu > 1:
 #             for loss in loss_list:
