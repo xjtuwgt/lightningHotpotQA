@@ -259,7 +259,7 @@ class HotpotTestDataset(Dataset):
         for key in data_keys:
             if key in {'ids'}:
                 batch_data[key] = [_[key] for _ in data]
-            elif key in {'context_lens'}:
+            elif key in {'context_lens', 'para_num', 'sent_num'}:
                 batch_data[key] = torch.LongTensor([_[key] for _ in data])
             else:
                 batch_data[key] = torch.stack([_[key] for _ in data], dim=0)
