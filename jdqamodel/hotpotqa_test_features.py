@@ -10,6 +10,8 @@ from os.path import join
 from collections import Counter
 from tqdm import tqdm
 import itertools
+from torch.utils.data import DataLoader
+from jdqamodel.hotpotqa_data_loader import HotpotTestDataset
 
 from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
@@ -588,6 +590,31 @@ def trim_case_to_feature_checker(para_file: str,
     # print('Trim no answer count = {}'.format(trim_no_answer_count))
     # print('maximum sent num = {}'.format(max_sent_num))
 
+
+def data_loader_checker(para_file: str,
+                    full_file: str,
+                    example_file: str,
+                    tokenizer,
+                    data_source_type=None):
+    sel_para_data = json_loader(json_file_name=para_file)
+    full_data = json_loader(json_file_name=full_file)
+    examples = pickle.load(gzip.open(example_file, 'rb'))
+    example_dict = {e.qas_id: e for e in examples}
+    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    print('Number of examples = {}'.format(len(examples)))
+
+    hotpotdata = HotpotTestDataset(examples=examples, sep_token_id=tokenizer.sep_token_id)
+
+    dev_data_loader = DataLoader(dataset=hotpotdata, batch_size=8,
+            shuffle=False,
+            num_workers=5,
+            collate_fn=HotpotTestDataset.collate_fn)
+
+    for batch in dev_data_loader:
+        print(batch)
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
@@ -648,6 +675,10 @@ if __name__ == '__main__':
     # sent_drop_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
     #                         tokenizer=tokenizer, data_source_type=data_source_type)
 
-    trim_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data,
-                                      example_file=cached_examples_file,
-                                      tokenizer=tokenizer, data_source_type=data_source_type)
+    # trim_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data,
+    #                                   example_file=cached_examples_file,
+    #                                   tokenizer=tokenizer, data_source_type=data_source_type)
+
+    data_loader_checker(para_file=args.para_path, full_file=args.full_data,
+                                 example_file=cached_examples_file,
+                                 tokenizer=tokenizer, data_source_type=data_source_type)
