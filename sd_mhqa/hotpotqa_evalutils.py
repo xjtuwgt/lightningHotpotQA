@@ -72,7 +72,7 @@ def convert_to_tokens(tokenizer, examples, ids, y1, y2, q_type_prob):
             answer_text = 'no'
         else:
             raise ValueError("question type error")
-
+        print(answer_text)
         answer_dict[qid] = answer_text
         answer_type_prob_dict[qid] = q_type_prob[i].tolist()
         answer_type_dict[qid] = q_type[i].item()
