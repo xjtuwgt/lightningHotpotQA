@@ -416,6 +416,7 @@ def trim_case_to_feature_checker(para_file: str,
     trim_larger_512 = 0
     max_query_len = 0
     query_len_list = []
+    max_sent_num = 0
 
 
     for row in tqdm(full_data):
@@ -428,6 +429,8 @@ def trim_case_to_feature_checker(para_file: str,
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
 
+        if len(sent_spans) > max_sent_num:
+            max_sent_num = len(sent_spans)
 
         # trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
         #     doc_input_ids, query_spans, para_spans, sent_spans,
@@ -567,6 +570,7 @@ def trim_case_to_feature_checker(para_file: str,
 
     print('No answer count = {}'.format(no_answer_count))
     print('Trim no answer count = {}'.format(trim_no_answer_count))
+    print('maximum sent num = {}'.format(max_sent_num))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
