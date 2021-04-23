@@ -306,10 +306,7 @@ class DataHelper:
 
     def get_pickle_file(self, file_name):
         print('pickler file name {}'.format(file_name))
-        if self.gz:
-            return pickle.load(gzip.open(file_name, 'rb'))
-        else:
-            return open(file_name, 'rb')
+        return pickle.load(gzip.open(file_name, 'rb'))
 
     # Examples
     def get_train_examples(self):
