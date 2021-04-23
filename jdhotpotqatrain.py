@@ -53,8 +53,7 @@ for a in args_dict:
 # Read Data
 ##########################################################################
 _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
-tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
-                                            do_lower_case=args.do_lower_case)
+tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path, do_lower_case=True)
 sep_token_id = tokenizer.sep_token_id
 ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 helper = DataHelper(sep_token_id=sep_token_id, config=args)
@@ -94,7 +93,9 @@ encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = SDModel(config=args)
 
 if encoder_path is not None:
+    logger.info("Loading encoder from: {}".format(encoder_path))
     encoder.load_state_dict(torch.load(encoder_path))
+    logger.info("Loading encoder completed")
 if model_path is not None:
     model.load_state_dict(torch.load(model_path))
 
