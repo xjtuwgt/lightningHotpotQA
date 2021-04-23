@@ -4,7 +4,6 @@ from jdqamodel.hotpotqaUtils import example_sent_drop, case_to_features, trim_in
 import torch
 import numpy as np
 
-
 IGNORE_INDEX = -100
 
 class HotpotDataset(Dataset):
