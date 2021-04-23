@@ -7,6 +7,7 @@ from os.path import join
 # # from tensorboardX import SummaryWriter
 import pickle, gzip
 import argparse
+from model_envs import MODEL_CLASSES
 #
 #
 # from jdqamodel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
