@@ -104,7 +104,7 @@ def jd_hotpotqa_eval_model(args, encoder, model, dataloader, example_dict, predi
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         with torch.no_grad():
-            start, end, q_type, paras, sent, ent, yp1, yp2 = model(encoder, batch, return_yp=True)
+            start, end, q_type, paras, sent, yp1, yp2 = model(encoder, batch, return_yp=True)
 
         type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
         answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(tokenizer, example_dict, batch['ids'],
