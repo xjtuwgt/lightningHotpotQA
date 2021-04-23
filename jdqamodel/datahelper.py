@@ -41,17 +41,9 @@ class DataHelper:
     def get_dev_examples(self):
         return self.get_pickle_file(self.dev_example_file())
 
-    # Load
-    def load_dev(self):
+    def hotpot_train_dataloader(self) -> DataLoader:
         self.train_examples = self.get_train_examples()
         self.train_example_dict = {e.qas_id: e for e in self.train_examples}
-
-    def load_train(self):
-        self.dev_examples = self.get_dev_examples()
-        self.dev_example_dict = {e.qas_id: e for e in self.dev_examples}
-
-    def hotpot_train_dataloader(self) -> DataLoader:
-        self.load_train()
         train_data = self.Dataset(examples=self.train_examples,
                                   max_para_num=self.config.max_para_num,
                                   max_sent_num=self.config.max_sent_num,
@@ -68,7 +60,8 @@ class DataHelper:
         return dataloader
 
     def hotpot_val_dataloader(self) -> DataLoader:
-        self.load_dev()
+        self.dev_examples = self.get_dev_examples()
+        self.dev_example_dict = {e.qas_id: e for e in self.dev_examples}
         dev_data = self.Dataset(examples=self.dev_examples,
                                   max_para_num=self.config.max_para_num,
                                   max_sent_num=self.config.max_sent_num,
