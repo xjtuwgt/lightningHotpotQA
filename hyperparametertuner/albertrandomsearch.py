@@ -58,7 +58,7 @@ def HypeParameterSpace():
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [8]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
-    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_long_docred_low']} #
+    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_low']} #
     num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # if SAE, then this number should be 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
@@ -108,7 +108,7 @@ def generate_random_search_bash(task_num, seed=42):
         with open(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
             # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdgraphtrain.py --config_file " + \
             #             json_file_path + config_json_file_name
-            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
+            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdhotpotqatrain.py --config_file " + \
                         json_file_path + config_json_file_name
             rsh_i.write(command_i)
             print('saving jobs at {}'.format(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh'))
