@@ -97,7 +97,7 @@ class DataHelper:
 
     @property
     def hotpot_val_dataloader(self) -> DataLoader:
-        dev_examples = self.load_dev()
+        dev_examples, _ = self.load_dev()
         dev_data = self.Dataset(examples=dev_examples,
                                 max_para_num=self.config.max_para_num,
                                 max_sent_num=self.config.max_sent_num,
