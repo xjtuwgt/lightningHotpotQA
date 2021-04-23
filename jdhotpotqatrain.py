@@ -54,6 +54,8 @@ for a in args_dict:
 _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
                                             do_lower_case=args.do_lower_case)
+sep_token_id = tokenizer.sep_token_id
+print(sep_token_id)
 # Set datasets
 # train_dataloader = helper.hotpot_train_dataloader
 # dev_example_dict = helper.dev_example_dict
