@@ -20,7 +20,6 @@ def single_task_trial(search_space: dict, rand_seed=42):
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.graph.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + '.as' + str(parameter_dict['gradient_accumulation_steps']) + \
                '.lr' + str(parameter_dict['learning_rate']) +'.lrs' + str(parameter_dict['learning_rate_schema']) + '.lrd' + str(parameter_dict['layer_wise_lr_decay']) + \
-               '.gnn' + str(parameter_dict['gnn'].replace(':','').replace(',', '.')) +\
                '.data' +str(parameter_dict['daug_type']) + parameter_dict['optimizer'] + '.' + parameter_dict['lr_scheduler'] + '.seed' +str(rand_seed)
     parameter_dict['exp_name'] = exp_name
     return parameter_dict
@@ -51,19 +50,13 @@ def HypeParameterSpace():
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1,2,4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5]} ##
     frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
-    gnn_drop = {'name': 'gnn_drop', 'type': 'choice', 'values': [0.3]} #0.3
-    gnn_attn_drop = {'name': 'gnn_attn_drop', 'type': 'choice', 'values': [0.3]}  # 0.3
-    bi_attn_drop = {'name': 'bi_attn_drop', 'type': 'choice', 'values': [0.3]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
-    lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [8]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_low']} #
-    num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # if SAE, then this number should be 9
-    ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
-    hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
-    learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['layer_decay']}
-    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2' 'gat:1,4'
+    transformer_hidden_dim = {'name': 'transformer_hidden_dim', 'type': 'choice', 'values': [512]}
+    transformer_head_num = {'name': 'transformer_head_num', 'type': 'choice', 'values': [8]}
+    sent_drop_ratio = {'name': 'sent_drop_ratio', 'type': 'choice', 'values': [0.25]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['albert']}
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['albert/albert-xxlarge-v2_hotpotqa']} #'ahotrod/roberta_large_squad2'
@@ -72,9 +65,8 @@ def HypeParameterSpace():
     lr_scheduler = {'name': 'lr_scheduler', 'type': 'choice', 'values': ['cosine']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num, layer_wise_lr_decay,
-                    lr_scheduler, gnn, fine_tuned_encoder, daug_type, devf_type, ctx_attn_hidden_dim, hidden_dim, learning_rate_schema,
-                    gnn_attn_drop, optimizer,
-                    gnn_drop, num_edge_type, bi_attn_drop, trans_drop, lstm_drop, num_train_epochs, model_type, encoder_name_or_path]
+                    lr_scheduler, fine_tuned_encoder, daug_type, devf_type,  optimizer, trans_drop, num_train_epochs,
+                    model_type, encoder_name_or_path, transformer_hidden_dim, transformer_head_num, sent_drop_ratio]
     search_space = dict((x['name'], x) for x in search_space)
     return search_space
 
@@ -100,15 +92,14 @@ def generate_random_search_bash(task_num, seed=42):
         config_json_file_name = 'train.graph.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
                                 +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.lrs' + rand_hype_dict['learning_rate_schema'] + '.lrd' + \
                                 str(rand_hype_dict['layer_wise_lr_decay']) + rand_hype_dict['optimizer'] + '.' + rand_hype_dict['lr_scheduler']+ \
-                                rand_hype_dict['gnn'].replace(',', '.').replace(':', '') \
-                                + '.seed' + str(rand_hype_dict['seed']) + '.json'
+                                '.seed' + str(rand_hype_dict['seed']) + '.json'
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
             json.dump(rand_hype_dict, fp)
         print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
-        with open(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
+        with open(jobs_path + 'jd_hotpotqa_' + config_json_file_name +'.sh', 'w') as rsh_i:
             # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdgraphtrain.py --config_file " + \
             #             json_file_path + config_json_file_name
-            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
+            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdhotpotqatrain.py --config_file " + \
                         json_file_path + config_json_file_name
             rsh_i.write(command_i)
             print('saving jobs at {}'.format(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh'))
