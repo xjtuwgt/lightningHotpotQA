@@ -59,7 +59,7 @@ _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
                                             do_lower_case=args.do_lower_case)
 
-cached_examples_file = join(DATASET_FOLDER, 'data_feat',
+cached_examples_file = join(DATASET_FOLDER, 'data_feat', 'train',
                                     get_cached_filename('hgn_low_hotpotqa_tokenized_examples',
                                                         args))
 examples = pickle.load(gzip.open(cached_examples_file, 'rb'))
