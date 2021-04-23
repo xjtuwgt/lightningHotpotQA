@@ -46,7 +46,7 @@ class ParaSentPredictionLayer(nn.Module):
 
         sent_logits_aux = Variable(sent_logit.data.new(sent_logit.size(0), sent_logit.size(1), 1).zero_())
         sent_prediction = torch.cat([sent_logits_aux, sent_logit], dim=-1).contiguous()
-        return para_prediction, sent_prediction
+        return (para_prediction, sent_prediction)
 
 class PredictionLayer(nn.Module):
     """
@@ -82,7 +82,7 @@ class PredictionLayer(nn.Module):
         type_prediction = self.type_linear(context_input[:, 0, :])
 
         if not return_yp:
-            return start_prediction, end_prediction, type_prediction
+            return (start_prediction, end_prediction, type_prediction)
 
         outer = start_prediction[:, :, None] + end_prediction[:, None]
         outer_mask = self.get_output_mask(outer)
@@ -93,7 +93,7 @@ class PredictionLayer(nn.Module):
         # yp2: end
         yp1 = outer.max(dim=2)[0].max(dim=1)[1]
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
-        return start_prediction, end_prediction, type_prediction, yp1, yp2
+        return (start_prediction, end_prediction, type_prediction, yp1, yp2)
 
 class SDModel(nn.Module):
     """
