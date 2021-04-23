@@ -630,6 +630,7 @@ def data_loader_checker(para_file: str,
             y1_i = y1[i]
             y2_i = y2[i]
             # print(y1_i, y2_i)
+            orig_answer = example_dict[ids[i]]
             if y1_i > 0:
                 ans_ids = inp_id_i[y1_i:y2_i]
                 print(tokenizer.decode(ans_ids))
