@@ -56,8 +56,8 @@ class ScaleDotProductAttention(nn.Module):
         self.softmax = nn.Softmax()
 
     def forward(self, q, k, v, mask=None, dropout=None):
-        v, score = self.attention(query=q, key=k, value=v, mask=mask, dropout=dropout)
-        return v, score
+        v = self.attention(query=q, key=k, value=v, mask=mask, dropout=dropout)
+        return v
 
     def attention(self, query, key, value, mask=None, dropout=None):
         "Compute 'Scaled Dot Product Attention'"
