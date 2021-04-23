@@ -211,8 +211,9 @@ for epoch in train_iterator:
             if key not in {'ids'}:
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        start, end, q_type, paras, sents, yp1, yp2 = model(encoder, batch, return_yp=True)
-        loss_list = compute_loss(args, batch, start, end, paras, sents, q_type)
+        # start, end, q_type, paras, sents, yp1, yp2 = model(encoder, batch, return_yp=True)
+        # loss_list = compute_loss(args, batch, start, end, paras, sents, q_type)
+        loss_list = model(encoder, batch, return_yp=True)
         print(loss_list)
         del batch
 

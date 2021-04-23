@@ -5,6 +5,7 @@ from models.layers import OutputLayer
 from torch import Tensor
 import numpy as np
 from sd_mhqa.transformer import EncoderLayer as Transformer_layer
+from sd_mhqa.hotpotqa_evalutils import compute_loss
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end'] - 1
@@ -133,13 +134,18 @@ class SDModel(nn.Module):
         query_mapping = batch['query_mapping']
         predictions = self.predict_layer.forward(batch=batch, context_input=input_state,
                                                  packing_mask=query_mapping, return_yp=return_yp)
-        if return_yp:
-            start, end, q_type, yp1, yp2 = predictions
-            if return_cls:
-                return start, end, q_type, para_predictions, sent_predictions, yp1, yp2, cls_emb_state
-            return start, end, q_type, para_predictions, sent_predictions, yp1, yp2
+        if not self.training:
+            if return_yp:
+                start, end, q_type, yp1, yp2 = predictions
+                if return_cls:
+                    return start, end, q_type, para_predictions, sent_predictions, yp1, yp2, cls_emb_state
+                return start, end, q_type, para_predictions, sent_predictions, yp1, yp2
+            else:
+                start, end, q_type = predictions
+                if return_cls:
+                    return start, end, q_type, para_predictions, sent_predictions, cls_emb_state
+                return start, end, q_type, para_predictions, sent_predictions
         else:
-            start, end, q_type = predictions
-            if return_cls:
-                return start, end, q_type, para_predictions, sent_predictions, cls_emb_state
-            return start, end, q_type, para_predictions, sent_predictions
+            start, end, q_type, yp1, yp2 = predictions
+            loss_list = compute_loss(self.config, batch, start, end, para_predictions, sent_predictions, q_type)
+            return loss_list
