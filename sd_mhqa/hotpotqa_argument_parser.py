@@ -115,7 +115,6 @@ def default_train_parser():
                         help="Model type selected in the list")
     parser.add_argument("--max_seq_length", default=512, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
-    parser.add_argument("--sent_drop_ratio", type=float, default=0.25)
     parser.add_argument("--encoder_name_or_path",
                         # default='bert-base-uncased',
                         default='roberta-large',
@@ -250,6 +249,12 @@ def default_train_parser():
     parser.add_argument("--sent_lambda", type=float, default=5)
     parser.add_argument("--ent_lambda", type=float, default=1)
     parser.add_argument("--sp_threshold", type=float, default=0.5)
+
+    ##++++++++++++++++++
+    parser.add_argument("--transformer_hidden_dim", type=int, default=512)
+    parser.add_argument("--transformer_head_num", type=int, default=8)
+    parser.add_argument("--sent_drop_ratio", type=float, default=0.25)
+    ##++++++++++++++++++
 
     return parser
 

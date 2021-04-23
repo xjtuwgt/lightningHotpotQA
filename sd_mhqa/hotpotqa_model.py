@@ -101,9 +101,10 @@ class SDModel(nn.Module):
         super(SDModel, self).__init__()
         self.config = config
         self.input_dim = config.input_dim
-        self.hidden_dim = config.hidden_dim
+        self.hidden_dim = config.transformer_hidden_dim
+        self.head_num = config.transformer_head_num
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
-        self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=4)
+        self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=self.head_num)
 
         self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
