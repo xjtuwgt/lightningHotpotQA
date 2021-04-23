@@ -286,27 +286,21 @@ class DataHelper:
         self.suffix = '.pkl.gz' if gz else '.pkl'
 
         self.data_dir = join(DATASET_FOLDER, 'data_feat')
-
-        self.__train_examples__ = None
-        self.__dev_examples__ = None
-
-        self.__train_example_dict__ = None
-        self.__dev_example_dict__ = None
-
         self.config = config
+        self.train_examples = None
+        self.train_example_dict = None
+        self.dev_examples = None
+        self.dev_example_dict = None
         self.sep_token_id = sep_token_id
         self.train_f_type = self.config.daug_type
 
     def get_example_file(self, tag, f_type=None):
         cached_filename = get_cached_filename('{}_hotpotqa_tokenized_examples'.format(f_type), self.config)
-        print(cached_filename)
         return join(self.data_dir, tag, cached_filename)
 
-    @property
     def train_example_file(self):
         return self.get_example_file('train', self.train_f_type)
 
-    @property
     def dev_example_file(self):
         return self.get_example_file('dev_distractor', self.config.devf_type)
 
@@ -316,46 +310,26 @@ class DataHelper:
         else:
             return open(file_name, 'rb')
 
-    def __get_or_load__(self, name, file):
-        if getattr(self, name) is None:
-            with self.get_pickle_file(file) as fin:
-                print('loading', file)
-                setattr(self, name, pickle.load(fin))
-        return getattr(self, name)
-
     # Examples
-    @property
-    def train_examples(self):
-        return self.__get_or_load__('__train_examples__', self.train_example_file)
+    def get_train_examples(self):
+        return self.get_pickle_file(self.train_example_file())
 
-    @property
-    def dev_examples(self):
-        return self.__get_or_load__('__dev_examples__', self.dev_example_file)
-
-    # Example dict
-    @property
-    def train_example_dict(self):
-        if self.__train_example_dict__ is None:
-            self.__train_example_dict__ = {e.qas_id: e for e in self.train_examples}
-        return self.__train_example_dict__
-
-    @property
-    def dev_example_dict(self):
-        if self.__dev_example_dict__ is None:
-            self.__dev_example_dict__ = {e.qas_id: e for e in self.dev_examples}
-        return self.__dev_example_dict__
+    def get_dev_examples(self):
+        return self.get_pickle_file(self.dev_example_file())
 
     # Load
     def load_dev(self):
-        return self.dev_examples, self.dev_example_dict
+        self.train_examples = self.get_train_examples()
+        self.train_example_dict = {e.qas_id: e for e in self.train_examples}
 
     def load_train(self):
-        return self.train_examples, self.train_example_dict
+        self.dev_examples = self.get_dev_examples()
+        self.dev_example_dict = {e.qas_id: e for e in self.dev_examples}
 
     @property
     def hotpot_train_dataloader(self) -> DataLoader:
-        train_data_examples, _ = self.load_train()
-        train_data = self.Dataset(examples=train_data_examples,
+        self.load_train()
+        train_data = self.Dataset(examples=self.train_examples,
                                   max_para_num=self.config.max_para_num,
                                   max_sent_num=self.config.max_sent_num,
                                   max_seq_num=self.config.max_seq_length,
@@ -372,8 +346,8 @@ class DataHelper:
 
     @property
     def hotpot_val_dataloader(self) -> DataLoader:
-        dev_data_examples, _ = self.load_dev()
-        dev_data = self.Dataset(examples=dev_data_examples,
+        self.load_dev()
+        dev_data = self.Dataset(examples=self.dev_examples,
                                   max_para_num=self.config.max_para_num,
                                   max_sent_num=self.config.max_sent_num,
                                   max_seq_num=self.config.max_seq_length,
