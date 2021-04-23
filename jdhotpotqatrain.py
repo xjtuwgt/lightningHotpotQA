@@ -185,19 +185,30 @@ logger.info('Total number of batches = {}'.format(total_batch_num))
 eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
 logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
 ###++++++++++++++++++++++++++++++++++++++++++
-#
-# train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
-# for epoch in train_iterator:
-#     epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
-#
-#     for step, batch in enumerate(epoch_iterator):
-#         encoder.train()
-#         model.train()
-#         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#         for key, value in batch.items():
-#             if key not in {'ids'}:
-#                 batch[key] = value.to(args.device)
-#         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# #########################################################################
+# # Show model information
+# #########################################################################
+logging.info('Encoder Parameter Configuration:')
+for name, param in encoder.named_parameters():
+    logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+logging.info('*' * 75)
+logging.info('Model Parameter Configuration:')
+for name, param in model.named_parameters():
+    logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+logging.info('*' * 75)
+
+train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
+for epoch in train_iterator:
+    epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
+
+    for step, batch in enumerate(epoch_iterator):
+        encoder.train()
+        model.train()
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for key, value in batch.items():
+            if key not in {'ids'}:
+                batch[key] = value.to(args.device)
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #         # inputs = {'input_ids':      batch['context_idxs'],
 #         #           'attention_mask': batch['context_mask'],
 #         #           'token_type_ids': batch['segment_idxs'] if args.model_type in ['bert', 'xlnet', 'electra'] else None}  # XLM don't use segment_ids
