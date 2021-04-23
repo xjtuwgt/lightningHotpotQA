@@ -12,7 +12,7 @@ from model_envs import MODEL_CLASSES
 #
 # from HotpotQAModel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # # from utils.jdutils import get_lr_with_optimizer
-from HotpotQAModel.hotpotqa_dump_features import get_cached_filename
+from sd_mhqa.hotpotqa_dump_features import get_cached_filename
 #
 # from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
 # # from HotpotQAModel.evalutils import compute_loss
