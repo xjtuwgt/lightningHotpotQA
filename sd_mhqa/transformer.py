@@ -64,14 +64,15 @@ class ScaleDotProductAttention(nn.Module):
         d_k = query.size(-1)
         scores = torch.matmul(query, key.transpose(-2, -1)) \
                  / math.sqrt(d_k)
-        print(scores.shape)
-        print(mask.shape)
-        print(mask.shape)
+        print(mask.sum(dim=-1))
+
         if mask is not None:
             scores = scores.masked_fill(mask == 0, -1e9)
+
+
         p_attn = F.softmax(scores, dim=-1)
-        print(scores[0][0])
-        print(p_attn[0][0].sum(dim=-1))
+        for i in range(mask.shape[0]):
+            print(p_attn[i][0])
         if dropout is not None:
             p_attn = dropout(p_attn)
         return torch.matmul(p_attn, value), p_attn
