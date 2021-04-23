@@ -10,10 +10,6 @@ def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end'] - 1
     para_start, para_end = batch['para_start'], batch['para_end'] - 1
 
-    # print(input_state.shape)
-    # print(sent_start)
-    # print(sent_end)
-
     batch_size, para_num, sent_num = para_start.shape[0], para_start.shape[1], sent_start.shape[1]
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     sent_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, sent_num)
