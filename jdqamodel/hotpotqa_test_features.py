@@ -619,7 +619,7 @@ def data_loader_checker(para_file: str,
         # print(batch_idx)
         x = batch_idx
         ids = batch['ids']
-        input_ids = batch_idx['context_idxs']
+        input_ids = batch['context_idxs']
         y1= batch['y1']
         y2= batch['y2']
         batch_size = input_ids.shape[0]
