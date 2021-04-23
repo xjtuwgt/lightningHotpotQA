@@ -83,7 +83,7 @@ class DataHelper:
         train_data = self.Dataset(examples=train_examples,
                                   max_para_num=self.config.max_para_num,
                                   max_sent_num=self.config.max_sent_num,
-                                  max_seq_num=self.config.max_seq_num,
+                                  max_seq_num=self.config.max_seq_length,
                                   sent_drop_ratio=self.config.sent_drop_ratio,
                                   sep_token_id=self.sep_token_id)
         ####++++++++++++
@@ -101,7 +101,7 @@ class DataHelper:
         dev_data = self.Dataset(examples=dev_examples,
                                 max_para_num=self.config.max_para_num,
                                 max_sent_num=self.config.max_sent_num,
-                                max_seq_num=self.config.max_seq_num,
+                                max_seq_num=self.config.max_seq_length,
                                 sep_token_id=self.sep_token_id,
                                 sent_drop_ratio=-1)
         dataloader = DataLoader(
