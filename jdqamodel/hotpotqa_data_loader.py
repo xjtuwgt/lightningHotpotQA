@@ -162,6 +162,9 @@ class HotpotTestDataset(Dataset):
         self.max_seq_length = max_seq_num
         self.sep_token_id = sep_token_id
 
+    def __len__(self):
+        return len(self.examples)
+
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
         doc_input_ids, query_spans, para_spans, sent_spans = \
