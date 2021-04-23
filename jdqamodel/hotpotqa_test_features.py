@@ -11,7 +11,7 @@ from collections import Counter
 from tqdm import tqdm
 import itertools
 from torch.utils.data import DataLoader
-from jdqamodel.hotpotqa_data_loader import HotpotTestDataset
+from jdqamodel.hotpotqa_data_loader import HotpotTestDataset, HotpotDataset
 
 from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
@@ -603,7 +603,8 @@ def data_loader_checker(para_file: str,
     assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
 
-    hotpotdata = HotpotTestDataset(examples=examples, sep_token_id=tokenizer.sep_token_id)
+    # hotpotdata = HotpotTestDataset(examples=examples, sep_token_id=tokenizer.sep_token_id)
+    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_drop_ratio=-1)
 
     dev_data_loader = DataLoader(dataset=hotpotdata, batch_size=8,
             shuffle=False,
@@ -611,7 +612,8 @@ def data_loader_checker(para_file: str,
             collate_fn=HotpotTestDataset.collate_fn)
 
     for batch_idx, batch in tqdm(enumerate(dev_data_loader)):
-        print(batch_idx)
+        # print(batch_idx)
+        x = batch_idx
 
 
 
