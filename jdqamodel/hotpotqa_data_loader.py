@@ -146,6 +146,8 @@ class HotpotDataset(Dataset):
                 batch_data[key] = [_[key] for _ in data]
             elif key in {'context_lens', 'para_num', 'sent_num'}:
                 batch_data[key] = torch.LongTensor([_[key] for _ in data])
+            elif key in {'q_type', 'y1', 'y2'}:
+                batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
             else:
                 batch_data[key] = torch.stack([_[key] for _ in data], dim=0)
         trim_keys = ['context_idxs', 'context_mask', 'segment_idxs']
