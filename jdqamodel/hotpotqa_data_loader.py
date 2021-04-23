@@ -131,7 +131,7 @@ class HotpotDataset(Dataset):
 
     @staticmethod
     def collate_fn(data):
-        assert len(data[0]) == 14
+        assert len(data[0]) == 20
         context_lens_np = np.array([_['context_lens'] for _ in data])
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
@@ -144,7 +144,7 @@ class HotpotDataset(Dataset):
         for key in data_keys:
             if key in {'ids'}:
                 batch_data[key] = [_[key] for _ in data]
-            elif key in {'context_lens'}:
+            elif key in {'context_lens', 'para_num', 'sent_num'}:
                 batch_data[key] = torch.LongTensor([_[key] for _ in data])
             else:
                 batch_data[key] = torch.stack([_[key] for _ in data], dim=0)

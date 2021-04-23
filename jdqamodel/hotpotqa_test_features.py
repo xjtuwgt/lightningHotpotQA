@@ -610,8 +610,8 @@ def data_loader_checker(para_file: str,
             num_workers=5,
             collate_fn=HotpotTestDataset.collate_fn)
 
-    for batch in dev_data_loader:
-        print(batch)
+    for batch_idx, batch in tqdm(enumerate(dev_data_loader)):
+        print(batch_idx)
 
 
 
