@@ -59,7 +59,7 @@ sep_token_id = tokenizer.sep_token_id
 helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
 # Set datasets
-# train_dataloader = helper.hotpot_train_dataloader
+train_dataloader = helper.hotpot_val_dataloader
 dev_example_dict = helper.dev_example_dict
 dev_dataloader = helper.hotpot_val_dataloader
 
@@ -107,95 +107,84 @@ if model_path is not None:
 #             param.requires_grad = False
 #     logging.info('Frozen the first {} layers'.format(args.frozen_layer_number))
 # #######################################################################################
-# encoder.to(args.device)
-# model.to(args.device)
+encoder.to(args.device)
+model.to(args.device)
 # #########################################################################
 # # Evalaute if resumed from other checkpoint
 # ##########################################################################
-# if encoder_path is not None and model_path is not None:
-#     output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
-#     output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
-#     prev_metrics, prev_threshold = jd_hotpotqa_eval_model(args, encoder, model,
-#                                               dev_dataloader, dev_example_dict,
-#                                               output_pred_file, output_eval_file, args.dev_gold_file)
-#     logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
-#     # prev_metrics, prev_threshold = eval_model(args, encoder, model,
-#     #                                           dev_dataloader, dev_example_dict, dev_feature_dict,
-#     #                                           output_pred_file, output_eval_file, args.dev_gold_file)
-#     # logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
-#     for key, val in prev_metrics.items():
-#         logger.info("{} = {}".format(key, val))
-#
+if encoder_path is not None and model_path is not None:
+    output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
+    output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
+    prev_metrics, prev_threshold = jd_hotpotqa_eval_model(args, encoder, model,
+                                              dev_dataloader, dev_example_dict,
+                                              output_pred_file, output_eval_file, args.dev_gold_file)
+    logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
+    for key, val in prev_metrics.items():
+        logger.info("{} = {}".format(key, val))
+
 # #########################################################################
 # # Get Optimizer
 # ##########################################################################
-# if args.max_steps > 0:
-#     t_total = args.max_steps
-#     args.num_train_epochs = args.max_steps // (len(train_dataloader) // args.gradient_accumulation_steps) + 1
-# else:
-#     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
-#
-# optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
-#
-# if args.fp16:
-#     try:
-#         from apex import amp
-#     except ImportError:
-#         raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
-#     models, optimizer = amp.initialize([encoder, model], optimizer, opt_level=args.fp16_opt_level)
-#     assert len(models) == 2
-#     encoder, model = models
-#
-# # Distributed training (should be after apex fp16 initialization)
-# if args.local_rank != -1:
-#     encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
-#                                                         output_device=args.local_rank,
-#                                                         find_unused_parameters=True)
-#
-#     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
-#                                                       output_device=args.local_rank,
-#                                                       find_unused_parameters=True)
-#
-#     # encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
-#     #                                                     output_device=args.local_rank)
-#     #
-#     # model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
-#     #                                                   output_device=args.local_rank)
-#
-#
-# if args.lr_scheduler == 'linear':
-#     scheduler = get_linear_schedule_with_warmup(optimizer,
-#                                             num_warmup_steps=args.warmup_steps,
-#                                             num_training_steps=t_total)
-# elif args.lr_scheduler == 'cosine':
-#     scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
-#                                                 num_warmup_steps=args.warmup_steps,
-#                                                 num_training_steps=t_total)
-# elif args.lr_scheduler == 'cosine_restart':
-#     scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
-#                                                                    num_warmup_steps=args.warmup_steps,
-#                                                                    num_training_steps=t_total)
-# else:
-#     raise '{} is not supported'.format(args.lr_scheduler)
-#
+if args.max_steps > 0:
+    t_total = args.max_steps
+    args.num_train_epochs = args.max_steps // (len(train_dataloader) // args.gradient_accumulation_steps) + 1
+else:
+    t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
+
+optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
+
+if args.fp16:
+    try:
+        from apex import amp
+    except ImportError:
+        raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
+    models, optimizer = amp.initialize([encoder, model], optimizer, opt_level=args.fp16_opt_level)
+    assert len(models) == 2
+    encoder, model = models
+
+# Distributed training (should be after apex fp16 initialization)
+if args.local_rank != -1:
+    encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
+                                                        output_device=args.local_rank,
+                                                        find_unused_parameters=True)
+
+    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
+                                                      output_device=args.local_rank,
+                                                      find_unused_parameters=True)
+
+if args.lr_scheduler == 'linear':
+    scheduler = get_linear_schedule_with_warmup(optimizer,
+                                            num_warmup_steps=args.warmup_steps,
+                                            num_training_steps=t_total)
+elif args.lr_scheduler == 'cosine':
+    scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                num_warmup_steps=args.warmup_steps,
+                                                num_training_steps=t_total)
+elif args.lr_scheduler == 'cosine_restart':
+    scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                   num_warmup_steps=args.warmup_steps,
+                                                                   num_training_steps=t_total)
+else:
+    raise '{} is not supported'.format(args.lr_scheduler)
+
 # #########################################################################
 # # launch training
 # ##########################################################################
-# global_step = 0
-# loss_name = ["loss_total", "loss_span", "loss_type", "loss_sup", "loss_ent", "loss_para"]
-# tr_loss, logging_loss = [0] * len(loss_name), [0]* len(loss_name)
-# if args.local_rank in [-1, 0]:
-#     tb_writer = SummaryWriter(args.exp_name)
-#
-# encoder.zero_grad()
-# model.zero_grad()
-#
-# ###++++++++++++++++++++++++++++++++++++++++++
-# total_batch_num = len(train_dataloader)
-# logger.info('Total number of batches = {}'.format(total_batch_num))
-# eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
-# logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
-# ###++++++++++++++++++++++++++++++++++++++++++
+global_step = 0
+loss_name = ["loss_total", "loss_span", "loss_type", "loss_sup", "loss_para"]
+tr_loss, logging_loss = [0] * len(loss_name), [0]* len(loss_name)
+if args.local_rank in [-1, 0]:
+    tb_writer = SummaryWriter(args.exp_name)
+
+encoder.zero_grad()
+model.zero_grad()
+
+###++++++++++++++++++++++++++++++++++++++++++
+total_batch_num = len(train_dataloader)
+logger.info('Total number of batches = {}'.format(total_batch_num))
+eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
+logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
+###++++++++++++++++++++++++++++++++++++++++++
 #
 # train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 # for epoch in train_iterator:
