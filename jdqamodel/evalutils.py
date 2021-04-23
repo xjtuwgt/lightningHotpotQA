@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 def compute_loss(args, batch, start, end, para, sent, q_type):
     criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
-    binary_criterion = nn.BCEWithLogitsLoss(reduction='mean')
     loss_span = args.ans_lambda * (criterion(start, batch['y1']) + criterion(end, batch['y2']))
     loss_type = args.type_lambda * criterion(q_type, batch['q_type'])
 
