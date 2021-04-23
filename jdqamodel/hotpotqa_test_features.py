@@ -15,7 +15,7 @@ from model_envs import MODEL_CLASSES
 from jdqamodel.hotpotqa_dump_features import get_cached_filename
 from jdqamodel.hotpotqaUtils import json_loader
 from jdqamodel.hotpotqa_data_structure import Example
-from jdqamodel.hotpotqa_data_loader import case_to_features, example_sent_drop, trim_input_span
+from jdqamodel.hotpotqaUtils import case_to_features, example_sent_drop, trim_input_span
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 
