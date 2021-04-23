@@ -2,22 +2,23 @@ from torch import nn
 from torch.autograd import Variable
 import torch
 from models.layers import OutputLayer
+from torch import Tensor
 import numpy as np
 from jdqamodel.transformer import EncoderLayer as Transformer_layer
 
-def init_state_feature(batch, input_state, hidden_dim):
-    sent_start_mapping = batch['sent_start']
-    sent_end_mapping = batch['sent_end']
-    para_start_mapping = batch['para_start']
-    para_end_mapping = batch['para_end']
+def init_state_feature(batch, input_state: Tensor, hidden_dim: int):
+    sent_start, sent_end = batch['sent_start'], batch['sent_end']
+    para_start, para_end = batch['para_start'], batch['para_end']
+    para_state = []
+    sent_state = []
 
-    para_start_output = torch.bmm(para_start_mapping, input_state[:, :, hidden_dim:])  # N x max_para x d
-    para_end_output = torch.bmm(para_end_mapping, input_state[:, :, :hidden_dim])  # N x max_para x d
-    para_state = torch.cat([para_start_output, para_end_output], dim=-1)  # N x max_para x 2d
-
-    sent_start_output = torch.bmm(sent_start_mapping, input_state[:, :, hidden_dim:])  # N x max_sent x d
-    sent_end_output = torch.bmm(sent_end_mapping, input_state[:, :, :hidden_dim])  # N x max_sent x d
-    sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)  # N x max_sent x 2d
+    # para_start_output = torch.bmm(para_start_mapping, input_state[:, :, hidden_dim:])  # N x max_para x d
+    # para_end_output = torch.bmm(para_end_mapping, input_state[:, :, :hidden_dim])  # N x max_para x d
+    # para_state = torch.cat([para_start_output, para_end_output], dim=-1)  # N x max_para x 2d
+    #
+    # sent_start_output = torch.bmm(sent_start_mapping, input_state[:, :, hidden_dim:])  # N x max_sent x d
+    # sent_end_output = torch.bmm(sent_end_mapping, input_state[:, :, :hidden_dim])  # N x max_sent x d
+    # sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)  # N x max_sent x 2d
 
     state_dict = {'para_state': para_state, 'sent_state': sent_state}
     return state_dict
@@ -102,7 +103,7 @@ class HotPotQAModel(nn.Module):
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
         self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=4)
 
-        self.para_sent_ent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=self.hidden_dim)
+        self.para_sent_ent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
     def forward(self, encoder, batch, return_yp=False, return_cls=False):

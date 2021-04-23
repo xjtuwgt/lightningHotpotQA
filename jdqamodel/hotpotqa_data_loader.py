@@ -43,6 +43,7 @@ class HotpotDataset(Dataset):
         trim_doc_input_ids = torch.LongTensor(trim_doc_input_ids)
         trim_doc_input_mask = torch.LongTensor(trim_doc_input_mask)
         trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
+        query_mapping = torch.FloatTensor(trim_doc_segment_ids)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1]]
         query_start_position = torch.LongTensor(query_start_position)
@@ -119,6 +120,7 @@ class HotpotDataset(Dataset):
                'context_lens': trim_doc_input_length,
                'query_start': query_start_position,
                'query_end': query_end_position,
+               'query_mapping': query_mapping,
                'para_start': trim_para_start_position,
                'para_end': trim_para_end_position,
                'para_mask': trim_para_mask,
@@ -131,7 +133,7 @@ class HotpotDataset(Dataset):
 
     @staticmethod
     def collate_fn(data):
-        assert len(data[0]) == 20
+        assert len(data[0]) == 21
         context_lens_np = np.array([_['context_lens'] for _ in data])
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
@@ -189,6 +191,7 @@ class HotpotTestDataset(Dataset):
         trim_doc_input_ids = torch.LongTensor(trim_doc_input_ids)
         trim_doc_input_mask = torch.LongTensor(trim_doc_input_mask)
         trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
+        query_mapping = torch.FloatTensor(trim_doc_segment_ids)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1]]
         query_start_position = torch.LongTensor(query_start_position)
@@ -236,6 +239,7 @@ class HotpotTestDataset(Dataset):
             'context_lens': trim_doc_input_length,
             'query_start': query_start_position,
             'query_end': query_end_position,
+            'query_mapping': query_mapping,
             'para_start': trim_para_start_position,
             'para_end': trim_para_end_position,
             'para_mask': trim_para_mask,
@@ -248,7 +252,7 @@ class HotpotTestDataset(Dataset):
 
     @staticmethod
     def collate_fn(data):
-        assert len(data[0]) == 15
+        assert len(data[0]) == 16
         context_lens_np = np.array([_['context_lens'] for _ in data])
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
