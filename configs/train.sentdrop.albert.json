@@ -1,5 +1,5 @@
 {
-    "name": "sr_albert_xxlarge_v2_mrqa",
+    "exp_name": "sr_albert_xxlarge_v2_hotpotqa",
     "model_type": "albert",
     "num_train_epochs": 5,
     "encoder_name_or_path": "albert-xxlarge-v2",
