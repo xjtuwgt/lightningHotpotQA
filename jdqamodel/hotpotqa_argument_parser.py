@@ -115,6 +115,7 @@ def default_train_parser():
                         help="Model type selected in the list")
     parser.add_argument("--max_seq_length", default=512, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
+    parser.add_argument("--sent_drop_ratio", type=float, default=0.25)
     parser.add_argument("--encoder_name_or_path",
                         # default='bert-base-uncased',
                         default='roberta-large',
