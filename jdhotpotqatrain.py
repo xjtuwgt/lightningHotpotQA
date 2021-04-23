@@ -12,6 +12,7 @@ from sd_mhqa.hotpotqa_argument_parser import default_train_parser, complete_defa
 from utils.jdutils import get_lr_with_optimizer
 from sd_mhqa.hotpotqa_dump_features import get_cached_filename
 from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
+from sd_mhqa.hotpotqa_datahelper import DataHelper
 from sd_mhqa.hotpotqa_evalutils import compute_loss
 from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
 from envs import DATASET_FOLDER
@@ -55,7 +56,9 @@ _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
                                             do_lower_case=args.do_lower_case)
 sep_token_id = tokenizer.sep_token_id
-print(sep_token_id)
+## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+helper = DataHelper(sep_token_id=sep_token_id, config=args)
+
 # Set datasets
 # train_dataloader = helper.hotpot_train_dataloader
 # dev_example_dict = helper.dev_example_dict
