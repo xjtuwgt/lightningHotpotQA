@@ -7,12 +7,12 @@ import numpy as np
 from sd_mhqa.transformer import EncoderLayer as Transformer_layer
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
-    sent_start, sent_end = batch['sent_start'], batch['sent_end']
-    para_start, para_end = batch['para_start'], batch['para_end']
+    sent_start, sent_end = batch['sent_start'], batch['sent_end'] - 1
+    para_start, para_end = batch['para_start'], batch['para_end'] - 1
 
-    print(input_state.shape)
-    print(sent_start)
-    print(sent_end)
+    # print(input_state.shape)
+    # print(sent_start)
+    # print(sent_end)
 
     batch_size, para_num, sent_num = para_start.shape[0], para_start.shape[1], sent_start.shape[1]
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
