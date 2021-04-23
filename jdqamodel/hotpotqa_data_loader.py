@@ -327,7 +327,6 @@ class DataHelper:
         self.dev_examples = self.get_dev_examples()
         self.dev_example_dict = {e.qas_id: e for e in self.dev_examples}
 
-    @property
     def hotpot_train_dataloader(self) -> DataLoader:
         self.load_train()
         train_data = self.Dataset(examples=self.train_examples,
@@ -345,7 +344,6 @@ class DataHelper:
             collate_fn=HotpotDataset.collate_fn)
         return dataloader
 
-    @property
     def hotpot_val_dataloader(self) -> DataLoader:
         self.load_dev()
         dev_data = self.Dataset(examples=self.dev_examples,
