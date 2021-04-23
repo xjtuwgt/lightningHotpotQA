@@ -118,10 +118,10 @@ class SDModel(nn.Module):
                   'attention_mask': batch['context_mask'],
                   'token_type_ids': batch['segment_idxs'] if self.config.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
         ####++++++++++++++++++++++++++++++++++++++
-        outputs = encoder(**inputs)
+        outputs, _ = encoder(**inputs)
         print(type(outputs))
         print(len(outputs))
-        batch['context_encoding'] = outputs[0]
+        batch['context_encoding'] = outputs
 
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
