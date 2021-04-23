@@ -623,8 +623,8 @@ def data_loader_checker(para_file: str,
         y1= batch['y1']
         y2= batch['y2']
         batch_size = input_ids.shape[0]
-        print(y1)
-        print(y2)
+        print(y1.shape)
+        print(y2.shape)
         # for i in range(batch_size):
         #     inp_id_i = input_ids[i]
         #     y1 = y1[i]
