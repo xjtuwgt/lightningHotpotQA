@@ -46,7 +46,7 @@ class HotpotDevDataset(Dataset):
             limit=512, sep_token_id=self.sep_token_id, ans_spans=ans_spans)
 
 class HotpotTestDataset(Dataset):
-    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=60,
+    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
                  max_seq_num=512):
         self.examples = examples
         self.max_para_num = max_para_num
