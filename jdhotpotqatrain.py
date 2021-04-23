@@ -13,7 +13,7 @@ from utils.jdutils import get_lr_with_optimizer
 from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
 from jdqamodel.evalutils import compute_loss
 from jdqamodel.evalutils import jd_hotpotqa_eval_model
-from jdqamodel.hotpotqa_data_loader import DataHelper
+from jdqamodel.datahelper import DataHelper
 
 from jdqamodel.hotpotqa_model import HotPotQAModel
 from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
