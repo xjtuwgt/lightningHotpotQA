@@ -1,63 +1,113 @@
-import logging
-import sys
-import torch
-import os
+# import logging
+# import sys
+# import torch
+# import os
 from os.path import join
-# from tqdm import tqdm, trange
-# from tensorboardX import SummaryWriter
+# # from tqdm import tqdm, trange
+# # from tensorboardX import SummaryWriter
 import pickle, gzip
-
-
-from jdqamodel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-# from utils.jdutils import get_lr_with_optimizer
-from jdqamodel.hotpotqa_dump_features import get_cached_filename
-
-from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
-# from jdqamodel.evalutils import compute_loss
-# from jdqamodel.evalutils import jd_hotpotqa_eval_model
-from envs import DATASET_FOLDER
 #
-# from jdqamodel.hotpotqa_model import SDModel
-# from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
-
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                    datefmt='%m/%d/%Y %H:%M:%S',
-                    level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-#########################################################################
-# Initialize arguments
-##########################################################################
-parser = default_train_parser()
-
-logger.info("IN CMD MODE")
-logger.info("Pytorch version = {}".format(torch.__version__))
-args_config_provided = parser.parse_args(sys.argv[1:])
-if args_config_provided.config_file is not None:
-    argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
-else:
-    argv = sys.argv[1:]
-args = parser.parse_args(argv)
-#########################################################################
-for key, value in vars(args).items():
-    print('Hype-parameter\t{} = {}'.format(key, value))
-#########################################################################
-args = complete_default_train_parser(args)
-
-logger.info('-' * 100)
-logger.info('Input Argument Information')
-logger.info('-' * 100)
-args_dict = vars(args)
-for a in args_dict:
-    logger.info('%-28s  %s' % (a, args_dict[a]))
+#
+# from jdqamodel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
+# # from utils.jdutils import get_lr_with_optimizer
+from jdqamodel.hotpotqa_dump_features import get_cached_filename
+#
+# from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
+# # from jdqamodel.evalutils import compute_loss
+# # from jdqamodel.evalutils import jd_hotpotqa_eval_model
+from envs import DATASET_FOLDER
+# #
+# # from jdqamodel.hotpotqa_model import SDModel
+# # from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
+#
+# logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+#                     datefmt='%m/%d/%Y %H:%M:%S',
+#                     level=logging.INFO)
+# logger = logging.getLogger(__name__)
+#
+#
+# #########################################################################
+# # Initialize arguments
+# ##########################################################################
+# parser = default_train_parser()
+#
+# logger.info("IN CMD MODE")
+# logger.info("Pytorch version = {}".format(torch.__version__))
+# args_config_provided = parser.parse_args(sys.argv[1:])
+# if args_config_provided.config_file is not None:
+#     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
+# else:
+#     argv = sys.argv[1:]
+# args = parser.parse_args(argv)
+# #########################################################################
+# for key, value in vars(args).items():
+#     print('Hype-parameter\t{} = {}'.format(key, value))
+# #########################################################################
+# args = complete_default_train_parser(args)
+#
+# logger.info('-' * 100)
+# logger.info('Input Argument Information')
+# logger.info('-' * 100)
+# args_dict = vars(args)
+# for a in args_dict:
+#     logger.info('%-28s  %s' % (a, args_dict[a]))
 
 #########################################################################
 # Read Data
 ##########################################################################
-_, _, tokenizer_class = MODEL_CLASSES[args.model_type]
-tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
-                                            do_lower_case=args.do_lower_case)
+# _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
+# tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
+#                                             do_lower_case=args.do_lower_case)
+
+parser = argparse.ArgumentParser()
+
+# Required parameters
+parser.add_argument("--para_path", type=str, required=True)
+parser.add_argument("--full_data", type=str, required=True)
+parser.add_argument("--data_type", type=str, required=True)
+parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
+
+# Other parameters
+parser.add_argument("--model_type", default=None, type=str, required=True,
+                    help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
+parser.add_argument("--tokenizer_name", default="", type=str,
+                    help="Pretrained tokenizer name or path if not the same as model_name")
+parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
+                    help="Path to pre-trained model")
+parser.add_argument("--do_lower_case", action='store_true',
+                    help="Set this flag if you are using an uncased model.")
+parser.add_argument("--max_entity_num", default=60, type=int)
+parser.add_argument("--max_sent_num", default=40, type=int)
+parser.add_argument("--max_query_length", default=50, type=int)
+parser.add_argument("--max_seq_length", default=512, type=int,
+                    help="The maximum total input sequence length after WordPiece tokenization. Sequences longer "
+                         "than this will be truncated, and sequences shorter than this will be padded.")
+parser.add_argument("--filter_no_ans", action='store_true',
+                    help="Set this flag if you are using an uncased model.")
+parser.add_argument("--ranker", default=None, type=str, required=True,
+                    help="The ranker for paragraph ranking")
+parser.add_argument("--reverse", action='store_true',
+                    help="Set this flag if you are using reverse data.")
+
+args = parser.parse_args()
+print('*' * 75)
+for key, value in vars(args).items():
+    print('Hype-parameter: {}:\t{}'.format(key, value))
+    print('*' * 75)
+
+ranker = args.ranker
+data_type = args.data_type
+if args.do_lower_case:
+    ranker = ranker + '_low'
+data_source_name = "{}".format(ranker)
+if "train" in data_type:
+    data_source_type = data_source_name
+else:
+    data_source_type = None
+print('data_type = {} \n data_source_id= {} \n data_source_name = {}'.format(data_type, data_source_type,
+                                                                             data_source_name))
+# cached_examples_file = os.path.join(args.output_dir,
+#                                     get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
 
 cached_examples_file = join(DATASET_FOLDER, 'data_feat', 'train',
                                     get_cached_filename('hgn_low_hotpotqa_tokenized_examples',
