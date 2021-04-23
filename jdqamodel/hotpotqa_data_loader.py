@@ -299,6 +299,7 @@ class DataHelper:
 
     def get_example_file(self, tag, f_type=None):
         cached_filename = get_cached_filename('{}_hotpotqa_tokenized_examples'.format(f_type), self.config)
+        print(cached_filename)
         return join(self.data_dir, tag, cached_filename)
 
     @property
@@ -384,6 +385,5 @@ class DataHelper:
             batch_size=self.config.eval_batch_size,
             shuffle=False,
             num_workers=max(1, self.config.cpu_num // 2),
-            collate_fn=HotpotDataset.collate_fn
-        )
+            collate_fn=HotpotDataset.collate_fn)
         return dataloader
