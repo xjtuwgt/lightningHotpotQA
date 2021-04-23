@@ -64,17 +64,17 @@ from envs import DATASET_FOLDER
 parser = argparse.ArgumentParser()
 
 # Required parameters
-parser.add_argument("--para_path", type=str, required=True)
-parser.add_argument("--full_data", type=str, required=True)
-parser.add_argument("--data_type", type=str, required=True)
-parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
+# parser.add_argument("--para_path", type=str, required=True)
+# parser.add_argument("--full_data", type=str, required=True)
+# parser.add_argument("--data_type", type=str, required=True)
+# parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
 
 # Other parameters
-parser.add_argument("--model_type", default=None, type=str, required=True,
+parser.add_argument("--model_type", default='roberta', type=str,
                     help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
 parser.add_argument("--tokenizer_name", default="", type=str,
                     help="Pretrained tokenizer name or path if not the same as model_name")
-parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
+parser.add_argument("--model_name_or_path", default=None, type=str,
                     help="Path to pre-trained model")
 parser.add_argument("--do_lower_case", action='store_true',
                     help="Set this flag if you are using an uncased model.")
@@ -86,7 +86,7 @@ parser.add_argument("--max_seq_length", default=512, type=int,
                          "than this will be truncated, and sequences shorter than this will be padded.")
 parser.add_argument("--filter_no_ans", action='store_true',
                     help="Set this flag if you are using an uncased model.")
-parser.add_argument("--ranker", default=None, type=str, required=True,
+parser.add_argument("--ranker", default='hgn', type=str,
                     help="The ranker for paragraph ranking")
 parser.add_argument("--reverse", action='store_true',
                     help="Set this flag if you are using reverse data.")
