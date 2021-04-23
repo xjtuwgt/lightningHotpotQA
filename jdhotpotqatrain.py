@@ -64,43 +64,40 @@ helper = DataHelper(sep_token_id=sep_token_id, config=args)
 dev_example_dict = helper.dev_example_dict
 dev_dataloader = helper.hotpot_val_dataloader
 
-for batch_idx, batch in tqdm(enumerate(dev_dataloader)):
-    print(batch_idx)
-
 # #########################################################################
 # # Initialize Model
 # ##########################################################################
-# cached_config_file = join(args.exp_name, 'cached_config.bin')
-# if os.path.exists(cached_config_file):
-#     cached_config = torch.load(cached_config_file)
-#     encoder_path = join(args.exp_name, cached_config['encoder'])
-#     model_path = join(args.exp_name, cached_config['model'])
-#     learning_rate = cached_config['lr']
-#     start_epoch = cached_config['epoch']
-#     best_joint_f1 = cached_config['best_joint_f1']
-#     logger.info("Loading encoder from: {}".format(encoder_path))
-#     logger.info("Loading model from: {}".format(model_path))
-# else:
-#     model_path = None
-#     if args.fine_tuned_encoder is not None:
-#         # encoder_path = join(args.output_dir, args.fine_tuned_encoder, 'encoder.pkl')
-#         encoder_path = join(args.fine_tuned_encoder_path, args.fine_tuned_encoder, 'encoder.pkl')
-#         logger.info("Loading encoder from: {}".format(encoder_path))
-#     else:
-#         encoder_path = None
-#     start_epoch = 0
-#     best_joint_f1 = 0
-#     learning_rate = args.learning_rate
+cached_config_file = join(args.exp_name, 'cached_config.bin')
+if os.path.exists(cached_config_file):
+    cached_config = torch.load(cached_config_file)
+    encoder_path = join(args.exp_name, cached_config['encoder'])
+    model_path = join(args.exp_name, cached_config['model'])
+    learning_rate = cached_config['lr']
+    start_epoch = cached_config['epoch']
+    best_joint_f1 = cached_config['best_joint_f1']
+    logger.info("Loading encoder from: {}".format(encoder_path))
+    logger.info("Loading model from: {}".format(model_path))
+else:
+    model_path = None
+    if args.fine_tuned_encoder is not None:
+        # encoder_path = join(args.output_dir, args.fine_tuned_encoder, 'encoder.pkl')
+        encoder_path = join(args.fine_tuned_encoder_path, args.fine_tuned_encoder, 'encoder.pkl')
+        logger.info("Loading encoder from: {}".format(encoder_path))
+    else:
+        encoder_path = None
+    start_epoch = 0
+    best_joint_f1 = 0
+    learning_rate = args.learning_rate
 #
 # # Set Encoder and Model
-# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-# model = HotPotQAModel(config=args)
-#
-# if encoder_path is not None:
-#     encoder.load_state_dict(torch.load(encoder_path))
-# if model_path is not None:
-#     model.load_state_dict(torch.load(model_path))
-#
+encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
+model = SDModel(config=args)
+
+if encoder_path is not None:
+    encoder.load_state_dict(torch.load(encoder_path))
+if model_path is not None:
+    model.load_state_dict(torch.load(model_path))
+
 # #######################################################################################
 # if args.frozen_layer_number > 0:
 #     modules = [encoder.embeddings, *encoder.encoder.layer[:args.frozen_layer_number]]
