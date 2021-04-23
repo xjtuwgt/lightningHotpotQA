@@ -11,8 +11,9 @@ from jdqamodel.hotpotqa_argument_parser import default_train_parser, complete_de
 from utils.jdutils import get_lr_with_optimizer
 
 from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
-from jdqamodel.lossutils import compute_loss
-from utils.jdevalUtil import jd_tune_eval_model
+from jdqamodel.evalutils import compute_loss
+from jdqamodel.evalutils import jd_eval_model
+from jdqamodel.hotpotqa_data_loader import DataHelper
 
 from jdqamodel.hotpotqa_model import HotPotQAModel
 from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
@@ -52,14 +53,15 @@ for a in args_dict:
 #########################################################################
 # Read Data
 ##########################################################################
-helper = DataHelper(gz=True, config=args)
+_, _, tokenizer_class = MODEL_CLASSES[args.model_type]
+tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
+                                            do_lower_case=args.do_lower_case)
+
+helper = DataHelper(sep_token_id=tokenizer.sep_token_id, gz=True, config=args)
 
 # Set datasets
-# train_dataloader = helper.train_loader
 train_dataloader = helper.hotpot_train_dataloader
 dev_example_dict = helper.dev_example_dict
-dev_feature_dict = helper.dev_feature_dict
-# dev_dataloader = helper.dev_loader
 dev_dataloader = helper.hotpot_val_dataloader
 
 #########################################################################
@@ -104,22 +106,16 @@ if args.frozen_layer_number > 0:
             param.requires_grad = False
     logging.info('Frozen the first {} layers'.format(args.frozen_layer_number))
 #######################################################################################
-
 encoder.to(args.device)
 model.to(args.device)
-
-_, _, tokenizer_class = MODEL_CLASSES[args.model_type]
-tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
-                                            do_lower_case=args.do_lower_case)
-
 #########################################################################
 # Evalaute if resumed from other checkpoint
 ##########################################################################
 if encoder_path is not None and model_path is not None:
     output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
     output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
-    prev_metrics, prev_threshold = jd_tune_eval_model(args, encoder, model,
-                                              dev_dataloader, dev_example_dict, dev_feature_dict,
+    prev_metrics, prev_threshold = jd_eval_model(args, encoder, model,
+                                              dev_dataloader, dev_example_dict,
                                               output_pred_file, output_eval_file, args.dev_gold_file)
     logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
     # prev_metrics, prev_threshold = eval_model(args, encoder, model,
