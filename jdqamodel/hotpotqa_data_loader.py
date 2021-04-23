@@ -5,7 +5,7 @@ import torch
 import numpy as np
 from torch.utils.data import DataLoader
 
-class HotpotTrainDataset(Dataset):
+class HotpotDataset(Dataset):
     def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
                  max_seq_num=512, sent_drop_ratio=0.25):
         self.examples = examples
@@ -30,22 +30,22 @@ class HotpotTrainDataset(Dataset):
         supp_sent_ids = case.sup_fact_id
 
 
-class HotpotDevDataset(Dataset):
-    def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
-                 max_seq_num=512):
-        self.examples = examples
-        self.max_para_num = max_para_num
-        self.max_sent_num = max_sent_num
-        self.max_seq_length = max_seq_num
-        self.sep_token_id = sep_token_id
-
-    def __getitem__(self, idx):
-        case: Example = self.examples[idx]
-        doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
-            case_to_features(case=case, train_dev=True)
-        trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
-            doc_input_ids, query_spans, para_spans, sent_spans,
-            limit=self.max_seq_length, sep_token_id=self.sep_token_id, ans_spans=ans_spans)
+# class HotpotDevDataset(Dataset):
+#     def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
+#                  max_seq_num=512):
+#         self.examples = examples
+#         self.max_para_num = max_para_num
+#         self.max_sent_num = max_sent_num
+#         self.max_seq_length = max_seq_num
+#         self.sep_token_id = sep_token_id
+#
+#     def __getitem__(self, idx):
+#         case: Example = self.examples[idx]
+#         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
+#             case_to_features(case=case, train_dev=True)
+#         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
+#             doc_input_ids, query_spans, para_spans, sent_spans,
+#             limit=self.max_seq_length, sep_token_id=self.sep_token_id, ans_spans=ans_spans)
 
 class HotpotTestDataset(Dataset):
     def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100, max_seq_num=512):
@@ -117,8 +117,7 @@ class HotpotTestDataset(Dataset):
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         id = case.qas_id
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res = {
-            'ids': id,
+        res = {'ids': id,
             'context_idxs': trim_doc_input_ids,
             'context_mask': trim_doc_input_mask,
             'segment_idxs': trim_doc_segment_ids,
