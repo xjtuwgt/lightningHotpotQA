@@ -16,6 +16,9 @@ class MultiHeadAttention(nn.Module):
         self.attn_drop_out = nn.Dropout(p=dropout)
 
     def forward(self, q, k, v, mask=None):
+        if mask is not None:
+            # Same mask applied to all h heads.
+            mask = mask.unsqueeze(1)
         # 1. dot product with weight matrices
         q, k, v = self.w_q(q), self.w_k(k), self.w_v(v)
 
