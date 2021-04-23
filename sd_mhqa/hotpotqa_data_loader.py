@@ -151,7 +151,7 @@ class HotpotDataset(Dataset):
                 batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
             else:
                 batch_data[key] = torch.stack([_[key] for _ in data], dim=0)
-        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs']
+        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
         for key in trim_keys:
             batch_data[key] = batch_data[key][:, :max_c_len]
         return batch_data
@@ -268,7 +268,8 @@ class HotpotTestDataset(Dataset):
                 batch_data[key] = torch.LongTensor([_[key] for _ in data])
             else:
                 batch_data[key] = torch.stack([_[key] for _ in data], dim=0)
-        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs']
+        # trim_keys = ['context_idxs', 'context_mask', 'segment_idxs']
+        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
         for key in trim_keys:
             batch_data[key] = batch_data[key][:, :max_c_len]
         return batch_data
