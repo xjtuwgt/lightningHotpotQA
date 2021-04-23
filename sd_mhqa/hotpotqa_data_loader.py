@@ -41,8 +41,8 @@ class HotpotDataset(Dataset):
         assert len(trim_doc_segment_ids) == self.max_seq_length
         trim_doc_input_ids = torch.LongTensor(trim_doc_input_ids)
         trim_doc_input_mask = torch.LongTensor(trim_doc_input_mask)
-        trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
         query_mapping = torch.FloatTensor(trim_doc_segment_ids)
+        trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1]]
         query_start_position = torch.LongTensor(query_start_position)
@@ -189,8 +189,8 @@ class HotpotTestDataset(Dataset):
         assert len(trim_doc_segment_ids) == self.max_seq_length
         trim_doc_input_ids = torch.LongTensor(trim_doc_input_ids)
         trim_doc_input_mask = torch.LongTensor(trim_doc_input_mask)
-        trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
         query_mapping = torch.FloatTensor(trim_doc_segment_ids)
+        trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1]]
         query_start_position = torch.LongTensor(query_start_position)
