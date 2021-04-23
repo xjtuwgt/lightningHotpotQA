@@ -60,9 +60,9 @@ tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
 helper = DataHelper(sep_token_id=tokenizer.sep_token_id, gz=True, config=args)
 
 # Set datasets
-# train_dataloader = helper.hotpot_train_dataloader
-dev_example_dict = helper.dev_example_dict
-dev_dataloader = helper.hotpot_val_dataloader
+train_dataloader = helper.hotpot_train_dataloader
+# dev_example_dict = helper.dev_example_dict
+# dev_dataloader = helper.hotpot_val_dataloader
 
 for batch_idx, batch in tqdm(enumerate(dev_dataloader)):
     print(batch_idx)
