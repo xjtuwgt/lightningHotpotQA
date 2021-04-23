@@ -3,20 +3,22 @@ import sys
 import torch
 import os
 from os.path import join
-from tqdm import tqdm, trange
-from tensorboardX import SummaryWriter
+# from tqdm import tqdm, trange
+# from tensorboardX import SummaryWriter
+import pickle, gzip
 
 
 from jdqamodel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from utils.jdutils import get_lr_with_optimizer
+# from utils.jdutils import get_lr_with_optimizer
+from jdqamodel.hotpotqa_dump_features import get_cached_filename
 
 from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
-from jdqamodel.evalutils import compute_loss
-from jdqamodel.evalutils import jd_hotpotqa_eval_model
-from jdqamodel.datahelper import DataHelper
-
-from jdqamodel.hotpotqa_model import SDModel
-from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
+# from jdqamodel.evalutils import compute_loss
+# from jdqamodel.evalutils import jd_hotpotqa_eval_model
+from envs import DATASET_FOLDER
+#
+# from jdqamodel.hotpotqa_model import SDModel
+# from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -57,9 +59,11 @@ _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
                                             do_lower_case=args.do_lower_case)
 
-helper = DataHelper(sep_token_id=tokenizer.sep_token_id, gz=True, config=args)
-helper.get_dev_examples()
-
+cached_examples_file = join(DATASET_FOLDER, 'data_feat',
+                                    get_cached_filename('hgn_low_hotpotqa_tokenized_examples',
+                                                        args))
+examples = pickle.load(gzip.open(cached_examples_file, 'rb'))
+example_dict = {e.qas_id: e for e in examples}
 # Set datasets
 # train_dataloader = helper.hotpot_train_dataloader
 # dev_example_dict = helper.dev_example_dict
