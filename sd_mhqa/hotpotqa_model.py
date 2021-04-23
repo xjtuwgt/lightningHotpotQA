@@ -131,8 +131,12 @@ class SDModel(nn.Module):
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
         para_predictions, sent_predictions = self.para_sent_predict_layer.forward(state_dict=para_sent_state_dict)
         query_mapping = batch['query_mapping']
-        predictions = self.predict_layer.forward(batch=batch, context_input=input_state,
-                                                 packing_mask=query_mapping, return_yp=return_yp)
+        if self.training:
+            predictions = self.predict_layer.forward(batch=batch, context_input=input_state,
+                                                 packing_mask=query_mapping, return_yp=False)
+        else:
+            predictions = self.predict_layer.forward(batch=batch, context_input=input_state,
+                                                     packing_mask=query_mapping, return_yp=True)
         if not self.training:
             if return_yp:
                 start, end, q_type, yp1, yp2 = predictions
@@ -143,6 +147,6 @@ class SDModel(nn.Module):
                     return start, end, q_type, para_predictions, sent_predictions
                 return start, end, q_type, para_predictions, sent_predictions
         else:
-            start, end, q_type, _, _ = predictions
+            start, end, q_type = predictions
             loss_list = compute_loss(self.config, batch, start, end, para_predictions, sent_predictions, q_type)
             return loss_list
