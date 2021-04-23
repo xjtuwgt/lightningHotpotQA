@@ -127,9 +127,7 @@ class PositionwiseFeedForward(nn.Module):
         x = self.linear2(x)
         return x
 
-
 class EncoderLayer(nn.Module):
-
     def __init__(self, d_model, ffn_hidden, n_head, drop_prob=0.1, attn_drop_prob=0.1):
         super(EncoderLayer, self).__init__()
         self.attention = MultiHeadAttention(d_model=d_model, n_head=n_head, dropout=attn_drop_prob)

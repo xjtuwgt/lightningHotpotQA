@@ -3,12 +3,13 @@ from torch.autograd import Variable
 import torch
 from models.layers import OutputLayer
 import numpy as np
+from jdqamodel.transformer import EncoderLayer as Transformer_layer
 
 def init_state_feature(batch, input_state, hidden_dim):
-    sent_start_mapping = batch['sent_start_mapping']
-    sent_end_mapping = batch['sent_end_mapping']
-    para_start_mapping = batch['para_start_mapping']
-    para_end_mapping = batch['para_end_mapping']
+    sent_start_mapping = batch['sent_start']
+    sent_end_mapping = batch['sent_end']
+    para_start_mapping = batch['para_start']
+    para_end_mapping = batch['para_end']
 
     para_start_output = torch.bmm(para_start_mapping, input_state[:, :, hidden_dim:])  # N x max_para x d
     para_end_output = torch.bmm(para_end_mapping, input_state[:, :, :hidden_dim])  # N x max_para x d
@@ -51,14 +52,11 @@ class PredictionLayer(nn.Module):
     def __init__(self, config):
         super(PredictionLayer, self).__init__()
         self.config = config
-        input_dim = config.ctx_attn_hidden_dim
-        h_dim = config.hidden_dim
+        self.hidden = config.hidden_dim
 
-        self.hidden = h_dim
-
-        self.start_linear = OutputLayer(input_dim, config, num_answer=1)
-        self.end_linear = OutputLayer(input_dim, config, num_answer=1)
-        self.type_linear = OutputLayer(input_dim, config, num_answer=3)
+        self.start_linear = OutputLayer(self.hidden, config, num_answer=1)
+        self.end_linear = OutputLayer(self.hidden, config, num_answer=1)
+        self.type_linear = OutputLayer(self.hidden, config, num_answer=3)
 
         self.cache_S = 0
         self.cache_mask = None
@@ -99,7 +97,13 @@ class HotPotQAModel(nn.Module):
     def __init__(self, config):
         super(HotPotQAModel, self).__init__()
         self.config = config
+        self.input_dim = config.input_dim
         self.hidden_dim = config.hidden_dim
+        self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
+        self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=4)
+
+        self.para_sent_ent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=self.hidden_dim)
+        self.predict_layer = PredictionLayer(self.config)
 
     def forward(self, encoder, batch, return_yp=False, return_cls=False):
         ####++++++++++++++++++++++++++++++++++++++
@@ -112,5 +116,10 @@ class HotPotQAModel(nn.Module):
         batch['context_encoding'] = outputs[0]
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
+        context_encoding = batch['context_encoding']
+        input_state = self.linear_map(context_encoding)
+        input_state = self.transformer_encoder.forward(x=input_state, src_mask=batch['context_mask'])
+        ####++++++++++++++++++++++++++++++++++++++
+        cls_emb_state = input_state[:, 0]
 
         return
