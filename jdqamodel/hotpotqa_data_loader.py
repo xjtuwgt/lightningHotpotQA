@@ -305,6 +305,7 @@ class DataHelper:
         return self.get_example_file('dev_distractor', self.config.devf_type)
 
     def get_pickle_file(self, file_name):
+        print('pickler file name {}'.format(file_name))
         if self.gz:
             return pickle.load(gzip.open(file_name, 'rb'))
         else:
