@@ -632,7 +632,7 @@ def data_loader_checker(para_file: str,
             # print(y1_i, y2_i)
             if y1_i > 0:
                 ans_ids = inp_id_i[y1_i:y2_i]
-                print(tokenizer.decoder(ans_ids))
+                print(tokenizer.decode(ans_ids))
 
 
 
