@@ -34,7 +34,7 @@ class MultiHeadedAttention(nn.Module):
              for l, x in zip(self.linears, (query, key, value))]
 
         # 2) Apply attention on all the projected vectors in batch.
-        x, self.attn = self.attention_func(query, key, value, mask=mask,
+        x = self.attention_func(query, key, value, mask=mask,
                                  dropout=self.dropout)
 
         # 3) "Concat" using a view and apply a final linear.
@@ -69,7 +69,7 @@ class ScaleDotProductAttention(nn.Module):
         p_attn = F.softmax(scores, dim=-1)
         if dropout is not None:
             p_attn = dropout(p_attn)
-        return torch.matmul(p_attn, value), p_attn
+        return torch.matmul(p_attn, value)
 
 
 class LayerNorm(nn.Module):

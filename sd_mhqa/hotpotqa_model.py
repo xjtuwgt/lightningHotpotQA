@@ -120,6 +120,8 @@ class SDModel(nn.Module):
         ####++++++++++++++++++++++++++++++++++++++
         outputs = encoder(**inputs)
         batch['context_encoding'] = outputs[0]
+        print(type(outputs))
+        print(len(outputs))
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
         context_encoding = batch['context_encoding']
