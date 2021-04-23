@@ -138,13 +138,10 @@ class SDModel(nn.Module):
             predictions = self.predict_layer.forward(batch=batch, context_input=input_state,
                                                      packing_mask=query_mapping, return_yp=True)
         if not self.training:
+            start, end, q_type, yp1, yp2 = predictions
             if return_yp:
-                start, end, q_type, yp1, yp2 = predictions
                 return start, end, q_type, para_predictions, sent_predictions, yp1, yp2
             else:
-                start, end, q_type = predictions
-                if return_cls:
-                    return start, end, q_type, para_predictions, sent_predictions
                 return start, end, q_type, para_predictions, sent_predictions
         else:
             start, end, q_type = predictions
