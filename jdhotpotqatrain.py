@@ -15,7 +15,7 @@ from jdqamodel.evalutils import compute_loss
 from jdqamodel.evalutils import jd_hotpotqa_eval_model
 from jdqamodel.datahelper import DataHelper
 
-from jdqamodel.hotpotqa_model import HotPotQAModel
+from jdqamodel.hotpotqa_model import SDModel
 from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',

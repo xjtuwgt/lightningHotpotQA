@@ -93,12 +93,12 @@ class PredictionLayer(nn.Module):
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
         return start_prediction, end_prediction, type_prediction, yp1, yp2
 
-class HotPotQAModel(nn.Module):
+class SDModel(nn.Module):
     """
     Packing Query Version
     """
     def __init__(self, config):
-        super(HotPotQAModel, self).__init__()
+        super(SDModel, self).__init__()
         self.config = config
         self.input_dim = config.input_dim
         self.hidden_dim = config.hidden_dim
