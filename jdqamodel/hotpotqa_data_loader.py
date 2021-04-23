@@ -212,7 +212,7 @@ class HotpotTestDataset(Dataset):
         trim_sent_num = len(trim_sent_spans)
         assert trim_sent_num <= self.max_sent_num
         trim_sent_mask = [1] * trim_sent_num
-        sent_pad_num = self.max_sent_num
+        sent_pad_num = self.max_sent_num - trim_sent_num
         trim_sent_mask += [0] * sent_pad_num
         trim_sent_start_position = [_[0] for _ in trim_sent_spans]
         trim_sent_end_position = [_[1] for _ in trim_sent_spans]
