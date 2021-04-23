@@ -66,9 +66,9 @@ def convert_to_tokens(tokenizer, examples, ids, y1, y2, q_type_prob):
     for i, qid in enumerate(ids):
         if q_type[i] == 2:
             answer_text = get_ans_from_pos(qid, y1[i], y2[i])
-        elif q_type[i] == 1:
+        elif q_type[i] == 0:
             answer_text = 'yes'
-        elif q_type[i] == 2:
+        elif q_type[i] == 1:
             answer_text = 'no'
         else:
             raise ValueError("question type error")
