@@ -127,7 +127,6 @@ class SDModel(nn.Module):
         batch_mask = batch['context_mask'].unsqueeze(1)
         input_state = self.transformer_encoder.forward(x=input_state, src_mask=batch_mask)
         ####++++++++++++++++++++++++++++++++++++++
-        cls_emb_state = input_state[:,0,:]
         ####++++++++++++++++++++++++++++++++++++++
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
         para_predictions, sent_predictions = self.para_sent_predict_layer.forward(state_dict=para_sent_state_dict)
@@ -137,15 +136,13 @@ class SDModel(nn.Module):
         if not self.training:
             if return_yp:
                 start, end, q_type, yp1, yp2 = predictions
-                if return_cls:
-                    return start, end, q_type, para_predictions, sent_predictions, yp1, yp2, cls_emb_state
                 return start, end, q_type, para_predictions, sent_predictions, yp1, yp2
             else:
                 start, end, q_type = predictions
                 if return_cls:
-                    return start, end, q_type, para_predictions, sent_predictions, cls_emb_state
+                    return start, end, q_type, para_predictions, sent_predictions
                 return start, end, q_type, para_predictions, sent_predictions
         else:
-            start, end, q_type, yp1, yp2 = predictions
+            start, end, q_type, _, _ = predictions
             loss_list = compute_loss(self.config, batch, start, end, para_predictions, sent_predictions, q_type)
             return loss_list
