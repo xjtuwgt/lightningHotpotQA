@@ -97,17 +97,17 @@ for key, value in vars(args).items():
     print('Hype-parameter: {}:\t{}'.format(key, value))
     print('*' * 75)
 
-ranker = args.ranker
-data_type = args.data_type
-if args.do_lower_case:
-    ranker = ranker + '_low'
-data_source_name = "{}".format(ranker)
-if "train" in data_type:
-    data_source_type = data_source_name
-else:
-    data_source_type = None
-print('data_type = {} \n data_source_id= {} \n data_source_name = {}'.format(data_type, data_source_type,
-                                                                             data_source_name))
+# ranker = args.ranker
+# data_type = args.data_type
+# if args.do_lower_case:
+#     ranker = ranker + '_low'
+# data_source_name = "{}".format(ranker)
+# if "train" in data_type:
+#     data_source_type = data_source_name
+# else:
+#     data_source_type = None
+# print('data_type = {} \n data_source_id= {} \n data_source_name = {}'.format(data_type, data_source_type,
+#                                                                              data_source_name))
 # cached_examples_file = os.path.join(args.output_dir,
 #                                     get_cached_filename('{}_hotpotqa_tokenized_examples'.format(data_source_name), args))
 
