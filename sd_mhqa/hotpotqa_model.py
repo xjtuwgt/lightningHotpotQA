@@ -120,7 +120,7 @@ class SDModel(nn.Module):
         ####++++++++++++++++++++++++++++++++++++++
         outputs = encoder(**inputs)
         print(type(outputs))
-        print(outputs)
+        print(len(outputs))
         batch['context_encoding'] = outputs[0]
 
         ####++++++++++++++++++++++++++++++++++++++
