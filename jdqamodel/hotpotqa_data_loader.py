@@ -24,6 +24,8 @@ class HotpotTrainDataset(Dataset):
             case_to_features(case=case, train_dev=True)
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
             doc_input_ids, query_spans, para_spans, sent_spans, limit=512, sep_token_id=self.sep_token_id, ans_spans=ans_spans)
+        supp_para_ids = case.sup_para_id ## support paraids
+        supp_sent_ids = case.sup_fact_id
 
 
 class HotpotDevDataset(Dataset):

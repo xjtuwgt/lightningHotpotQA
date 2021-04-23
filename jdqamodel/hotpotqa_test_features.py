@@ -429,6 +429,8 @@ def trim_case_to_feature_checker(para_file: str,
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
 
+        supp_para_ids = example_i.sup_para_id
+
         if len(sent_spans) > max_sent_num:
             max_sent_num = len(sent_spans)
 
@@ -437,6 +439,9 @@ def trim_case_to_feature_checker(para_file: str,
         #     limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
         # print('before drop sent {}\n{}'.format(len(sent_spans), sent_spans))
         print('before drop sent {}'.format(len(sent_spans)))
+        for supp_para_id in supp_para_ids:
+            if supp_para_id < len(para_spans):
+                print('before drop', example_i.para_names[supp_para_id])
         # # print(len(doc_input_ids))
         # # print('orig', doc_input_ids)
         # # print(len(sent_spans))
@@ -478,6 +483,10 @@ def trim_case_to_feature_checker(para_file: str,
             case_to_features(case=drop_example_i, train_dev=True)
         # print('after drop sent {}\n{}'.format(len(sent_spans), sent_spans))
         print('after drop sent {}'.format(len(sent_spans)))
+        supp_para_ids = drop_example_i.sup_para_id
+        for supp_para_id in supp_para_ids:
+            if supp_para_id < len(para_spans):
+                print('after drop', drop_example_i.para_names[supp_para_id])
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
@@ -513,10 +522,17 @@ def trim_case_to_feature_checker(para_file: str,
         # # print('orig ans {}'.format(ans_spans))
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
+
+
         # print('after trim {}\n{}'.format(len(trim_sent_spans), trim_sent_spans))
         print('after trim {}'.format(len(trim_sent_spans)))
         if len(trim_doc_input_ids) > 512:
             trim_larger_512 +=0
+
+        supp_para_ids = drop_example_i.sup_para_id
+        for supp_para_id in supp_para_ids:
+            if supp_para_id < len(trim_para_spans):
+                print('after trim', drop_example_i.para_names[supp_para_id])
         # print('trim ans {}'.format(ans_spans))
         # print('*' * 75)
         # trim_ans_count_list.append(len(trim_ans_spans))
@@ -559,18 +575,18 @@ def trim_case_to_feature_checker(para_file: str,
     # print('Sum of trim ans count = {}'.format(sum(ans_count_list)))
     # # print('One support sent count = {}'.format(one_supp_sent))
     # print('Miss support sent count = {}'.format(miss_supp_count))
-    print('Larger than 512 count = {}'.format(larger_512))
-    print('Larger than 512 count after drop = {}'.format(drop_larger_512))
-    print('Trim Larger than 512 count after drop = {}'.format(trim_larger_512))
-    # print('Max query len = {}'.format(max_query_len))
-    # query_len_array = np.array(query_len_list)
+    # print('Larger than 512 count = {}'.format(larger_512))
+    # print('Larger than 512 count after drop = {}'.format(drop_larger_512))
+    # print('Trim Larger than 512 count after drop = {}'.format(trim_larger_512))
+    # # print('Max query len = {}'.format(max_query_len))
+    # # query_len_array = np.array(query_len_list)
+    # #
+    # # print('99 = {}'.format(np.percentile(query_len_array, 99)))
+    # # print('97.5 = {}'.format(np.percentile(query_len_array, 97.5)))
     #
-    # print('99 = {}'.format(np.percentile(query_len_array, 99)))
-    # print('97.5 = {}'.format(np.percentile(query_len_array, 97.5)))
-
-    print('No answer count = {}'.format(no_answer_count))
-    print('Trim no answer count = {}'.format(trim_no_answer_count))
-    print('maximum sent num = {}'.format(max_sent_num))
+    # print('No answer count = {}'.format(no_answer_count))
+    # print('Trim no answer count = {}'.format(trim_no_answer_count))
+    # print('maximum sent num = {}'.format(max_sent_num))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
