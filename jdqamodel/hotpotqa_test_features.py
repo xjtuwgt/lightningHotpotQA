@@ -633,8 +633,7 @@ def data_loader_checker(para_file: str,
             orig_answer = example_dict[ids[i]].answer_text
             if y1_i > 0:
                 ans_ids = inp_id_i[y1_i:y2_i]
-                print('deco ', tokenizer.decode(ans_ids))
-                print('orig ', orig_answer)
+                print('deco {} \t orig {}'.format(tokenizer.decode(ans_ids), orig_answer))
 
 
 
