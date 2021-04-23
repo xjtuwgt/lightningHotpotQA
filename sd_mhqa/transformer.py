@@ -2,69 +2,45 @@ import torch
 from torch import nn
 import math
 import torch.nn.functional as F
+import copy
 
-class MultiHeadAttention(nn.Module):
+def clones(module, N):
+    "Produce N identical layers."
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
-    def __init__(self, d_model, n_head, dropout=0.15):
-        super(MultiHeadAttention, self).__init__()
-        self.n_head = n_head
-        self.attention = ScaleDotProductAttention()
-        self.w_q = nn.Linear(d_model, d_model)
-        self.w_k = nn.Linear(d_model, d_model)
-        self.w_v = nn.Linear(d_model, d_model)
-        self.w_concat = nn.Linear(d_model, d_model)
-        self.attn_drop_out = nn.Dropout(p=dropout)
+class MultiHeadedAttention(nn.Module):
+    def __init__(self, h, d_model, dropout=0.1):
+        "Take in model size and number of heads."
+        super(MultiHeadedAttention, self).__init__()
+        assert d_model % h == 0
+        # We assume d_v always equals d_k
+        self.d_k = d_model // h
+        self.h = h
+        self.linears = clones(nn.Linear(d_model, d_model), 4)
+        self.attn = None
+        self.dropout = nn.Dropout(p=dropout)
+        self.attention_func = ScaleDotProductAttention()
 
-    def forward(self, q, k, v, mask=None):
+    def forward(self, query, key, value, mask=None):
+        "Implements Figure 2"
         if mask is not None:
             # Same mask applied to all h heads.
             mask = mask.unsqueeze(1)
-        # 1. dot product with weight matrices
-        q, k, v = self.w_q(q), self.w_k(k), self.w_v(v)
+        nbatches = query.size(0)
 
-        # 2. split tensor by number of heads
-        q, k, v = self.split(q), self.split(k), self.split(v)
+        # 1) Do all the linear projections in batch from d_model => h x d_k
+        query, key, value = \
+            [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2)
+             for l, x in zip(self.linears, (query, key, value))]
 
-        # 3. do scale dot product to compute similarity
-        out, attention = self.attention(q, k, v, mask=mask, dropout=self.attn_drop_out)
+        # 2) Apply attention on all the projected vectors in batch.
+        x, self.attn = self.attention_func(query, key, value, mask=mask,
+                                 dropout=self.dropout)
 
-        # 4. concat and pass to linear layer
-        out = self.concat(out)
-        out = self.w_concat(out)
-
-        # 5. visualize attention map
-        # TODO : we should implement visualization
-
-        return out
-
-    def split(self, tensor):
-        """
-        split tensor by number of head
-
-        :param tensor: [batch_size, length, d_model]
-        :return: [batch_size, head, length, d_tensor]
-        """
-        batch_size, length, d_model = tensor.size()
-
-        d_tensor = d_model // self.n_head
-        tensor = tensor.view(batch_size, self.n_head, length, d_tensor)
-        # it is similar with group convolution (split by number of heads)
-
-        return tensor
-
-    def concat(self, tensor):
-        """
-        inverse function of self.split(tensor : torch.Tensor)
-
-        :param tensor: [batch_size, head, length, d_tensor]
-        :return: [batch_size, length, d_model]
-        """
-        batch_size, head, length, d_tensor = tensor.size()
-        d_model = head * d_tensor
-
-        tensor = tensor.view(batch_size, length, d_model)
-        return tensor
-
+        # 3) "Concat" using a view and apply a final linear.
+        x = x.transpose(1, 2).contiguous() \
+            .view(nbatches, -1, self.h * self.d_k)
+        return self.linears[-1](x)
 
 class ScaleDotProductAttention(nn.Module):
     """
@@ -88,6 +64,9 @@ class ScaleDotProductAttention(nn.Module):
         d_k = query.size(-1)
         scores = torch.matmul(query, key.transpose(-2, -1)) \
                  / math.sqrt(d_k)
+        print(scores.shape)
+        print(mask.shape)
+        print(mask.shape)
         if mask is not None:
             scores = scores.masked_fill(mask == 0, -1e9)
         p_attn = F.softmax(scores, dim=-1)
@@ -130,10 +109,11 @@ class PositionwiseFeedForward(nn.Module):
         x = self.linear2(x)
         return x
 
+
 class EncoderLayer(nn.Module):
     def __init__(self, d_model, ffn_hidden, n_head, drop_prob=0.1, attn_drop_prob=0.1):
         super(EncoderLayer, self).__init__()
-        self.attention = MultiHeadAttention(d_model=d_model, n_head=n_head, dropout=attn_drop_prob)
+        self.attention = MultiHeadedAttention(d_model=d_model, h=n_head, dropout=attn_drop_prob)
         self.norm1 = LayerNorm(d_model=d_model)
         self.dropout1 = nn.Dropout(p=drop_prob)
 
@@ -144,7 +124,7 @@ class EncoderLayer(nn.Module):
     def forward(self, x, src_mask):
         # 1. compute self attention
         _x = x
-        x = self.attention(q=x, k=x, v=x, mask=src_mask)
+        x = self.attention(query=x, key=x, value=x, mask=src_mask)
 
         # 2. add and norm
         x = self.norm1(x + _x)
