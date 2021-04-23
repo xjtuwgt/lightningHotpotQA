@@ -99,7 +99,7 @@ class HotpotDataset(Dataset):
             if len(trim_ans_spans) == 0:
                 y1, y2 = [IGNORE_INDEX], [IGNORE_INDEX]
             elif len(trim_ans_spans) == 1:
-                y1, y2 = [trim_sent_spans[0][0]], [trim_ans_spans[0][1]]
+                y1, y2 = [trim_ans_spans[0][0]], [trim_ans_spans[0][1]]
             else:
                 rand_idx = np.random.randint(len(trim_ans_spans))
                 y1, y2 = [trim_ans_spans[rand_idx][0]], [trim_ans_spans[rand_idx][1]]
