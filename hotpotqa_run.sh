@@ -25,8 +25,8 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
-#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
+    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -45,17 +45,17 @@ preprocess() {
 #        # Output: long_multihop_para.json
 #        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
 
-        echo "2. Tokenized example extraction (Roberta low)"
-        python sd_mhqa/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
-
-        echo "3. Tokenized example extraction (Albert low)"
-        python sd_mhqa/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+#        echo "2. Tokenized example extraction (Roberta low)"
+#        python sd_mhqa/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+#
+#        echo "3. Tokenized example extraction (Albert low)"
+#        python sd_mhqa/hotpotqa_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
 #        echo "4. Drop sentence testing (Roberta low)"
 #        python sd_mhqa/hotpotqa_test_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path roberta-large --do_lower_case --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
-#        echo "4. Drop sentence testing (albert low)"
-#        python sd_mhqa/hotpotqa_test_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+        echo "4. Drop sentence testing (albert low)"
+        python sd_mhqa/hotpotqa_test_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
 
         done
