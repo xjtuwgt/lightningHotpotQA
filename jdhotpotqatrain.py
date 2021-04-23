@@ -10,16 +10,16 @@ import argparse
 from model_envs import MODEL_CLASSES
 #
 #
-# from jdqamodel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
+# from HotpotQAModel.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 # # from utils.jdutils import get_lr_with_optimizer
-from jdqamodel.hotpotqa_dump_features import get_cached_filename
+from HotpotQAModel.hotpotqa_dump_features import get_cached_filename
 #
 # from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
-# # from jdqamodel.evalutils import compute_loss
-# # from jdqamodel.evalutils import jd_hotpotqa_eval_model
+# # from HotpotQAModel.evalutils import compute_loss
+# # from HotpotQAModel.evalutils import jd_hotpotqa_eval_model
 from envs import DATASET_FOLDER
 # #
-# # from jdqamodel.hotpotqa_model import SDModel
+# # from HotpotQAModel.hotpotqa_model import SDModel
 # # from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 #
 # logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',

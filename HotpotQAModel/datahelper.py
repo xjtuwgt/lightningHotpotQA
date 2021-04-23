@@ -1,4 +1,4 @@
-from jdqamodel.hotpotqa_data_loader import HotpotDataset
+from HotpotQAModel.hotpotqa_data_loader import HotpotDataset
 from torch.utils.data import DataLoader
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def hotpot_train_dataloader(train_examples, args) -> DataLoader:

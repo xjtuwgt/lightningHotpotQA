@@ -1,11 +1,11 @@
 from torch import nn
-from jdqamodel.hotpotqa_data_loader import IGNORE_INDEX
+from HotpotQAModel.hotpotqa_data_loader import IGNORE_INDEX
 import logging
 import numpy as np
 from tqdm import tqdm
 import torch.nn.functional as F
 from csr_mhqa.utils import MODEL_CLASSES
-from jdqamodel.hotpotqaUtils import case_to_features
+from HotpotQAModel.hotpotqaUtils import case_to_features
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 import shutil
 

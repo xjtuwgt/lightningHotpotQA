@@ -4,7 +4,7 @@ from pandas import DataFrame
 from time import time
 from tqdm import tqdm
 import itertools
-from jdqamodel.hotpotqa_data_structure import Example
+from HotpotQAModel.hotpotqa_data_structure import Example
 import spacy
 import re
 nlp = spacy.load("en_core_web_lg", disable=['tagger', 'parser'])

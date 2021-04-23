@@ -4,7 +4,7 @@ import torch
 from models.layers import OutputLayer
 from torch import Tensor
 import numpy as np
-from jdqamodel.transformer import EncoderLayer as Transformer_layer
+from HotpotQAModel.transformer import EncoderLayer as Transformer_layer
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end']

@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
-from jdqamodel.hotpotqa_data_structure import Example
-from jdqamodel.hotpotqaUtils import example_sent_drop, case_to_features, trim_input_span
+from HotpotQAModel.hotpotqa_data_structure import Example
+from HotpotQAModel.hotpotqaUtils import example_sent_drop, case_to_features, trim_input_span
 import torch
 import numpy as np
 

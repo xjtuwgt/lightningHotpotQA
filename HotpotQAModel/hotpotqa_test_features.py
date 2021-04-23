@@ -11,13 +11,13 @@ from collections import Counter
 from tqdm import tqdm
 import itertools
 from torch.utils.data import DataLoader
-from jdqamodel.hotpotqa_data_loader import HotpotTestDataset, HotpotDataset
+from HotpotQAModel.hotpotqa_data_loader import HotpotTestDataset, HotpotDataset
 
 from model_envs import MODEL_CLASSES
-from jdqamodel.hotpotqa_dump_features import get_cached_filename
-from jdqamodel.hotpotqaUtils import json_loader
-from jdqamodel.hotpotqa_data_structure import Example
-from jdqamodel.hotpotqaUtils import case_to_features, example_sent_drop, trim_input_span
+from HotpotQAModel.hotpotqa_dump_features import get_cached_filename
+from HotpotQAModel.hotpotqaUtils import json_loader
+from HotpotQAModel.hotpotqa_data_structure import Example
+from HotpotQAModel.hotpotqaUtils import case_to_features, example_sent_drop, trim_input_span
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 

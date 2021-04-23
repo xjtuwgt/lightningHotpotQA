@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-from jdqamodel.hotpotqaUtils import hotpot_answer_tokenizer
+from HotpotQAModel.hotpotqaUtils import hotpot_answer_tokenizer
 from os.path import join
 import gzip
 import pickle
