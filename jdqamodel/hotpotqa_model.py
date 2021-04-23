@@ -6,19 +6,21 @@ from torch import Tensor
 import numpy as np
 from jdqamodel.transformer import EncoderLayer as Transformer_layer
 
-def init_state_feature(batch, input_state: Tensor, hidden_dim: int):
+def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end']
     para_start, para_end = batch['para_start'], batch['para_end']
-    para_state = []
-    sent_state = []
 
-    # para_start_output = torch.bmm(para_start_mapping, input_state[:, :, hidden_dim:])  # N x max_para x d
-    # para_end_output = torch.bmm(para_end_mapping, input_state[:, :, :hidden_dim])  # N x max_para x d
-    # para_state = torch.cat([para_start_output, para_end_output], dim=-1)  # N x max_para x 2d
-    #
-    # sent_start_output = torch.bmm(sent_start_mapping, input_state[:, :, hidden_dim:])  # N x max_sent x d
-    # sent_end_output = torch.bmm(sent_end_mapping, input_state[:, :, :hidden_dim])  # N x max_sent x d
-    # sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)  # N x max_sent x 2d
+    batch_size, para_num, sent_num = para_start.shape[0], para_start.shape[1], sent_start.shape[1]
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    sent_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, sent_num)
+    sent_start_output = input_state[sent_batch_idx, sent_start]
+    sent_end_output = input_state[sent_batch_idx, sent_end]
+    sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    para_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, para_num)
+    para_start_output = input_state[para_batch_idx, para_start]
+    para_end_output = input_state[para_batch_idx, para_end]
+    para_state = torch.cat([para_start_output, para_end_output], dim=-1)
 
     state_dict = {'para_state': para_state, 'sent_state': sent_state}
     return state_dict
@@ -103,7 +105,7 @@ class HotPotQAModel(nn.Module):
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
         self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=4)
 
-        self.para_sent_ent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
+        self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
     def forward(self, encoder, batch, return_yp=False, return_cls=False):
@@ -121,6 +123,20 @@ class HotPotQAModel(nn.Module):
         input_state = self.linear_map(context_encoding)
         input_state = self.transformer_encoder.forward(x=input_state, src_mask=batch['context_mask'])
         ####++++++++++++++++++++++++++++++++++++++
-        cls_emb_state = input_state[:, 0]
-
-        return
+        cls_emb_state = input_state[:,0,:]
+        ####++++++++++++++++++++++++++++++++++++++
+        para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
+        para_predictions, sent_predictions = self.para_sent_predict_layer.forward(state_dict=para_sent_state_dict)
+        query_mapping = batch['query_mapping']
+        predictions = self.predict_layer.forward(batch=batch, context_input=input_state,
+                                                 packing_mask=query_mapping, return_yp=return_yp)
+        if return_yp:
+            start, end, q_type, yp1, yp2 = predictions
+            if return_cls:
+                return start, end, q_type, para_predictions, sent_predictions, yp1, yp2, cls_emb_state
+            return start, end, q_type, para_predictions, sent_predictions, yp1, yp2
+        else:
+            start, end, q_type = predictions
+            if return_cls:
+                return start, end, q_type, para_predictions, sent_predictions, cls_emb_state
+            return start, end, q_type, para_predictions, sent_predictions
