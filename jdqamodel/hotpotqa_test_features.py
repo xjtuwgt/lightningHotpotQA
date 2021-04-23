@@ -630,7 +630,7 @@ def data_loader_checker(para_file: str,
             y1_i = y1[i]
             y2_i = y2[i]
             # print(y1_i, y2_i)
-            if y1 > 0:
+            if y1_i > 0:
                 ans_ids = inp_id_i[y1_i:y2_i]
                 print(ans_ids)
 
