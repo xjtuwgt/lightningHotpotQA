@@ -11,8 +11,8 @@ import logging
 from os.path import join
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
-    sent_start, sent_end = batch['sent_start'], batch['sent_end'] - 1
-    para_start, para_end = batch['para_start'], batch['para_end'] - 1
+    sent_start, sent_end = batch['sent_start'], batch['sent_end']
+    para_start, para_end = batch['para_start'], batch['para_end']
     assert (sent_start < input_state.shape[1]).sum() == input_state.shape[0] \
            and (sent_end < input_state.shape[1]).sum() == input_state.shape[0], '{}\t{}\t{}'.format(sent_start, sent_end, input_state.shape[1])
 

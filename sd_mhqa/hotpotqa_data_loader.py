@@ -41,12 +41,13 @@ class HotpotDataset(Dataset):
         assert len(trim_doc_segment_ids) == self.max_seq_length
         trim_doc_input_ids = torch.LongTensor(trim_doc_input_ids)
         trim_doc_input_mask = torch.LongTensor(trim_doc_input_mask)
-        query_mapping = torch.FloatTensor(trim_doc_segment_ids)
         trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1]]
+        query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1] - 1]
         query_start_position = torch.LongTensor(query_start_position)
         query_end_position = torch.LongTensor(query_end_position)
+        query_mapping = [1] * trim_query_spans[0][1] + [0] * (self.max_seq_length - trim_query_spans[0][1])
+        query_mapping = torch.FloatTensor(query_mapping)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         trim_para_num = len(trim_para_spans)
         trim_para_mask = [1] * trim_para_num
@@ -54,7 +55,7 @@ class HotpotDataset(Dataset):
         trim_para_mask += [0] * para_pad_num
 
         trim_para_start_position = [_[0] for _ in trim_para_spans]
-        trim_para_end_position = [_[1] for _ in trim_para_spans]
+        trim_para_end_position = [(_[1] - 1) for _ in trim_para_spans]
         trim_para_start_position += [0] * para_pad_num
         trim_para_end_position += [0] * para_pad_num
         assert len(trim_para_start_position) == self.max_para_num
@@ -72,7 +73,7 @@ class HotpotDataset(Dataset):
         sent_pad_num = self.max_sent_num - trim_sent_num
         trim_sent_mask += [0] * sent_pad_num
         trim_sent_start_position = [_[0] for _ in trim_sent_spans]
-        trim_sent_end_position = [_[1] for _ in trim_sent_spans]
+        trim_sent_end_position = [(_[1] - 1) for _ in trim_sent_spans]
         trim_sent_start_position += [0] * sent_pad_num
         trim_sent_end_position += [0] * sent_pad_num
         assert len(trim_sent_start_position) == self.max_sent_num
@@ -86,10 +87,10 @@ class HotpotDataset(Dataset):
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         supp_para_ids = [supp_para for supp_para in case.sup_para_id if supp_para < len(trim_para_spans)] ## supp para ids
         supp_sent_ids = [supp_sent for supp_sent in case.sup_fact_id if supp_sent < len(trim_sent_spans)] ## support fact ids
-        if len(supp_sent_ids) <= 0 or len(supp_para_ids) <=0:
-            print('##' * 50)
-            print('supp para {}'.format(supp_para_ids))
-            print('supp sent {}'.format(supp_sent_ids))
+        # if len(supp_sent_ids) <= 0 or len(supp_para_ids) <=0:
+        #     print('##' * 50)
+        #     print('supp para {}'.format(supp_para_ids))
+        #     print('supp sent {}'.format(supp_sent_ids))
         is_support_sent = torch.zeros(self.max_sent_num, dtype=torch.float)
         for s_sent_id in supp_sent_ids:
             is_support_sent[s_sent_id] = 1
@@ -194,10 +195,11 @@ class HotpotTestDataset(Dataset):
         assert len(trim_doc_segment_ids) == self.max_seq_length
         trim_doc_input_ids = torch.LongTensor(trim_doc_input_ids)
         trim_doc_input_mask = torch.LongTensor(trim_doc_input_mask)
-        query_mapping = torch.FloatTensor(trim_doc_segment_ids)
         trim_doc_segment_ids = torch.LongTensor(trim_doc_segment_ids)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1]]
+        query_start_position, query_end_position = [trim_query_spans[0][0]], [trim_query_spans[0][1] - 1]
+        query_mapping = [1] * trim_query_spans[0][1] + [0] * (self.max_seq_length - trim_query_spans[0][1])
+        query_mapping = torch.FloatTensor(query_mapping)
         query_start_position = torch.LongTensor(query_start_position)
         query_end_position = torch.LongTensor(query_end_position)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -206,7 +208,7 @@ class HotpotTestDataset(Dataset):
         para_pad_num = self.max_para_num - trim_para_num
         trim_para_mask += [0] * para_pad_num
         trim_para_start_position = [_[0] for _ in trim_para_spans]
-        trim_para_end_position = [_[1] for _ in trim_para_spans]
+        trim_para_end_position = [(_[1] -1)  for _ in trim_para_spans]
         trim_para_start_position += [0] * para_pad_num
         trim_para_end_position += [0] * para_pad_num
         assert len(trim_para_start_position) == self.max_para_num
@@ -224,7 +226,7 @@ class HotpotTestDataset(Dataset):
         sent_pad_num = self.max_sent_num - trim_sent_num
         trim_sent_mask += [0] * sent_pad_num
         trim_sent_start_position = [_[0] for _ in trim_sent_spans]
-        trim_sent_end_position = [_[1] for _ in trim_sent_spans]
+        trim_sent_end_position = [(_[1]-1) for _ in trim_sent_spans]
         trim_sent_start_position += [0] * sent_pad_num
         trim_sent_end_position += [0] * sent_pad_num
         assert len(trim_sent_start_position) == self.max_sent_num
