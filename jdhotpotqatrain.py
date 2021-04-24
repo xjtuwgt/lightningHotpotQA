@@ -52,7 +52,6 @@ _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
 tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path, do_lower_case=True)
 sep_token_id = tokenizer.sep_token_id
 ## ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-args.eval_batch_size = 2
 helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
 # Set datasets
@@ -129,6 +128,7 @@ for name, param in model.named_parameters():
 logging.info('*' * 75)
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 start_epoch = 0
+best_joint_f1 = 0.0
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
