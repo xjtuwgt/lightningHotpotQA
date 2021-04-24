@@ -52,6 +52,7 @@ class HotpotDataset(Dataset):
         trim_para_mask = [1] * trim_para_num
         para_pad_num = self.max_para_num - trim_para_num
         trim_para_mask += [0] * para_pad_num
+
         trim_para_start_position = [_[0] for _ in trim_para_spans]
         trim_para_end_position = [_[1] for _ in trim_para_spans]
         trim_para_start_position += [0] * para_pad_num
