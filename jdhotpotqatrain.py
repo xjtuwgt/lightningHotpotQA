@@ -89,12 +89,12 @@ else:
     learning_rate = args.learning_rate
 #
 # # Set Encoder and Model
-encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
+# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 model = SDModel(config=args)
 
 if encoder_path is not None:
     logger.info("Loading encoder from: {}".format(encoder_path))
-    encoder.load_state_dict(torch.load(encoder_path))
+    # encoder.load_state_dict(torch.load(encoder_path))
     logger.info("Loading encoder completed")
 if model_path is not None:
     model.load_state_dict(torch.load(model_path))
@@ -107,7 +107,7 @@ if model_path is not None:
 #             param.requires_grad = False
 #     logging.info('Frozen the first {} layers'.format(args.frozen_layer_number))
 # #######################################################################################
-encoder.to(args.device)
+# encoder.to(args.device)
 model.to(args.device)
 # #########################################################################
 # # Evalaute if resumed from other checkpoint
@@ -176,7 +176,7 @@ tr_loss, logging_loss = [0] * len(loss_name), [0]* len(loss_name)
 if args.local_rank in [-1, 0]:
     tb_writer = SummaryWriter(args.exp_name)
 
-encoder.zero_grad()
+# encoder.zero_grad()
 model.zero_grad()
 
 ###++++++++++++++++++++++++++++++++++++++++++

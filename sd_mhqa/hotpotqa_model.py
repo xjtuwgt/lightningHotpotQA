@@ -114,8 +114,9 @@ class SDModel(nn.Module):
         self.encoder, _ = load_encoder_model(self.config.encoder_name_or_path, self.config.model_type)
         if self.config.fine_tuned_encoder is not None:
             encoder_path = join(self.config.fine_tuned_encoder_path, self.config.fine_tuned_encoder, 'encoder.pkl')
-            print("Loading encoder from: {}".format(encoder_path))
+            logging.info("Loading encoder from: {}".format(encoder_path))
             self.encoder.load_state_dict(torch.load(encoder_path))
+            logging.info("Loading encoder completed")
 
         self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
