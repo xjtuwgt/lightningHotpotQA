@@ -81,7 +81,6 @@ if args.local_rank != -1:
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
                                                       output_device=args.local_rank,
                                                       find_unused_parameters=True)
-
 if args.lr_scheduler == 'linear':
     scheduler = get_linear_schedule_with_warmup(optimizer,
                                             num_warmup_steps=args.warmup_steps,
@@ -129,18 +128,13 @@ start_epoch = 0
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
     epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
-
     for step, batch in enumerate(epoch_iterator):
-        # encoder.train()
         model.train()
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
             if key not in {'ids'}:
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        # start, end, q_type, paras, sents, yp1, yp2 = model(encoder, batch, return_yp=True)
-        # loss_list = compute_loss(args, batch, start, end, paras, sents, q_type)
-        # loss_list = model(encoder, batch, return_yp=True)
         loss_list = model(batch, return_yp=True)
         del batch
 
@@ -163,7 +157,6 @@ for epoch in train_iterator:
         if (step + 1) % args.gradient_accumulation_steps == 0:
             optimizer.step()
             scheduler.step()  # Update learning rate schedule
-            # encoder.zero_grad()
             model.zero_grad()
             global_step += 1
 
