@@ -128,8 +128,6 @@ class SDModel(nn.Module):
                   'token_type_ids': batch['segment_idxs'] if self.config.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
         ####++++++++++++++++++++++++++++++++++++++
         outputs, _ = self.encoder(**inputs)
-        print(type(outputs))
-        print(len(outputs))
         batch['context_encoding'] = outputs
 
         ####++++++++++++++++++++++++++++++++++++++
