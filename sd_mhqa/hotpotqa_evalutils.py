@@ -45,12 +45,11 @@ def convert_to_tokens(tokenizer, examples, ids, y1, y2, q_type_prob):
 
     return answer_dict, answer_type_dict, answer_type_prob_dict
 
-def jd_hotpotqa_eval_model(args, encoder, model, dataloader, example_dict, prediction_file, eval_file, dev_gold_file, output_score_file=None):
+def jd_hotpotqa_eval_model(args, model, dataloader, example_dict, prediction_file, eval_file, dev_gold_file, output_score_file=None):
     _, _, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path,
                                                 do_lower_case=args.do_lower_case)
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    encoder.eval()
     model.eval()
 
     answer_dict = {}
@@ -70,14 +69,13 @@ def jd_hotpotqa_eval_model(args, encoder, model, dataloader, example_dict, predi
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         with torch.no_grad():
-            start, end, q_type, paras, sent, yp1, yp2 = model(encoder, batch, return_yp=True)
+            start, end, q_type, paras, sent, yp1, yp2 = model(batch, return_yp=True)
 
         type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
         answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(tokenizer, example_dict, batch['ids'],
                                                                                     yp1.data.cpu().numpy().tolist(),
                                                                                     yp2.data.cpu().numpy().tolist(),
                                                                                     type_prob)
-
         answer_type_dict.update(answer_type_dict_)
         answer_type_prob_dict.update(answer_type_prob_dict_)
         answer_dict.update(answer_dict_)
@@ -125,5 +123,4 @@ def jd_hotpotqa_eval_model(args, encoder, model, dataloader, example_dict, predi
 
     best_metrics, best_threshold = choose_best_threshold(answer_dict, prediction_file)
     json.dump(best_metrics, open(eval_file, 'w'))
-
     return best_metrics, best_threshold
