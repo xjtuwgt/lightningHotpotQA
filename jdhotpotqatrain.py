@@ -142,7 +142,6 @@ for epoch in train_iterator:
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         loss_list = model(batch, return_yp=True)
         del batch
-        logging.info(global_step, step)
         if args.n_gpu > 1:
             for loss in loss_list:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
@@ -168,15 +167,11 @@ for epoch in train_iterator:
             scheduler.step()  # Update learning rate schedule
             model.zero_grad()
             global_step += 1
-            print(global_step)
             if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 avg_loss = [(_tr_loss - _logging_loss) / (args.logging_steps*args.gradient_accumulation_steps)
                              for (_tr_loss, _logging_loss) in zip(tr_loss, logging_loss)]
-
                 loss_str = "step[{0:6}] " + " ".join(['%s[{%d:.5f}]' % (loss_name[i], i+1) for i in range(len(avg_loss))])
                 logger.info(loss_str.format(global_step, *avg_loss))
-                print(loss_str.format(global_step, *avg_loss))
-
                 # tensorboard
                 tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
                 for i in range(len(loss_name)):
