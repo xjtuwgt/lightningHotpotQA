@@ -190,7 +190,7 @@ model.zero_grad()
 total_batch_num = len(train_dataloader)
 logger.info('Total number of batches = {}'.format(total_batch_num))
 eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
-logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
+logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num))
 ###++++++++++++++++++++++++++++++++++++++++++
 
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])

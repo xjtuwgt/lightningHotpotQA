@@ -120,7 +120,6 @@ total_batch_num = len(train_dataloader)
 logger.info('Total number of batches = {}'.format(total_batch_num))
 eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
 logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num ))
-###++++++++++++++++++++++++++++++++++++++++++
 # #########################################################################
 # # Show model information
 # #########################################################################
@@ -128,11 +127,6 @@ logging.info('Model Parameter Configuration:')
 for name, param in model.named_parameters():
     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 logging.info('*' * 75)
-##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-output_pred_file = os.path.join(args.exp_name, f'pred.epoch.json')
-output_eval_file = os.path.join(args.exp_name, f'eval.epoch.txt')
-metrics, threshold = jd_hotpotqa_eval_model(args, model, dev_dataloader, dev_example_dict,
-                                                        output_pred_file, output_eval_file, args.dev_gold_file)
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 start_epoch = 0
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
