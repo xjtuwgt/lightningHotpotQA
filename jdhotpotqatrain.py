@@ -112,15 +112,15 @@ model.to(args.device)
 # #########################################################################
 # # Evalaute if resumed from other checkpoint
 # ##########################################################################
-if encoder_path is not None and model_path is not None:
-    output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
-    output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
-    prev_metrics, prev_threshold = jd_hotpotqa_eval_model(args, encoder, model,
-                                              dev_dataloader, dev_example_dict,
-                                              output_pred_file, output_eval_file, args.dev_gold_file)
-    logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
-    for key, val in prev_metrics.items():
-        logger.info("{} = {}".format(key, val))
+# if encoder_path is not None and model_path is not None:
+#     output_pred_file = os.path.join(args.exp_name, 'prev_checkpoint.pred.json')
+#     output_eval_file = os.path.join(args.exp_name, 'prev_checkpoint.eval.txt')
+#     prev_metrics, prev_threshold = jd_hotpotqa_eval_model(args, encoder, model,
+#                                               dev_dataloader, dev_example_dict,
+#                                               output_pred_file, output_eval_file, args.dev_gold_file)
+#     logger.info("Best threshold for prev checkpoint: {}".format(prev_threshold))
+#     for key, val in prev_metrics.items():
+#         logger.info("{} = {}".format(key, val))
 
 # #########################################################################
 # # Get Optimizer
@@ -131,22 +131,24 @@ if args.max_steps > 0:
 else:
     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
-optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
+# optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
+#
+# if args.fp16:
+#     try:
+#         from apex import amp
+#     except ImportError:
+#         raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
+#     models, optimizer = amp.initialize([encoder, model], optimizer, opt_level=args.fp16_opt_level)
+#     assert len(models) == 2
+#     encoder, model = models
 
-if args.fp16:
-    try:
-        from apex import amp
-    except ImportError:
-        raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
-    models, optimizer = amp.initialize([encoder, model], optimizer, opt_level=args.fp16_opt_level)
-    assert len(models) == 2
-    encoder, model = models
+optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
 # Distributed training (should be after apex fp16 initialization)
 if args.local_rank != -1:
-    encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
-                                                        output_device=args.local_rank,
-                                                        find_unused_parameters=True)
+    # encoder = torch.nn.parallel.DistributedDataParallel(encoder, device_ids=[args.local_rank],
+    #                                                     output_device=args.local_rank,
+    #                                                     find_unused_parameters=True)
 
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
                                                       output_device=args.local_rank,
@@ -189,9 +191,9 @@ logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num 
 # # Show model information
 # #########################################################################
 logging.info('Encoder Parameter Configuration:')
-for name, param in encoder.named_parameters():
-    logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-logging.info('*' * 75)
+# for name, param in encoder.named_parameters():
+#     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+# logging.info('*' * 75)
 logging.info('Model Parameter Configuration:')
 for name, param in model.named_parameters():
     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
@@ -225,12 +227,13 @@ for epoch in train_iterator:
                 loss = loss / args.gradient_accumulation_steps
         # print(loss_list)
         if args.fp16:
-            with amp.scale_loss(loss_list[0], optimizer) as scaled_loss:
-                scaled_loss.backward()
-            torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), args.max_grad_norm)
+            # with amp.scale_loss(loss_list[0], optimizer) as scaled_loss:
+            #     scaled_loss.backward()
+            # torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), args.max_grad_norm)
+            print()
         else:
             loss_list[0].backward()
-            torch.nn.utils.clip_grad_norm_(encoder.parameters(), args.max_grad_norm)
+            # torch.nn.utils.clip_grad_norm_(encoder.parameters(), args.max_grad_norm)
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
 
         for idx in range(len(loss_name)):
@@ -242,7 +245,7 @@ for epoch in train_iterator:
         if (step + 1) % args.gradient_accumulation_steps == 0:
             optimizer.step()
             scheduler.step()  # Update learning rate schedule
-            encoder.zero_grad()
+            # encoder.zero_grad()
             model.zero_grad()
             global_step += 1
 
@@ -265,63 +268,63 @@ for epoch in train_iterator:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         ########################+++++++
-        if (step + 1) % eval_batch_interval_num == 0:
-            if args.local_rank == -1 or torch.distributed.get_rank() == 0:
-                output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step + 1}.json')
-                output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step + 1}.txt')
-                metrics, threshold = jd_hotpotqa_eval_model(args, encoder, model,
-                                                dev_dataloader, dev_example_dict,
-                                                output_pred_file, output_eval_file, args.dev_gold_file)
-                if metrics['joint_f1'] >= best_joint_f1:
-                    best_joint_f1 = metrics['joint_f1']
-                    torch.save({'epoch': epoch + 1,
-                                'lr': scheduler.get_lr()[0],
-                                'encoder': 'encoder.pkl',
-                                'model': 'model.pkl',
-                                'best_joint_f1': best_joint_f1,
-                                'threshold': threshold},
-                               join(args.exp_name, f'cached_config.bin')
-                               )
-                    logger.info(
-                        'Current best joint_f1 = {} with best threshold = {}'.format(best_joint_f1, threshold))
-                    for key, val in metrics.items():
-                        logger.info("Current {} = {}".format(key, val))
-                    logger.info('*' * 100)
-                torch.save({k: v.cpu() for k, v in encoder.state_dict().items()},
-                           join(args.exp_name, f'encoder_{epoch + 1}.step_{step + 1}.pkl'))
-                torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                           join(args.exp_name, f'model_{epoch + 1}.step_{step + 1}.pkl'))
-
-                for key, val in metrics.items():
-                    tb_writer.add_scalar(key, val, epoch)
-        ########################+++++++
-    if args.local_rank == -1 or torch.distributed.get_rank() == 0:
-        output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch+1}.json')
-        output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch+1}.txt')
-        metrics, threshold = jd_hotpotqa_eval_model(args, encoder, model,
-                                        dev_dataloader, dev_example_dict,
-                                        output_pred_file, output_eval_file, args.dev_gold_file)
-        if metrics['joint_f1'] >= best_joint_f1:
-            best_joint_f1 = metrics['joint_f1']
-            torch.save({'epoch': epoch+1,
-                        'lr': scheduler.get_lr()[0],
-                        'encoder': 'encoder.pkl',
-                        'model': 'model.pkl',
-                        'best_joint_f1': best_joint_f1,
-                        'threshold': threshold},
-                       join(args.exp_name, f'cached_config.bin')
-            )
-            logger.info('Current best joint_f1 = {} with best threshold = {}'.format(best_joint_f1, threshold))
-            for key, val in metrics.items():
-                logger.info("Current {} = {}".format(key, val))
-            logger.info('*' * 100)
-        torch.save({k: v.cpu() for k, v in encoder.state_dict().items()},
-                    join(args.exp_name, f'encoder_{epoch+1}.pkl'))
-        torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                    join(args.exp_name, f'model_{epoch+1}.pkl'))
-
-        for key, val in metrics.items():
-            tb_writer.add_scalar(key, val, epoch)
+    #     if (step + 1) % eval_batch_interval_num == 0:
+    #         if args.local_rank == -1 or torch.distributed.get_rank() == 0:
+    #             output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step + 1}.json')
+    #             output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step + 1}.txt')
+    #             metrics, threshold = jd_hotpotqa_eval_model(args, encoder, model,
+    #                                             dev_dataloader, dev_example_dict,
+    #                                             output_pred_file, output_eval_file, args.dev_gold_file)
+    #             if metrics['joint_f1'] >= best_joint_f1:
+    #                 best_joint_f1 = metrics['joint_f1']
+    #                 torch.save({'epoch': epoch + 1,
+    #                             'lr': scheduler.get_lr()[0],
+    #                             'encoder': 'encoder.pkl',
+    #                             'model': 'model.pkl',
+    #                             'best_joint_f1': best_joint_f1,
+    #                             'threshold': threshold},
+    #                            join(args.exp_name, f'cached_config.bin')
+    #                            )
+    #                 logger.info(
+    #                     'Current best joint_f1 = {} with best threshold = {}'.format(best_joint_f1, threshold))
+    #                 for key, val in metrics.items():
+    #                     logger.info("Current {} = {}".format(key, val))
+    #                 logger.info('*' * 100)
+    #             torch.save({k: v.cpu() for k, v in encoder.state_dict().items()},
+    #                        join(args.exp_name, f'encoder_{epoch + 1}.step_{step + 1}.pkl'))
+    #             torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+    #                        join(args.exp_name, f'model_{epoch + 1}.step_{step + 1}.pkl'))
+    #
+    #             for key, val in metrics.items():
+    #                 tb_writer.add_scalar(key, val, epoch)
+    #     ########################+++++++
+    # if args.local_rank == -1 or torch.distributed.get_rank() == 0:
+    #     output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch+1}.json')
+    #     output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch+1}.txt')
+    #     metrics, threshold = jd_hotpotqa_eval_model(args, encoder, model,
+    #                                     dev_dataloader, dev_example_dict,
+    #                                     output_pred_file, output_eval_file, args.dev_gold_file)
+    #     if metrics['joint_f1'] >= best_joint_f1:
+    #         best_joint_f1 = metrics['joint_f1']
+    #         torch.save({'epoch': epoch+1,
+    #                     'lr': scheduler.get_lr()[0],
+    #                     'encoder': 'encoder.pkl',
+    #                     'model': 'model.pkl',
+    #                     'best_joint_f1': best_joint_f1,
+    #                     'threshold': threshold},
+    #                    join(args.exp_name, f'cached_config.bin')
+    #         )
+    #         logger.info('Current best joint_f1 = {} with best threshold = {}'.format(best_joint_f1, threshold))
+    #         for key, val in metrics.items():
+    #             logger.info("Current {} = {}".format(key, val))
+    #         logger.info('*' * 100)
+    #     torch.save({k: v.cpu() for k, v in encoder.state_dict().items()},
+    #                 join(args.exp_name, f'encoder_{epoch+1}.pkl'))
+    #     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+    #                 join(args.exp_name, f'model_{epoch+1}.pkl'))
+    #
+    #     for key, val in metrics.items():
+    #         tb_writer.add_scalar(key, val, epoch)
 
 if args.local_rank in [-1, 0]:
     tb_writer.close()
