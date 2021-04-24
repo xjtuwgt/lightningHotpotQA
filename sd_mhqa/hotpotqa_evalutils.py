@@ -26,7 +26,7 @@ def convert_to_tokens(tokenizer, examples, ids, y1, y2, q_type_prob):
 
         final_text = " "
         if y1 < len(doc_input_ids) and y2 < len(doc_input_ids):
-            answer_input_ids = doc_input_ids[y1:(y2+1)]
+            answer_input_ids = doc_input_ids[y1:(y2+1)] ## y2+1
             final_text = tokenizer.decode(answer_input_ids)
         return final_text
 
