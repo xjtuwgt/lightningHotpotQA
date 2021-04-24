@@ -115,10 +115,6 @@ logger.info('Evaluate the model by = {} batches'.format(eval_batch_interval_num 
 # #########################################################################
 # # Show model information
 # #########################################################################
-logging.info('Encoder Parameter Configuration:')
-# for name, param in encoder.named_parameters():
-#     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-# logging.info('*' * 75)
 logging.info('Model Parameter Configuration:')
 for name, param in model.named_parameters():
     logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
