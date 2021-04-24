@@ -19,7 +19,7 @@ def single_task_trial(search_space: dict, rand_seed=42):
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.graph.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + '.as' + str(parameter_dict['gradient_accumulation_steps']) + \
-               '.lr' + str(parameter_dict['learning_rate']) + \
+               '.lr' + str(parameter_dict['learning_rate']) + 'sdr.' + str(parameter_dict['sent_drop_ratio']) + \
                '.data' +str(parameter_dict['daug_type']) + parameter_dict['optimizer'] + '.' + parameter_dict['lr_scheduler'] + '.seed' +str(rand_seed)
     parameter_dict['exp_name'] = exp_name
     return parameter_dict
@@ -55,7 +55,7 @@ def HypeParameterSpace():
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_low']} #
     transformer_hidden_dim = {'name': 'transformer_hidden_dim', 'type': 'choice', 'values': [512]}
     transformer_head_num = {'name': 'transformer_head_num', 'type': 'choice', 'values': [8]}
-    sent_drop_ratio = {'name': 'sent_drop_ratio', 'type': 'choice', 'values': [0.25]}
+    sent_drop_ratio = {'name': 'sent_drop_ratio', 'type': 'choice', 'values': [0.1, 0.25]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['albert']}
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['albert/albert-xxlarge-v2_hotpotqa']} #'ahotrod/roberta_large_squad2'
@@ -88,7 +88,7 @@ def generate_random_search_bash(task_num, seed=42):
     search_space = HypeParameterSpace()
     for i in range(task_num):
         rand_hype_dict = single_task_trial(search_space, seed+i)
-        config_json_file_name = 'train.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
+        config_json_file_name = 'train.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] + 'sdr.' + str(rand_hype_dict['sent_drop_ratio']) \
                                 +'.lr.'+ str(rand_hype_dict['learning_rate']) + rand_hype_dict['optimizer'] + '.' + rand_hype_dict['lr_scheduler']+ \
                                 '.seed' + str(rand_hype_dict['seed']) + '.json'
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
