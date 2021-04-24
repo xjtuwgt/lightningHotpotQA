@@ -221,10 +221,6 @@ for epoch in train_iterator:
         metrics, threshold = jd_hotpotqa_eval_model(args, model,
                                                 dev_dataloader, dev_example_dict,
                                                 output_pred_file, output_eval_file, args.dev_gold_file)
-        # metrics, threshold = eval_model(args, encoder, model,
-        #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-        #                                 output_pred_file, output_eval_file, args.dev_gold_file)
-
         if metrics['joint_f1'] >= best_joint_f1:
             best_joint_f1 = metrics['joint_f1']
             torch.save({'epoch': epoch + 1,
