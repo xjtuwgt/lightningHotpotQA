@@ -71,6 +71,7 @@ def jd_hotpotqa_eval_model(args, model, dataloader, example_dict, prediction_fil
         with torch.no_grad():
             start, end, q_type, paras, sent, yp1, yp2 = model(batch, return_yp=True)
 
+
         type_prob = F.softmax(q_type, dim=1).data.cpu().numpy()
         answer_dict_, answer_type_dict_, answer_type_prob_dict_ = convert_to_tokens(tokenizer, example_dict, batch['ids'],
                                                                                     yp1.data.cpu().numpy().tolist(),

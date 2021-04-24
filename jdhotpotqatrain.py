@@ -154,7 +154,6 @@ for epoch in train_iterator:
         if args.gradient_accumulation_steps > 1:
             for loss in loss_list:
                 loss = loss / args.gradient_accumulation_steps
-        # print(loss_list)
         if args.fp16:
             with amp.scale_loss(loss_list[0], optimizer) as scaled_loss:
                 scaled_loss.backward()
@@ -176,11 +175,12 @@ for epoch in train_iterator:
             global_step += 1
 
             if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
-                avg_loss = [ (_tr_loss - _logging_loss) / (args.logging_steps*args.gradient_accumulation_steps)
+                avg_loss = [(_tr_loss - _logging_loss) / (args.logging_steps*args.gradient_accumulation_steps)
                              for (_tr_loss, _logging_loss) in zip(tr_loss, logging_loss)]
 
                 loss_str = "step[{0:6}] " + " ".join(['%s[{%d:.5f}]' % (loss_name[i], i+1) for i in range(len(avg_loss))])
                 logger.info(loss_str.format(global_step, *avg_loss))
+                print(loss_str.format(global_step, *avg_loss))
 
                 # tensorboard
                 tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
