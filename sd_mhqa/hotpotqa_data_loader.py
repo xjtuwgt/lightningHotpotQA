@@ -57,9 +57,13 @@ class HotpotDataset(Dataset):
         trim_para_mask = [1] * trim_para_num
         para_pad_num = self.max_para_num - trim_para_num
         trim_para_mask += [0] * para_pad_num
-
         trim_para_start_position = [_[0] for _ in trim_para_spans]
         trim_para_end_position = [(_[1] - 1) for _ in trim_para_spans]
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for p_idx in range(len(trim_para_end_position)):
+            if trim_para_start_position[p_idx] > trim_para_end_position[p_idx]:
+                trim_para_start_position[p_idx] = trim_para_end_position[p_idx]
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         trim_para_start_position += [0] * para_pad_num
         trim_para_end_position += [0] * para_pad_num
         assert len(trim_para_start_position) == self.max_para_num
@@ -78,6 +82,11 @@ class HotpotDataset(Dataset):
         trim_sent_mask += [0] * sent_pad_num
         trim_sent_start_position = [_[0] for _ in trim_sent_spans]
         trim_sent_end_position = [(_[1] - 1) for _ in trim_sent_spans]
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for s_idx in range(len(trim_sent_end_position)):
+            if trim_sent_start_position[s_idx] > trim_sent_end_position[s_idx]:
+                trim_sent_start_position[s_idx] = trim_sent_end_position[s_idx]
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         trim_sent_start_position += [0] * sent_pad_num
         trim_sent_end_position += [0] * sent_pad_num
         assert len(trim_sent_start_position) == self.max_sent_num
