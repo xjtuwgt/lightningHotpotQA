@@ -5,7 +5,8 @@ from models.layers import OutputLayer
 from torch import Tensor
 import numpy as np
 from sd_mhqa.transformer import EncoderLayer as Transformer_layer
-from sd_mhqa.hotpotqa_evalutils import compute_loss
+from sd_mhqa.hotpotqa_data_loader import IGNORE_INDEX
+import logging
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end'] - 1
@@ -148,5 +149,37 @@ class SDModel(nn.Module):
                 return start, end, q_type, para_predictions, sent_predictions
         else:
             start, end, q_type = predictions
-            loss_list = compute_loss(self.config, batch, start, end, para_predictions, sent_predictions, q_type)
+            loss_list = self.compute_loss(self.config, batch, start, end, para_predictions, sent_predictions, q_type)
             return loss_list
+
+    def compute_loss(self, args, batch, start, end, para, sent, q_type):
+        criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
+        loss_span = args.ans_lambda * (criterion(start, batch['y1']) + criterion(end, batch['y2']))
+        loss_type = args.type_lambda * criterion(q_type, batch['q_type'])
+
+        sent_pred = sent.view(-1, 2)
+        sent_gold = batch['is_support'].long().view(-1)
+        loss_sup = args.sent_lambda * criterion(sent_pred, sent_gold.long())
+
+        loss_para = args.para_lambda * criterion(para.view(-1, 2), batch['is_gold_para'].long().view(-1))
+
+        loss = loss_span + loss_type + loss_sup + loss_para
+
+        if loss_span > 1000:
+            logging.info('Hhhhhhhhhhhhhhhhh {}'.format((loss_span, loss_type, loss_sup, loss_para)))
+            start_list = batch['y1'].tolist()
+            mask = batch['context_mask']
+            for x_idx, x in enumerate(start_list):
+                print(x, start[x_idx][x], mask[x_idx][x])
+            # logging.info(start)
+            # logging.info(batch['y1'])
+            # logging.info(criterion(start, batch['y1']))
+            logging.info('*' * 10)
+            # logging.info(end)
+            end_list = batch['y2'].tolist()
+            for x_idx, x in enumerate(end_list):
+                print(x, end[x_idx][x], mask[x_idx][x])
+            # logging.info(batch['y2'])
+            # logging.info(criterion(end, batch['y2']))
+
+        return loss, loss_span, loss_type, loss_sup, loss_para
