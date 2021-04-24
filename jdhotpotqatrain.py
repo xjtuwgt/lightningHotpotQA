@@ -129,6 +129,16 @@ logging.info('*' * 75)
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 start_epoch = 0
 best_joint_f1 = 0.0
+
+if isinstance(model, torch.nn.parallel.DistributedDataParallel):
+    torch.save({k: v.cpu() for k, v in model.module.encoder.state_dict().items()},
+               join(args.exp_name, f'encoder_test.pkl'))
+else:
+    torch.save({k: v.cpu() for k, v in model.encoder.state_dict().items()},
+               join(args.exp_name, f'encoder_test.pkl'))
+torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+                           join(args.exp_name, f'model_test.pkl'))
+
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
