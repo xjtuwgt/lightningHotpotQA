@@ -6,7 +6,6 @@ from csr_mhqa.utils import MODEL_CLASSES
 from sd_mhqa.hotpotqaUtils import case_to_features
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 import shutil
-
 import torch
 import os
 import json
