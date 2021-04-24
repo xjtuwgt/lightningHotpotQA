@@ -608,7 +608,7 @@ def data_loader_checker(para_file: str,
     #         shuffle=False,
     #         num_workers=5,
     #         collate_fn=HotpotTestDataset.collate_fn)
-    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_drop_ratio=0.25)
+    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_drop_ratio=-1)
 
     dev_data_loader = DataLoader(dataset=hotpotdata, batch_size=8,
             shuffle=False,
