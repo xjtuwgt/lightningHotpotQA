@@ -105,9 +105,9 @@ class PositionwiseFeedForward(nn.Module):
         return x
 
 
-class EncoderLayer(nn.Module):
+class TransformerLayer(nn.Module):
     def __init__(self, d_model, ffn_hidden, n_head, drop_prob=0.1, attn_drop_prob=0.1):
-        super(EncoderLayer, self).__init__()
+        super(TransformerLayer, self).__init__()
         self.attention = MultiHeadedAttention(d_model=d_model, h=n_head, dropout=attn_drop_prob)
         self.norm1 = LayerNorm(d_model=d_model)
         self.dropout1 = nn.Dropout(p=drop_prob)

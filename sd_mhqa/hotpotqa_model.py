@@ -4,7 +4,7 @@ import torch
 from models.layers import OutputLayer
 from torch import Tensor
 import numpy as np
-from sd_mhqa.transformer import EncoderLayer as Transformer_layer
+from sd_mhqa.transformer import TransformerLayer
 from csr_mhqa.utils import load_encoder_model
 from sd_mhqa.hotpotqa_data_loader import IGNORE_INDEX
 import logging
@@ -108,16 +108,15 @@ class SDModel(nn.Module):
         self.input_dim = config.input_dim
         self.hidden_dim = config.transformer_hidden_dim
         self.head_num = config.transformer_head_num
-        self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
-        self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=self.head_num)
-
         self.encoder, _ = load_encoder_model(self.config.encoder_name_or_path, self.config.model_type)
         if self.config.fine_tuned_encoder is not None:
             encoder_path = join(self.config.fine_tuned_encoder_path, self.config.fine_tuned_encoder, 'encoder.pkl')
             logging.info("Loading encoder from: {}".format(encoder_path))
             self.encoder.load_state_dict(torch.load(encoder_path))
             logging.info("Loading encoder completed")
-
+        self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
+        self.transformer_layer = TransformerLayer(d_model=self.hidden_dim, ffn_hidden=4 * self.hidden_dim,
+                                                  n_head=self.head_num)
         self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
@@ -138,7 +137,7 @@ class SDModel(nn.Module):
         context_encoding = batch['context_encoding']
         input_state = self.linear_map(context_encoding)
         batch_mask = batch['context_mask'].unsqueeze(1)
-        input_state = self.transformer_encoder.forward(x=input_state, src_mask=batch_mask)
+        input_state = self.transformer_layer.forward(x=input_state, src_mask=batch_mask)
         ####++++++++++++++++++++++++++++++++++++++
         ####++++++++++++++++++++++++++++++++++++++
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
