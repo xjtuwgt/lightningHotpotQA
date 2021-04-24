@@ -354,6 +354,8 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
         trim_para_spans = [(_[0], _[1]) for _ in trim_para_spans]
 
         largest_sent_idx = largest_valid_index(sent_spans, limit)
+        # trim_sent_spans = []
+        # trim_sent_spans += sent_spans[:largest_sent_idx]
         largest_sent_start, largest_sent_end = sent_spans[largest_sent_idx]
         trim_sent_spans = []
         if (limit - largest_sent_start) < (largest_sent_end - largest_sent_start) * 0.8:
