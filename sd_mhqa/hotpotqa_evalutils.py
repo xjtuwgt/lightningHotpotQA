@@ -128,13 +128,13 @@ def jd_hotpotqa_eval_model(args, model, dataloader, example_dict, prediction_fil
 
 def get_lr_with_optimizer(model, args):
     learning_rate = args.learning_rate
-    if args.optimizer == 'Adam':
-        if args.learning_rate_schema == 'fixed':
-            optimizer = get_optimizer(model, args, learning_rate)
-        else:
-            raise 'Wrong lr setting method = {}'.format(args.learning_rate_schema)
-    # else:
-    #     optimizer = get_rec_adam_optimizer(model=model, args=args)
+    # if args.optimizer == 'Adam':
+    #     if args.learning_rate_schema == 'fixed':
+    #         optimizer = get_optimizer(model, args, learning_rate)
+    #     else:
+    #         raise 'Wrong lr setting method = {}'.format(args.learning_rate_schema)
+    # # else:
+    # #     optimizer = get_rec_adam_optimizer(model=model, args=args)
     optimizer = get_optimizer(model, args, learning_rate)
     return optimizer
 
