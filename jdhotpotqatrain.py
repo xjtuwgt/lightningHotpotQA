@@ -55,7 +55,7 @@ args.eval_batch_size = 2
 helper = DataHelper(sep_token_id=sep_token_id, config=args)
 
 # Set datasets
-train_dataloader = helper.hotpot_val_dataloader
+train_dataloader = helper.hotpot_train_dataloader
 dev_example_dict = helper.dev_example_dict
 dev_dataloader = helper.hotpot_val_dataloader
 
