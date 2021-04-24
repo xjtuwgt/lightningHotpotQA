@@ -87,6 +87,8 @@ class HotpotDataset(Dataset):
         supp_sent_ids = [supp_sent for supp_sent in case.sup_fact_id if supp_sent < len(trim_sent_spans)] ## support fact ids
         if len(supp_sent_ids) <= 0 or len(supp_para_ids) <=0:
             print('##' * 50)
+            print('supp para {}'.format(supp_para_ids))
+            print('supp sent {}'.format(supp_sent_ids))
         is_support_sent = torch.zeros(self.max_sent_num, dtype=torch.float)
         for s_sent_id in supp_sent_ids:
             is_support_sent[s_sent_id] = 1
