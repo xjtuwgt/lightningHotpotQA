@@ -139,6 +139,8 @@ else:
 torch.save({k: v.cpu() for k, v in model.state_dict().items()},
                            join(args.exp_name, f'model_test.pkl'))
 
+print('saving test completed')
+
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 train_iterator = trange(start_epoch, start_epoch+int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
 for epoch in train_iterator:
