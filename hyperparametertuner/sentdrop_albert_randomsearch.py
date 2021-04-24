@@ -61,7 +61,7 @@ def HypeParameterSpace():
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['albert']}
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['albert/albert-xxlarge-v2_hotpotqa']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['albert-xxlarge-v2']}
-    optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['RecAdam']} #RecAdam
+    optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['Adam']} #RecAdam
     lr_scheduler = {'name': 'lr_scheduler', 'type': 'choice', 'values': ['cosine']}
     #++++++++++++++++++++++++++++++++++
     search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num, layer_wise_lr_decay,
