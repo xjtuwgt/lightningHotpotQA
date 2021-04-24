@@ -608,7 +608,7 @@ def data_loader_checker(para_file: str,
     #         shuffle=False,
     #         num_workers=5,
     #         collate_fn=HotpotTestDataset.collate_fn)
-    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_drop_ratio=-1)
+    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_drop_ratio=0.25)
 
     dev_data_loader = DataLoader(dataset=hotpotdata, batch_size=8,
             shuffle=False,
@@ -623,8 +623,8 @@ def data_loader_checker(para_file: str,
         y1= batch['y1']
         y2= batch['y2']
         batch_size = input_ids.shape[0]
-        print(y1.shape)
-        print(y2.shape)
+        # print(y1.shape)
+        # print(y2.shape)
         for i in range(batch_size):
             inp_id_i = input_ids[i]
             y1_i = y1[i]
@@ -633,7 +633,7 @@ def data_loader_checker(para_file: str,
             orig_answer = example_dict[ids[i]].answer_text
             if y1_i > 0:
                 ans_ids = inp_id_i[y1_i:y2_i]
-                print('deco {} \t orig {}'.format(tokenizer.decode(ans_ids), orig_answer))
+                # print('deco {} \t orig {}'.format(tokenizer.decode(ans_ids), orig_answer))
 
 
 
