@@ -65,7 +65,6 @@ dev_dataloader = helper.hotpot_val_dataloader
 model = SDModel(config=args)
 model.to(args.device)
 # #########################################################################
-# #########################################################################
 # # Get Optimizer
 # ##########################################################################
 if args.max_steps > 0:
@@ -75,6 +74,15 @@ else:
     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
 optimizer = get_lr_with_optimizer(model=model, args=args)
+
+if args.fp16:
+    try:
+        from apex import amp
+    except ImportError:
+        raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
+    models, optimizer = amp.initialize([model], optimizer, opt_level=args.fp16_opt_level)
+    assert len(models) == 1
+    model = models[0]
 
 # Distributed training (should be after apex fp16 initialization)
 if args.local_rank != -1:
@@ -136,13 +144,18 @@ for epoch in train_iterator:
 
         if args.n_gpu > 1:
             for loss in loss_list:
-                loss = loss.mean() # mean() to average on multi-gpu parallel training
+                loss = loss.mean()  # mean() to average on multi-gpu parallel training
         if args.gradient_accumulation_steps > 1:
             for loss in loss_list:
                 loss = loss / args.gradient_accumulation_steps
         # print(loss_list)
-        loss_list[0].backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+        if args.fp16:
+            with amp.scale_loss(loss_list[0], optimizer) as scaled_loss:
+                scaled_loss.backward()
+            torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), args.max_grad_norm)
+        else:
+            loss_list[0].backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
 
         for idx in range(len(loss_name)):
             if not isinstance(loss_list[idx], int):
@@ -157,21 +170,23 @@ for epoch in train_iterator:
             global_step += 1
 
             if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
-                avg_loss = [ (_tr_loss - _logging_loss) / (args.logging_steps*args.gradient_accumulation_steps)
-                             for (_tr_loss, _logging_loss) in zip(tr_loss, logging_loss)]
+                avg_loss = [(_tr_loss - _logging_loss) / (args.logging_steps * args.gradient_accumulation_steps)
+                            for (_tr_loss, _logging_loss) in zip(tr_loss, logging_loss)]
 
-                loss_str = "step[{0:6}] " + " ".join(['%s[{%d:.5f}]' % (loss_name[i], i+1) for i in range(len(avg_loss))])
+                loss_str = "step[{0:6}] " + " ".join(
+                    ['%s[{%d:.5f}]' % (loss_name[i], i + 1) for i in range(len(avg_loss))])
                 logger.info(loss_str.format(global_step, *avg_loss))
+
                 # tensorboard
                 tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
                 for i in range(len(loss_name)):
-                    tb_writer.add_scalar(loss_name[i], (tr_loss[i]- logging_loss[i])/(args.logging_steps * args.gradient_accumulation_steps), global_step)
+                    tb_writer.add_scalar(loss_name[i], (tr_loss[i] - logging_loss[i]) / (
+                                args.logging_steps * args.gradient_accumulation_steps), global_step)
                 logging_loss = tr_loss.copy()
         if args.max_steps > 0 and global_step > args.max_steps:
             epoch_iterator.close()
             break
-
-        ##++++++++++++++++++++++++++++
+        ##++++++
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
         ########################+++++++
@@ -180,8 +195,8 @@ for epoch in train_iterator:
                 output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step + 1}.json')
                 output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step + 1}.txt')
                 metrics, threshold = jd_hotpotqa_eval_model(args, model,
-                                                dev_dataloader, dev_example_dict,
-                                                output_pred_file, output_eval_file, args.dev_gold_file)
+                                                        dev_dataloader, dev_example_dict,
+                                                        output_pred_file, output_eval_file, args.dev_gold_file)
                 if metrics['joint_f1'] >= best_joint_f1:
                     best_joint_f1 = metrics['joint_f1']
                     torch.save({'epoch': epoch + 1,
@@ -206,29 +221,33 @@ for epoch in train_iterator:
                     tb_writer.add_scalar(key, val, epoch)
         ########################+++++++
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
-        output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch+1}.json')
-        output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch+1}.txt')
+        output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.json')
+        output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.txt')
         metrics, threshold = jd_hotpotqa_eval_model(args, model,
-                                        dev_dataloader, dev_example_dict,
-                                        output_pred_file, output_eval_file, args.dev_gold_file)
+                                                dev_dataloader, dev_example_dict,
+                                                output_pred_file, output_eval_file, args.dev_gold_file)
+        # metrics, threshold = eval_model(args, encoder, model,
+        #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
+        #                                 output_pred_file, output_eval_file, args.dev_gold_file)
+
         if metrics['joint_f1'] >= best_joint_f1:
             best_joint_f1 = metrics['joint_f1']
-            torch.save({'epoch': epoch+1,
+            torch.save({'epoch': epoch + 1,
                         'lr': scheduler.get_lr()[0],
                         'encoder': 'encoder.pkl',
                         'model': 'model.pkl',
                         'best_joint_f1': best_joint_f1,
                         'threshold': threshold},
                        join(args.exp_name, f'cached_config.bin')
-            )
+                       )
             logger.info('Current best joint_f1 = {} with best threshold = {}'.format(best_joint_f1, threshold))
             for key, val in metrics.items():
                 logger.info("Current {} = {}".format(key, val))
             logger.info('*' * 100)
         torch.save({k: v.cpu() for k, v in model.encoder.state_dict().items()},
-                    join(args.exp_name, f'encoder_{epoch+1}.pkl'))
+                   join(args.exp_name, f'encoder_{epoch + 1}.pkl'))
         torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                    join(args.exp_name, f'model_{epoch+1}.pkl'))
+                   join(args.exp_name, f'model_{epoch + 1}.pkl'))
 
         for key, val in metrics.items():
             tb_writer.add_scalar(key, val, epoch)
