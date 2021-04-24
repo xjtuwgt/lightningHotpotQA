@@ -13,7 +13,6 @@ from utils.jdutils import get_lr_with_optimizer
 from sd_mhqa.hotpotqa_dump_features import get_cached_filename
 from csr_mhqa.utils import load_encoder_model, MODEL_CLASSES
 from sd_mhqa.hotpotqa_datahelper import DataHelper
-from sd_mhqa.hotpotqa_evalutils import compute_loss
 from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
 from envs import DATASET_FOLDER
 from sd_mhqa.hotpotqa_model import SDModel

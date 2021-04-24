@@ -1,5 +1,3 @@
-from torch import nn
-from sd_mhqa.hotpotqa_data_loader import IGNORE_INDEX
 import logging
 import numpy as np
 from tqdm import tqdm
@@ -13,7 +11,6 @@ import torch
 import os
 import json
 logger = logging.getLogger(__name__)
-
 
 
 def convert_to_tokens(tokenizer, examples, ids, y1, y2, q_type_prob):
