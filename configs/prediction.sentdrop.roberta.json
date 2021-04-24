@@ -1,9 +1,9 @@
 {
-    "exp_name": "sr_albert_xxlarge_v2_hotpotqa",
-    "model_type": "albert",
+    "exp_name": "sr_roberta_xxlarge_v2_hotpotqa",
+    "model_type": "roberta",
     "num_train_epochs": 5,
-    "encoder_name_or_path": "albert-xxlarge-v2",
-    "fine_tuned_encoder": "albert/albert-xxlarge-v2_hotpotqa",
+    "encoder_name_or_path": "roberta-large",
+    "fine_tuned_encoder": "roberta/roberta-large_hgn",
     "devf_type": "long_low",
     "max_para_num": 4,
     "max_sent_num": 100,
