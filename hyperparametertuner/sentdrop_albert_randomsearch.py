@@ -49,7 +49,6 @@ def HypeParameterSpace():
     layer_wise_lr_decay = {'name': 'layer_wise_lr_decay', 'type': 'choice', 'values': [0.9]}
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1,2,4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5]} ##
-    frozen_layer_num = {'name': 'frozen_layer_number', 'type': 'choice', 'values': [0]}
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [8]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
@@ -64,7 +63,7 @@ def HypeParameterSpace():
     optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['Adam']} #RecAdam
     lr_scheduler = {'name': 'lr_scheduler', 'type': 'choice', 'values': ['cosine']}
     #++++++++++++++++++++++++++++++++++
-    search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, frozen_layer_num, layer_wise_lr_decay,
+    search_space = [learning_rate, per_gpu_train_batch_size, gradient_accumulation_steps, sent_lambda, layer_wise_lr_decay,
                     lr_scheduler, fine_tuned_encoder, daug_type, devf_type,  optimizer, trans_drop, num_train_epochs,
                     model_type, encoder_name_or_path, transformer_hidden_dim, transformer_head_num, sent_drop_ratio]
     search_space = dict((x['name'], x) for x in search_space)
