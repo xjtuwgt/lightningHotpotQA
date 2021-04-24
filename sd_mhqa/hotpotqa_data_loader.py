@@ -27,14 +27,10 @@ class HotpotDataset(Dataset):
             case_to_features(case=case, train_dev=True)
         for sent_span in sent_spans:
             assert sent_span[0] <= sent_span[1], '{}'.format(sent_span)
-            if sent_span[0] == sent_span[1]:
-                print(sent_span)
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(
             doc_input_ids, query_spans, para_spans, sent_spans, limit=self.max_seq_length, sep_token_id=self.sep_token_id, ans_spans=ans_spans)
         for sent_span in trim_sent_spans:
             assert sent_span[0] <= sent_span[1], '{}'.format(sent_span)
-            if sent_span[0] == sent_span[1]:
-                print(sent_span)
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         trim_doc_input_length = len(trim_doc_input_ids)
         trim_doc_input_mask = [1] * trim_doc_input_length

@@ -2,6 +2,7 @@ import logging
 import sys
 import torch
 import os
+
 from os.path import join
 from tqdm import tqdm, trange
 from tensorboardX import SummaryWriter
@@ -147,7 +148,7 @@ for epoch in train_iterator:
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         loss_list = model(batch, return_yp=True)
         del batch
-        print(global_step, step)
+        logging.info(global_step, step)
         if args.n_gpu > 1:
             for loss in loss_list:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
