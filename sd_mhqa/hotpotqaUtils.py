@@ -344,18 +344,26 @@ def trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans, limit, s
             return doc_input_ids, query_spans, para_spans, sent_spans
     else:
         trim_doc_input_ids = []
-        trim_doc_input_ids += doc_input_ids[:(limit-1)]
+        trim_doc_input_ids += doc_input_ids[:(limit - 1)]
         trim_doc_input_ids += [sep_token_id]
-        largest_para_idx = largest_valid_index(para_spans, limit)
-        trim_para_spans = []
-        trim_para_spans += para_spans[:(largest_para_idx+1)]
-        trim_para_spans = [[_[0], _[1]] for _ in trim_para_spans]
-        trim_para_spans[largest_para_idx][1] = limit
-        trim_para_spans = [(_[0], _[1]) for _ in trim_para_spans]
-
+        trim_seq_len = len(trim_doc_input_ids)
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
         largest_sent_idx = largest_valid_index(sent_spans, limit)
         trim_sent_spans = []
         trim_sent_spans += sent_spans[:largest_sent_idx]
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        largest_para_idx = largest_valid_index(para_spans, trim_seq_len)
+        trim_para_spans = []
+        trim_para_spans += para_spans[:largest_para_idx]
+        if largest_para_idx < len(para_spans):
+            if para_spans[largest_para_idx][0] < trim_seq_len:
+                trim_para_spans += [(para_spans[largest_para_idx][0], trim_seq_len)]
+        # trim_para_spans = [[_[0], _[1]] for _ in trim_para_spans]
+        # trim_para_spans[largest_para_idx][1] = limit
+        # trim_para_spans = [(_[0], _[1]) for _ in trim_para_spans]
+        # largest_sent_idx = largest_valid_index(sent_spans, limit)
+        # trim_sent_spans = []
+        # trim_sent_spans += sent_spans[:largest_sent_idx]
         # largest_sent_start, largest_sent_end = sent_spans[largest_sent_idx]
         # trim_sent_spans = []
         # if (limit - largest_sent_start) < (largest_sent_end - largest_sent_start) * 0.8:
