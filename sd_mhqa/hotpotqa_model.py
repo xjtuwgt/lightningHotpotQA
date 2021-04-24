@@ -5,8 +5,10 @@ from models.layers import OutputLayer
 from torch import Tensor
 import numpy as np
 from sd_mhqa.transformer import EncoderLayer as Transformer_layer
+from csr_mhqa.utils import load_encoder_model
 from sd_mhqa.hotpotqa_data_loader import IGNORE_INDEX
 import logging
+from os.path import join
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end'] - 1
@@ -109,17 +111,23 @@ class SDModel(nn.Module):
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
         self.transformer_encoder = Transformer_layer(d_model=self.hidden_dim, ffn_hidden=4*self.hidden_dim, n_head=self.head_num)
 
+        self.encoder, _ = load_encoder_model(self.config.encoder_name_or_path, self.config.model_type)
+        if self.config.fine_tuned_encoder is not None:
+            encoder_path = join(self.config.fine_tuned_encoder_path, self.config.fine_tuned_encoder, 'encoder.pkl')
+            print("Loading encoder from: {}".format(encoder_path))
+            self.encoder.load_state_dict(torch.load(encoder_path))
+
         self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
-    def forward(self, encoder, batch, return_yp=False, return_cls=False):
+    def forward(self, batch, return_yp=False, return_cls=False):
         ####++++++++++++++++++++++++++++++++++++++
         ###############################################################################################################
         inputs = {'input_ids': batch['context_idxs'],
                   'attention_mask': batch['context_mask'],
                   'token_type_ids': batch['segment_idxs'] if self.config.model_type in ['bert', 'xlnet'] else None}  # XLM don't use segment_ids
         ####++++++++++++++++++++++++++++++++++++++
-        outputs, _ = encoder(**inputs)
+        outputs, _ = self.encoder(**inputs)
         print(type(outputs))
         print(len(outputs))
         batch['context_encoding'] = outputs
