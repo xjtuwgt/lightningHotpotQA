@@ -203,7 +203,7 @@ for epoch in train_iterator:
     epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
 
     for step, batch in enumerate(epoch_iterator):
-        encoder.train()
+        # encoder.train()
         model.train()
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -212,7 +212,8 @@ for epoch in train_iterator:
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # start, end, q_type, paras, sents, yp1, yp2 = model(encoder, batch, return_yp=True)
         # loss_list = compute_loss(args, batch, start, end, paras, sents, q_type)
-        loss_list = model(encoder, batch, return_yp=True)
+        # loss_list = model(encoder, batch, return_yp=True)
+        loss_list = model(batch, return_yp=True)
         print(loss_list)
         del batch
 
