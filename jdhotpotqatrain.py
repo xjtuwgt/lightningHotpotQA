@@ -173,7 +173,7 @@ for epoch in train_iterator:
             scheduler.step()  # Update learning rate schedule
             model.zero_grad()
             global_step += 1
-
+            print(global_step)
             if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 avg_loss = [(_tr_loss - _logging_loss) / (args.logging_steps*args.gradient_accumulation_steps)
                              for (_tr_loss, _logging_loss) in zip(tr_loss, logging_loss)]
