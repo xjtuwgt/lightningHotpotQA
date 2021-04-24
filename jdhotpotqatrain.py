@@ -7,7 +7,7 @@ from tqdm import tqdm, trange
 from tensorboardX import SummaryWriter
 
 from sd_mhqa.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from utils.jdutils import get_lr_with_optimizer
+from sd_mhqa.hotpotqa_evalutils import get_lr_with_optimizer
 from csr_mhqa.utils import MODEL_CLASSES
 from sd_mhqa.hotpotqa_datahelper import DataHelper
 from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
@@ -74,9 +74,7 @@ if args.max_steps > 0:
 else:
     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
-optimizer = get_lr_with_optimizer(encoder=encoder, model=model, args=args)
-
-optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
+optimizer = get_lr_with_optimizer(model=model, args=args)
 
 # Distributed training (should be after apex fp16 initialization)
 if args.local_rank != -1:
