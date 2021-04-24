@@ -28,7 +28,7 @@ class DataHelper:
 
     @property
     def train_example_file(self):
-        return self.get_example_file('dev_distractor', self.config.daug_type)
+        return self.get_example_file('train', self.config.daug_type)
 
     @property
     def dev_example_file(self):
