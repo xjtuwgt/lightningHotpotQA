@@ -6,10 +6,10 @@ from utils.gpu_utils import single_free_cuda
 from os.path import join
 import torch
 
-# from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-from plmodels.jd_argument_parser import default_dev_parser, complete_default_dev_parser, json_to_argv
-from plmodels.pldata_processing import Example, InputFeatures, DataHelper
+
+from sd_mhqa.hotpotqa_argument_parser import default_dev_parser, json_to_argv, complete_default_dev_parser
 from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
+from sd_mhqa.hotpotqa_datahelper import DataHelper
 
 
 from sd_mhqa.hotpotqa_model import SDModel
@@ -44,7 +44,10 @@ for a in args_dict:
 #########################################################################
 # Read Data
 ##########################################################################
-helper = DataHelper(gz=True, config=args)
+_, _, tokenizer_class = MODEL_CLASSES[args.model_type]
+tokenizer = tokenizer_class.from_pretrained(args.encoder_name_or_path, do_lower_case=True)
+sep_token_id = tokenizer.sep_token_id
+helper = DataHelper(sep_token_id=sep_token_id, gz=True, config=args)
 
 # Set datasets
 dev_example_dict = helper.dev_example_dict
@@ -55,13 +58,11 @@ dev_dataloader = helper.hotpot_val_dataloader
 # #########################################################################
 # # Initialize Model
 # ##########################################################################
-config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-config = config_class.from_pretrained(args.encoder_name_or_path)
 
-encoder_path = join(args.exp_name, args.encoder_name) ## replace encoder.pkl as encoder
-model_path = join(args.exp_name, args.model_name) ## replace encoder.pkl as encoder
-logger.info("Loading encoder from: {}".format(encoder_path))
-logger.info("Loading model from: {}".format(model_path))
+# encoder_path = join(args.exp_name, args.encoder_name) ## replace encoder.pkl as encoder
+# model_path = join(args.exp_name, args.model_name) ## replace encoder.pkl as encoder
+# logger.info("Loading encoder from: {}".format(encoder_path))
+# logger.info("Loading model from: {}".format(model_path))
 
 if torch.cuda.is_available():
     device_ids, _ = single_free_cuda()
@@ -72,14 +73,14 @@ else:
 model = SDModel(config=args)
 
 
-if model_path is not None:
-    state_dict = torch.load(model_path)
-    print('loading parameter from {}'.format(model_path))
-    for key in list(state_dict.keys()):
-        if 'module.' in key:
-            state_dict[key.replace('module.', '')] = state_dict[key]
-            del state_dict[key]
-    model.load_state_dict(state_dict)
+# if model_path is not None:
+#     state_dict = torch.load(model_path)
+#     print('loading parameter from {}'.format(model_path))
+#     for key in list(state_dict.keys()):
+#         if 'module.' in key:
+#             state_dict[key.replace('module.', '')] = state_dict[key]
+#             del state_dict[key]
+#     model.load_state_dict(state_dict)
 
 model.to(args.device)
 

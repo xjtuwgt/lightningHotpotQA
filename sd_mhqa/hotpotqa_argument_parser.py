@@ -432,6 +432,12 @@ def default_dev_parser():
     # check point path or name
     parser.add_argument("--encoder_name", type=str, default=None)
     parser.add_argument("--model_name", type=str, default=None)
+
+    ##++++++++++++++++++
+    parser.add_argument("--transformer_hidden_dim", type=int, default=512)
+    parser.add_argument("--transformer_head_num", type=int, default=8)
+    parser.add_argument("--sent_drop_ratio", type=float, default=0.25)
+    ##++++++++++++++++++
     return parser
 
 def complete_default_dev_parser(args):
