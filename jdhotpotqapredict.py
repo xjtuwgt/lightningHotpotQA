@@ -51,8 +51,6 @@ helper = DataHelper(sep_token_id=sep_token_id, gz=True, config=args)
 
 # Set datasets
 dev_example_dict = helper.dev_example_dict
-dev_feature_dict = helper.dev_feature_dict
-# dev_dataloader = helper.dev_loader
 dev_dataloader = helper.hotpot_val_dataloader
 
 # #########################################################################
