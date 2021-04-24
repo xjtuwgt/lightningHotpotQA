@@ -50,7 +50,7 @@ def HypeParameterSpace():
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1,2,4]}
     sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5]} ##
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
-    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [8]}
+    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [2]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_low']} #
     transformer_hidden_dim = {'name': 'transformer_hidden_dim', 'type': 'choice', 'values': [512]}
