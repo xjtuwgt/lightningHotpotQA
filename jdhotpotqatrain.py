@@ -89,8 +89,12 @@ else:
 #                                                                    num_training_steps=t_total_steps)
 # else:
 #     raise '{} is not supported'.format(args.lr_scheduler)
-
-optimizer, scheduler = model.fixed_learning_rate_optimizers(total_steps=t_total_steps)
+# ##########################################################################
+if args.optimizer == 'RecAdam':
+    optimizer, scheduler = model.rec_adam_learning_optimizer(total_steps=t_total_steps)
+else:
+    optimizer, scheduler = model.fixed_learning_rate_optimizers(total_steps=t_total_steps)
+# ##########################################################################
 
 if args.fp16:
     try:
