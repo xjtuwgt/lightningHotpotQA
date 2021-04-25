@@ -3,6 +3,7 @@ from torch.autograd import Variable
 import torch
 from models.layers import OutputLayer
 from torch import Tensor
+import torch.nn.functional as F
 import numpy as np
 from sd_mhqa.transformer import TransformerLayer
 from csr_mhqa.utils import load_encoder_model
