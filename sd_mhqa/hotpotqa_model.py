@@ -188,7 +188,7 @@ class UnifiedSDModel(nn.Module):
             {
                 "params": [p for n, p in self.named_parameters() if
                            (p.requires_grad) and (not any(nd in n for nd in no_decay))],
-                "weight_decay": self.hparams.weight_decay,
+                "weight_decay": self.config.weight_decay,
             },
             {
                 "params": [p for n, p in self.named_parameters() if
