@@ -12,7 +12,7 @@ from sd_mhqa.hotpotqa_evalutils import get_lr_with_optimizer
 from csr_mhqa.utils import MODEL_CLASSES
 from sd_mhqa.hotpotqa_datahelper import DataHelper
 from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
-from sd_mhqa.hotpotqa_model import SDModel
+from sd_mhqa.hotpotqa_model import SDModel, UnifiedSDModel
 from hgntransformers import get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -62,7 +62,8 @@ dev_dataloader = helper.hotpot_val_dataloader
 # #########################################################################
 # # Initialize Model
 # ##########################################################################
-model = SDModel(config=args)
+# model = SDModel(config=args)
+model = UnifiedSDModel(config=args)
 model.to(args.device)
 # #########################################################################
 # # Get Optimizer
