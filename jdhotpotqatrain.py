@@ -142,6 +142,7 @@ torch.save({k: v.cpu() for k, v in model.state_dict().items()},
 
 print('saving test completed')
 model_dict = torch.load(join(args.exp_name, f'model_test.pkl'))
+print(model_dict)
 
 model.load_state_dict(model_dict)
 
