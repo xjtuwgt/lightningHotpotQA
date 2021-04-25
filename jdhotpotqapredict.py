@@ -12,7 +12,7 @@ from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
 from sd_mhqa.hotpotqa_datahelper import DataHelper
 
 
-from sd_mhqa.hotpotqa_model import SDModel
+from sd_mhqa.hotpotqa_model import SDModel, UnifiedSDModel
 from model_envs import MODEL_CLASSES
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -68,7 +68,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device('cpu')
 
-model = SDModel(config=args)
+model = UnifiedSDModel(config=args)
 
 
 # if model_path is not None:
@@ -81,7 +81,6 @@ model = SDModel(config=args)
 #     model.load_state_dict(state_dict)
 
 model.to(args.device)
-
 model.eval()
 
 #########################################################################
