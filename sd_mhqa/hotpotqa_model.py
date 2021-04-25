@@ -9,6 +9,8 @@ from csr_mhqa.utils import load_encoder_model
 from sd_mhqa.hotpotqa_data_loader import IGNORE_INDEX
 import logging
 from os.path import join
+from hgntransformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
+from utils.optimizerutils import RecAdam
 
 def para_sent_state_feature_extractor(batch, input_state: Tensor):
     sent_start, sent_end = batch['sent_start'], batch['sent_end']
@@ -178,6 +180,97 @@ class UnifiedSDModel(nn.Module):
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
         return self.model.forward(batch=batch, return_yp=return_yp, return_cls=return_cls)
+
+    def fixed_learning_rate_optimizers(self, total_steps):
+        "Prepare optimizer and schedule (linear warmup and decay)"
+        no_decay = ["bias", "LayerNorm.weight"]
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in self.named_parameters() if
+                           (p.requires_grad) and (not any(nd in n for nd in no_decay))],
+                "weight_decay": self.hparams.weight_decay,
+            },
+            {
+                "params": [p for n, p in self.named_parameters() if
+                           (p.requires_grad) and (any(nd in n for nd in no_decay))],
+                "weight_decay": 0.0,
+            }
+        ]
+        optimizer = AdamW(optimizer_grouped_parameters, lr=self.config.learning_rate, eps=self.config.adam_epsilon)
+
+        if self.config.lr_scheduler == 'linear':
+            scheduler = get_linear_schedule_with_warmup(optimizer,
+                                                        num_warmup_steps=self.config.warmup_steps,
+                                                        num_training_steps=total_steps)
+        elif self.config.lr_scheduler == 'cosine':
+            scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                        num_warmup_steps=self.config.warmup_steps,
+                                                        num_training_steps=total_steps)
+        elif self.config.lr_scheduler == 'cosine_restart':
+            scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                           num_warmup_steps=self.config.warmup_steps,
+                                                                           num_training_steps=total_steps)
+        else:
+            raise '{} is not supported'.format(self.config.lr_scheduler)
+        return [optimizer], [scheduler]
+
+    def rec_adam_learning_optimizer(self, total_steps):
+        no_decay = ["bias", "LayerNorm.weight"]
+        new_model = self.model
+        args = self.config
+        pretrained_model = self.encoder
+        optimizer_grouped_parameters = [
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           not any(nd in n for nd in no_decay) and args.model_type in n],
+                "weight_decay": args.weight_decay,
+                "anneal_w": args.recadam_anneal_w,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    not any(nd in p_n for nd in no_decay) and args.model_type in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           not any(nd in n for nd in no_decay) and args.model_type not in n],
+                "weight_decay": args.weight_decay,
+                "anneal_w": 0.0,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    not any(nd in p_n for nd in no_decay) and args.model_type not in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           any(nd in n for nd in no_decay) and args.model_type in n],
+                "weight_decay": 0.0,
+                "anneal_w": args.recadam_anneal_w,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    any(nd in p_n for nd in no_decay) and args.model_type in p_n]
+            },
+            {
+                "params": [p for n, p in new_model.named_parameters() if
+                           any(nd in n for nd in no_decay) and args.model_type not in n],
+                "weight_decay": 0.0,
+                "anneal_w": 0.0,
+                "pretrain_params": [p_p for p_n, p_p in pretrained_model.named_parameters() if
+                                    any(nd in p_n for nd in no_decay) and args.model_type not in p_n]
+            }
+        ]
+        optimizer = RecAdam(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon,
+                            anneal_fun=args.recadam_anneal_fun, anneal_k=args.recadam_anneal_k,
+                            anneal_t0=args.recadam_anneal_t0, pretrain_cof=args.recadam_pretrain_cof)
+        if self.config.lr_scheduler == 'linear':
+            scheduler = get_linear_schedule_with_warmup(optimizer,
+                                                        num_warmup_steps=self.config.warmup_steps,
+                                                        num_training_steps=total_steps)
+        elif self.config.lr_scheduler == 'cosine':
+            scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                        num_warmup_steps=self.config.warmup_steps,
+                                                        num_training_steps=total_steps)
+        elif self.config.lr_scheduler == 'cosine_restart':
+            scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                           num_warmup_steps=self.config.warmup_steps,
+                                                                           num_training_steps=total_steps)
+        else:
+            raise '{} is not supported'.format(self.config.lr_scheduler)
+        return [optimizer], [scheduler]
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
