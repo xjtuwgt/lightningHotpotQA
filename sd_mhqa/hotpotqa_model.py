@@ -212,7 +212,7 @@ class UnifiedSDModel(nn.Module):
                                                                            num_training_steps=total_steps)
         else:
             raise '{} is not supported'.format(self.config.lr_scheduler)
-        return [optimizer], [scheduler]
+        return optimizer, scheduler
 
     def rec_adam_learning_optimizer(self, total_steps):
         no_decay = ["bias", "LayerNorm.weight"]
@@ -270,10 +270,8 @@ class UnifiedSDModel(nn.Module):
                                                                            num_training_steps=total_steps)
         else:
             raise '{} is not supported'.format(self.config.lr_scheduler)
-        return [optimizer], [scheduler]
+        return optimizer, scheduler
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class SDModel(nn.Module):
     """

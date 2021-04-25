@@ -69,12 +69,28 @@ model.to(args.device)
 # # Get Optimizer
 # ##########################################################################
 if args.max_steps > 0:
-    t_total = args.max_steps
+    t_total_steps = args.max_steps
     args.num_train_epochs = args.max_steps // (len(train_dataloader) // args.gradient_accumulation_steps) + 1
 else:
-    t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
+    t_total_steps = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
 optimizer = get_lr_with_optimizer(model=model, args=args)
+if args.lr_scheduler == 'linear':
+    scheduler = get_linear_schedule_with_warmup(optimizer,
+                                            num_warmup_steps=args.warmup_steps,
+                                            num_training_steps=t_total_steps)
+elif args.lr_scheduler == 'cosine':
+    scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                num_warmup_steps=args.warmup_steps,
+                                                num_training_steps=t_total_steps)
+elif args.lr_scheduler == 'cosine_restart':
+    scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
+                                                                   num_warmup_steps=args.warmup_steps,
+                                                                   num_training_steps=t_total_steps)
+else:
+    raise '{} is not supported'.format(args.lr_scheduler)
+
+optimizer, scheduler = model.fixed_learning_rate_optimizers(total_steps=t_total_steps)
 
 if args.fp16:
     try:
@@ -90,21 +106,6 @@ if args.local_rank != -1:
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
                                                       output_device=args.local_rank,
                                                       find_unused_parameters=True)
-if args.lr_scheduler == 'linear':
-    scheduler = get_linear_schedule_with_warmup(optimizer,
-                                            num_warmup_steps=args.warmup_steps,
-                                            num_training_steps=t_total)
-elif args.lr_scheduler == 'cosine':
-    scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
-                                                num_warmup_steps=args.warmup_steps,
-                                                num_training_steps=t_total)
-elif args.lr_scheduler == 'cosine_restart':
-    scheduler = get_cosine_with_hard_restarts_schedule_with_warmup(optimizer=optimizer,
-                                                                   num_warmup_steps=args.warmup_steps,
-                                                                   num_training_steps=t_total)
-else:
-    raise '{} is not supported'.format(args.lr_scheduler)
-
 # #########################################################################
 # # launch training
 # ##########################################################################
