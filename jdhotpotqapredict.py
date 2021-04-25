@@ -80,8 +80,15 @@ model = UnifiedSDModel(config=args)
 #             del state_dict[key]
 #     model.load_state_dict(state_dict)
 
+# #########################################################################
+logging.info('Model Parameter Configuration:')
+for name, param in model.named_parameters():
+    logging.info('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+logging.info('*' * 75)
+
 model.to(args.device)
 model.eval()
+
 
 #########################################################################
 # Evaluation
