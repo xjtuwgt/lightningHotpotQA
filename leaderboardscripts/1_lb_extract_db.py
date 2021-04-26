@@ -93,6 +93,7 @@ class DocDB(object):
         col_infors = cursor.description
         print(col_infors)
         col_names = [_[0] for _ in col_infors]
+        print(col_names)
         cursor.close()
         return col_names
 
