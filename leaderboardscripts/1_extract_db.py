@@ -25,7 +25,6 @@ def normalize(text):
     """Resolve different type of unicode encodings."""
     return unicodedata.normalize('NFD', text)
 
-
 class DocDB(object):
     """Sqlite backed document storage.
 
