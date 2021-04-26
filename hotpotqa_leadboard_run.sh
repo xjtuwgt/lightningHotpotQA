@@ -22,7 +22,6 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
-
 preprocess() {
     INPUTS=("hotpot_test_distractor_v1.json;test_distractor")
     for input in ${INPUTS[*]}; do
