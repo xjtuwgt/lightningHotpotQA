@@ -86,6 +86,33 @@ class DocDB(object):
 
     def get_doc_title(self, doc_id):
         return self._get_doc_key(doc_id, 'title')
+
+    def get_table_infor(self, table_name):
+        select_sql = "SELECT * FROM " + table_name
+        cursor = self.connection.cursor()
+        count = cursor.execute("SELECT COUNT(*) FROM " + table_name).fetchone()[0]
+        cursor.execute(select_sql)
+        col_names = cursor.description
+        print(count)
+        rows = cursor.fetchmany(1)
+        for row in rows:
+            print("Id: ", row[0])
+            print("Name: ", row[1])
+            print("\n")
+        cursor.close()
+        return col_names
+
+    def fetch_all_tables(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = cursor.fetchall()
+        table_names = []
+        for table_name in tables:
+            table_name = table_name[0]
+            table_names.append(table_name)
+        cursor.close()
+        return table_names
+
 start_time = time()
 doc_db = DocDB(db_path)
 print('Loading database takes {:.4f}'.format(time() - start_time))
@@ -101,40 +128,40 @@ for doc_id in tqdm(doc_ids):
         title_to_id[title] = doc_id
 print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
 
-start_time = time()
-# 2. extract hyperlink and NER
-input_data = json.load(open(input_file, 'r'))
-output_data = {}
-for data in tqdm(input_data):
-    context = dict(data['context'])
-    for title in context.keys():
-        if title not in title_to_id:
-            print("{} not exist in DB".format(title))
-        else:
-            doc_id = title_to_id[title]
-            text_with_links = pickle.loads(doc_db.get_doc_text_with_links(doc_id))
-            text_ner = pickle.loads(doc_db.get_doc_ner(doc_id))
-
-            hyperlink_titles, hyperlink_spans = [], []
-            hyperlink_paras = []
-            for i, sentence in enumerate(text_with_links):
-                _lt, _ls, _lp = [], [], []
-
-                t = get_edges(sentence)
-                if len(t) > 0:
-                    for link_title, mention_entity in t:
-                        if link_title in title_to_id:
-                            _lt.append(link_title)
-                            _ls.append(mention_entity)
-                            doc_text = pickle.loads(doc_db.get_doc_text(title_to_id[link_title]))
-                            _lp.append(doc_text)
-                hyperlink_titles.append(_lt)
-                hyperlink_spans.append(_ls)
-                hyperlink_paras.append(_lp)
-            output_data[title] = {'hyperlink_titles': hyperlink_titles, 
-                                  'hyperlink_paras': hyperlink_paras, 
-                                  'hyperlink_spans': hyperlink_spans,
-                                  'text_ner': text_ner}
-json.dump(output_data, open(output_file, 'w'))
-print('Saving {} records in to {}'.format(len(output_data), output_file))
-print('Processing takes {:.5f} seconds'.format(time() - start_time))
+# start_time = time()
+# # 2. extract hyperlink and NER
+# input_data = json.load(open(input_file, 'r'))
+# output_data = {}
+# for data in tqdm(input_data):
+#     context = dict(data['context'])
+#     for title in context.keys():
+#         if title not in title_to_id:
+#             print("{} not exist in DB".format(title))
+#         else:
+#             doc_id = title_to_id[title]
+#             text_with_links = pickle.loads(doc_db.get_doc_text_with_links(doc_id))
+#             text_ner = pickle.loads(doc_db.get_doc_ner(doc_id))
+#
+#             hyperlink_titles, hyperlink_spans = [], []
+#             hyperlink_paras = []
+#             for i, sentence in enumerate(text_with_links):
+#                 _lt, _ls, _lp = [], [], []
+#
+#                 t = get_edges(sentence)
+#                 if len(t) > 0:
+#                     for link_title, mention_entity in t:
+#                         if link_title in title_to_id:
+#                             _lt.append(link_title)
+#                             _ls.append(mention_entity)
+#                             doc_text = pickle.loads(doc_db.get_doc_text(title_to_id[link_title]))
+#                             _lp.append(doc_text)
+#                 hyperlink_titles.append(_lt)
+#                 hyperlink_spans.append(_ls)
+#                 hyperlink_paras.append(_lp)
+#             output_data[title] = {'hyperlink_titles': hyperlink_titles,
+#                                   'hyperlink_paras': hyperlink_paras,
+#                                   'hyperlink_spans': hyperlink_spans,
+#                                   'text_ner': text_ner}
+# json.dump(output_data, open(output_file, 'w'))
+# print('Saving {} records in to {}'.format(len(output_data), output_file))
+# print('Processing takes {:.5f} seconds'.format(time() - start_time))
