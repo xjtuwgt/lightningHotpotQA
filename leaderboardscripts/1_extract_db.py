@@ -88,8 +88,9 @@ class DocDB(object):
 
     def get_doc_title(self, doc_id):
         return self._get_doc_key(doc_id, 'title')
-
+start_time = time()
 doc_db = DocDB(db_path)
+print('Loading database takes {:.4f}'.format(time() - start_time))
 
 start_time = time()
 # 1. map title to ID
@@ -100,7 +101,9 @@ for doc_id in doc_ids:
 
     if title not in title_to_id:
         title_to_id[title] = doc_id
+print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
 
+start_time = time()
 # 2. extract hyperlink and NER
 input_data = json.load(open(input_file, 'r'))
 output_data = {}
