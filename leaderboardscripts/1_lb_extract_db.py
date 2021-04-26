@@ -72,7 +72,6 @@ class DocDB(object):
         """Fetch the raw text of the doc for 'doc_id'."""
         return self._get_doc_key(doc_id, 'text')
 
-
     def get_doc_sent_num(self, doc_id):
         return int(self._get_doc_key(doc_id, 'sent_num'))
 
