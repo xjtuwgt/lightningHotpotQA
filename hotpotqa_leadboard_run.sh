@@ -41,7 +41,7 @@ preprocess() {
         # Input: INPUT_FILE, enwiki_ner.db
         # Output: doc_link_ner.json
 #        python scripts/1_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner.json
-        python leaderboardscripts/1_lb_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner2.json
+        python leaderboardscripts/1_lb_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner.json
 
 #
 #        echo "2. Extract NER for Question and Context"
