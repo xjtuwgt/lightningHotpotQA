@@ -61,7 +61,7 @@ class DocDB(object):
         """Fetch all ids of docs stored in the db."""
         cursor = self.connection.cursor()
         cursor.execute("SELECT id, title FROM documents")
-        results = [r[0] for r in cursor.fetchall()]
+        results = [(r[0], r[1]) for r in cursor.fetchall()]
         cursor.close()
         return results
 
@@ -135,10 +135,8 @@ title_to_id = {}
 # print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
 doc_id_titles = doc_db.get_doc_id_titles()
 print('Loading all document id and title takes {:.4f}'.format(time() - start_time))
-for row in tqdm(doc_id_titles):
-    print(row)
-    doc_id, title = row[0], row[1]
-    # print(doc_id, title)
+for doc_id, title in tqdm(doc_id_titles):
+    print(doc_id, title)
     if title not in title_to_id:
         title_to_id[title] = doc_id
 print('Mapping title to ID takes {:.4f} with dictionary size = {}'.format(time() - start_time, len(title_to_id)))
