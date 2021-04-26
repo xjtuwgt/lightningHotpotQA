@@ -1,6 +1,6 @@
 import spacy
 import json
-import os
+from time import time
 import re
 import sys
 import itertools
@@ -52,7 +52,7 @@ def extract_question_ner(full_data):
     idx, idx_to_ques = 0, {}
 
     ques_guid2ner = {}
-    for case in full_data:
+    for case in enumerate(full_data):
         guid = case['_id']
         all_questions.append(case['question'])
         idx_to_ques[idx] = guid
@@ -72,7 +72,7 @@ def extract_context_ner(full_data, ner_data=None):
     id_to_sent = {}
 
     context_guid2ner = {}
-    for case in full_data:
+    for case in enumerate(full_data):
         guid = case['_id']
         context_guid2ner[guid] = []
         titles = list(dict(case['context']).keys())
@@ -91,14 +91,24 @@ def extract_context_ner(full_data, ner_data=None):
 
     return context_guid2ner
 
+start_time = time()
 data = json.load(open(input_file, 'r'))
 # ner_data is from spacy which has been extracted in 0_build_db.py
 ner_data = json.load(open(ner_file, 'r'))
-ques_guid2ner = extract_question_ner(data)
-context_guid2ner = extract_context_ner(data, ner_data)
+print('Loading {} records from {}'.format(len(data), input_file))
+print('Loading ner {} records from {}'.format(len(ner_data), ner_file))
+print('Data loading takes {:.4f}'.format(time() - start_time))
 
+start_time = time()
+ques_guid2ner = extract_question_ner(data)
+print('NER over question takes {:.4f}'.format(time() - start_time))
+start_time = time()
+context_guid2ner = extract_context_ner(data, ner_data)
+print('NER over context takes {:.4f}'.format(time() - start_time))
+
+start_time = time()
 output_data = {}
-for case in data:
+for case in tqdm(data):
     guid = case['_id']
     context = dict(case['context'])
     question_text = case['question']
@@ -118,3 +128,5 @@ for case in data:
     output_data[guid]['context'] = context_ners
 
 json.dump(output_data, open(output_file, 'w'))
+print('Saving {} records into {}'.format(len(output_data), output_file))
+print('NER extraction takes {:.4f}'.format(time() - start_time))
