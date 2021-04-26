@@ -126,21 +126,20 @@ print('Loading database takes {:.4f}'.format(time() - start_time))
 start_time = time()
 # 1. map title to ID
 title_to_id = {}
-doc_ids = doc_db.get_doc_ids()
+# doc_ids = doc_db.get_doc_ids()
 # print('Loading all document ids takes {:.4f}'.format(time() - start_time))
 # for doc_id in tqdm(doc_ids):
 #     title = doc_db.get_doc_title(doc_id)
 #     if title not in title_to_id:
 #         title_to_id[title] = doc_id
 # print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
-
 doc_id_titles = doc_db.get_doc_id_titles()
 print('Loading all document id and title takes {:.4f}'.format(time() - start_time))
 for row in tqdm(doc_id_titles):
     doc_id, title = row[0], row[1]
     if title not in title_to_id:
         title_to_id[title] = doc_id
-print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
+print('Mapping title to ID takes {:.4f} with dictionary size = {}'.format(time() - start_time, len(title_to_id)))
 
 # start_time = time()
 # # 2. extract hyperlink and NER
