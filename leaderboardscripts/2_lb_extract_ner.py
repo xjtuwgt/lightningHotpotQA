@@ -67,10 +67,6 @@ def extract_question_ner(full_data):
 
 def extract_context_ner(full_data, ner_data=None):
     print("Extract NER from context")
-    sentences = []
-    sent_cnt = 0
-    id_to_sent = {}
-
     context_guid2ner = {}
     for case in tqdm(full_data):
         guid = case['_id']
