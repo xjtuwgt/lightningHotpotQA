@@ -88,17 +88,9 @@ class DocDB(object):
         return self._get_doc_key(doc_id, 'title')
 
     def get_table_infor(self, table_name):
-        select_sql = "SELECT * FROM " + table_name
         cursor = self.connection.cursor()
-        count = cursor.execute("SELECT COUNT(*) FROM " + table_name).fetchone()[0]
-        cursor.execute(select_sql)
-        col_names = cursor.description
-        print(count)
-        rows = cursor.fetchmany(1)
-        for row in rows:
-            print("Id: ", row[0])
-            print("Name: ", row[1])
-            print("\n")
+        row = cursor.execute("SELECT * FROM " + table_name).fetchone()
+        col_names = row.keys()
         cursor.close()
         return col_names
 
@@ -118,6 +110,7 @@ doc_db = DocDB(db_path)
 db_table_names = doc_db.fetch_all_tables()
 print('All table names = {}'.format(db_table_names))
 for tab_name in db_table_names:
+    print('Table name : {}'.format(tab_name))
     table_infor = doc_db.get_table_infor(table_name=tab_name)
     print('Table infor : '.format(table_infor))
 print('Loading database takes {:.4f}'.format(time() - start_time))
