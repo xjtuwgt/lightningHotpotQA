@@ -108,7 +108,7 @@ def generate_random_search_bash(task_num, seed=42):
         with open(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
             # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdgraphtrain.py --config_file " + \
             #             json_file_path + config_json_file_name
-            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdtrain.py --config_file " + \
+            command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdUnifiedHGNtrain.py --config_file " + \
                         json_file_path + config_json_file_name
             rsh_i.write(command_i)
             print('saving jobs at {}'.format(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh'))
