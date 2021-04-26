@@ -52,7 +52,7 @@ def extract_question_ner(full_data):
     idx, idx_to_ques = 0, {}
 
     ques_guid2ner = {}
-    for case in enumerate(full_data):
+    for case in tqdm(full_data):
         guid = case['_id']
         all_questions.append(case['question'])
         idx_to_ques[idx] = guid
@@ -72,7 +72,7 @@ def extract_context_ner(full_data, ner_data=None):
     id_to_sent = {}
 
     context_guid2ner = {}
-    for case in enumerate(full_data):
+    for case in tqdm(full_data):
         guid = case['_id']
         context_guid2ner[guid] = []
         titles = list(dict(case['context']).keys())
