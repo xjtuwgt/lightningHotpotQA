@@ -115,6 +115,11 @@ class DocDB(object):
 
 start_time = time()
 doc_db = DocDB(db_path)
+db_table_names = doc_db.fetch_all_tables()
+print('All table names = {}'.format(db_table_names))
+for tab_name in db_table_names:
+    table_infor = doc_db.get_table_infor(table_name=tab_name)
+    print('Table infor : '.format(table_infor))
 print('Loading database takes {:.4f}'.format(time() - start_time))
 
 start_time = time()
