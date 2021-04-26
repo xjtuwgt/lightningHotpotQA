@@ -91,6 +91,7 @@ class DocDB(object):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM " + table_name).fetchone()
         col_infors = cursor.description
+        print(col_infors)
         col_names = [_[0] for _ in col_infors]
         cursor.close()
         return col_names
