@@ -99,11 +99,9 @@ class DocDB(object):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM " + table_name).fetchone()
         col_infors = cursor.description
-        print(col_infors)
         col_names = [_[0] for _ in col_infors]
         print(col_names)
         cursor.close()
-        return col_names
 
     def fetch_all_tables(self):
         cursor = self.connection.cursor()
@@ -123,7 +121,6 @@ print('All table names = {}'.format(db_table_names))
 for tab_name in db_table_names:
     print('Table name : {}'.format(tab_name))
     table_infor = doc_db.get_table_infor(table_name=tab_name)
-    print('Table infor : '.format(table_infor))
 print('Loading database takes {:.4f}'.format(time() - start_time))
 
 start_time = time()
@@ -139,7 +136,8 @@ doc_ids = doc_db.get_doc_ids()
 
 doc_id_titles = doc_db.get_doc_id_titles()
 print('Loading all document id and title takes {:.4f}'.format(time() - start_time))
-for doc_id, title in tqdm(doc_id_titles):
+for row in tqdm(doc_id_titles):
+    doc_id, title = row[0], row[1]
     if title not in title_to_id:
         title_to_id[title] = doc_id
 print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
