@@ -4,6 +4,7 @@ import sys
 import unicodedata
 import re
 import pickle
+from time import time
 
 from urllib.parse import unquote
 from tqdm import tqdm
@@ -90,6 +91,7 @@ class DocDB(object):
 
 doc_db = DocDB(db_path)
 
+start_time = time()
 # 1. map title to ID
 title_to_id = {}
 doc_ids = doc_db.get_doc_ids()
@@ -102,7 +104,7 @@ for doc_id in doc_ids:
 # 2. extract hyperlink and NER
 input_data = json.load(open(input_file, 'r'))
 output_data = {}
-for data in input_data:
+for data in tqdm(input_data):
     context = dict(data['context'])
     for title in context.keys():
         if title not in title_to_id:
@@ -136,3 +138,5 @@ for data in input_data:
                                   'text_ner': text_ner}
 
 json.dump(output_data, open(output_file, 'w'))
+print('Saving {} records in to {}'.format(len(output_data), output_file))
+print('Processing takes {:.5f} seconds'.format(time() - start_time))
