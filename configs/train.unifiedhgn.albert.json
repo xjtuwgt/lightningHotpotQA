@@ -1,0 +1,10 @@
+{
+    "exp_name": "unified_albert_xxlarge_v2_hotpotqa",
+    "model_type": "albert",
+    "num_train_epochs": 5,
+    "encoder_name_or_path": "albert-xxlarge-v2",
+    "fine_tuned_encoder": "albert/albert-xxlarge-v2_hotpotqa",
+    "per_gpu_train_batch_size": 2,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 1e-5
+}
