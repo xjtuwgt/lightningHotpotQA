@@ -133,6 +133,7 @@ title_to_id = {}
 #     if title not in title_to_id:
 #         title_to_id[title] = doc_id
 # print('Mapping title to ID takes {:.4f}'.format(time() - start_time))
+# ++++++ 700+ times speedup for dictionary contruction
 doc_id_titles = doc_db.get_doc_id_titles()
 print('Loading all document id and title takes {:.4f}'.format(time() - start_time))
 for doc_id, title in tqdm(doc_id_titles):
@@ -143,6 +144,7 @@ print('Mapping title to ID takes {:.4f} with dictionary size = {}'.format(time()
 start_time = time()
 # 2. extract hyperlink and NER
 input_data = json.load(open(input_file, 'r'))
+print('Loading {} records from {}'.format(len(input_data), input_file))
 output_data = {}
 for data in tqdm(input_data):
     context = dict(data['context'])
