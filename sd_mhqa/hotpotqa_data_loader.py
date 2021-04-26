@@ -2,26 +2,29 @@ from torch.utils.data import Dataset
 from sd_mhqa.hotpotqa_data_structure import Example
 from sd_mhqa.hotpotqaUtils import example_sent_drop, case_to_features, trim_input_span
 import torch
+from numpy import random
 import numpy as np
 
 IGNORE_INDEX = -100
 
 class HotpotDataset(Dataset):
     def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
-                 max_seq_num=512, sent_drop_ratio=0.25):
+                 max_seq_num=512, sent_drop_ratio=0.25, drop_prob=0.5):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
         self.max_seq_length = max_seq_num
         self.sep_token_id = sep_token_id
         self.sent_drop_ratio = sent_drop_ratio
+        self.drop_prob = drop_prob
 
     def __len__(self):
         return len(self.examples)
 
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
-        if self.sent_drop_ratio > 0:
+        random_number = random.random()
+        if self.sent_drop_ratio > 0 and random_number > self.drop_prob:
             case = example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=case, train_dev=True)
