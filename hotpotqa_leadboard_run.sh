@@ -47,7 +47,7 @@ preprocess() {
 #        # Output: ner.json
 #        python leaderboardscripts/2_lb_extract_ner.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
 
-        echo "3. Paragraph ranking (2): longformer retrieval data preprocess"
+        echo "3. Paragraph ranking (1): longformer retrieval data preprocess"
         # Output: para_ranking.json
         python leaderboardscripts/3_lb_longformer_dataprepare_para_sel.py $INPUT_FILE $OUTPUT_PROCESSED/para_ir_combined.json
 
