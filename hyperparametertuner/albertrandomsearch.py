@@ -97,7 +97,7 @@ def generate_random_search_bash(task_num, seed=42):
     search_space = HypeParameterSpace()
     for i in range(task_num):
         rand_hype_dict = single_task_trial(search_space, seed+i)
-        config_json_file_name = 'train.graph.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
+        config_json_file_name = 'train.unified_hgn.graph.' + rand_hype_dict['model_type'] + '.data.' + rand_hype_dict['daug_type'] \
                                 +'.lr.'+ str(rand_hype_dict['learning_rate']) + '.lrs' + rand_hype_dict['learning_rate_schema'] + '.lrd' + \
                                 str(rand_hype_dict['layer_wise_lr_decay']) + rand_hype_dict['optimizer'] + '.' + rand_hype_dict['lr_scheduler']+ \
                                 rand_hype_dict['gnn'].replace(',', '.').replace(':', '') \
@@ -105,11 +105,11 @@ def generate_random_search_bash(task_num, seed=42):
         with open(os.path.join(bash_save_path, config_json_file_name), 'w') as fp:
             json.dump(rand_hype_dict, fp)
         print('{}\n{}'.format(rand_hype_dict, config_json_file_name))
-        with open(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
+        with open(jobs_path + 'jd_unified_hgn_' + config_json_file_name +'.sh', 'w') as rsh_i:
             # command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdgraphtrain.py --config_file " + \
             #             json_file_path + config_json_file_name
             command_i = "CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 jdUnifiedHGNtrain.py --config_file " + \
                         json_file_path + config_json_file_name
             rsh_i.write(command_i)
-            print('saving jobs at {}'.format(jobs_path + 'jd_hgn_' + config_json_file_name +'.sh'))
+            print('saving jobs at {}'.format(jobs_path + 'jd_unified_hgn_' + config_json_file_name +'.sh'))
     print('{} jobs have been generated'.format(task_num))
