@@ -129,16 +129,13 @@ for data in tqdm(input_data):
                             _ls.append(mention_entity)
                             doc_text = pickle.loads(doc_db.get_doc_text(title_to_id[link_title]))
                             _lp.append(doc_text)
-
                 hyperlink_titles.append(_lt)
                 hyperlink_spans.append(_ls)
                 hyperlink_paras.append(_lp)
-
             output_data[title] = {'hyperlink_titles': hyperlink_titles, 
                                   'hyperlink_paras': hyperlink_paras, 
                                   'hyperlink_spans': hyperlink_spans,
                                   'text_ner': text_ner}
-
 json.dump(output_data, open(output_file, 'w'))
 print('Saving {} records in to {}'.format(len(output_data), output_file))
 print('Processing takes {:.5f} seconds'.format(time() - start_time))
