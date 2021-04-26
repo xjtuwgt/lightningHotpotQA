@@ -90,7 +90,7 @@ class DocDB(object):
     def get_table_infor(self, table_name):
         cursor = self.connection.cursor()
         row = cursor.execute("SELECT * FROM " + table_name).fetchone()
-        print(row)
+        print(cursor.description)
         col_names = row[0]
         cursor.close()
         return col_names
