@@ -45,7 +45,7 @@ preprocess() {
         echo "2. Extract NER for Question and Context"
         # Input: doc_link_ner.json
         # Output: ner.json
-        python scripts/2_lb_extract_ner.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
+        python leaderboardscripts/2_lb_extract_ner.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
 
 #        echo "3. Paragraph ranking (2): longformer retrieval data preprocess"
 #        # Output: para_ranking.json
