@@ -136,8 +136,9 @@ title_to_id = {}
 doc_id_titles = doc_db.get_doc_id_titles()
 print('Loading all document id and title takes {:.4f}'.format(time() - start_time))
 for row in tqdm(doc_id_titles):
+    print(row)
     doc_id, title = row[0], row[1]
-    print(doc_id, title)
+    # print(doc_id, title)
     if title not in title_to_id:
         title_to_id[title] = doc_id
 print('Mapping title to ID takes {:.4f} with dictionary size = {}'.format(time() - start_time, len(title_to_id)))
