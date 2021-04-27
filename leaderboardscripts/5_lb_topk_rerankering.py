@@ -18,11 +18,11 @@ def parse_args(args=None):
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--testf_type', default=None, type=str, required=True)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--input_data', default=None, type=str, required=True)
+    # parser.add_argument('--input_data', default=None, type=str, required=True)
+    # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # parser.add_argument('--data_dir', default=None, type=str, required=True)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--data_dir', default=None, type=str, required=True)
-    ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
+    # parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
     parser.add_argument("--exp_name", default='albert_reader', type=str, help="alber reader model")
     parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
     parser.add_argument('--gpus', default=1, type=int)
