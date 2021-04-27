@@ -154,6 +154,7 @@ class InputFeatures(object):
         self.sent_spans = sent_spans
         self.entity_spans = entity_spans
         self.q_entity_cnt = q_entity_cnt
+        self.answer_candidates_ids = answer_candidates_ids
 
         self.edges = edges
         self.token_to_orig_map = token_to_orig_map
