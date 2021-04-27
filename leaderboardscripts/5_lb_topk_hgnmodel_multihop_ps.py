@@ -5,7 +5,6 @@ from os.path import join
 import numpy as np
 import sys
 from time import time
-import itertools
 import collections
 
 from tqdm import tqdm
@@ -245,9 +244,6 @@ for case in tqdm(raw_data):
     ####++++++++++++
 
 para_num_counter = collections.Counter(para_num)
-print(para_num_counter)
-
-print(output_file)
-# json.dump(selected_para_dict, open(output_file, 'w'))
-# print('Saving {} into {}'.format(len(selected_para_dict), output_file))
+json.dump(selected_para_dict, open(output_file, 'w'))
+print('Saving {} into {}'.format(len(selected_para_dict), output_file))
 print('Combining topk and hyper-link takes {:.4f} seconds'.format(time() - start_time))
