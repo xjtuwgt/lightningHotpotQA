@@ -160,9 +160,9 @@ data_processed_pred_para_file = join(DATASET_FOLDER, 'data_processed/test_distra
 json.dump(selected_para_dict, open(data_processed_pred_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_file))
 # # import json
-# # with open(output_score_file, 'r') as fp:
-# #     data = json.load(fp)
-# #     print(len(data))
-# #     for x in data:
-# #         print(x)
-# #         print(data[x])
+# with open(data_processed_pred_para_file, 'r') as fp:
+#     data = json.load(fp)
+#     print(len(data))
+#     for x in data:
+#         print(x)
+#         print(data[x])
