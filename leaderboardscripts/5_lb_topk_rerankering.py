@@ -22,6 +22,7 @@ def parse_args(args=None):
     # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--data_dir', default=None, type=str, required=True)
     parser.add_argument("--max_entity_num", default=60, type=int)
+    parser.add_argument("--max_para_num", default=5, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
     parser.add_argument("--max_seq_length", default=512, type=int)
