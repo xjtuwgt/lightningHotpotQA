@@ -118,7 +118,8 @@ test_data_loader = helper.hotpot_test_dataloader
 #
 # # print(test_example_dict)
 for batch in test_data_loader:
-    print(batch['ids'])
+    # print(batch['ids'])
+    print(batch)
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
