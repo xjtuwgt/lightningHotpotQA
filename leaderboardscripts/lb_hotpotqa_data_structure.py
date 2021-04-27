@@ -366,14 +366,14 @@ class HotpotDataset(Dataset):
         # # if case.ans_type != 3:
         # #     is_gold_ent[i].fill_(IGNORE_INDEX)
         #
-        # tmp_graph = self.graph_dict[case.qas_id]
-        # graph_adj = torch.from_numpy(tmp_graph['adj'])
-        # for k in range(graph_adj.size(0)):
-        #     graph_adj[k, k] = self.num_edge_type ## adding self-loop
-        # for edge_type in self.mask_edge_types:
-        #     graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
-        # graphs[i] = graph_adj
-        #
+        tmp_graph = self.graph_dict[case.qas_id]
+        graph_adj = torch.from_numpy(tmp_graph['adj'])
+        for k in range(graph_adj.size(0)):
+            graph_adj[k, k] = self.num_edge_type ## adding self-loop
+        for edge_type in self.mask_edge_types:
+            graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
+        graphs[i] = graph_adj
+
         examp_id = case.qas_id
         # input_length = (context_mask > 0).long().sum(dim=1)
         # para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
