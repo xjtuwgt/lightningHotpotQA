@@ -420,9 +420,8 @@ class HotpotDataset(Dataset):
             'ent_start_mapping': ent_start_mapping,
             'ent_end_mapping': ent_end_mapping,
             'ent_mask': ent_mask,
-            'graphs': graphs
-        }
-        return res ## 26 elements
+            'graphs': graphs}
+        return res ## 19 elements
 
     @staticmethod
     def collate_fn(data):
