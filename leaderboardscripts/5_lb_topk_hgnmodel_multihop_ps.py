@@ -6,6 +6,7 @@ import numpy as np
 import sys
 from time import time
 import itertools
+import collections
 
 from tqdm import tqdm
 
@@ -242,6 +243,9 @@ for case in tqdm(raw_data):
     #++++++++++++++++++++++++++++++++++++++++++++
     para_num.append(sum(sel_para_idx))
     ####++++++++++++
+
+para_num_counter = collections.Counter(para_num)
+print(para_num_counter)
 
 print(output_file)
 # json.dump(selected_para_dict, open(output_file, 'w'))
