@@ -148,9 +148,9 @@ test_data_loader = helper.hotpot_test_dataloader
 # # config = config_class.from_pretrained(args.encoder_name_or_path)
 #
 # # print(test_example_dict)
-for batch in test_data_loader:
-    # print(batch['ids'])
-    print(batch)
+# for batch in test_data_loader:
+#     # print(batch['ids'])
+#     print(batch)
 
 model = UnifiedHGNModel(config=args)
 model.to(args.device)
