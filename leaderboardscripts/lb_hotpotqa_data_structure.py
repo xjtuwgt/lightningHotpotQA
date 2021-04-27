@@ -413,7 +413,7 @@ class HotpotDataset(Dataset):
         #        'context_mask': context_mask,
         #        'segment_idxs': segment_idxs
         #        }
-        return res ## 19 elements
+        return res ## 20 elements
 
     @staticmethod
     def collate_fn(data):
