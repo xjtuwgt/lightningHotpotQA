@@ -9,7 +9,7 @@ IGNORE_INDEX = -100
 
 class HotpotDataset(Dataset):
     def __init__(self, examples, sep_token_id, max_para_num=4, max_sent_num=100,
-                 max_seq_num=512, sent_drop_ratio=0.25, drop_prob=0.5):
+                 max_seq_num=512, sent_drop_ratio=0.25, drop_prob=0.25):
         self.examples = examples
         self.max_para_num = max_para_num
         self.max_sent_num = max_sent_num
@@ -24,7 +24,7 @@ class HotpotDataset(Dataset):
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
         random_number = random.random()
-        if self.sent_drop_ratio > 0 and random_number > self.drop_prob:
+        if self.sent_drop_ratio > 0 and random_number < self.drop_prob:
             case = example_sent_drop(case=case, drop_ratio=self.sent_drop_ratio)
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=case, train_dev=True)
