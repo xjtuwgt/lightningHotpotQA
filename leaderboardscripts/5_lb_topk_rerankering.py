@@ -64,6 +64,7 @@ def parse_args(args=None):
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_ans_ent_num", default=15, type=int)
+    parser.add_argument("--max_seq_length", default=512, type=int)
 
     # bi attn
     parser.add_argument('--ctx_attn', type=str, default='gate_att_up',
@@ -73,11 +74,6 @@ def parse_args(args=None):
     parser.add_argument("--hidden_dim", type=int, default=300)
     # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--data_dir', default=None, type=str, required=True)
-    parser.add_argument("--max_entity_num", default=60, type=int)
-    parser.add_argument("--max_para_num", default=5, type=int)
-    parser.add_argument("--max_sent_num", default=40, type=int)
-    parser.add_argument("--max_query_length", default=50, type=int)
-    parser.add_argument("--max_seq_length", default=512, type=int)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
     parser.add_argument("--encoder_name_or_path",
