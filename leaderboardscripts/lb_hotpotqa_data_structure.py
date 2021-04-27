@@ -433,12 +433,12 @@ class HotpotDataset(Dataset):
                 batch_data[key] = torch.LongTensor([_[key] for _ in data])
             else:
                 batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
-        # trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
-        # for key in trim_keys:
-        #     batch_data[key] = batch_data[key][:,:max_c_len]
-        # trim_map_keys = ['para_mapping', 'sent_mapping', 'ent_mapping']
-        # for key in trim_map_keys:
-        #     batch_data[key] = batch_data[key][:,:max_c_len,:]
+        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
+        for key in trim_keys:
+            batch_data[key] = batch_data[key][:,:max_c_len]
+        trim_map_keys = ['para_mapping', 'sent_mapping', 'ent_mapping']
+        for key in trim_map_keys:
+            batch_data[key] = batch_data[key][:,:max_c_len,:]
         # trim_start_end_keys = ['para_start_mapping', 'para_end_mapping',
         #                        'sent_start_mapping', 'sent_end_mapping',
         #                        'ent_start_mapping', 'ent_end_mapping']
