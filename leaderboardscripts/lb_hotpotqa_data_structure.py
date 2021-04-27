@@ -185,15 +185,15 @@ class DataHelper:
 
     @property
     def test_feature_file(self):
-        return self.get_feature_file('test_distractor', self.config.devf_type)
+        return self.get_feature_file('test_distractor', self.config.testf_type)
 
     @property
     def test_example_file(self):
-        return self.get_example_file('test_distractor', self.config.devf_type)
+        return self.get_example_file('test_distractor', self.config.testf_type)
 
     @property
     def test_graph_file(self):
-        return self.get_graph_file('test_distractor', self.config.devf_type)
+        return self.get_graph_file('test_distractor', self.config.testf_type)
 
     def get_pickle_file(self, file_name):
         if self.gz:
