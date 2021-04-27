@@ -302,19 +302,8 @@ class HotpotDataset(Dataset):
         ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
         # ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
 
-        # Label tensor
-        # y1 = torch.zeros(1, dtype=torch.long)
-        # y2 = torch.zeros(1, dtype=torch.long)
-        # q_type = torch.zeros(1, dtype=torch.long)
-        # is_support = torch.zeros(1, self.sent_limit, dtype=torch.float)
-        # is_gold_para = torch.zeros(1, self.para_limit, dtype=torch.float)
-        # is_gold_ent = torch.zeros(1, dtype=torch.float)
-
         # Graph related
         graphs = torch.zeros(1, self.graph_nodes_num, self.graph_nodes_num, dtype=torch.float)
-        # is_support.fill_(IGNORE_INDEX)
-        # is_gold_para.fill_(IGNORE_INDEX)
-        # is_gold_ent.fill_(IGNORE_INDEX)
         ################################################################################################################
         case = self.features[idx]
         ################################################################################################################
@@ -328,7 +317,6 @@ class HotpotDataset(Dataset):
                 query_mapping[i, j] = 1
 
         for j, para_span in enumerate(case.para_spans[:self.para_limit]):
-            # is_gold_flag = j in case.sup_para_ids
             start, end, _ = para_span
             if start <= end:
                 end = min(end, self.max_seq_length - 1)
@@ -336,24 +324,22 @@ class HotpotDataset(Dataset):
                 para_mapping[i, start:end + 1, j] = 1
                 para_start_mapping[i, j, start] = 1
                 para_end_mapping[i, j, end] = 1
-        #
-        # for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
-        #     is_sp_flag = j in case.sup_fact_ids
-        #     start, end = sent_span
-        #     if start <= end:
-        #         end = min(end, self.max_seq_length - 1)
-        #         # is_support[i, j] = int(is_sp_flag)
-        #         sent_mapping[i, start:end + 1, j] = 1
-        #         sent_start_mapping[i, j, start] = 1
-        #         sent_end_mapping[i, j, end] = 1
-        #
-        # for j, ent_span in enumerate(case.entity_spans[:self.ent_limit]):
-        #     start, end = ent_span
-        #     if start <= end:
-        #         end = min(end, self.max_seq_length - 1)
-        #         ent_mapping[i, start:end + 1, j] = 1
-        #         ent_start_mapping[i, j, start] = 1
-        #         ent_end_mapping[i, j, end] = 1
+
+        for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
+            start, end = sent_span
+            if start <= end:
+                end = min(end, self.max_seq_length - 1)
+                sent_mapping[i, start:end + 1, j] = 1
+                sent_start_mapping[i, j, start] = 1
+                sent_end_mapping[i, j, end] = 1
+
+        for j, ent_span in enumerate(case.entity_spans[:self.ent_limit]):
+            start, end = ent_span
+            if start <= end:
+                end = min(end, self.max_seq_length - 1)
+                ent_mapping[i, start:end + 1, j] = 1
+                ent_start_mapping[i, j, start] = 1
+                ent_end_mapping[i, j, end] = 1
         #     # ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
         #
         # # is_gold_ent[i] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX ## no need for loss computation
