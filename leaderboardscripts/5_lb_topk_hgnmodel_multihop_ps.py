@@ -4,6 +4,7 @@ import torch
 from os.path import join
 import numpy as np
 import sys
+from time import time
 import itertools
 
 from tqdm import tqdm
@@ -14,9 +15,13 @@ def get_topk_cached_filename(topk_para_num, testf_type):
     file_name = 'rerank_topk_' + str(topk_para_num) + '_' + testf_type
     return file_name
 
+start_time = time()
 raw_data = json.load(open(sys.argv[1], 'r'))
+print('Loading {} records from {}'.format(len(raw_data), sys.argv[1]))
 doc_link_data = json.load(open(sys.argv[2], 'r'))
+print('Loading {} records from {}'.format(len(doc_link_data), sys.argv[2]))
 ent_data = json.load(open(sys.argv[3], 'r'))
+print('Loading {} records from {}'.format(len(ent_data), sys.argv[3]))
 output_folder = sys.argv[4]
 ###################################################
 num_selected_docs = int(sys.argv[5])
@@ -25,6 +30,9 @@ data_type = sys.argv[7]
 topk_file_name_prefix = get_topk_cached_filename(topk_para_num=topk, testf_type=data_type)
 para_data_file_name = '{}_para_ranking.json'.format(topk_file_name_prefix)
 para_data = json.load(open(join(output_folder, para_data_file_name), 'r'))
+print('Loading {} records from {}'.format(len(para_data), join(output_folder, para_data_file_name)))
+print('Loading data takes {:.4f} seconds'.format(time() - start_time))
+###################################################
 output_file_name = 'topk_long_multihop_para.json'
 output_file = join(output_folder, output_file_name)
 print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
