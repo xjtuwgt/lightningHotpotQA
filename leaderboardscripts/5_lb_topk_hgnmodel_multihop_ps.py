@@ -33,7 +33,7 @@ para_data = json.load(open(join(output_folder, para_data_file_name), 'r'))
 print('Loading {} records from {}'.format(len(para_data), join(output_folder, para_data_file_name)))
 print('Loading data takes {:.4f} seconds'.format(time() - start_time))
 ###################################################
-output_file_name = 'topk_long_multihop_para.json'
+output_file_name = '_long_multihop_para.json'.format(topk_file_name_prefix)
 output_file = join(output_folder, output_file_name)
 print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
 ###################################################
@@ -243,6 +243,7 @@ for case in tqdm(raw_data):
     para_num.append(sum(sel_para_idx))
     ####++++++++++++
 
-json.dump(selected_para_dict, open(output_file, 'w'))
-print('Saving {} into {}'.format(len(selected_para_dict), output_file))
+print(output_file)
+# json.dump(selected_para_dict, open(output_file, 'w'))
+# print('Saving {} into {}'.format(len(selected_para_dict), output_file))
 print('Combining topk and hyper-link takes {} seconds'.format(time() - start_time))
