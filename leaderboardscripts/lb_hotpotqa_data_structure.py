@@ -417,12 +417,12 @@ class HotpotDataset(Dataset):
     @staticmethod
     def collate_fn(data):
         # # assert len(data[0]) == 19
-        # context_lens_np = np.array([_['context_lens'] for _ in data])
-        # max_c_len = context_lens_np.max()
-        # sorted_idxs = np.argsort(context_lens_np)[::-1]
-        # assert len(data) == len(sorted_idxs)
-        # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        # data = [data[_] for _ in sorted_idxs]
+        context_lens_np = np.array([_['context_lens'] for _ in data])
+        max_c_len = context_lens_np.max()
+        sorted_idxs = np.argsort(context_lens_np)[::-1]
+        assert len(data) == len(sorted_idxs)
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        data = [data[_] for _ in sorted_idxs]
         # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         data_keys = data[0].keys()
         batch_data = {}
