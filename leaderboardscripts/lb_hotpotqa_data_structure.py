@@ -237,16 +237,19 @@ class DataHelper:
 
     # Load
     def load_test(self):
+        print(self.test_features)
         return self.test_features, self.test_example_dict, self.test_graphs
 
     @property
     def hotpot_test_dataloader(self) -> DataLoader:
+
         dev_data = self.Dataset(*self.load_test(),
                                  para_limit=self.config.max_para_num,
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
                                  num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
+
         dataloader = DataLoader(
             dataset=dev_data,
             batch_size=self.config.test_batch_size,
