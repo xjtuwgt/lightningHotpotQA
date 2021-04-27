@@ -29,8 +29,7 @@ def parse_args(args=None):
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--data_dir', default=None, type=str, required=True)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument("--eval_ckpt", default=None, type=str, required=True,
-                        help="evaluation checkpoint")
+    parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
     parser.add_argument("--model_type", default='Longformer', type=str, help="Longformer retrieval model")
     parser.add_argument('--gpus', default=1, type=int)
     parser.add_argument('--test_batch_size', default=16, type=int)
