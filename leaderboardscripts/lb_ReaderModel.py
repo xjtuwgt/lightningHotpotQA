@@ -26,7 +26,6 @@ class UnifiedHGNModel(nn.Module):
         else:
             raise 'The model name is none'.format(self.config.model)
 
-
     def forward(self, batch, return_yp=True, return_cls=True):
         ###############################################################################################################
         inputs = {'input_ids': batch['context_idxs'],
@@ -38,5 +37,5 @@ class UnifiedHGNModel(nn.Module):
         batch['context_encoding'] = outputs[0]
         ####++++++++++++++++++++++++++++++++++++++
         batch['context_mask'] = batch['context_mask'].float().to(self.config.device)
-        start, end, q_type, paras, sents, ents, y1, y2 = self.model.forward(batch, return_yp=True)
-        return start, end, q_type, paras, sents, ents, y1, y2
+        start, end, q_type, paras, sents, ents, y1, y2, cls_emb = self.model.forward(batch, return_yp=return_yp, return_cls=return_cls)
+        return start, end, q_type, paras, sents, ents, y1, y2, cls_emb
