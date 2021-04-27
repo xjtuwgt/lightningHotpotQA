@@ -34,7 +34,7 @@ para_data = json.load(open(join(output_folder, para_data_file_name), 'r'))
 print('Loading {} records from {}'.format(len(para_data), join(output_folder, para_data_file_name)))
 print('Loading data takes {:.4f} seconds'.format(time() - start_time))
 ###################################################
-output_file_name = '_long_multihop_para.json'.format(topk_file_name_prefix)
+output_file_name = '{}_long_multihop_para.json'.format(topk_file_name_prefix)
 output_file = join(output_folder, output_file_name)
 print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
 ###################################################
