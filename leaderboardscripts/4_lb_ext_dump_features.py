@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 from model_envs import MODEL_CLASSES
 from envs import DATASET_FOLDER
-from leaderboardscripts.lb_hotpotqa_data_structure import Example, InputFeatures, get_cached_filename
+from leaderboardscripts.lb_hotpotqa_data_structure import Example, InputFeatures, get_cached_filename, get_topk_cached_filename
 from eval.hotpot_evaluate_v1 import normalize_answer
 
 infix_re = re.compile(r'''[-—–~]''')
@@ -699,6 +699,10 @@ if __name__ == '__main__':
         data_source_type = data_source_name
     else:
         data_source_type = None
+
+    if args.do_rerank:
+        topk_para_name = get_topk_cached_filename(topk_para_num=args.topk, testf_type=args.data_type)
+        args.para_path = os.path.join(args.para_path, topk_para_name)
 
     print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
     examples = read_hotpot_examples(para_file=args.para_path,
