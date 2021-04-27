@@ -85,7 +85,7 @@ class DataHelper:
                                   max_sent_num=self.config.max_sent_num,
                                   max_seq_num=self.config.max_seq_length,
                                   sent_drop_ratio=self.config.sent_drop_ratio,
-                                  drop_prob=self.config.drop_ratio,
+                                  drop_prob=self.config.drop_prob,
                                   sep_token_id=self.sep_token_id)
         ####++++++++++++
         dataloader = DataLoader(dataset=train_data, batch_size=self.config.batch_size,
@@ -104,7 +104,8 @@ class DataHelper:
                                 max_sent_num=self.config.max_sent_num,
                                 max_seq_num=self.config.max_seq_length,
                                 sep_token_id=self.sep_token_id,
-                                sent_drop_ratio=-1)
+                                sent_drop_ratio=-1,
+                                drop_prob=-1)
         dataloader = DataLoader(
             dataset=dev_data,
             batch_size=self.config.eval_batch_size,
