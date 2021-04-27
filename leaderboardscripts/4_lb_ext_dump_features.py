@@ -671,6 +671,9 @@ if __name__ == '__main__':
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--ranker", default=None, type=str, required=True,
                         help="The ranker for paragraph ranking")
+    parser.add_argument("--do_rerank", action='store_true', type=bool,
+                        help="The ranker for paragraph ranking")
+    parser.add_argument("--topk", default=3, type=int)
     parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
 
@@ -688,18 +691,15 @@ if __name__ == '__main__':
     data_type = args.data_type
     if args.do_lower_case:
         ranker = ranker + '_low'
-    if args.sae_graph:
-        ranker = ranker + '_sae'
-
-    if args.reverse:
-        data_source_name = "{}_reverse".format(ranker)
-    else:
-        data_source_name = "{}".format(ranker)
-
+    if args.do_rerank:
+        assert args.topk >= 2
+        ranker = '{}_reranker{}'.format(ranker, args.topk)
+    data_source_name = "{}".format(ranker)
     if "train" in data_type:
         data_source_type = data_source_name
     else:
         data_source_type = None
+
     print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
