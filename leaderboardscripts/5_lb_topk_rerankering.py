@@ -38,6 +38,7 @@ def parse_args(args=None):
     parser.add_argument('--num_edge_type', type=int, default=8) ### number of edge types
     parser.add_argument('--mask_edge_types', type=str, default="0") ### masked edge types
     parser.add_argument('--gnn', default='gat:1,2', type=str, help='gat:n_layer, n_head')
+    parser.add_argument("--hidden_dim", type=int, default=300)
     # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--data_dir', default=None, type=str, required=True)
     parser.add_argument("--max_entity_num", default=60, type=int)
