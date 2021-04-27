@@ -2,6 +2,7 @@ import logging
 import os
 import argparse
 from os.path import join
+import json
 from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
@@ -133,98 +134,31 @@ for a in args_dict:
 # Read Data
 ##########################################################################
 helper = DataHelper(gz=True, config=args)
-
 # Set datasets
 test_example_dict = helper.test_example_dict
 test_feature_dict = helper.test_feature_dict
 test_features = helper.test_features
-# for key, value in test_feature_dict.items():
-#     print(value)
-#     print(test_example_dict[key])
-# for case in test_features:
-#     print(case[])
 test_data_loader = helper.hotpot_test_dataloader
 #
 # # # #########################################################################
 # # # # Initialize Model
 # # # ##########################################################################
-# # config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-# # config = config_class.from_pretrained(args.encoder_name_or_path)
-#
-# # print(test_example_dict)
-# for batch in test_data_loader:
-#     # print(batch['ids'])
-#     print(batch)
-
 model = UnifiedHGNModel(config=args)
 model.to(args.device)
-
-# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-# model = HierarchicalGraphNetwork(config=args)
-#
-# if encoder_path is not None:
-#     state_dict = torch.load(encoder_path)
-#     print('loading parameter from {}'.format(encoder_path))
-#     for key in list(state_dict.keys()):
-#         if 'module.' in key:
-#             state_dict[key.replace('module.', '')] = state_dict[key]
-#             del state_dict[key]
-#     encoder.load_state_dict(state_dict)
-# if model_path is not None:
-#     state_dict = torch.load(model_path)
-#     print('loading parameter from {}'.format(model_path))
-#     for key in list(state_dict.keys()):
-#         if 'module.' in key:
-#             state_dict[key.replace('module.', '')] = state_dict[key]
-#             del state_dict[key]
-#     model.load_state_dict(state_dict)
-#
-# encoder.to(args.device)
-# model.to(args.device)
-#
-# encoder.eval()
 model.eval()
 #
 # #########################################################################
 # # Evaluation
 # ##########################################################################
-# if args.exp_name is not None:
-#     if 'seed' in args.exp_name:
-#         idx = args.exp_name.index('seed')
-#         model_name = args.exp_name[idx:] + args.model_type
-#     else:
-#         model_name = args.model_type
-# else:
-#     model_name = '' + args.model_type
-#
 selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=test_data_loader,
                                                               example_dict=test_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
+output_pred_para_file = join(args.exp_name, 'rerank_topk_' + str(args.topk_para_num) + '_' + args.testf_type + '_multihop_para.json')
+json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
 
-# output_pred_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
-# json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
-# print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
-#
-# output_rank_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
-# json.dump(para_rank_dict, open(output_rank_para_file, 'w'))
-# print('Saving {} examples in {}'.format(len(para_rank_dict), output_rank_para_file))
-#
-# data_processed_pred_para_file = join(DATASET_FOLDER, 'data_processed/dev_distractor', 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
-# json.dump(selected_para_dict, open(data_processed_pred_para_file, 'w'))
-# print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_file))
-#
-# data_processed_rank_para_file = join(DATASET_FOLDER, 'data_processed/dev_distractor', 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
-# json.dump(para_rank_dict, open(data_processed_rank_para_file, 'w'))
-# print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_rank_para_file))
-# # metrics, threshold = jd_eval_model(args, encoder, model,
-# #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-# #                                 output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
-# # metrics, threshold = eval_model(args, encoder, model,
-# #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-# #                                 output_pred_file, output_eval_file, args.dev_gold_file)
-# # print("Best threshold: {}".format(threshold))
-# # for key, val in metrics.items():
-# #     print("{} = {}".format(key, val))
-#
+data_processed_pred_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_' + str(args.topk_para_num) + '_' + args.testf_type + '_multihop_para.json')
+json.dump(selected_para_dict, open(data_processed_pred_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_file))
 # # import json
 # # with open(output_score_file, 'r') as fp:
 # #     data = json.load(fp)
