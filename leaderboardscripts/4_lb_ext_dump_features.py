@@ -526,10 +526,10 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         assert len(query_segment_ids) == max_query_length
 
         # Dropout out-of-bound span
-        sup_fact_ids = [sent_id for sent_id in example.sup_fact_id if sent_id < len(sentence_spans)]
-        sup_para_ids = [para_id for para_id in example.sup_para_id if para_id < len(para_spans)]
-        if len(sup_fact_ids) != len(example.sup_fact_id):
-            failed += 1
+        # sup_fact_ids = [sent_id for sent_id in example.sup_fact_id if sent_id < len(sentence_spans)]
+        # sup_para_ids = [para_id for para_id in example.sup_para_id if para_id < len(para_spans)]
+        # if len(sup_fact_ids) != len(example.sup_fact_id):
+        #     failed += 1
 
         # if example.orig_answer_text == 'yes':
         #     ans_type = 1
