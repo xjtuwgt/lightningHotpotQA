@@ -106,9 +106,9 @@ test_features = helper.test_features
 # for key, value in test_feature_dict.items():
 #     print(value)
 #     print(test_example_dict[key])
-for case in test_features:
-    print(case)
-# test_data_loader = helper.hotpot_test_dataloader
+# for case in test_features:
+#     print(case[])
+test_data_loader = helper.hotpot_test_dataloader
 #
 # # # #########################################################################
 # # # # Initialize Model
@@ -117,8 +117,8 @@ for case in test_features:
 # # config = config_class.from_pretrained(args.encoder_name_or_path)
 #
 # # print(test_example_dict)
-# for batch in test_data_loader:
-#     print(batch)
+for batch in test_data_loader:
+    print(batch)
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)

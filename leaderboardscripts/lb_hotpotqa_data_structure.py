@@ -278,29 +278,29 @@ class HotpotDataset(Dataset):
 
     def __getitem__(self, idx):
         # BERT input
-        context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
-        context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.long)
-        segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
-
-        # Mappings
-        query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
-        para_start_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
-        para_end_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
-        para_mapping = torch.zeros(1, self.max_seq_length, self.para_limit, dtype=torch.float)
-
-        sent_start_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
-        sent_end_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
-        sent_mapping = torch.zeros(1, self.max_seq_length, self.sent_limit, dtype=torch.float)
-
-        ent_start_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
-        ent_end_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
-        ent_mapping = torch.zeros(1, self.max_seq_length, self.ent_limit, dtype=torch.float)
-
-        # Mask
-        para_mask = torch.zeros(1, self.para_limit, dtype=torch.float)
-        sent_mask = torch.zeros(1, self.sent_limit, dtype=torch.float)
-        ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
-        # ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
+        # context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        # context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        # segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        #
+        # # Mappings
+        # query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
+        # para_start_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
+        # para_end_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
+        # para_mapping = torch.zeros(1, self.max_seq_length, self.para_limit, dtype=torch.float)
+        #
+        # sent_start_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
+        # sent_end_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
+        # sent_mapping = torch.zeros(1, self.max_seq_length, self.sent_limit, dtype=torch.float)
+        #
+        # ent_start_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
+        # ent_end_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
+        # ent_mapping = torch.zeros(1, self.max_seq_length, self.ent_limit, dtype=torch.float)
+        #
+        # # Mask
+        # para_mask = torch.zeros(1, self.para_limit, dtype=torch.float)
+        # sent_mask = torch.zeros(1, self.sent_limit, dtype=torch.float)
+        # ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
+        # # ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
 
         # Label tensor
         # y1 = torch.zeros(1, dtype=torch.long)
@@ -320,138 +320,140 @@ class HotpotDataset(Dataset):
         print(case)
         ################################################################################################################
         i = 0
-        context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
-        context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
-        segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
-
-        if len(case.sent_spans) > 0:
-            for j in range(case.sent_spans[0][0] - 1):
-                query_mapping[i, j] = 1
-
-        for j, para_span in enumerate(case.para_spans[:self.para_limit]):
-            is_gold_flag = j in case.sup_para_ids
-            start, end, _ = para_span
-            if start <= end:
-                end = min(end, self.max_seq_length - 1)
-                # is_gold_para[i, j] = int(is_gold_flag)
-                para_mapping[i, start:end + 1, j] = 1
-                para_start_mapping[i, j, start] = 1
-                para_end_mapping[i, j, end] = 1
-
-        for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
-            is_sp_flag = j in case.sup_fact_ids
-            start, end = sent_span
-            if start <= end:
-                end = min(end, self.max_seq_length - 1)
-                # is_support[i, j] = int(is_sp_flag)
-                sent_mapping[i, start:end + 1, j] = 1
-                sent_start_mapping[i, j, start] = 1
-                sent_end_mapping[i, j, end] = 1
-
-        for j, ent_span in enumerate(case.entity_spans[:self.ent_limit]):
-            start, end = ent_span
-            if start <= end:
-                end = min(end, self.max_seq_length - 1)
-                ent_mapping[i, start:end + 1, j] = 1
-                ent_start_mapping[i, j, start] = 1
-                ent_end_mapping[i, j, end] = 1
-            # ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
-
-        # is_gold_ent[i] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX ## no need for loss computation
-
-        # if case.ans_type == 0 or case.ans_type == 3:
-        #     if len(case.end_position) == 0:
-        #         y1[i] = y2[i] = 0
-        #     elif case.end_position[0] < self.max_seq_length and context_mask[i][
-        #         case.end_position[0] + 1] == 1:  # "[SEP]" is the last token
-        #         y1[i] = case.start_position[0]
-        #         y2[i] = case.end_position[0]
-        #     else:
-        #         y1[i] = y2[i] = 0
-        #     q_type[i] = case.ans_type if is_gold_ent[i] > 0 else 0
-        # elif case.ans_type == 1:
-        #     y1[i] = IGNORE_INDEX
-        #     y2[i] = IGNORE_INDEX
-        #     q_type[i] = 1
-        # elif case.ans_type == 2:
-        #     y1[i] = IGNORE_INDEX
-        #     y2[i] = IGNORE_INDEX
-        #     q_type[i] = 2
-        # # ignore entity loss if there is no entity
-        # if case.ans_type != 3:
-        #     is_gold_ent[i].fill_(IGNORE_INDEX)
-
-        tmp_graph = self.graph_dict[case.qas_id]
-        graph_adj = torch.from_numpy(tmp_graph['adj'])
-        for k in range(graph_adj.size(0)):
-            graph_adj[k, k] = self.num_edge_type ## adding self-loop
-        for edge_type in self.mask_edge_types:
-            graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
-        graphs[i] = graph_adj
-
-        id = case.qas_id
-        input_length = (context_mask > 0).long().sum(dim=1)
-        para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
-        sent_mask = (sent_mapping > 0).any(1).float()
-        ent_mask = (ent_mapping > 0).any(1).float()
-
-        res = {
-            'context_idxs': context_idxs,
-            'context_mask': context_mask,
-            'segment_idxs': segment_idxs,
-            'context_lens': input_length,
-            'ids': id,
-            # 'y1': y1,
-            # 'y2': y2,
-            # 'q_type': q_type,
-            # 'is_support': is_support,
-            # 'is_gold_para': is_gold_para,
-            # 'is_gold_ent': is_gold_ent,
-            # 'ans_cand_mask': ans_cand_mask,
-            'query_mapping': query_mapping,
-            'para_mapping': para_mapping,
-            'para_start_mapping': para_start_mapping,
-            'para_end_mapping': para_end_mapping,
-            'para_mask': para_mask,
-            'sent_mapping': sent_mapping,
-            'sent_start_mapping': sent_start_mapping,
-            'sent_end_mapping': sent_end_mapping,
-            'sent_mask': sent_mask,
-            'ent_mapping': ent_mapping,
-            'ent_start_mapping': ent_start_mapping,
-            'ent_end_mapping': ent_end_mapping,
-            'ent_mask': ent_mask,
-            'graphs': graphs}
+        # context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
+        # context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
+        # segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
+        #
+        # if len(case.sent_spans) > 0:
+        #     for j in range(case.sent_spans[0][0] - 1):
+        #         query_mapping[i, j] = 1
+        #
+        # for j, para_span in enumerate(case.para_spans[:self.para_limit]):
+        #     is_gold_flag = j in case.sup_para_ids
+        #     start, end, _ = para_span
+        #     if start <= end:
+        #         end = min(end, self.max_seq_length - 1)
+        #         # is_gold_para[i, j] = int(is_gold_flag)
+        #         para_mapping[i, start:end + 1, j] = 1
+        #         para_start_mapping[i, j, start] = 1
+        #         para_end_mapping[i, j, end] = 1
+        #
+        # for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
+        #     is_sp_flag = j in case.sup_fact_ids
+        #     start, end = sent_span
+        #     if start <= end:
+        #         end = min(end, self.max_seq_length - 1)
+        #         # is_support[i, j] = int(is_sp_flag)
+        #         sent_mapping[i, start:end + 1, j] = 1
+        #         sent_start_mapping[i, j, start] = 1
+        #         sent_end_mapping[i, j, end] = 1
+        #
+        # for j, ent_span in enumerate(case.entity_spans[:self.ent_limit]):
+        #     start, end = ent_span
+        #     if start <= end:
+        #         end = min(end, self.max_seq_length - 1)
+        #         ent_mapping[i, start:end + 1, j] = 1
+        #         ent_start_mapping[i, j, start] = 1
+        #         ent_end_mapping[i, j, end] = 1
+        #     # ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
+        #
+        # # is_gold_ent[i] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX ## no need for loss computation
+        #
+        # # if case.ans_type == 0 or case.ans_type == 3:
+        # #     if len(case.end_position) == 0:
+        # #         y1[i] = y2[i] = 0
+        # #     elif case.end_position[0] < self.max_seq_length and context_mask[i][
+        # #         case.end_position[0] + 1] == 1:  # "[SEP]" is the last token
+        # #         y1[i] = case.start_position[0]
+        # #         y2[i] = case.end_position[0]
+        # #     else:
+        # #         y1[i] = y2[i] = 0
+        # #     q_type[i] = case.ans_type if is_gold_ent[i] > 0 else 0
+        # # elif case.ans_type == 1:
+        # #     y1[i] = IGNORE_INDEX
+        # #     y2[i] = IGNORE_INDEX
+        # #     q_type[i] = 1
+        # # elif case.ans_type == 2:
+        # #     y1[i] = IGNORE_INDEX
+        # #     y2[i] = IGNORE_INDEX
+        # #     q_type[i] = 2
+        # # # ignore entity loss if there is no entity
+        # # if case.ans_type != 3:
+        # #     is_gold_ent[i].fill_(IGNORE_INDEX)
+        #
+        # tmp_graph = self.graph_dict[case.qas_id]
+        # graph_adj = torch.from_numpy(tmp_graph['adj'])
+        # for k in range(graph_adj.size(0)):
+        #     graph_adj[k, k] = self.num_edge_type ## adding self-loop
+        # for edge_type in self.mask_edge_types:
+        #     graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
+        # graphs[i] = graph_adj
+        #
+        # id = case.qas_id
+        # input_length = (context_mask > 0).long().sum(dim=1)
+        # para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
+        # sent_mask = (sent_mapping > 0).any(1).float()
+        # ent_mask = (ent_mapping > 0).any(1).float()
+        #
+        # res = {
+        #     'context_idxs': context_idxs,
+        #     'context_mask': context_mask,
+        #     'segment_idxs': segment_idxs,
+        #     'context_lens': input_length,
+        #     'ids': id,
+        #     # 'y1': y1,
+        #     # 'y2': y2,
+        #     # 'q_type': q_type,
+        #     # 'is_support': is_support,
+        #     # 'is_gold_para': is_gold_para,
+        #     # 'is_gold_ent': is_gold_ent,
+        #     # 'ans_cand_mask': ans_cand_mask,
+        #     'query_mapping': query_mapping,
+        #     'para_mapping': para_mapping,
+        #     'para_start_mapping': para_start_mapping,
+        #     'para_end_mapping': para_end_mapping,
+        #     'para_mask': para_mask,
+        #     'sent_mapping': sent_mapping,
+        #     'sent_start_mapping': sent_start_mapping,
+        #     'sent_end_mapping': sent_end_mapping,
+        #     'sent_mask': sent_mask,
+        #     'ent_mapping': ent_mapping,
+        #     'ent_start_mapping': ent_start_mapping,
+        #     'ent_end_mapping': ent_end_mapping,
+        #     'ent_mask': ent_mask,
+        #     'graphs': graphs}
+        res = {'ids': id}
         return res ## 19 elements
 
     @staticmethod
     def collate_fn(data):
-        assert len(data[0]) == 19
-        context_lens_np = np.array([_['context_lens'] for _ in data])
-        max_c_len = context_lens_np.max()
-        sorted_idxs = np.argsort(context_lens_np)[::-1]
-        assert len(data) == len(sorted_idxs)
-        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        data = [data[_] for _ in sorted_idxs]
-        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # # assert len(data[0]) == 19
+        # context_lens_np = np.array([_['context_lens'] for _ in data])
+        # max_c_len = context_lens_np.max()
+        # sorted_idxs = np.argsort(context_lens_np)[::-1]
+        # assert len(data) == len(sorted_idxs)
+        # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # data = [data[_] for _ in sorted_idxs]
+        # # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         data_keys = data[0].keys()
         batch_data = {}
         for key in data_keys:
             if key in {'ids'}:
                 batch_data[key] = [_[key] for _ in data]
-            elif key in {'context_lens'}:
-                batch_data[key] = torch.LongTensor([_[key] for _ in data])
-            else:
-                batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
-        trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
-        for key in trim_keys:
-            batch_data[key] = batch_data[key][:,:max_c_len]
-        trim_map_keys = ['para_mapping', 'sent_mapping', 'ent_mapping']
-        for key in trim_map_keys:
-            batch_data[key] = batch_data[key][:,:max_c_len,:]
-        trim_start_end_keys = ['para_start_mapping', 'para_end_mapping',
-                               'sent_start_mapping', 'sent_end_mapping',
-                               'ent_start_mapping', 'ent_end_mapping']
-        for key in trim_start_end_keys:
-            batch_data[key] = batch_data[key][:, :, :max_c_len]
+        #     elif key in {'context_lens'}:
+        #         batch_data[key] = torch.LongTensor([_[key] for _ in data])
+        #     else:
+        #         batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
+        # trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
+        # for key in trim_keys:
+        #     batch_data[key] = batch_data[key][:,:max_c_len]
+        # trim_map_keys = ['para_mapping', 'sent_mapping', 'ent_mapping']
+        # for key in trim_map_keys:
+        #     batch_data[key] = batch_data[key][:,:max_c_len,:]
+        # trim_start_end_keys = ['para_start_mapping', 'para_end_mapping',
+        #                        'sent_start_mapping', 'sent_end_mapping',
+        #                        'ent_start_mapping', 'ent_end_mapping']
+        # for key in trim_start_end_keys:
+        #     batch_data[key] = batch_data[key][:, :, :max_c_len]
+
         return batch_data
