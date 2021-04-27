@@ -650,6 +650,7 @@ if __name__ == '__main__':
     parser.add_argument("--graph_id", type=str, default="1", help='define output directory')
     parser.add_argument("--sae_graph", action='store_true',
                         help="Set this flag if you are using SAE graph.")
+    parser.add_argument("--testf_type", type=str, default='long_low')
 
     # Other parameters
     parser.add_argument("--model_type", default=None, type=str, required=True,
@@ -700,7 +701,8 @@ if __name__ == '__main__':
         data_source_type = None
 
     if args.do_rerank:
-        topk_para_name = get_topk_cached_filename(topk_para_num=args.topk, testf_type=args.data_type)
+        topk_para_name_fix = get_topk_cached_filename(topk_para_num=args.topk, testf_type=args.testf_type)
+        topk_para_name = '{}_long_multihop_para.json'.format(topk_para_name_fix)
         args.para_path = os.path.join(args.para_path, topk_para_name)
 
     print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
