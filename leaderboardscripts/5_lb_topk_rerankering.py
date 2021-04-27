@@ -1,10 +1,8 @@
 import logging
-import json
 import os
 import argparse
 from os.path import join
 from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
-from model_envs import MODEL_CLASSES
 from envs import OUTPUT_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
@@ -104,14 +102,16 @@ helper = DataHelper(gz=True, config=args)
 # Set datasets
 test_example_dict = helper.test_example_dict
 test_feature_dict = helper.test_feature_dict
-test_dataloader = helper.hotpot_test_dataloader
+test_data_loader = helper.hotpot_test_dataloader
 
-# #########################################################################
-# # Initialize Model
-# ##########################################################################
-config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-config = config_class.from_pretrained(args.encoder_name_or_path)
+# # #########################################################################
+# # # Initialize Model
+# # ##########################################################################
+# config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
+# config = config_class.from_pretrained(args.encoder_name_or_path)
 
+for batch in test_data_loader:
+    print(batch)
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
