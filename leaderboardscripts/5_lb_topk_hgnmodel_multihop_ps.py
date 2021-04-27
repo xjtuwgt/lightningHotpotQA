@@ -244,6 +244,6 @@ for case in tqdm(raw_data):
     ####++++++++++++
 
 print('Combining topk and hyper-link takes {} seconds'.format(time() - start_time))
-print(output_file_name)
+print(output_file)
 # json.dump(selected_para_dict, open(output_file, 'w'))
 # print('Saving {} into {}'.format(len(selected_para_dict), output_file))
