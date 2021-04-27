@@ -113,12 +113,13 @@ def device_setting(args):
 def ParagraphRanker(data: DataFrame):
     def row_process(row):
         ctx_titles = [x[0] for x in row['context']]
+        para_num = len(ctx_titles)
         predicted_scores = row['doc_score']
         predicted_scores = predicted_scores[:(len(ctx_titles))]
         title_score_pair_list = list(zip(ctx_titles, predicted_scores))
         title_score_pair_list.sort(key=lambda x: x[1], reverse=True)
-        return tuple(title_score_pair_list)
-    data['ti_s_pair'] = data.apply(lambda row: pd.Series(row_process(row)), axis=1)
+        return para_num, tuple(title_score_pair_list)
+    data[['para_num', 'ti_s_pair']] = data.apply(lambda row: pd.Series(row_process(row)), axis=1)
     doc_ids, para_score_pair = data['_id'].tolist(), data['ti_s_pair'].tolist()
     para_score_dict = dict(zip(doc_ids, para_score_pair))
     return para_score_dict
