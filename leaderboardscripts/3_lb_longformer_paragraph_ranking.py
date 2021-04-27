@@ -118,8 +118,7 @@ def ParagraphRanker(data: DataFrame):
         title_score_pair_list = list(zip(ctx_titles, predicted_scores))
         title_score_pair_list.sort(key=lambda x: x[1], reverse=True)
         return tuple(title_score_pair_list)
-    res_names = ['ti_s_pair']
-    data[res_names] = data.apply(lambda row: pd.Series(row_process(row)), axis=1)
+    data['ti_s_pair'] = data.apply(lambda row: pd.Series(row_process(row)), axis=1)
     doc_ids, para_score_pair = data['_id'].tolist(), data['ti_s_pair'].tolist()
     para_score_dict = dict(zip(doc_ids, para_score_pair))
     return para_score_dict
