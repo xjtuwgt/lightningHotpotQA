@@ -12,7 +12,6 @@ from envs import DATASET_FOLDER
 IGNORE_INDEX = -100
 def get_cached_filename(f_type, config):
     f_type_set = {'examples', 'features', 'graphs',
-
                   'hgn_examples', 'hgn_features', 'hgn_graphs',
                   'hgn_reverse_examples', 'hgn_reverse_features', 'hgn_reverse_graphs',
 
@@ -401,13 +400,14 @@ class HotpotDataset(Dataset):
             'context_mask': context_mask,
             'segment_idxs': segment_idxs,
             'context_lens': input_length,
+            'ids': id,
             # 'y1': y1,
             # 'y2': y2,
-            # 'ids': id,
             # 'q_type': q_type,
             # 'is_support': is_support,
             # 'is_gold_para': is_gold_para,
             # 'is_gold_ent': is_gold_ent,
+            # 'ans_cand_mask': ans_cand_mask,
             'query_mapping': query_mapping,
             'para_mapping': para_mapping,
             'para_start_mapping': para_start_mapping,
@@ -421,14 +421,13 @@ class HotpotDataset(Dataset):
             'ent_start_mapping': ent_start_mapping,
             'ent_end_mapping': ent_end_mapping,
             'ent_mask': ent_mask,
-            # 'ans_cand_mask': ans_cand_mask,
             'graphs': graphs
         }
         return res ## 26 elements
 
     @staticmethod
     def collate_fn(data):
-        assert len(data[0]) == 18
+        assert len(data[0]) == 19
         context_lens_np = np.array([_['context_lens'] for _ in data])
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
