@@ -167,13 +167,3 @@ print('Saving {} examples in {}'.format(len(para_rank_dict), output_ranking_para
 data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
 json.dump(para_rank_dict, open(data_processed_ranking_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_ranking_para_file))
-
-
-
-# # import json
-# with open(data_processed_pred_para_file, 'r') as fp:
-#     data = json.load(fp)
-#     print(len(data))
-#     for x in data:
-#         print(x)
-#         print(data[x])
