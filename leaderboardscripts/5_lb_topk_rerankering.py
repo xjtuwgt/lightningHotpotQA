@@ -152,13 +152,24 @@ model.eval()
 # ##########################################################################
 selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=test_data_loader,
                                                               example_dict=test_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
-output_pred_para_file = join(args.exp_name, 'rerank_topk_' + str(args.topk_para_num) + '_' + args.testf_type + '_multihop_para.json')
-json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
-print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
+output_pred_para_dict_file = join(args.exp_name, 'rerank_topk_' + str(args.topk_para_num) + '_' + args.testf_type + '_multihop_para.json')
+json.dump(selected_para_dict, open(output_pred_para_dict_file, 'w'))
+print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_dict_file))
 
-data_processed_pred_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_' + str(args.topk_para_num) + '_' + args.testf_type + '_multihop_para.json')
-json.dump(selected_para_dict, open(data_processed_pred_para_file, 'w'))
-print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_file))
+data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_' + str(args.topk_para_num) + '_' + args.testf_type + '_multihop_para.json')
+json.dump(selected_para_dict, open(data_processed_pred_para_dict_file, 'w'))
+print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_dict_file))
+
+output_ranking_para_file = join(args.exp_name, 'rerank_topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
+json.dump(para_rank_dict, open(output_ranking_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(para_rank_dict), output_ranking_para_file))
+
+data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_para_ranking.json')
+json.dump(para_rank_dict, open(data_processed_ranking_para_file, 'w'))
+print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_ranking_para_file))
+
+
+
 # # import json
 # with open(data_processed_pred_para_file, 'r') as fp:
 #     data = json.load(fp)
