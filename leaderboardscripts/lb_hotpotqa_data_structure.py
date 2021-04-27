@@ -135,6 +135,7 @@ class InputFeatures(object):
                  entity_spans,
                  q_entity_cnt,
                  token_to_orig_map,
+                 answer_candidates_ids,
                  edges=None):
         self.qas_id = qas_id
         self.doc_tokens = doc_tokens

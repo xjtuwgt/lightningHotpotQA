@@ -343,7 +343,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
             all_query_tokens += [sep_token]
 
         entity_spans = []
-        # answer_candidates_ids = []
+        answer_candidates_ids = []
         for q_ent_text, (q_ent_start, q_ent_end) in zip(example.ques_entities_text,
                                                         example.ques_entity_start_end_position):
             _start_pos, _end_pos = relocate_tok_span(ques_orig_to_tok_index, ques_orig_to_tok_back_index,
@@ -393,8 +393,8 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
 
         # entity part
         q_entity_cnt = len(entity_spans)
-        # answer_candidates_ids.extend(
-        #     list(range(q_entity_cnt)))  # all entities in question would be in the answer candidates
+        answer_candidates_ids.extend(
+            list(range(q_entity_cnt)))  # all entities in question would be in the answer candidates
         for c_ent_text, (c_ent_start, c_ent_end) in zip(example.ctx_entities_text,
                                                         example.ctx_entity_start_end_position):
             _start_pos, _end_pos = relocate_tok_span(orig_to_tok_index, orig_to_tok_back_index, example.doc_tokens,
@@ -475,7 +475,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         #         ans_end_position.append(_end_pos)
 
         # # answer entity
-        # c_entity_cnt = len(entity_spans) - q_entity_cnt
+        c_entity_cnt = len(entity_spans) - q_entity_cnt
 
         # answer_in_entity_ids = []
         # for q_entity_id in example.answer_in_ques_entity_ids:
@@ -483,9 +483,9 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
         #         answer_in_entity_ids.append(q_entity_id)
 
         # # entities which match title can be in the candidates
-        # for c_entity_id in example.answer_candidates_in_ctx_entity_ids:
-        #     if c_entity_id < c_entity_cnt:
-        #         answer_candidates_ids.append(c_entity_id + q_entity_cnt)
+        for c_entity_id in example.answer_candidates_in_ctx_entity_ids:
+            if c_entity_id < c_entity_cnt:
+                answer_candidates_ids.append(c_entity_id + q_entity_cnt)
         #
         # if len(answer_in_entity_ids) == 0:
         #     for c_entity_id in example.answer_in_ctx_entity_ids:
@@ -558,6 +558,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, max_query_
                           entity_spans=entity_spans,
                           q_entity_cnt=q_entity_cnt,
                           token_to_orig_map=tok_to_orig_index,
+                          answer_candidates_ids=answer_candidates_ids,
                           edges=edges)
         )
     print('Number of failed examples = {}'.format(failed))
