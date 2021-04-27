@@ -40,7 +40,6 @@ def parse_args(args=None):
     parser.add_argument("--encoder_ckpt", default='encoder.pkl', type=str)
     parser.add_argument("--model_ckpt", default='model.pkl', type=str)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    parser.add_argument('--num_edge_type', type=int, default=8) ### number of edge types
     parser.add_argument('--mask_edge_types', type=str, default="0") ### masked edge types
     parser.add_argument('--gnn', default='gat:1,2', type=str, help='gat:n_layer, n_head')
     # hyper-parameter
