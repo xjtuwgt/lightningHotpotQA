@@ -6,14 +6,11 @@ import numpy as np
 import sys
 from time import time
 import collections
+from leaderboardscripts.lb_hotpotqa_data_structure import get_topk_cached_filename
 
 from tqdm import tqdm
 
 assert len(sys.argv) == 8
-
-def get_topk_cached_filename(topk_para_num, testf_type):
-    file_name = 'rerank_topk_' + str(topk_para_num) + '_' + testf_type
-    return file_name
 
 start_time = time()
 raw_data = json.load(open(sys.argv[1], 'r'))

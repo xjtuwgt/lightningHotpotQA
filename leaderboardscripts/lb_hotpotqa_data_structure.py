@@ -9,6 +9,10 @@ from torch.utils.data import DataLoader
 from envs import DATASET_FOLDER
 IGNORE_INDEX = -100
 
+def get_topk_cached_filename(topk_para_num, testf_type):
+    file_name = 'rerank_topk_' + str(topk_para_num) + '_' + testf_type
+    return file_name
+
 def get_cached_filename(f_type, config):
     f_type_set = {'examples', 'features', 'graphs',
                   'hgn_examples', 'hgn_features', 'hgn_graphs',

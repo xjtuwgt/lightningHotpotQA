@@ -7,6 +7,7 @@ from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
+from leaderboardscripts.lb_hotpotqa_data_structure import get_topk_cached_filename
 from leaderboardscripts.lb_readermodel_paragraph_ranker import albert_para_ranker_model
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
 
@@ -19,10 +20,6 @@ def boolean_string(s):
     if s.lower() not in {'false', 'true'}:
         raise ValueError('Not a valid boolean string')
     return s.lower() == 'true'
-
-def get_topk_cached_filename(topk_para_num, testf_type):
-    file_name = 'rerank_topk_' + str(topk_para_num) + '_' + testf_type
-    return file_name
 
 
 def parse_args(args=None):
