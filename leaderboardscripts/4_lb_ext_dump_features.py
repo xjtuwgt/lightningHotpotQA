@@ -671,8 +671,7 @@ if __name__ == '__main__':
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--ranker", default=None, type=str, required=True,
                         help="The ranker for paragraph ranking")
-    parser.add_argument("--do_rerank", action='store_true', type=bool,
-                        help="The ranker for paragraph ranking")
+    parser.add_argument("--do_rerank", action='store_true', help="Whether re-rank")
     parser.add_argument("--topk", default=3, type=int)
     parser.add_argument("--reverse", action='store_true',
                         help="Set this flag if you are using reverse data.")
