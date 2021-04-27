@@ -249,7 +249,6 @@ class DataHelper:
                                  para_limit=self.config.max_para_num,
                                  sent_limit=self.config.max_sent_num,
                                  ent_limit=self.config.max_entity_num,
-                                 ans_ent_limit=self.config.max_ans_ent_num,
                                  num_edge_type=self.config.num_edge_type,
                                  mask_edge_types=self.config.mask_edge_types)
         dataloader = DataLoader(
