@@ -301,7 +301,7 @@ class HotpotDataset(Dataset):
         para_mask = torch.zeros(1, self.para_limit, dtype=torch.float)
         sent_mask = torch.zeros(1, self.sent_limit, dtype=torch.float)
         ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
-        # ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
+        ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
 
         # Graph related
         graphs = torch.zeros(1, self.graph_nodes_num, self.graph_nodes_num, dtype=torch.float)
@@ -341,7 +341,7 @@ class HotpotDataset(Dataset):
                 ent_mapping[i, start:end + 1, j] = 1
                 ent_start_mapping[i, j, start] = 1
                 ent_end_mapping[i, j, end] = 1
-        #     # ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
+            ans_cand_mask[i, j] = int(j in case.answer_candidates_ids)
         #
         # # is_gold_ent[i] = case.answer_in_entity_ids[0] if len(case.answer_in_entity_ids) > 0 else IGNORE_INDEX ## no need for loss computation
         #
@@ -393,7 +393,7 @@ class HotpotDataset(Dataset):
             # 'is_support': is_support,
             # 'is_gold_para': is_gold_para,
             # 'is_gold_ent': is_gold_ent,
-            # 'ans_cand_mask': ans_cand_mask,
+            'ans_cand_mask': ans_cand_mask,
             'query_mapping': query_mapping,
             'para_mapping': para_mapping,
             'para_start_mapping': para_start_mapping,
@@ -417,7 +417,7 @@ class HotpotDataset(Dataset):
 
     @staticmethod
     def collate_fn(data):
-        assert len(data[0]) == 19
+        assert len(data[0]) == 20
         context_lens_np = np.array([_['context_lens'] for _ in data])
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
