@@ -375,43 +375,43 @@ class HotpotDataset(Dataset):
         graphs[i] = graph_adj
 
         examp_id = case.qas_id
-        # input_length = (context_mask > 0).long().sum(dim=1)
-        # para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
-        # sent_mask = (sent_mapping > 0).any(1).float()
-        # ent_mask = (ent_mapping > 0).any(1).float()
+        input_length = (context_mask > 0).long().sum(dim=1)
+        para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
+        sent_mask = (sent_mapping > 0).any(1).float()
+        ent_mask = (ent_mapping > 0).any(1).float()
         #
-        # res = {
-        #     'context_idxs': context_idxs,
-        #     'context_mask': context_mask,
-        #     'segment_idxs': segment_idxs,
-        #     'context_lens': input_length,
-        #     'ids': id,
-        #     # 'y1': y1,
-        #     # 'y2': y2,
-        #     # 'q_type': q_type,
-        #     # 'is_support': is_support,
-        #     # 'is_gold_para': is_gold_para,
-        #     # 'is_gold_ent': is_gold_ent,
-        #     # 'ans_cand_mask': ans_cand_mask,
-        #     'query_mapping': query_mapping,
-        #     'para_mapping': para_mapping,
-        #     'para_start_mapping': para_start_mapping,
-        #     'para_end_mapping': para_end_mapping,
-        #     'para_mask': para_mask,
-        #     'sent_mapping': sent_mapping,
-        #     'sent_start_mapping': sent_start_mapping,
-        #     'sent_end_mapping': sent_end_mapping,
-        #     'sent_mask': sent_mask,
-        #     'ent_mapping': ent_mapping,
-        #     'ent_start_mapping': ent_start_mapping,
-        #     'ent_end_mapping': ent_end_mapping,
-        #     'ent_mask': ent_mask,
-        #     'graphs': graphs}
-        res = {'ids': examp_id,
-               'context_idxs': context_idxs,
-               'context_mask': context_mask,
-               'segment_idxs': segment_idxs
-               }
+        res = {
+            'context_idxs': context_idxs,
+            'context_mask': context_mask,
+            'segment_idxs': segment_idxs,
+            'context_lens': input_length,
+            'ids': examp_id,
+            # 'y1': y1,
+            # 'y2': y2,
+            # 'q_type': q_type,
+            # 'is_support': is_support,
+            # 'is_gold_para': is_gold_para,
+            # 'is_gold_ent': is_gold_ent,
+            # 'ans_cand_mask': ans_cand_mask,
+            'query_mapping': query_mapping,
+            'para_mapping': para_mapping,
+            'para_start_mapping': para_start_mapping,
+            'para_end_mapping': para_end_mapping,
+            'para_mask': para_mask,
+            'sent_mapping': sent_mapping,
+            'sent_start_mapping': sent_start_mapping,
+            'sent_end_mapping': sent_end_mapping,
+            'sent_mask': sent_mask,
+            'ent_mapping': ent_mapping,
+            'ent_start_mapping': ent_start_mapping,
+            'ent_end_mapping': ent_end_mapping,
+            'ent_mask': ent_mask,
+            'graphs': graphs}
+        # res = {'ids': examp_id,
+        #        'context_idxs': context_idxs,
+        #        'context_mask': context_mask,
+        #        'segment_idxs': segment_idxs
+        #        }
         return res ## 19 elements
 
     @staticmethod
@@ -429,8 +429,8 @@ class HotpotDataset(Dataset):
         for key in data_keys:
             if key in {'ids'}:
                 batch_data[key] = [_[key] for _ in data]
-        #     elif key in {'context_lens'}:
-        #         batch_data[key] = torch.LongTensor([_[key] for _ in data])
+            elif key in {'context_lens'}:
+                batch_data[key] = torch.LongTensor([_[key] for _ in data])
             else:
                 batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
         # trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
