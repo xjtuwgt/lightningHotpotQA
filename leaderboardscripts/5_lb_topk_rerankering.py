@@ -3,7 +3,7 @@ import os
 import argparse
 from os.path import join
 from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
-from envs import OUTPUT_FOLDER
+from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_readermodel_paragraph_ranker import albert_para_ranker_model
@@ -87,6 +87,9 @@ def parse_args(args=None):
     parser.add_argument('--test_batch_size', default=16, type=int)
     parser.add_argument('--test_log_steps', default=10, type=int)
     parser.add_argument('--cpu_num', default=24, type=int)
+    parser.add_argument("--dev_gold_file",
+                        type=str,
+                        default=join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json'))
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return parser.parse_args(args)
 
@@ -194,7 +197,8 @@ model.eval()
 # else:
 #     model_name = '' + args.model_type
 #
-selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=test_data_loader, example_dict=test_example_dict, topk=args.topk_para_num)
+selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=test_data_loader,
+                                                              example_dict=test_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
 
 # output_pred_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
 # json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
