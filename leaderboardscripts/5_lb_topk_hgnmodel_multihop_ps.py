@@ -17,14 +17,16 @@ def get_topk_cached_filename(topk_para_num, testf_type):
 raw_data = json.load(open(sys.argv[1], 'r'))
 doc_link_data = json.load(open(sys.argv[2], 'r'))
 ent_data = json.load(open(sys.argv[3], 'r'))
-output_file = sys.argv[4]
+output_folder = sys.argv[4]
 ###################################################
 num_selected_docs = int(sys.argv[5])
 topk = int(sys.argv[6])
 data_type = sys.argv[7]
 topk_file_name_prefix = get_topk_cached_filename(topk_para_num=topk, testf_type=data_type)
 para_data_file_name = '{}_para_ranking.json'.format(topk_file_name_prefix)
-para_data = json.load(open(para_data_file_name, 'r'))
+para_data = json.load(open(join(output_folder, para_data_file_name), 'r'))
+output_file_name = 'topk_long_multihop_para.json'
+output_file = join(output_folder, output_file_name)
 print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
 ###################################################
 
