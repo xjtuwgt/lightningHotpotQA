@@ -416,7 +416,7 @@ class HotpotDataset(Dataset):
 
     @staticmethod
     def collate_fn(data):
-        # # assert len(data[0]) == 19
+        assert len(data[0]) == 19
         context_lens_np = np.array([_['context_lens'] for _ in data])
         max_c_len = context_lens_np.max()
         sorted_idxs = np.argsort(context_lens_np)[::-1]
