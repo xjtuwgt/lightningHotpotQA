@@ -134,7 +134,7 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         with torch.no_grad():
-            start, end, q_type, paras, sent, ent, yp1, yp2 = model(batch, return_yp=True)
+            start, end, q_type, paras, sent, ent, yp1, yp2, _ = model(batch, return_yp=True)
         ####################################################################
         predict_support_para_np = torch.sigmoid(paras[:, :, 1]).data.cpu().numpy()
         support_para_mask_np = batch['para_mask'].data.cpu().numpy()
