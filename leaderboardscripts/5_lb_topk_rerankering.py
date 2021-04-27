@@ -60,11 +60,12 @@ def parse_args(args=None):
     parser.add_argument('--graph_residual', type=boolean_string, default='True',
                         help='whether use residual connection in GAT')  ##+++++++++
 
-    parser.add_argument("--max_para_num", default=4, type=int)
+    parser.add_argument("--max_para_num", default=5, type=int)
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_entity_num", default=60, type=int)
     parser.add_argument("--max_ans_ent_num", default=15, type=int)
     parser.add_argument("--max_seq_length", default=512, type=int)
+    parser.add_argument("--max_query_length", default=50, type=int)
 
     # bi attn
     parser.add_argument('--ctx_attn', type=str, default='gate_att_up',
