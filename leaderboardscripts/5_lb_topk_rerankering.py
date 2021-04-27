@@ -26,6 +26,7 @@ def parse_args(args=None):
     parser.add_argument("--max_sent_num", default=40, type=int)
     parser.add_argument("--max_query_length", default=50, type=int)
     parser.add_argument("--max_seq_length", default=512, type=int)
+    parser.add_argument("--num_edge_type", default=512, type=int)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
     parser.add_argument("--exp_name", default='albert_reader', type=str, help="alber reader model")
