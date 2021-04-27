@@ -6,6 +6,7 @@ from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
+from leaderboardscripts.lb_readermodel_paragraph_ranker import albert_para_ranker_model
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -179,7 +180,7 @@ model.to(args.device)
 # model.to(args.device)
 #
 # encoder.eval()
-# model.eval()
+model.eval()
 #
 # #########################################################################
 # # Evaluation
@@ -193,8 +194,8 @@ model.to(args.device)
 # else:
 #     model_name = '' + args.model_type
 #
-# selected_para_dict, para_rank_dict = para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
-#
+selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
+
 # output_pred_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
 # json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
 # print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_file))
