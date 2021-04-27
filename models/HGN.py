@@ -38,7 +38,7 @@ class HierarchicalGraphNetwork(nn.Module):
 
         self.predict_layer = PredictionLayer(self.config, q_dim)
 
-    def forward(self, batch, return_yp):
+    def forward(self, batch, return_yp, return_cls=False):
         query_mapping = batch['query_mapping']
         context_encoding = batch['context_encoding']
 
@@ -76,9 +76,14 @@ class HierarchicalGraphNetwork(nn.Module):
         input_state, _ = self.ctx_attention(input_state, graph_state, graph_mask.squeeze(-1))
         predictions = self.predict_layer(batch, input_state, sent_logits[-1], packing_mask=query_mapping, return_yp=return_yp)
 
+        cls_embed = input_state[:,0,:]
         if return_yp:
             start, end, q_type, yp1, yp2 = predictions
+            if return_cls:
+                return start, end, q_type, para_predictions[-1], sent_predictions[-1], ent_predictions[-1], yp1, yp2, cls_embed
             return start, end, q_type, para_predictions[-1], sent_predictions[-1], ent_predictions[-1], yp1, yp2
         else:
             start, end, q_type = predictions
+            if return_cls:
+                return start, end, q_type, para_predictions[-1], sent_predictions[-1], ent_predictions[-1]
             return start, end, q_type, para_predictions[-1], sent_predictions[-1], ent_predictions[-1]
