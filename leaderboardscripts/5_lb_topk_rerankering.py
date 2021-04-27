@@ -110,9 +110,9 @@ test_data_loader = helper.hotpot_test_dataloader
 # config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
 # config = config_class.from_pretrained(args.encoder_name_or_path)
 
-print(test_example_dict)
-# for batch in test_data_loader:
-#     print(batch)
+# print(test_example_dict)
+for batch in test_data_loader:
+    print(batch)
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
