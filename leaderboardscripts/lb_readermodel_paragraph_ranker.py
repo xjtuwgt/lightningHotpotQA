@@ -182,27 +182,6 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
                 sel_paras.append([])
                 sel_paras.append(selected_para_names[2:])
             print('tuple result = {}'.format(sel_paras))
-            # if para_num < 2:
-            #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[0]]], [], [])
-            # else:
-            #     topk_paras = []
-            #     for i in range(para_num):
-            #         sel_idx = sorted_idxes[i]
-            #         if len(topk_paras) < topk:
-            #             topk_paras.append(para_names_i[sel_idx])
-            #     assert len(topk_paras) <= topk and len(topk_paras) <= para_num and para_num <=4
-            #     sel_paras=[topk_paras[:2], [], topk_paras[2:]]
-
-                # if topk == 2 and para_num >=2:
-                #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
-                # elif topk == 3:
-                #     if para_num > 2:
-                #         sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]]])
-                #     else:
-                #         sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [])
-                # else:
-                #     if
-                #     sel_paras = ([para_names_i[sorted_idxes[0]], para_names_i[sorted_idxes[1]]], [], [para_names_i[sorted_idxes[2]], para_names_i[sorted_idxes[3]]])
             prediction_para_dict[cur_id] = (sel_paras[0], sel_paras[1], sel_paras[2])
 
     recall_list = []
