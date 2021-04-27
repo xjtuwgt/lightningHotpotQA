@@ -102,17 +102,20 @@ helper = DataHelper(gz=True, config=args)
 # Set datasets
 test_example_dict = helper.test_example_dict
 test_feature_dict = helper.test_feature_dict
-test_data_loader = helper.hotpot_test_dataloader
-
-# # #########################################################################
-# # # Initialize Model
-# # ##########################################################################
-# config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-# config = config_class.from_pretrained(args.encoder_name_or_path)
-
-# print(test_example_dict)
-for batch in test_data_loader:
-    print(batch)
+for key, value in test_feature_dict.items():
+    print(value)
+    print(test_example_dict[key])
+# test_data_loader = helper.hotpot_test_dataloader
+#
+# # # #########################################################################
+# # # # Initialize Model
+# # # ##########################################################################
+# # config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
+# # config = config_class.from_pretrained(args.encoder_name_or_path)
+#
+# # print(test_example_dict)
+# for batch in test_data_loader:
+#     print(batch)
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
