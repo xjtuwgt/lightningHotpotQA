@@ -237,7 +237,6 @@ class DataHelper:
 
     # Load
     def load_test(self):
-        print(self.test_features)
         return self.test_features, self.test_example_dict, self.test_graphs
 
     @property
@@ -318,6 +317,7 @@ class HotpotDataset(Dataset):
         # is_gold_ent.fill_(IGNORE_INDEX)
         ################################################################################################################
         case = self.features[idx]
+        print(case)
         ################################################################################################################
         i = 0
         context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
