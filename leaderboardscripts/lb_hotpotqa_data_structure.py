@@ -328,7 +328,7 @@ class HotpotDataset(Dataset):
                 query_mapping[i, j] = 1
 
         for j, para_span in enumerate(case.para_spans[:self.para_limit]):
-            is_gold_flag = j in case.sup_para_ids
+            # is_gold_flag = j in case.sup_para_ids
             start, end, _ = para_span
             if start <= end:
                 end = min(end, self.max_seq_length - 1)
