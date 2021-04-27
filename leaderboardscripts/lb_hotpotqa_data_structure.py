@@ -389,7 +389,7 @@ class HotpotDataset(Dataset):
         #     graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
         # graphs[i] = graph_adj
         #
-        # id = case.qas_id
+        examp_id = case.qas_id
         # input_length = (context_mask > 0).long().sum(dim=1)
         # para_mask = (para_mapping > 0).any(1).float() ### 1 represents dimension
         # sent_mask = (sent_mapping > 0).any(1).float()
@@ -422,7 +422,7 @@ class HotpotDataset(Dataset):
         #     'ent_end_mapping': ent_end_mapping,
         #     'ent_mask': ent_mask,
         #     'graphs': graphs}
-        res = {'ids': id}
+        res = {'ids': examp_id}
         return res ## 19 elements
 
     @staticmethod
