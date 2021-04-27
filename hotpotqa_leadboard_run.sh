@@ -66,11 +66,14 @@ preprocess() {
 #        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
 #        python leaderboardscripts/4_lb_ext_dump_features.py  --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM
 
-        echo "5. Re-rank over top 5 via the trained model (1)"
+        echo "5. Re-rank over top 5 via the trained model"
         python leaderboardscripts/5_lb_topk_rerankering.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
 
-#        echo "5. Dump features for electra (5) do_lower_case for re-rank results (2)"
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
+#        echo "6. Re-rank over top k and hyper-link "
+#        python leaderboardscripts/5_lb_topk_hgnmodel_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/topk_long_multihop_para.json $SELECTEED_DOC_NUM $TOPK_PARA_NUM long_low
+
+#        echo "7. Dump features for electra (5) do_lower_case for re-rank results (2)"
+#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/topk_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
 #
 #        echo "6. Model prediction"
 #
