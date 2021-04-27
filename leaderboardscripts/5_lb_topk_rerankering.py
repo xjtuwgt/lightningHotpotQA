@@ -6,6 +6,7 @@ from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
+from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -120,6 +121,9 @@ test_data_loader = helper.hotpot_test_dataloader
 for batch in test_data_loader:
     # print(batch['ids'])
     print(batch)
+
+model = UnifiedHGNModel(config=args)
+model.to(args.device)
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
