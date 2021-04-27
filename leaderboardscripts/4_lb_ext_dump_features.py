@@ -12,6 +12,7 @@ import os
 import numpy as np
 import itertools
 import spacy
+from time import time
 
 from spacy.tokenizer import Tokenizer
 from collections import Counter
@@ -706,36 +707,42 @@ if __name__ == '__main__':
         args.para_path = os.path.join(args.para_path, topk_para_name)
 
     print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
+    start_time = time()
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
                                     doc_link_file=args.doc_link_ner)
+    print('Generate {} examples in {:.4f} seconds'.format(len(examples), time() - start_time))
 
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_examples'.format(data_source_name), args))
 
-    # with gzip.open(cached_examples_file, 'wb') as fout:
-    #     pickle.dump(examples, fout)
-    #
-    # features = convert_examples_to_features(examples, tokenizer,
-    #                                         max_seq_length=args.max_seq_length,
-    #                                         max_query_length=args.max_query_length,
-    #                                         max_entity_num=args.max_entity_num,
-    #                                         cls_token=tokenizer.cls_token,
-    #                                         sep_token=tokenizer.sep_token,
-    #                                         is_roberta=bool(args.model_type in ['roberta']),
-    #                                         filter_no_ans=args.filter_no_ans)
-    #
-    # cached_features_file = os.path.join(args.output_dir,
-    #                                     get_cached_filename('{}_features'.format(data_source_name), args))
-    #
-    # with gzip.open(cached_features_file, 'wb') as fout:
-    #     pickle.dump(features, fout)
-    #
-    # # build graphs
-    # cached_graph_file = os.path.join(args.output_dir,
-    #                                  get_cached_filename('{}_graphs'.format(data_source_name), args))
-    #
-    # graphs = build_graph(args, examples, features, args.max_entity_num)
-    # with gzip.open(cached_graph_file, 'wb') as fout:
-    #     pickle.dump(graphs, fout)
+    with gzip.open(cached_examples_file, 'wb') as fout:
+        pickle.dump(examples, fout)
+    print('Saving {} examples in {}'.format(len(examples), cached_examples_file))
+
+    start_time = time()
+    features = convert_examples_to_features(examples, tokenizer,
+                                            max_seq_length=args.max_seq_length,
+                                            max_query_length=args.max_query_length,
+                                            max_entity_num=args.max_entity_num,
+                                            cls_token=tokenizer.cls_token,
+                                            sep_token=tokenizer.sep_token,
+                                            is_roberta=bool(args.model_type in ['roberta']),
+                                            filter_no_ans=args.filter_no_ans)
+    print('Generate {} features in {:.4f} seconds'.format(len(features), time() - start_time))
+    cached_features_file = os.path.join(args.output_dir,
+                                        get_cached_filename('{}_features'.format(data_source_name), args))
+    with gzip.open(cached_features_file, 'wb') as fout:
+        pickle.dump(features, fout)
+    print('Saving {} features in {}'.format(len(features), cached_features_file))
+
+    # build graphs
+    start_time = time()
+    graphs = build_graph(args, examples, features, args.max_entity_num)
+    print('Generate {} graphs in {:.4f} seconds'.format(len(graphs), time() - start_time))
+    cached_graph_file = os.path.join(args.output_dir,
+                                     get_cached_filename('{}_graphs'.format(data_source_name), args))
+    with gzip.open(cached_graph_file, 'wb') as fout:
+        pickle.dump(graphs, fout)
+    print('Saving {} graphs in {}'.format(len(graphs), cached_graph_file))
