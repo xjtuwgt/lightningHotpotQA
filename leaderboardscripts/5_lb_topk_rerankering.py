@@ -102,9 +102,12 @@ helper = DataHelper(gz=True, config=args)
 # Set datasets
 test_example_dict = helper.test_example_dict
 test_feature_dict = helper.test_feature_dict
-for key, value in test_feature_dict.items():
-    print(value)
-    print(test_example_dict[key])
+test_features = helper.test_features
+# for key, value in test_feature_dict.items():
+#     print(value)
+#     print(test_example_dict[key])
+for case in test_features:
+    print(case)
 # test_data_loader = helper.hotpot_test_dataloader
 #
 # # # #########################################################################
