@@ -96,6 +96,7 @@ class Example(object):
                  ctx_entity_start_end_position,
                  question_text,
                  question_word_to_char_idx,
+                 answer_candidates_in_ctx_entity_ids,
                  ctx_text,
                  ctx_word_to_char_idx,
                  edges=None):
@@ -115,6 +116,7 @@ class Example(object):
         self.question_word_to_char_idx = question_word_to_char_idx
         self.ctx_text = ctx_text
         self.ctx_word_to_char_idx = ctx_word_to_char_idx
+        self.answer_candidates_in_ctx_entity_ids = answer_candidates_in_ctx_entity_ids
         self.edges = edges
 
 class InputFeatures(object):

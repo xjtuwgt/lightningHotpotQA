@@ -272,6 +272,7 @@ def read_hotpot_examples(para_file,
             question_word_to_char_idx=ques_word_to_char_idx,
             ctx_text=ctx_text,
             ctx_word_to_char_idx=ctx_word_to_char_idx,
+            answer_candidates_in_ctx_entity_ids=ctx_answer_candidates,
             edges=edges)
         examples.append(example)
 
