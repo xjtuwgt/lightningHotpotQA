@@ -249,7 +249,7 @@ class DataHelper:
                                  mask_edge_types=self.config.mask_edge_types)
         dataloader = DataLoader(
             dataset=dev_data,
-            batch_size=self.config.eval_batch_size,
+            batch_size=self.config.test_batch_size,
             shuffle=False,
             num_workers=max(1, self.config.cpu_num // 2),
             collate_fn=HotpotDataset.collate_fn
