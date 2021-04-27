@@ -75,7 +75,7 @@ def parse_args(args=None):
     parser.add_argument("--bi_attn_drop", type=float, default=0.3)
     parser.add_argument("--hidden_dim", type=int, default=300)
     # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # parser.add_argument('--data_dir', default=None, type=str, required=True)
+    parser.add_argument('--topk_para_num', default=3, type=int, required=True)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
     parser.add_argument("--encoder_name_or_path",
@@ -194,7 +194,7 @@ model.eval()
 # else:
 #     model_name = '' + args.model_type
 #
-selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, encoder=encoder, model=model, dataloader=dev_dataloader, example_dict=dev_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
+selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=test_data_loader, example_dict=test_example_dict, topk=args.topk_para_num)
 
 # output_pred_para_file = join(args.exp_name, 'rerank_' + model_name+'topk_' + str(args.topk_para_num) + '_' + args.devf_type + '_multihop_para.json')
 # json.dump(selected_para_dict, open(output_pred_para_file, 'w'))
