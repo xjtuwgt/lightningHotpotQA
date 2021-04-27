@@ -10,7 +10,7 @@ from tensorboardX import SummaryWriter
 from sd_mhqa.hotpotqa_argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
 from csr_mhqa.utils import MODEL_CLASSES
 from plmodels.pldata_processing import DataHelper
-from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
+from utils.jdevalUtil import jd_unified_eval_model
 from sd_mhqa.hgn_hotpotqa_model import UnifiedHGNModel
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -55,6 +55,7 @@ helper = DataHelper(config=args)
 # Set datasets
 train_dataloader = helper.hotpot_train_dataloader
 dev_example_dict = helper.dev_example_dict
+dev_feature_dict = helper.dev_feature_dict
 dev_dataloader = helper.hotpot_val_dataloader
 
 # #########################################################################
@@ -176,8 +177,8 @@ for epoch in train_iterator:
             if args.local_rank == -1 or torch.distributed.get_rank() == 0:
                 output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.step_{step + 1}.json')
                 output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.step_{step + 1}.txt')
-                metrics, threshold = jd_hotpotqa_eval_model(args, model,
-                                                        dev_dataloader, dev_example_dict,
+                metrics, threshold = jd_unified_eval_model(args, model,
+                                                        dev_dataloader, dev_example_dict, dev_feature_dict,
                                                         output_pred_file, output_eval_file, args.dev_gold_file)
                 if metrics['joint_f1'] >= best_joint_f1:
                     best_joint_f1 = metrics['joint_f1']
@@ -209,9 +210,9 @@ for epoch in train_iterator:
     if args.local_rank == -1 or torch.distributed.get_rank() == 0:
         output_pred_file = os.path.join(args.exp_name, f'pred.epoch_{epoch + 1}.json')
         output_eval_file = os.path.join(args.exp_name, f'eval.epoch_{epoch + 1}.txt')
-        metrics, threshold = jd_hotpotqa_eval_model(args, model,
-                                                dev_dataloader, dev_example_dict,
-                                                output_pred_file, output_eval_file, args.dev_gold_file)
+        metrics, threshold = jd_unified_eval_model(args, model,
+                                                        dev_dataloader, dev_example_dict, dev_feature_dict,
+                                                        output_pred_file, output_eval_file, args.dev_gold_file)
         if metrics['joint_f1'] >= best_joint_f1:
             best_joint_f1 = metrics['joint_f1']
             torch.save({'epoch': epoch + 1,
