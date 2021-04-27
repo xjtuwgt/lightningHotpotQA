@@ -13,6 +13,11 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def boolean_string(s):
+    if s.lower() not in {'false', 'true'}:
+        raise ValueError('Not a valid boolean string')
+    return s.lower() == 'true'
+
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='Evaluating albert based reader Model')
@@ -38,6 +43,36 @@ def parse_args(args=None):
     parser.add_argument('--num_edge_type', type=int, default=8) ### number of edge types
     parser.add_argument('--mask_edge_types', type=str, default="0") ### masked edge types
     parser.add_argument('--gnn', default='gat:1,2', type=str, help='gat:n_layer, n_head')
+    # hyper-parameter
+    parser.add_argument('--q_update', type=boolean_string, default='False', help='Whether update query')
+    parser.add_argument("--trans_drop", type=float, default=0.2)
+    parser.add_argument("--trans_heads", type=int, default=3)
+
+    # graph
+    parser.add_argument('--num_edge_type', type=int, default=8)  ### number of edge types
+    parser.add_argument('--mask_edge_types', type=str, default="0")  ### masked edge types
+
+    parser.add_argument('--gnn', default='gat:1,2', type=str, help='gat:n_layer, n_head')
+    parser.add_argument("--gnn_drop", type=float, default=0.3)
+    #########
+    parser.add_argument("--gnn_attn_drop", type=float, default=0.3)
+    #########
+    parser.add_argument('--q_attn', type=boolean_string, default='True', help='whether use query attention in GAT')
+    parser.add_argument("--lstm_drop", type=float, default=0.3)
+    parser.add_argument("--lstm_layer", type=int, default=1)  ###++++++
+    parser.add_argument('--graph_residual', type=boolean_string, default='True',
+                        help='whether use residual connection in GAT')  ##+++++++++
+
+    parser.add_argument("--max_para_num", default=4, type=int)
+    parser.add_argument("--max_sent_num", default=40, type=int)
+    parser.add_argument("--max_entity_num", default=60, type=int)
+    parser.add_argument("--max_ans_ent_num", default=15, type=int)
+
+    # bi attn
+    parser.add_argument('--ctx_attn', type=str, default='gate_att_up',
+                        choices=['no_gate', 'gate_att_or', 'gate_att_up'])
+    parser.add_argument("--ctx_attn_hidden_dim", type=int, default=300)
+    parser.add_argument("--bi_attn_drop", type=float, default=0.3)
     parser.add_argument("--hidden_dim", type=int, default=300)
     # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--data_dir', default=None, type=str, required=True)
