@@ -131,6 +131,7 @@ selected_para_dict = {}
 #####++++++++++++++++++++++++++++++++++++
 selected_para_score_threshold_dict = {}
 recall_list = []
+start_time = time()
 #####++++++++++++++++++++++++++++++++++++
 
 for case in tqdm(raw_data):
@@ -241,19 +242,8 @@ for case in tqdm(raw_data):
     #++++++++++++++++++++++++++++++++++++++++++++
     para_num.append(sum(sel_para_idx))
     ####++++++++++++
-    # supp_title_set = set([x[0] for x in case['supporting_facts']])
-    # print('gold {}'.format(supp_title_set))
-    # sel_para_names = set(itertools.chain.from_iterable(selected_para_dict[guid]))
-    # # print('sele {}'.format(sel_para_names))
-    # if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
-    #     recall_list.append(1)
-    # else:
-    #     recall_list.append(0)
-    ####++++++++++++
 
-# print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
-# print('Input data = {}\ntopk={}'.format(sys.argv[4], topk))
-# print('*' * 75)
-#
+print('Combining topk and hyper-link takes {} seconds'.format(time() - start_time))
+print(output_file_name)
 # json.dump(selected_para_dict, open(output_file, 'w'))
 # print('Saving {} into {}'.format(len(selected_para_dict), output_file))
