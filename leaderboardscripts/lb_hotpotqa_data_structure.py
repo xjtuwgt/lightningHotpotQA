@@ -6,10 +6,9 @@ import numpy as np
 from os.path import join
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-
 from envs import DATASET_FOLDER
-
 IGNORE_INDEX = -100
+
 def get_cached_filename(f_type, config):
     f_type_set = {'examples', 'features', 'graphs',
                   'hgn_examples', 'hgn_features', 'hgn_graphs',
