@@ -23,7 +23,7 @@ num_selected_docs = int(sys.argv[5])
 topk = int(sys.argv[6])
 data_type = sys.argv[7]
 topk_file_name_prefix = get_topk_cached_filename(topk_para_num=topk, testf_type=data_type)
-para_data_file_name = '_para_ranking.json'.format(topk_file_name_prefix)
+para_data_file_name = '{}_para_ranking.json'.format(topk_file_name_prefix)
 para_data = json.load(open(para_data_file_name, 'r'))
 print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
 ###################################################
