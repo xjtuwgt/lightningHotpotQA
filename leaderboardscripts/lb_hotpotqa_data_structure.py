@@ -281,26 +281,26 @@ class HotpotDataset(Dataset):
         context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
         context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.long)
         segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
-        #
+
         # # Mappings
-        # query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
-        # para_start_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
-        # para_end_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
-        # para_mapping = torch.zeros(1, self.max_seq_length, self.para_limit, dtype=torch.float)
-        #
-        # sent_start_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
-        # sent_end_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
-        # sent_mapping = torch.zeros(1, self.max_seq_length, self.sent_limit, dtype=torch.float)
-        #
-        # ent_start_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
-        # ent_end_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
-        # ent_mapping = torch.zeros(1, self.max_seq_length, self.ent_limit, dtype=torch.float)
-        #
-        # # Mask
-        # para_mask = torch.zeros(1, self.para_limit, dtype=torch.float)
-        # sent_mask = torch.zeros(1, self.sent_limit, dtype=torch.float)
-        # ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
-        # # ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
+        query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
+        para_start_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
+        para_end_mapping = torch.zeros(1, self.para_limit, self.max_seq_length, dtype=torch.float)
+        para_mapping = torch.zeros(1, self.max_seq_length, self.para_limit, dtype=torch.float)
+
+        sent_start_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
+        sent_end_mapping = torch.zeros(1, self.sent_limit, self.max_seq_length, dtype=torch.float)
+        sent_mapping = torch.zeros(1, self.max_seq_length, self.sent_limit, dtype=torch.float)
+
+        ent_start_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
+        ent_end_mapping = torch.zeros(1, self.ent_limit, self.max_seq_length, dtype=torch.float)
+        ent_mapping = torch.zeros(1, self.max_seq_length, self.ent_limit, dtype=torch.float)
+
+        # Mask
+        para_mask = torch.zeros(1, self.para_limit, dtype=torch.float)
+        sent_mask = torch.zeros(1, self.sent_limit, dtype=torch.float)
+        ent_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
+        # ans_cand_mask = torch.zeros(1, self.ent_limit, dtype=torch.float)
 
         # Label tensor
         # y1 = torch.zeros(1, dtype=torch.long)
@@ -317,26 +317,25 @@ class HotpotDataset(Dataset):
         # is_gold_ent.fill_(IGNORE_INDEX)
         ################################################################################################################
         case = self.features[idx]
-        print(case)
         ################################################################################################################
         i = 0
         context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
         context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
         segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
 
-        # if len(case.sent_spans) > 0:
-        #     for j in range(case.sent_spans[0][0] - 1):
-        #         query_mapping[i, j] = 1
-        #
-        # for j, para_span in enumerate(case.para_spans[:self.para_limit]):
-        #     is_gold_flag = j in case.sup_para_ids
-        #     start, end, _ = para_span
-        #     if start <= end:
-        #         end = min(end, self.max_seq_length - 1)
-        #         # is_gold_para[i, j] = int(is_gold_flag)
-        #         para_mapping[i, start:end + 1, j] = 1
-        #         para_start_mapping[i, j, start] = 1
-        #         para_end_mapping[i, j, end] = 1
+        if len(case.sent_spans) > 0:
+            for j in range(case.sent_spans[0][0] - 1):
+                query_mapping[i, j] = 1
+
+        for j, para_span in enumerate(case.para_spans[:self.para_limit]):
+            is_gold_flag = j in case.sup_para_ids
+            start, end, _ = para_span
+            if start <= end:
+                end = min(end, self.max_seq_length - 1)
+                # is_gold_para[i, j] = int(is_gold_flag)
+                para_mapping[i, start:end + 1, j] = 1
+                para_start_mapping[i, j, start] = 1
+                para_end_mapping[i, j, end] = 1
         #
         # for j, sent_span in enumerate(case.sent_spans[:self.sent_limit]):
         #     is_sp_flag = j in case.sup_fact_ids
