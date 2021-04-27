@@ -162,14 +162,14 @@ output_pred_para_dict_file = join(args.exp_name, '{}_para.json'.format(topk_file
 json.dump(selected_para_dict, open(output_pred_para_dict_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_dict_file))
 
-data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed/test_distractor', '_para.json'.format(topk_file_type_name))
+data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed/test_distractor', '{}_para.json'.format(topk_file_type_name))
 json.dump(selected_para_dict, open(data_processed_pred_para_dict_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_dict_file))
 
-output_ranking_para_file = join(args.exp_name, '_para_ranking.json'.format(topk_file_type_name))
+output_ranking_para_file = join(args.exp_name, '{}_para_ranking.json'.format(topk_file_type_name))
 json.dump(para_rank_dict, open(output_ranking_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(para_rank_dict), output_ranking_para_file))
 
-data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', '_para_ranking.json'.format(topk_file_type_name))
+data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', '{}_para_ranking.json'.format(topk_file_type_name))
 json.dump(para_rank_dict, open(data_processed_ranking_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_ranking_para_file))

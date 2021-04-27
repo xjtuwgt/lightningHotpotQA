@@ -71,12 +71,12 @@ preprocess() {
 
 #        echo "6. Re-rank over top k and hyper-link "
 #        python leaderboardscripts/5_lb_topk_hgnmodel_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/topk_long_multihop_para.json $SELECTEED_DOC_NUM $TOPK_PARA_NUM long_low
+#
+#        echo "7. Dump features for albert do_lower_case for re-rank results"
+#        python leaderboardscripts/4_lb_ext_dump_features.py --para_path $OUTPUT_PROCESSED/topk_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
+#
+#        echo "8. Model prediction with albert"
 
-#        echo "7. Dump features for electra (5) do_lower_case for re-rank results (2)"
-#        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/topk_long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path $ELECTRA_ROOT/electra-large-discriminator --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type electra --tokenizer_name $ELECTRA_ROOT/electra-large-discriminator --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
-#
-#        echo "6. Model prediction"
-#
 #        echo "7. Prediction postprocessing"
     done
 
