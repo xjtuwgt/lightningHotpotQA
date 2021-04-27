@@ -278,9 +278,9 @@ class HotpotDataset(Dataset):
 
     def __getitem__(self, idx):
         # BERT input
-        # context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
-        # context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.long)
-        # segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        context_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        context_mask = torch.zeros(1, self.max_seq_length, dtype=torch.long)
+        segment_idxs = torch.zeros(1, self.max_seq_length, dtype=torch.long)
         #
         # # Mappings
         # query_mapping = torch.zeros(1, self.max_seq_length, dtype=torch.float)
@@ -320,10 +320,10 @@ class HotpotDataset(Dataset):
         print(case)
         ################################################################################################################
         i = 0
-        # context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
-        # context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
-        # segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
-        #
+        context_idxs[i].copy_(torch.Tensor(case.doc_input_ids))
+        context_mask[i].copy_(torch.Tensor(case.doc_input_mask))
+        segment_idxs[i].copy_(torch.Tensor(case.doc_segment_ids))
+
         # if len(case.sent_spans) > 0:
         #     for j in range(case.sent_spans[0][0] - 1):
         #         query_mapping[i, j] = 1
@@ -422,7 +422,11 @@ class HotpotDataset(Dataset):
         #     'ent_end_mapping': ent_end_mapping,
         #     'ent_mask': ent_mask,
         #     'graphs': graphs}
-        res = {'ids': examp_id}
+        res = {'ids': examp_id,
+               'context_idxs': context_idxs,
+               'context_mask': context_mask,
+               'segment_idxs': segment_idxs
+               }
         return res ## 19 elements
 
     @staticmethod
@@ -442,8 +446,8 @@ class HotpotDataset(Dataset):
                 batch_data[key] = [_[key] for _ in data]
         #     elif key in {'context_lens'}:
         #         batch_data[key] = torch.LongTensor([_[key] for _ in data])
-        #     else:
-        #         batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
+            else:
+                batch_data[key] = torch.cat([_[key] for _ in data], dim=0)
         # trim_keys = ['context_idxs', 'context_mask', 'segment_idxs', 'query_mapping']
         # for key in trim_keys:
         #     batch_data[key] = batch_data[key][:,:max_c_len]
