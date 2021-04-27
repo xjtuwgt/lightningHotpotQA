@@ -38,8 +38,7 @@ nlp.tokenizer.infix_finditer = infix_re.finditer
 def read_hotpot_examples(para_file,
                          full_file,
                          ner_file,
-                         doc_link_file,
-                         data_source_type=None):
+                         doc_link_file):
     with open(para_file, 'r', encoding='utf-8') as reader:
         para_data = json.load(reader)
 
@@ -74,7 +73,7 @@ def read_hotpot_examples(para_file,
     examples = []
     for case in tqdm(full_data):
         key = case['_id']
-        qas_type = case['type']
+        # qas_type = case['type']
         # sup_facts = set([(sp[0], sp[1]) for sp in case['supporting_facts']])
         context = dict(case['context'])
 
@@ -258,7 +257,6 @@ def read_hotpot_examples(para_file,
 
         example = Example(
             qas_id=key,
-            qas_type=qas_type,
             question_tokens=question_tokens,
             doc_tokens=doc_tokens,
             sent_num=sent_id + 1,
@@ -703,8 +701,7 @@ if __name__ == '__main__':
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
                                     ner_file=args.ner_path,
-                                    doc_link_file=args.doc_link_ner,
-                                    data_source_type=data_source_type)
+                                    doc_link_file=args.doc_link_ner)
 
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_examples'.format(data_source_name), args))

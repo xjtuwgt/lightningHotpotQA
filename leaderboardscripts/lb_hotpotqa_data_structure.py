@@ -83,7 +83,6 @@ class Example(object):
 
     def __init__(self,
                  qas_id,
-                 qas_type,
                  question_tokens,
                  doc_tokens,
                  sent_num,
@@ -101,7 +100,6 @@ class Example(object):
                  ctx_word_to_char_idx,
                  edges=None):
         self.qas_id = qas_id
-        self.qas_type = qas_type
         self.question_tokens = question_tokens
         self.doc_tokens = doc_tokens
         self.question_text = question_text
