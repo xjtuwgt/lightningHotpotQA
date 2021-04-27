@@ -16,12 +16,17 @@ class UnifiedHGNModel(nn.Module):
             logging.info("Loading encoder completed")
         else:
             raise 'The encoder name is none {}'.format(self.config.model)
-        # if self.config.model_path is not None:
-        #     logging.info("Loading model from: {}".format(self.config.model_path))
-        #     self.encoder.load_state_dict(torch.load(self.config.model_path))
-        #     logging.info("Loading model completed")
-        # else:
-        #     raise 'The model name is none'.format(self.config.model)
+        if self.config.model_path is not None:
+            state_dict = torch.load(self.config.model_path)
+            for key in list(state_dict.keys()):
+                if 'module.' in key:
+                    state_dict[key.replace('module.', '')] = state_dict[key]
+                    del state_dict[key]
+            logging.info("Loading model from: {}".format(self.config.model_path))
+            self.encoder.load_state_dict(state_dict)
+            logging.info("Loading model completed")
+        else:
+            raise 'The model name is none'.format(self.config.model)
 
     def forward(self, batch, return_yp=True, return_cls=True):
         ###############################################################################################################
