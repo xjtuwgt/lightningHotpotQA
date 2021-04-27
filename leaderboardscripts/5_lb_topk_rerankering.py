@@ -25,7 +25,7 @@ def parse_args(args=None):
                         help='Directory to save model and summaries')
     parser.add_argument("--exp_name",
                         type=str,
-                        default='lead_board_test',
+                        default='albert',
                         help="If set, this will be used as directory name in OUTOUT folder")
     parser.add_argument("--config_file",
                         type=str,
@@ -33,8 +33,8 @@ def parse_args(args=None):
                         help="configuration file for command parser")
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--input_data', default=None, type=str, required=True)
-    parser.add_argument("--encoder_ckpt", default=None, type=str)
-    parser.add_argument("--model_ckpt", default=None, type=str)
+    parser.add_argument("--encoder_ckpt", default='encoder.pkl', type=str)
+    parser.add_argument("--model_ckpt", default='model.pkl', type=str)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--num_edge_type', type=int, default=8) ### number of edge types
     parser.add_argument('--mask_edge_types', type=str, default="0") ### masked edge types
@@ -76,6 +76,11 @@ def complete_default_test_parser(args):
     # output dir name
     args.exp_name = os.path.join(args.output_dir, args.exp_name)
     os.makedirs(args.exp_name, exist_ok=True)
+
+    encoder_path = join(args.exp_name, args.encoder_ckpt)  ## replace encoder.pkl as encoder
+    model_path = join(args.exp_name, args.model_ckpt)  ## replace encoder.pkl as encoder
+    args.encoder_path = encoder_path
+    args.model_path = model_path
     return args
 
 #########################################################################
@@ -106,12 +111,6 @@ test_dataloader = helper.hotpot_test_dataloader
 # ##########################################################################
 config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
 config = config_class.from_pretrained(args.encoder_name_or_path)
-
-encoder_path = join(args.exp_name, args.encoder_name) ## replace encoder.pkl as encoder
-model_path = join(args.exp_name, args.model_name) ## replace encoder.pkl as encoder
-logger.info("Loading encoder from: {}".format(encoder_path))
-logger.info("Loading model from: {}".format(model_path))
-
 
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)

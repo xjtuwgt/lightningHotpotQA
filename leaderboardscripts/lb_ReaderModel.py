@@ -11,17 +11,15 @@ class UnifiedHGNModel(nn.Module):
         self.config = config
         self.encoder, _ = load_encoder_model(self.config.encoder_name_or_path, self.config.model_type)
         self.model = HierarchicalGraphNetwork(config=self.config)
-        if self.config.fine_tuned_encoder is not None:
-            encoder_path = join(self.config.fine_tuned_encoder_path, self.config.fine_tuned_encoder, 'encoder.pkl')
-            logging.info("Loading encoder from: {}".format(encoder_path))
-            self.encoder.load_state_dict(torch.load(encoder_path))
+        if self.config.encoder_path is not None:
+            logging.info("Loading encoder from: {}".format(self.config.encoder_path))
+            self.encoder.load_state_dict(torch.load(self.config.encoder_path))
             logging.info("Loading encoder completed")
         else:
             raise 'The encoder name is none {}'.format(self.config.model)
-        if self.config.model is not None:
-            model_path = join(self.config.fine_tuned_encoder_path, self.config.model, 'model.pkl')
-            logging.info("Loading model from: {}".format(model_path))
-            self.encoder.load_state_dict(torch.load(model_path))
+        if self.config.model_path is not None:
+            logging.info("Loading model from: {}".format(self.config.model_path))
+            self.encoder.load_state_dict(torch.load(self.config.model_path))
             logging.info("Loading model completed")
         else:
             raise 'The model name is none'.format(self.config.model)
