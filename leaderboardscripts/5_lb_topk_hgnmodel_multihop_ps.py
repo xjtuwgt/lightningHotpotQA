@@ -1,6 +1,7 @@
 import json
 import re
 import torch
+from os.path import join
 import numpy as np
 import sys
 import itertools
@@ -9,14 +10,21 @@ from tqdm import tqdm
 
 assert len(sys.argv) == 8
 
+def get_topk_cached_filename(topk_para_num, testf_type):
+    file_name = 'rerank_topk_' + str(topk_para_num) + '_' + testf_type
+    return file_name
+
 raw_data = json.load(open(sys.argv[1], 'r'))
 doc_link_data = json.load(open(sys.argv[2], 'r'))
 ent_data = json.load(open(sys.argv[3], 'r'))
-para_data = json.load(open(sys.argv[4], 'r'))
-output_file = sys.argv[5]
+output_file = sys.argv[4]
 ###################################################
-num_selected_docs = int(sys.argv[6])
-topk = int(sys.argv[7])
+num_selected_docs = int(sys.argv[5])
+topk = int(sys.argv[6])
+data_type = sys.argv[7]
+topk_file_name_prefix = get_topk_cached_filename(topk_para_num=topk, testf_type=data_type)
+para_data_file_name = '_para_ranking.json'.format(topk_file_name_prefix)
+para_data = json.load(open(para_data_file_name, 'r'))
 print('num of selected docs = {}, type of para {}'.format(num_selected_docs, type(num_selected_docs), topk))
 ###################################################
 
@@ -236,5 +244,6 @@ for case in tqdm(raw_data):
 print('Recall = {}'.format(sum(recall_list)*1.0/len(selected_para_dict)))
 print('Input data = {}\ntopk={}'.format(sys.argv[4], topk))
 print('*' * 75)
+
 json.dump(selected_para_dict, open(output_file, 'w'))
 print('Saving {} into {}'.format(len(selected_para_dict), output_file))
