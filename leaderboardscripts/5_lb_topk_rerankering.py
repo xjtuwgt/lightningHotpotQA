@@ -1,9 +1,11 @@
 import logging
 import json
+import os
 import argparse
 from os.path import join
 from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from model_envs import MODEL_CLASSES
+from envs import OUTPUT_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
 
@@ -17,8 +19,26 @@ def parse_args(args=None):
         description='Evaluating albert based reader Model')
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument('--testf_type', default=None, type=str, required=True)
+    parser.add_argument('--output_dir',
+                        type=str,
+                        default=OUTPUT_FOLDER,
+                        help='Directory to save model and summaries')
+    parser.add_argument("--exp_name",
+                        type=str,
+                        default='lead_board_test',
+                        help="If set, this will be used as directory name in OUTOUT folder")
+    parser.add_argument("--config_file",
+                        type=str,
+                        default=None,
+                        help="configuration file for command parser")
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--input_data', default=None, type=str, required=True)
+    parser.add_argument("--encoder_ckpt", default=None, type=str)
+    parser.add_argument("--model_ckpt", default=None, type=str)
+    ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    parser.add_argument('--num_edge_type', type=int, default=8) ### number of edge types
+    parser.add_argument('--mask_edge_types', type=str, default="0") ### masked edge types
+    parser.add_argument('--gnn', default='gat:1,2', type=str, help='gat:n_layer, n_head')
     # ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument('--data_dir', default=None, type=str, required=True)
     parser.add_argument("--max_entity_num", default=60, type=int)
@@ -29,7 +49,10 @@ def parse_args(args=None):
     parser.add_argument("--num_edge_type", default=512, type=int)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # parser.add_argument("--eval_ckpt", default=None, type=str, required=True, help="evaluation checkpoint")
-    parser.add_argument("--exp_name", default='albert_reader', type=str, help="alber reader model")
+    parser.add_argument("--encoder_name_or_path",
+                        default='albert-xxlarge-v2',
+                        type=str,
+                        help="Path to pre-trained model or shortcut name selected")
     parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
     parser.add_argument('--gpus', default=1, type=int)
     parser.add_argument('--test_batch_size', default=16, type=int)
@@ -38,10 +61,31 @@ def parse_args(args=None):
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return parser.parse_args(args)
 
+def complete_default_test_parser(args):
+    if torch.cuda.is_available():
+        device_ids, _ = single_free_cuda()
+        device = torch.device('cuda:{}'.format(device_ids[0]))
+    else:
+        device = torch.device('cpu')
+    args.device = device
+    args.num_gnn_layers = int(args.gnn.split(':')[1].split(',')[0])
+    args.num_gnn_heads = int(args.gnn.split(':')[1].split(',')[1])
+    if len(args.mask_edge_types):
+        args.mask_edge_types = list(map(int, args.mask_edge_types.split(',')))
+    args.max_doc_len = 512
+    args.batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
+    # TODO: only support albert-xxlarge-v2 now
+    args.input_dim = 768 if 'base' in args.encoder_name_or_path else (4096 if 'albert' in args.encoder_name_or_path else 1024)
+    # output dir name
+    args.exp_name = os.path.join(args.output_dir, args.exp_name)
+    os.makedirs(args.exp_name, exist_ok=True)
+    return args
+
 #########################################################################
 # Initialize arguments
 ##########################################################################
 args = parse_args()
+args = complete_default_test_parser(args=args)
 
 logger.info('-' * 100)
 logger.info('Input Argument Information')
@@ -71,11 +115,7 @@ model_path = join(args.exp_name, args.model_name) ## replace encoder.pkl as enco
 logger.info("Loading encoder from: {}".format(encoder_path))
 logger.info("Loading model from: {}".format(model_path))
 
-if torch.cuda.is_available():
-    device_ids, _ = single_free_cuda()
-    device = torch.device('cuda:{}'.format(device_ids[0]))
-else:
-    device = torch.device('cpu')
+
 
 # encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
 # model = HierarchicalGraphNetwork(config=args)
