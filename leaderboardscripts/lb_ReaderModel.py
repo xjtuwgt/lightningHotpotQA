@@ -1,10 +1,8 @@
 from torch import nn
-from os.path import join
 import torch
 import logging
 from csr_mhqa.utils import load_encoder_model
-# from models.HGN import HierarchicalGraphNetwork
-from jdmodels.jdHGN import HierarchicalGraphNetwork
+from models.HGN import HierarchicalGraphNetwork
 
 class UnifiedHGNModel(nn.Module):
     def __init__(self, config):

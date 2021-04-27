@@ -29,7 +29,7 @@ def parse_args(args=None):
                         help='Directory to save model and summaries')
     parser.add_argument("--exp_name",
                         type=str,
-                        default='albert',
+                        default='albert_orig',
                         help="If set, this will be used as directory name in OUTOUT folder")
     parser.add_argument("--config_file",
                         type=str,
