@@ -62,6 +62,7 @@ def get_cached_filename(f_type, config):
 
                   'long_low_reranker2_examples', 'long_low_reranker2_features', 'long_low_reranker2_graphs',
                   'long_low_reranker3_examples', 'long_low_reranker3_features', 'long_low_reranker3_graphs',
+                  'long_low_reranker4_examples', 'long_low_reranker4_features', 'long_low_reranker4_graphs',
 
                   'long_low_sae_reranker2_examples', 'long_low_sae_reranker2_features', 'long_low_sae_reranker2_graphs',
                   'long_low_sae_reranker3_examples', 'long_low_sae_reranker3_features', 'long_low_sae_reranker3_graphs',
@@ -75,8 +76,7 @@ def get_cached_filename(f_type, config):
 
                   'albert_long_low_reranker2_examples', 'albert_long_low_reranker2_features', 'albert_long_low_reranker2_graphs',
                   'albert_long_low_reranker3_examples', 'albert_long_low_reranker3_features', 'albert_long_low_reranker3_graphs',
-                  'albert_long_low_reranker4_examples', 'albert_long_low_reranker4_features',
-                  'albert_long_low_reranker4_graphs',
+                  'albert_long_low_reranker4_examples', 'albert_long_low_reranker4_features', 'albert_long_low_reranker4_graphs',
 
                   'albert_long_low_sae_reranker2_examples', 'albert_long_low_sae_reranker2_features', 'albert_long_low_sae_reranker2_graphs',
                   'albert_long_low_sae_reranker3_examples', 'albert_long_low_sae_reranker3_features', 'albert_long_low_sae_reranker3_graphs',
