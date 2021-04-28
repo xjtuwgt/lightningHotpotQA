@@ -8,8 +8,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
-from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model
-from utils.jdevalUtil import jd_unified_eval_model
+from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model, jd_unified_eval_model
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
