@@ -82,7 +82,6 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
         print('Saving {} score records into {}'.format(len(prediction_res_score_dict), output_score_file))
     return metrics
 
-
 def jd_unified_eval_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file=None):
     model.eval()
 
