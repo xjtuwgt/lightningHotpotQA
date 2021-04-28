@@ -20,6 +20,7 @@ def best_metric_collection(key_word=None):
     best_joint_f1 = -1
     best_setting = None
     folder_names = list_all_folders(d=OUTPUT_FOLDER)
+    print(folder_names)
     metric_list = []
     for folder_idx, folder_name in enumerate(folder_names):
         eval_file_names = list_all_txt_files(path=folder_name)
