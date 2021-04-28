@@ -11,6 +11,10 @@ class UnifiedHGNModel(nn.Module):
         self.encoder, _ = load_encoder_model(self.config.encoder_name_or_path, self.config.model_type)
         self.model = HierarchicalGraphNetwork(config=self.config)
         if self.config.encoder_path is not None:
+            self.initialize_model()
+
+    def initialize_model(self):
+        if self.config.encoder_path is not None:
             logging.info("Loading encoder from: {}".format(self.config.encoder_path))
             self.encoder.load_state_dict(torch.load(self.config.encoder_path))
             logging.info("Loading encoder completed")
