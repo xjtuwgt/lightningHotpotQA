@@ -148,9 +148,8 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
             para_num = int(para_mask_i.sum())
             ##+++++++++
             ctx_titles = para_names_i[:para_num]
-            if para_num < 2:
-                print('*' * 50, ctx_titles)
-
+            # if para_num < 2:
+            #     print('*' * 50, ctx_titles)
             predicted_scores = para_score_i[:para_num]
             title_score_pair_list = list(zip(ctx_titles, predicted_scores))
             title_score_pair_list.sort(key=lambda x: x[1], reverse=True)
