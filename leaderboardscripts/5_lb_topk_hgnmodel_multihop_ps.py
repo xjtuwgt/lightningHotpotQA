@@ -240,6 +240,7 @@ for case in tqdm(raw_data):
     para_num.append(sum(sel_para_idx))
     ####++++++++++++
 para_num_counter = collections.Counter(para_num)
+print(para_num_counter)
 json.dump(selected_para_dict, open(output_file, 'w'))
 print('Saving {} into {}'.format(len(selected_para_dict), output_file))
 print('Combining topk and hyper-link takes {:.4f} seconds'.format(time() - start_time))
