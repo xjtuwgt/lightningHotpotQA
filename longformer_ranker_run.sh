@@ -24,9 +24,9 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
 #    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
-#    INPUTS=("hotpot_train_v1.1.json;train")
+    INPUTS=("hotpot_train_v1.1.json;train")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -54,14 +54,14 @@ preprocess() {
 #        # Output: para_ranking.json
 #        python longformerscripts/3_longformer_prepare_para_sel.py $INPUT_FILE $OUTPUT_PROCESSED/para_ir_combined.json
 #
-#        echo "3. Paragraph ranking (3): longformer retrieval ranking scores"
-#        # switch to Longformer for final leaderboard, PYTORCH LIGHTING + '1.0.8' TRANSFORMER (3.3.1)
-#        python longformerscripts/3_longformer_paragraph_ranking.py --data_dir $OUTPUT_PROCESSED --eval_ckpt $DATA_ROOT/models/finetuned/PS/longformer_pytorchlighting_model.ckpt --raw_data $INPUT_FILE --input_data $OUTPUT_PROCESSED/para_ir_combined.json
+        echo "3. Paragraph ranking (3): longformer retrieval ranking scores"
+        # switch to Longformer for final leaderboard, PYTORCH LIGHTING + '1.0.8' TRANSFORMER (3.3.1)
+        python longformerscripts/3_longformer_paragraph_ranking.py --data_dir $OUTPUT_PROCESSED --eval_ckpt $DATA_ROOT/models/finetuned/PS/longformer_pytorchlighting_model.ckpt --raw_data $INPUT_FILE --input_data $OUTPUT_PROCESSED/para_ir_combined.json
 
-        echo "4. MultiHop Paragraph Selection (4)"
-        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
-        # Output: long_multihop_para.json
-        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/5_long_multihop_para.json $SELECTEED_DOC_NUM
+#        echo "4. MultiHop Paragraph Selection (4)"
+#        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
+#        # Output: long_multihop_para.json
+#        python longformerscripts/4_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/5_long_multihop_para.json $SELECTEED_DOC_NUM
 
 #        echo "5. Dump features for reberta (5) do_lower_case"
 #        python jdscripts/5_ext_dump_features.py --para_path $OUTPUT_PROCESSED/5_long_multihop_para.json --full_data $INPUT_FILE --do_lower_case --model_name_or_path roberta-large --ner_path $OUTPUT_PROCESSED/ner.json --model_type roberta --tokenizer_name roberta-large --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE
