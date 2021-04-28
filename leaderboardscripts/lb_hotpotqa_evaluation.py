@@ -8,13 +8,17 @@ from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
 from csr_mhqa.utils import convert_to_tokens
 import torch.nn.functional as F
 
-def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None, score_file=None):
+def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None, output_score_file=None):
     model.eval()
 
     answer_dict = {}
     answer_type_dict = {}
     answer_type_prob_dict = {}
     sp_dict = {}
+
+    ##++++++
+    prediction_res_score_dict = {}
+    ##++++++
 
     for batch in tqdm(dataloader):
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -36,9 +40,25 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
 
         predict_support_np = torch.sigmoid(sent[:, :, 1]).data.cpu().numpy()
 
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        predict_support_logit_np = sent[:, :, 1].data.cpu().numpy()
+        support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
+        cls_emb_np = cls_emb.data.cpu().numpy()
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         for i in range(predict_support_np.shape[0]):
             cur_id = batch['ids'][i]
             sp_dict[cur_id] = []
+            # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            orig_supp_fact_id = example_dict[cur_id].sup_fact_id
+            prune_supp_fact_id = feature_dict[cur_id].sup_fact_ids
+            sent_pred_ = {'sp_score': predict_support_logit_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(),
+                          'sp_names': example_dict[cur_id].sent_names, 'sup_fact_id': orig_supp_fact_id,
+                          'trim_sup_fact_id': prune_supp_fact_id}
+            cls_emb_ = {'cls_emb': cls_emb_np[i].tolist()}
+            res_score = {**sent_pred_, **cls_emb_}
+            prediction_res_score_dict[cur_id] = res_score
+            # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
             for j in range(predict_support_np.shape[1]):
                 if j >= len(example_dict[cur_id].sent_names):
@@ -56,6 +76,10 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
     metrics = hotpot_eval(tmp_file, dev_gold_file)
     json.dump(metrics, open(eval_file, 'w'))
 
+    if output_score_file is not None:
+        with open(output_score_file, 'w') as f:
+            json.dump(prediction_res_score_dict, f)
+        print('Saving {} score records into {}'.format(len(prediction_res_score_dict), output_score_file))
     return metrics
 
 
