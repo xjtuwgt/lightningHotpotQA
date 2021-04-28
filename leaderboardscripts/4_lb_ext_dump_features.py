@@ -633,6 +633,7 @@ def build_graph(args, examples, features, entity_num):
                               max_para_num=args.max_para_num,
                               max_sent_num=args.max_sent_num,
                               max_entity_num=entity_num)
+
         graphs[case.qas_id] = {'adj': graph}
 
     return graphs
