@@ -174,7 +174,7 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
             for x_idx, x in enumerate(selected_idxes):
                 if x == 1:
                     selected_para_names.append(para_names_i[x_idx])
-            print('selected para names = {}'.format(selected_para_names))
+            # print('selected para names = {}'.format(selected_para_names))
             sel_paras = []
             if len(selected_para_names) < 2:
                 sel_paras.append([selected_para_names[0], selected_para_names[0]])
@@ -184,7 +184,7 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
                 sel_paras.append(selected_para_names[:2])
                 sel_paras.append([])
                 sel_paras.append(selected_para_names[2:])
-            print('tuple result = {}'.format(sel_paras))
+            # print('tuple result = {}'.format(sel_paras))
             prediction_para_dict[cur_id] = (sel_paras[0], sel_paras[1], sel_paras[2])
 
     recall_list = []
