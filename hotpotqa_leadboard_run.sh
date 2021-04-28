@@ -5,8 +5,8 @@
 DATA_ROOT=./data/
 
 LONG_FORMER_ROOT=allenai
-SELECTEED_DOC_NUM=5
-TOPK_PARA_NUM=2
+SELECTEED_DOC_NUM=6
+TOPK_PARA_NUM=3
 
 
 PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,preprocess,train" or "preprocess" only
@@ -57,14 +57,14 @@ preprocess() {
 #        # Output: long_para_ranking.json
 #        python leaderboardscripts/3_lb_longformer_paragraph_ranking.py --data_dir $OUTPUT_PROCESSED --eval_ckpt $DATA_ROOT/models/finetuned/PS/longformer_pytorchlighting_model.ckpt --raw_data $INPUT_FILE --input_data $OUTPUT_PROCESSED/para_ir_combined.json
 
-#        echo "3. MultiHop Paragraph Selection (3)"
-#        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
-#        # Output: long_multihop_para.json
-#        python leaderboardscripts/3_lb_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
+        echo "3. MultiHop Paragraph Selection (3)"
+        # Input: $INPUT_FILE, doc_link_ner.json,  ner.json, long_para_ranking.json
+        # Output: long_multihop_para.json
+        python leaderboardscripts/3_lb_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
 
-#        echo "4. Dump features for albert do_lower_case"
-#        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
-#        python leaderboardscripts/4_lb_ext_dump_features.py  --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM
+        echo "4. Dump features for albert do_lower_case"
+        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
+        python leaderboardscripts/4_lb_ext_dump_features.py  --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM
 
         echo "5. Re-rank over top 5 via the trained model"
         python leaderboardscripts/5_lb_topk_rerankering.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
