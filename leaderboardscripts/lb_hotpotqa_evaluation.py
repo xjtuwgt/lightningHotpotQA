@@ -50,11 +50,8 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
             cur_id = batch['ids'][i]
             sp_dict[cur_id] = []
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            orig_supp_fact_id = example_dict[cur_id].sup_fact_id
-            prune_supp_fact_id = feature_dict[cur_id].sup_fact_ids
             sent_pred_ = {'sp_score': predict_support_logit_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(),
-                          'sp_names': example_dict[cur_id].sent_names, 'sup_fact_id': orig_supp_fact_id,
-                          'trim_sup_fact_id': prune_supp_fact_id}
+                          'sp_names': example_dict[cur_id].sent_names}
             cls_emb_ = {'cls_emb': cls_emb_np[i].tolist()}
             res_score = {**sent_pred_, **cls_emb_}
             prediction_res_score_dict[cur_id] = res_score
