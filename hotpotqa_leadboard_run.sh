@@ -6,7 +6,7 @@ DATA_ROOT=./data/
 
 LONG_FORMER_ROOT=allenai
 SELECTEED_DOC_NUM=5
-TOPK_PARA_NUM=3
+TOPK_PARA_NUM=2
 
 
 PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,preprocess,train" or "preprocess" only
@@ -66,8 +66,8 @@ preprocess() {
 #        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
 #        python leaderboardscripts/4_lb_ext_dump_features.py  --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM
 
-#        echo "5. Re-rank over top 5 via the trained model"
-#        python leaderboardscripts/5_lb_topk_rerankering.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
+        echo "5. Re-rank over top 5 via the trained model"
+        python leaderboardscripts/5_lb_topk_rerankering.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
 
         echo "6. Re-rank over top k and hyper-link "
         # output: topk_long_multihop_para.json
