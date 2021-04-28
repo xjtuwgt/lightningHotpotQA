@@ -77,7 +77,7 @@ preprocess() {
 #        python leaderboardscripts/4_lb_ext_dump_features.py --para_path $OUTPUT_PROCESSED --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --do_rerank --topk $TOPK_PARA_NUM
 
         echo "8. Model prediction with albert"
-        python leaderboardscripts/lb_hotpotqa_predict.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
+        python leaderboardscripts/lb_hotpotqa_predict.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
 
 #        echo "7. Prediction postprocessing"
     done
