@@ -9,6 +9,7 @@ import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
 from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model
+from utils.jdevalUtil import jd_unified_eval_model
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -161,10 +162,18 @@ model.to(args.device)
 output_pred_file = join(args.exp_name, 'test_pred.json')
 output_eval_file = join(args.exp_name, 'test_eval.txt')
 output_score_file = join(args.exp_name, 'dev_score.json')
-threshold = 0.45
+
+
+best_metrics, best_threshold = jd_unified_eval_model(args, model, test_data_loader, test_example_dict, test_feature_dict,
+                                output_pred_file, output_eval_file, args.dev_gold_file)
+for key, val in best_metrics.items():
+    print("{} = {}".format(key, val))
+print('Best threshold = {}'.format(best_threshold))
+
+threshold = best_threshold
 
 metrics = jd_unified_test_model(args, model,
                                 test_data_loader, test_example_dict, test_feature_dict,
-                                output_pred_file, output_eval_file, args.dev_gold_file)
+                                output_pred_file, output_eval_file, threshold, args.dev_gold_file)
 for key, val in metrics.items():
     print("{} = {}".format(key, val))
