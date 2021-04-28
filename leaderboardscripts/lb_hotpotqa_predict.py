@@ -8,6 +8,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
+from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -156,146 +157,14 @@ test_data_loader = helper.hotpot_test_dataloader
 # # # ##########################################################################
 model = UnifiedHGNModel(config=args)
 model.to(args.device)
-model.eval()
 
-# gold = json.load(open(args.dev_gold_file, 'r'))
-# para_data = json.load(open(args.para_path, 'r'))
-# import itertools
-# recall_list = []
-# for idx, case in enumerate(gold):
-#     key = case['_id']
-#     supp_title_set = set([x[0] for x in case['supporting_facts']])
-#     pred_paras = para_data[key]
-#     # print('selected para {}'.format(pred_paras))
-#     sel_para_names = set(itertools.chain.from_iterable(pred_paras))
-#     # print('Gold para {}'.format(supp_title_set))
-#     if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
-#         recall_list.append(1)
-#     else:
-#         recall_list.append(0)
-# print('Recall = {}'.format(sum(recall_list)*1.0/len(para_data)))
+output_pred_file = join(args.exp_name, 'test_pred.json')
+output_eval_file = join(args.exp_name, 'test_eval.txt')
+output_score_file = join(args.exp_name, 'dev_score.json')
+threshold = 0.45
 
-# import numpy as np
-# import logging
-# import sys
-# from utils.gpu_utils import single_free_cuda
-#
-# from os.path import join
-# import torch
-#
-# # from csr_mhqa.argument_parser import default_train_parser, complete_default_train_parser, json_to_argv
-# from plmodels.jd_argument_parser import default_dev_parser, complete_default_dev_parser, json_to_argv
-# from plmodels.pldata_processing import Example, InputFeatures, DataHelper
-# from csr_mhqa.utils import load_encoder_model, eval_model
-# from utils.jdevalUtil import jd_eval_model
-#
-# # from models.HGN import HierarchicalGraphNetwork
-# from jdmodels.jdHGN import HierarchicalGraphNetwork
-# from model_envs import MODEL_CLASSES
-#
-# logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-#                     datefmt='%m/%d/%Y %H:%M:%S',
-#                     level=logging.INFO)
-# logger = logging.getLogger(__name__)
-#
-# #########################################################################
-# # Initialize arguments
-# ##########################################################################
-# parser = default_dev_parser()
-#
-# logger.info("IN CMD MODE")
-# args_config_provided = parser.parse_args(sys.argv[1:])
-# if args_config_provided.config_file is not None:
-#     argv = json_to_argv(args_config_provided.config_file) + sys.argv[1:]
-# else:
-#     argv = sys.argv[1:]
-# args = parser.parse_args(argv)
-# args = complete_default_dev_parser(args)
-#
-# logger.info('-' * 100)
-# logger.info('Input Argument Information')
-# logger.info('-' * 100)
-# args_dict = vars(args)
-# for a in args_dict:
-#     logger.info('%-28s  %s' % (a, args_dict[a]))
-#
-# #########################################################################
-# # Read Data
-# ##########################################################################
-# helper = DataHelper(gz=True, config=args)
-#
-# # Set datasets
-# dev_example_dict = helper.dev_example_dict
-# dev_feature_dict = helper.dev_feature_dict
-# # dev_dataloader = helper.dev_loader
-# dev_dataloader = helper.hotpot_val_dataloader
-#
-# # #########################################################################
-# # # Initialize Model
-# # ##########################################################################
-# config_class, model_encoder, tokenizer_class = MODEL_CLASSES[args.model_type]
-# config = config_class.from_pretrained(args.encoder_name_or_path)
-#
-# encoder_path = join(args.exp_name, args.encoder_name) ## replace encoder.pkl as encoder
-# model_path = join(args.exp_name, args.model_name) ## replace encoder.pkl as encoder
-# logger.info("Loading encoder from: {}".format(encoder_path))
-# logger.info("Loading model from: {}".format(model_path))
-#
-# if torch.cuda.is_available():
-#     device_ids, _ = single_free_cuda()
-#     device = torch.device('cuda:{}'.format(device_ids[0]))
-# else:
-#     device = torch.device('cpu')
-#
-# args.device = device
-#
-# encoder, _ = load_encoder_model(args.encoder_name_or_path, args.model_type)
-# model = HierarchicalGraphNetwork(config=args)
-#
-# if encoder_path is not None:
-#     state_dict = torch.load(encoder_path)
-#     print('loading parameter from {}'.format(encoder_path))
-#     for key in list(state_dict.keys()):
-#         if 'module.' in key:
-#             state_dict[key.replace('module.', '')] = state_dict[key]
-#             del state_dict[key]
-#     encoder.load_state_dict(state_dict)
-# if model_path is not None:
-#     state_dict = torch.load(model_path)
-#     print('loading parameter from {}'.format(model_path))
-#     for key in list(state_dict.keys()):
-#         if 'module.' in key:
-#             state_dict[key.replace('module.', '')] = state_dict[key]
-#             del state_dict[key]
-#     model.load_state_dict(state_dict)
-#
-# encoder.to(args.device)
-# model.to(args.device)
-#
-# encoder.eval()
-# model.eval()
-#
-# #########################################################################
-# # Evaluation
-# ##########################################################################
-# output_pred_file = join(args.exp_name, 'dev_pred.json')
-# output_eval_file = join(args.exp_name, 'dev_eval.txt')
-# output_score_file = join(args.exp_name, 'dev_score.json')
-#
-# metrics, threshold = jd_eval_model(args, encoder, model,
-#                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-#                                 output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
-# # metrics, threshold = eval_model(args, encoder, model,
-# #                                 dev_dataloader, dev_example_dict, dev_feature_dict,
-# #                                 output_pred_file, output_eval_file, args.dev_gold_file)
-# print("Best threshold: {}".format(threshold))
-# for key, val in metrics.items():
-#     print("{} = {}".format(key, val))
-#
-# # import json
-# # with open(output_score_file, 'r') as fp:
-# #     data = json.load(fp)
-# #     print(len(data))
-# #     for x in data:
-# #         print(x)
-# #         print(data[x])
+metrics = jd_unified_test_model(args, model,
+                                test_data_loader, test_example_dict, test_feature_dict,
+                                output_pred_file, output_eval_file, args.dev_gold_file)
+for key, val in metrics.items():
+    print("{} = {}".format(key, val))

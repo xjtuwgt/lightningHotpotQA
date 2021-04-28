@@ -8,7 +8,7 @@ from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
 from csr_mhqa.utils import convert_to_tokens
 import torch.nn.functional as F
 
-def jd_unified_eval_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None, score_file=None):
+def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None, score_file=None):
     model.eval()
 
     answer_dict = {}
