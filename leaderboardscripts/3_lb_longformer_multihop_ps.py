@@ -218,6 +218,7 @@ for case in tqdm(raw_data):
     selected_para_score_threshold_dict[guid].append(other_scores)
     #++++++++++++++++++++++++++++++++++++++++++++
     para_num.append(sum(sel_para_idx))
-
+para_num_counter = Counter(para_num)
+print(para_num_counter)
 json.dump(selected_para_dict, open(output_file, 'w'))
 print('Saving {} into {}'.format(len(selected_para_dict), output_file))
