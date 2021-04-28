@@ -20,11 +20,12 @@ def best_metric_collection(key_word=None):
     best_joint_f1 = -1
     best_setting = None
     folder_names = list_all_folders(d=OUTPUT_FOLDER)
-    print(folder_names)
+    # print(folder_names)
     metric_list = []
     for folder_idx, folder_name in enumerate(folder_names):
         eval_file_names = list_all_txt_files(path=folder_name)
         trim_folder_name = folder_name[(len(OUTPUT_FOLDER)+1):]
+        print(trim_folder_name)
         if key_word is not None:
             if key_word not in trim_folder_name:
                 continue
