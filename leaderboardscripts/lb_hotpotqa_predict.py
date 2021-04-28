@@ -98,7 +98,7 @@ def parse_args(args=None):
 
     parser.add_argument("--para_path",
                         type=str,
-                        default=join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_3_long_low_long_multihop_para.json'))
+                        default=join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_4_long_low_long_multihop_para.json'))
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return parser.parse_args(args)
 
