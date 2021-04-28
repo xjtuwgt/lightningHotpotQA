@@ -131,7 +131,7 @@ args = parse_args()
 args = complete_default_test_parser(args=args)
 if args.do_rerank:
     assert args.topk_para_num >= 2
-    args.testf_type = '{}_{}'.format(args.testf_type, args.topk_para_num)
+    args.testf_type = '{}_reranker{}'.format(args.testf_type, args.topk_para_num)
 
 
 logger.info('-' * 100)
