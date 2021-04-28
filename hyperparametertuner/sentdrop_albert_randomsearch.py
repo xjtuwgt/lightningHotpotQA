@@ -48,9 +48,9 @@ def HypeParameterSpace():
     learning_rate = {'name': 'learning_rate', 'type': 'choice', 'values': [3e-5, 2e-5, 1e-5, 1.5e-5]} #3e-5, 5e-5, 1e-4, 1.5e-4
     layer_wise_lr_decay = {'name': 'layer_wise_lr_decay', 'type': 'choice', 'values': [0.9]}
     gradient_accumulation_steps = {'name': 'gradient_accumulation_steps', 'type': 'choice', 'values': [1,2,4]}
-    sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [4, 5]} ##
+    sent_lambda = {'name': 'sent_lambda', 'type': 'choice', 'values': [5]} ##
     trans_drop = {'name': 'trans_drop', 'type': 'choice', 'values': [0.3]}
-    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [2]}
+    num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [3]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
     daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_low']} #
     transformer_hidden_dim = {'name': 'transformer_hidden_dim', 'type': 'choice', 'values': [512]}
