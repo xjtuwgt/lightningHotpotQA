@@ -2,10 +2,10 @@ from envs import OUTPUT_FOLDER
 import os
 import json
 
-def list_all_folders(d):
+def list_all_folders(d, model_type: str):
     folder_names = [os.path.join(d, o) for o in os.listdir(d)
      if os.path.isdir(os.path.join(d, o))]
-    folder_names = [i for i in folder_names if 'albert' not in i]
+    folder_names = [i for i in folder_names if model_type in i]
     return folder_names
 
 def list_all_txt_files(path):
@@ -15,16 +15,14 @@ def list_all_txt_files(path):
     eval_file_names = [i for i in eval_file_names if 'gpu' not in i]
     return eval_file_names
 
-def best_metric_collection(key_word=None):
+def best_metric_collection(key_word=None, model_type='roberta'):
     best_metric_dict = None
     best_joint_f1 = -1
     best_setting = None
-    folder_names = list_all_folders(d=OUTPUT_FOLDER)
+    folder_names = list_all_folders(d=OUTPUT_FOLDER, model_type=model_type)
     # print(folder_names)
     metric_list = []
     for folder_idx, folder_name in enumerate(folder_names):
-        if 'albert' in folder_name:
-            print(folder_name)
         eval_file_names = list_all_txt_files(path=folder_name)
         trim_folder_name = folder_name[(len(OUTPUT_FOLDER)+1):]
         # print(trim_folder_name)
