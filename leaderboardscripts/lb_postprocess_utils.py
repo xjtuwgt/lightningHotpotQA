@@ -60,14 +60,12 @@ class RangeDataset(Dataset):
         self.x_feat = x
         self.y_p = y_p
         self.y_n = y_n
-
     def __len__(self):
         return self.x_feat.shape[0]
 
     def __getitem__(self, idx):
         x_i = torch.from_numpy(self.x_feat[idx]).float()
         y_p_i, y_n_i = self.y_p[idx], self.y_n[idx]
-
         if y_p_i > y_n_i:
             y_min = torch.FloatTensor([y_n_i])
             y_max = torch.FloatTensor([y_p_i])
