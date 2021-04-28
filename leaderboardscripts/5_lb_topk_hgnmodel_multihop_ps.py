@@ -236,6 +236,8 @@ for case in tqdm(raw_data):
     selected_para_dict[guid].append(other_titles)
     ##############################################
     selected_para_score_threshold_dict[guid].append(other_scores)
+    if sum((sel_para_idx)) == 1:
+        print(selected_para_dict[guid])
     #++++++++++++++++++++++++++++++++++++++++++++
     para_num.append(sum(sel_para_idx))
     ####++++++++++++
