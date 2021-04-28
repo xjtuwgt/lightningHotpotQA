@@ -9,7 +9,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
-from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model, jd_unified_eval_model
+from post_feature_collection.feature_collection_utils import jd_unified_post_feature_collection_model
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -151,10 +151,19 @@ for a in args_dict:
 ##########################################################################
 helper = DataHelper(gz=True, config=args)
 # Set datasets
-data_example_dict = helper.test_example_dict
-data_feature_dict = helper.test_feature_dict
-data_features = helper.test_features
-data_data_loader = helper.hotpot_test_dataloader
+if args.data_type in ['train']:
+    data_example_dict = helper.train_example_dict
+    data_feature_dict = helper.train_feature_dict
+    data_features = helper.train_features
+    data_loader = helper.hotpot_train_dataloader
+elif args.data_type in ['dev_distractor']:
+    data_example_dict = helper.dev_example_dict
+    data_feature_dict = helper.dev_feature_dict
+    data_features = helper.dev_features
+    data_loader = helper.hotpot_val_dataloader
+else:
+    raise 'Wrong data type = {}'.format(args.data_type)
+
 #
 # # # #########################################################################
 # # # # Initialize Model
@@ -162,21 +171,13 @@ data_data_loader = helper.hotpot_test_dataloader
 model = UnifiedHGNModel(config=args)
 model.to(args.device)
 
-output_pred_file = join(args.exp_name, 'test_pred.json')
-output_eval_file = join(args.exp_name, 'test_eval.txt')
-output_score_file = join(args.exp_name, 'dev_score.json')
+output_pred_file = join(args.exp_name, '{}_pred.json'.format(args.data_type))
+output_eval_file = join(args.exp_name, '{}_eval.txt'.format(args.data_type))
+output_score_file = join(args.exp_name, '{}_score.json'.format(args.data_type))
 
 
-best_metrics, best_threshold = jd_unified_eval_model(args, model, test_data_loader, test_example_dict, test_feature_dict,
-                                output_pred_file, output_eval_file, args.dev_gold_file)
+best_metrics, best_threshold = jd_unified_post_feature_collection_model(args, model, data_loader, data_example_dict, data_feature_dict,
+                                output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
 for key, val in best_metrics.items():
     print("{} = {}".format(key, val))
 print('Best threshold = {}'.format(best_threshold))
-
-threshold = best_threshold
-
-metrics = jd_unified_test_model(args, model,
-                                test_data_loader, test_example_dict, test_feature_dict,
-                                output_pred_file, output_eval_file, threshold, args.dev_gold_file)
-for key, val in metrics.items():
-    print("{} = {}".format(key, val))
