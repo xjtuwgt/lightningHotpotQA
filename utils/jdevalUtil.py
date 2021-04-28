@@ -751,7 +751,7 @@ def jd_eval_post_model(args, encoder, model, dataloader, example_dict, feature_d
     return best_metrics, best_threshold
 
 
-def jd_unified_eval_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file):
+def jd_unified_eval_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file=None):
     model.eval()
 
     answer_dict = {}

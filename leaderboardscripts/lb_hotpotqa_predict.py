@@ -9,6 +9,7 @@ import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
 
+
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
                     level=logging.INFO)
@@ -46,6 +47,8 @@ def parse_args(args=None):
     parser.add_argument('--q_update', type=boolean_string, default='False', help='Whether update query')
     parser.add_argument("--trans_drop", type=float, default=0.2)
     parser.add_argument("--trans_heads", type=int, default=3)
+    parser.add_argument("--do_rerank", action='store_true', help="Whether re-rank")
+
 
     # graph
     parser.add_argument('--num_edge_type', type=int, default=8)  ### number of edge types
@@ -126,6 +129,10 @@ def complete_default_test_parser(args):
 ##########################################################################
 args = parse_args()
 args = complete_default_test_parser(args=args)
+if args.do_rerank:
+    assert args.topk_para_num >= 2
+    args.testf_type = '{}_{}'.format(args.testf_type, args.topk_para_num)
+
 
 logger.info('-' * 100)
 logger.info('Input Argument Information')
@@ -151,22 +158,22 @@ model = UnifiedHGNModel(config=args)
 model.to(args.device)
 model.eval()
 
-gold = json.load(open(args.dev_gold_file, 'r'))
-para_data = json.load(open(args.para_path, 'r'))
-import itertools
-recall_list = []
-for idx, case in enumerate(gold):
-    key = case['_id']
-    supp_title_set = set([x[0] for x in case['supporting_facts']])
-    pred_paras = para_data[key]
-    # print('selected para {}'.format(pred_paras))
-    sel_para_names = set(itertools.chain.from_iterable(pred_paras))
-    # print('Gold para {}'.format(supp_title_set))
-    if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
-        recall_list.append(1)
-    else:
-        recall_list.append(0)
-print('Recall = {}'.format(sum(recall_list)*1.0/len(para_data)))
+# gold = json.load(open(args.dev_gold_file, 'r'))
+# para_data = json.load(open(args.para_path, 'r'))
+# import itertools
+# recall_list = []
+# for idx, case in enumerate(gold):
+#     key = case['_id']
+#     supp_title_set = set([x[0] for x in case['supporting_facts']])
+#     pred_paras = para_data[key]
+#     # print('selected para {}'.format(pred_paras))
+#     sel_para_names = set(itertools.chain.from_iterable(pred_paras))
+#     # print('Gold para {}'.format(supp_title_set))
+#     if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
+#         recall_list.append(1)
+#     else:
+#         recall_list.append(0)
+# print('Recall = {}'.format(sum(recall_list)*1.0/len(para_data)))
 
 # import numpy as np
 # import logging
