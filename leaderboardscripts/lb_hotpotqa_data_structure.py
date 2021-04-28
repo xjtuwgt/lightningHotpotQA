@@ -82,7 +82,7 @@ def get_cached_filename(f_type, config):
                   'albert_long_low_sae_reranker3_examples', 'albert_long_low_sae_reranker3_features', 'albert_long_low_sae_reranker3_graphs',
 
                   } #### ranker: hgn, longformer; case: lowercase, cased; graph: whether sae-graph
-    assert f_type in f_type_set
+    assert f_type in f_type_set, 'f_type = {}'.format(f_type)
     return f"cached_{f_type}_{config.model_type}_{config.max_seq_length}_{config.max_query_length}.pkl.gz"
 
 class Example(object):
