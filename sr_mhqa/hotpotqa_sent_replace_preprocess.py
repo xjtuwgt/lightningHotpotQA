@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--split_rank_data', type=str, required=True)
 
     args = parser.parse_args()
-    for key, value in vars(args):
+    for key, value in vars(args).items():
         print('{}: {}'.format(key, value))
     print('*' * 100)
     full_file_name = args.full_data
