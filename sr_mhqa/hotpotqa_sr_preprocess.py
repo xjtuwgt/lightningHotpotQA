@@ -1,8 +1,50 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import argparse
-from sr_mhqa.hotpotqa_sr_data_structure import Example
+from model_envs import MODEL_CLASSES
 from sr_mhqa.hotpotqa_sr_utils import hotpot_answer_neg_sents_tokenizer
+
+def get_cached_filename(f_type, config):
+    f_type_set = {'long_low_srep_hotpotqa_tokenized_examples', 'hgn_low_srep_hotpotqa_tokenized_examples'}
+    assert f_type in f_type_set
+    return f"cached_{f_type}_{config.model_type}.pkl.gz"
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--full_data', type=str, required=True)
     parser.add_argument('--split_rank_data', type=str, required=True)
+    parser.add_argument("--data_type", type=str, required=True)
+    parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
+
+    parser.add_argument("--model_type", default=None, type=str, required=True,
+                        help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
+    parser.add_argument("--tokenizer_name", default="", type=str,
+                        help="Pretrained tokenizer name or path if not the same as model_name")
+    parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
+                        help="Path to pre-trained model")
+    parser.add_argument("--do_lower_case", action='store_true',
+                        help="Set this flag if you are using an uncased model.")
+
+    args = parser.parse_args()
+    for key, value in vars(args).items():
+        print('{}: {}'.format(key, value))
+    print('*' * 100)
+    full_file_name = args.full_data
+    split_rank_file_name = args.split_rank_data
+
+    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
+                                                do_lower_case=args.do_lower_case)
+
+    ranker = args.ranker
+    data_type = args.data_type
+    if args.do_lower_case:
+        ranker = ranker + '_low'
+    data_source_name = "{}".format(ranker)
+    if "train" in data_type:
+        data_source_type = data_source_name
+    else:
+        data_source_type = None
+    print('data_type = {} \n data_source_id = {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))

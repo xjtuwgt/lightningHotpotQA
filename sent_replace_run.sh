@@ -36,8 +36,13 @@ preprocess() {
         echo "1. Splitting 10 paras into (4, 4, 2)"
         # Input: INPUT_FILE, train_long_para_ranking.json
         # Output: split_train_long_para_ranking.json
-        python sr_mhqa/hotpotqa_sent_replace_preprocess.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
-#
+        python sr_mhqa/hotpotqa_rank_split.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
+
+        echo "2. Positive/negative para preprocess, tokenize (albert)"
+        # Input: INPUT_FILE, split_train_long_para_ranking.json
+        # Output: Example dictionary
+        python sr_mhqa/hotpotqa_sr_preprocess.py --full_data $INPUT_FILE --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+
     done
 }
 
