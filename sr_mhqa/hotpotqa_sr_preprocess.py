@@ -48,3 +48,6 @@ if __name__ == '__main__':
     else:
         data_source_type = None
     print('data_type = {} \n data_source_id = {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))
+
+    sr_example_name = get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name))
+    print('Sentence replacement example file name = {}'.format(sr_example_name))
