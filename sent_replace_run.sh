@@ -19,36 +19,26 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
+    INPUTS=("hotpot_train_v1.1.json;train")
+    for input in ${INPUTS[*]}; do
+        INPUT_FILE=$(echo $input | cut -d ";" -f 1)
+        DATA_TYPE=$(echo $input | cut -d ";" -f 2)
 
-     echo "HGN roberta 103 re-ranker model hgn topk = 2"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.json --topk_para_num 2
-     echo "HGN re-ranker model hgn topk = 3"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.json --topk_para_num 3
+        echo "Processing input_file: ${INPUT_FILE}"
 
-     echo "HGN roberta 103 re-ranker model long topk = 2"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdlong.json --topk_para_num 2
-     echo "HGN roberta 103 re-ranker model long topk = 3"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdlong.json --topk_para_num 3
+        INPUT_FILE=$DATA_ROOT/dataset/data_raw/$INPUT_FILE
+        OUTPUT_PROCESSED=$DATA_ROOT/dataset/data_processed/$DATA_TYPE
+        OUTPUT_FEAT=$DATA_ROOT/dataset/data_feat/$DATA_TYPE
 
-     echo "HGN roberta 3901  re-ranker model long topk = 3"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.long.json --topk_para_num 3
-     echo "HGN roberta 3901 re-ranker model long topk = 2"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.long.json --topk_para_num 2
+        [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
+        [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-     echo "HGN roberta 3901 re-ranker model hgn topk = 3"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.hgn.json --topk_para_num 3
-     echo "HGN roberta 3901 re-ranker model hgn topk = 2"
-     python3 jd_para_reranker.py --config_file configs/predict.roberta.jdhgn.hgn.json --topk_para_num 2
-
-     echo "HGN albert re-ranker model hgn topk = 2"
-     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.hgn.orig.json --topk_para_num 2
-     echo "HGN albert re-ranker model hgn topk = 3"
-     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.hgn.orig.json --topk_para_num 3
-
-     echo "HGN albert re-ranker model long topk = 2"
-     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.long.orig.json --topk_para_num 2
-     echo "HGN albert re-ranker model long topk = 3"
-     python3 jd_albert_para_reranker.py --config_file configs/predict.albert.long.orig.json --topk_para_num 3
+        echo "1. Extract Wiki Link & NER from DB"
+        # Input: INPUT_FILE, ranking
+        # Output: doc_link_ner.json
+        python scripts/1_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner.json
+#
+    done
 }
 
 for proc in "preprocess"
