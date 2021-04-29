@@ -25,8 +25,8 @@ mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
 #    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
-#    INPUTS=("hotpot_train_v1.1.json;train")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
+    INPUTS=("hotpot_train_v1.1.json;train")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -65,12 +65,12 @@ preprocess() {
 #        # Output: long_multihop_para.json
 #        python leaderboardscripts/3_lb_longformer_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED/long_para_ranking.json $OUTPUT_PROCESSED/long_multihop_para.json $SELECTEED_DOC_NUM
 #
-#        echo "4. Dump features for albert do_lower_case"
-#        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
-#        python post_feature_collection/5_lb_hotpotqa_dump_features.py --daug_type long_low --devf_type long_low --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk $TOPK_PARA_NUM
+        echo "4. Dump features for albert do_lower_case"
+        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
+        python post_feature_collection/5_lb_hotpotqa_dump_features.py --daug_type long_low --devf_type long_low --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk $TOPK_PARA_NUM
 
-        echo "5. Re-rank over top k via the trained model"
-        CUDA_LAUNCH_BLOCKING=1 python post_feature_collection/topk_rerankering.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
+#        echo "5. Re-rank over top k via the trained model"
+#        CUDA_LAUNCH_BLOCKING=1 python post_feature_collection/topk_rerankering.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
 
 #        echo "6. Re-rank over top k and hyper-link "
 #        # output: topk_long_multihop_para.json
