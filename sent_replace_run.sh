@@ -33,10 +33,10 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "1. Splitting 10 paras into (4, 4, 2)"
-        # Input: INPUT_FILE, train_long_para_ranking.json
-        # Output: split_train_long_para_ranking.json
-        python sr_mhqa/hotpotqa_rank_split.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
+#        echo "1. Splitting 10 paras into (4, 4, 2)"
+#        # Input: INPUT_FILE, train_long_para_ranking.json
+#        # Output: split_train_long_para_ranking.json
+#        python sr_mhqa/hotpotqa_rank_split.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
 
         echo "2. Positive/negative para preprocess, tokenize (albert)"
         # Input: INPUT_FILE, split_train_long_para_ranking.json
