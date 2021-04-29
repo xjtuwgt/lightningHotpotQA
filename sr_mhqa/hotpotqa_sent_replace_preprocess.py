@@ -1,6 +1,5 @@
 import argparse
 import json
-from os.path import join
 from time import time
 from tqdm import tqdm
 
