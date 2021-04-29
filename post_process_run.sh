@@ -70,7 +70,7 @@ preprocess() {
 #        python post_feature_collection/5_lb_hotpotqa_dump_features.py  --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk $TOPK_PARA_NUM
 
         echo "5. Re-rank over top k via the trained model"
-        python leaderboardscripts/5_lb_topk_rerankering.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
+        python post_feature_collection/topk_rerankering.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
 
 #        echo "6. Re-rank over top k and hyper-link "
 #        # output: topk_long_multihop_para.json
