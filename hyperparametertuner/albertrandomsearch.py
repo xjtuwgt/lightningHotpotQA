@@ -58,12 +58,12 @@ def HypeParameterSpace():
     lstm_drop = {'name': 'lstm_drop', 'type': 'choice', 'values': [0.3]}
     num_train_epochs = {'name': 'num_train_epochs', 'type': 'choice', 'values': [8]}
     devf_type = {'name': 'devf_type', 'type': 'choice', 'values': ['long_low']}
-    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['long_low']} #
+    daug_type = {'name': 'daug_type', 'type': 'choice', 'values': ['hgn_long_docred_low']} #
     num_edge_type = {'name': 'num_edge_type', 'type': 'choice', 'values': [8]} # if SAE, then this number should be 9
     ctx_attn_hidden_dim = {'name': 'ctx_attn_hidden_dim', 'type': 'choice', 'values': [300]} # 300
     hidden_dim = {'name': 'hidden_dim', 'type': 'choice', 'values': [300]} # 300
     learning_rate_schema = {'name': 'learning_rate_schema', 'type': 'choice', 'values': ['layer_decay']}
-    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,2']} ##'gat:1,2' 'gat:1,4'
+    gnn = {'name': 'gnn', 'type': 'choice', 'values': ['gat:1,4']} ##'gat:1,2' 'gat:1,4'
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['albert']}
     fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['albert/albert-xxlarge-v2_hotpotqa']} #'ahotrod/roberta_large_squad2'
