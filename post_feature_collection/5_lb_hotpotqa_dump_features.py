@@ -727,7 +727,7 @@ if __name__ == '__main__':
 
     if "train" in data_type:
         # data_source_type = data_source_name
-        data_source_name = None
+        data_source_type = None
         file_type = args.daug_type
     else:
         file_type = args.devf_type
