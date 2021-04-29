@@ -33,10 +33,10 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "1. Extract Wiki Link & NER from DB"
-        # Input: INPUT_FILE, ranking
-        # Output: doc_link_ner.json
-        python sr_mhqa/hotpotqa_sent_replace_preprocess.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
+        echo "1. Splitting 10 paras into (4, 4, 2)"
+        # Input: INPUT_FILE, train_long_para_ranking.json
+        # Output: split_train_long_para_ranking.json
+        python sr_mhqa/hotpotqa_sent_replace_preprocess.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/c --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
 #
     done
 }
