@@ -24,6 +24,8 @@ def para_ranking_preprocess(full_file, rank_file):
             top4_8 = para_scores[4:8]
             top8_plus = para_scores[8:]
             split_res = (top4, top4_8, top8_plus)
+        split_res_len = sum([len(_) for _ in split_res])
+        assert split_res_len == len(para_scores)
         return split_res
 
     split_rank_dict = {}
