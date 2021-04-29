@@ -1,5 +1,6 @@
 import argparse
 import json
+from os.path import join
 from time import time
 from tqdm import tqdm
 
@@ -48,7 +49,9 @@ if __name__ == '__main__':
     print('*' * 100)
     full_file_name = args.full_data
     para_rank_file_name = args.rank_data
-    split_rank_file_name = args.split_rank_data
     start_time = time()
-    para_ranking_preprocess(full_file=full_file_name, rank_file=para_rank_file_name)
+    split_rank_dict = para_ranking_preprocess(full_file=full_file_name, rank_file=para_rank_file_name)
     print('Data splitting takes {:.4f} seconds'.format(time() - start_time))
+    split_rank_file_name = args.split_rank_data
+    json.dump(split_rank_dict, open(split_rank_file_name, 'w'))
+    print('Saving {} records into {}'.format(len(split_rank_dict), split_rank_file_name))
