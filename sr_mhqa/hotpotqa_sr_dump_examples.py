@@ -5,6 +5,9 @@ from __future__ import print_function
 import argparse
 from model_envs import MODEL_CLASSES
 from time import time
+import gzip
+import pickle
+from os.path import join
 from sr_mhqa.hotpotqa_sr_utils import hotpot_answer_neg_sents_tokenizer
 
 def get_cached_filename(f_type, config):
@@ -70,4 +73,8 @@ if __name__ == '__main__':
                                        data_source_type=data_source_type)
     print('Tokenizing takes {} seconds'.format(time() - start_time))
     sr_example_name = get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name), config=args)
+    cached_examples_file = join(args.output_dir, sr_example_name)
     print('Sentence replacement example file name = {}'.format(sr_example_name))
+    with gzip.open(cached_examples_file, 'wb') as fout:
+        pickle.dump(examples, fout)
+    print('Saving {} examples in {}'.format(len(examples), cached_examples_file))
