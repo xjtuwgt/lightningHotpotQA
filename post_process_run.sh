@@ -25,8 +25,8 @@ mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
 #    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train")
-    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
-#    INPUTS=("hotpot_train_v1.1.json;train")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
+    INPUTS=("hotpot_train_v1.1.json;train")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
@@ -50,9 +50,9 @@ preprocess() {
 #        # Output: ner.json
 #        python leaderboardscripts/2_lb_extract_ner.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json
 #
-#        echo "3. Paragraph ranking (1): longformer retrieval data preprocess"
-#        # Output: para_ir_combined.json
-#        python leaderboardscripts/3_lb_longformer_dataprepare_para_sel.py $INPUT_FILE $OUTPUT_PROCESSED/para_ir_combined.json
+        echo "3. Paragraph ranking (1): longformer retrieval data preprocess"
+        # Output: para_ir_combined.json
+        python leaderboardscripts/3_lb_longformer_dataprepare_para_sel.py $INPUT_FILE $OUTPUT_PROCESSED/para_ir_combined.json
 #
 #        echo "3. Paragraph ranking (2): longformer retrieval ranking scores"
 #        # switch to Longformer for final leaderboard, PYTORCH LIGHTING + '1.0.8' TRANSFORMER (3.3.1)
@@ -69,8 +69,8 @@ preprocess() {
 #        # Input: $INPUT_FILE, long_multihop_para.json; model_type, model_name, doc_link_ner.json, ner.json
 #        python post_feature_collection/5_lb_hotpotqa_dump_features.py  --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk $TOPK_PARA_NUM
 
-        echo "5. Re-rank over top k via the trained model"
-        python post_feature_collection/topk_rerankering.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
+#        echo "5. Re-rank over top k via the trained model"
+#        python post_feature_collection/topk_rerankering.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
 
 #        echo "6. Re-rank over top k and hyper-link "
 #        # output: topk_long_multihop_para.json
