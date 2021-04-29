@@ -98,10 +98,14 @@ def parse_args(args=None):
     parser.add_argument("--dev_gold_file",
                         type=str,
                         default=join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json'))
+    parser.add_argument("--train_gold_file",
+                        type=str,
+                        default=join(DATASET_FOLDER, 'data_raw', 'hotpot_train_v1.1.json'))
 
     parser.add_argument("--para_path",
                         type=str,
-                        default=join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_3_long_low_long_multihop_para.json'))
+                        default=join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_4_long_low_long_multihop_para.json'))
+
     parser.add_argument("--data_type", type=str, required=True)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     return parser.parse_args(args)
@@ -136,8 +140,8 @@ args = parse_args()
 args = complete_default_test_parser(args=args)
 if args.do_rerank:
     assert args.topk_para_num >= 2
-    args.testf_type = '{}_reranker{}'.format(args.testf_type, args.topk_para_num)
-
+    args.devf_type = '{}_reranker{}'.format(args.devf_type, args.topk_para_num)
+    args.daug_type = '{}_reranker{}'.format(args.daug_type, args.topk_para_num)
 
 logger.info('-' * 100)
 logger.info('Input Argument Information')
@@ -156,14 +160,18 @@ if args.data_type in ['train']:
     data_feature_dict = helper.train_feature_dict
     data_features = helper.train_features
     data_loader = helper.hotpot_train_dataloader
+    gold_file = args.train_gold_file
+    file_type = args.daug_type
+
 elif args.data_type in ['dev_distractor']:
     data_example_dict = helper.dev_example_dict
     data_feature_dict = helper.dev_feature_dict
     data_features = helper.dev_features
     data_loader = helper.hotpot_val_dataloader
+    gold_file = args.dev_gold_file
+    file_type = args.devf_type
 else:
     raise 'Wrong data type = {}'.format(args.data_type)
-
 #
 # # # #########################################################################
 # # # # Initialize Model
@@ -171,13 +179,12 @@ else:
 model = UnifiedHGNModel(config=args)
 model.to(args.device)
 
-output_pred_file = join(args.exp_name, '{}_pred.json'.format(args.data_type))
-output_eval_file = join(args.exp_name, '{}_eval.txt'.format(args.data_type))
-output_score_file = join(args.exp_name, '{}_score.json'.format(args.data_type))
-
+output_pred_file = join(args.exp_name, '{}_{}_{}_pred.json'.format(args.data_type, args.max_para_num, args.topk_para_num))
+output_eval_file = join(args.exp_name, '{}_{}_{}_eval.txt'.format(args.data_type, args.max_para_num, args.topk_para_num))
+output_score_file = join(args.exp_name, '{}_{}_{}_score.json'.format(args.data_type, args.max_para_num, args.topk_para_num))
 
 best_metrics, best_threshold = jd_unified_post_feature_collection_model(args, model, data_loader, data_example_dict, data_feature_dict,
-                                output_pred_file, output_eval_file, args.dev_gold_file, output_score_file=output_score_file)
+                                output_pred_file, output_eval_file, gold_file, output_score_file=output_score_file)
 for key, val in best_metrics.items():
     print("{} = {}".format(key, val))
 print('Best threshold = {}'.format(best_threshold))
