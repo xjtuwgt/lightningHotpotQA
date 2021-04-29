@@ -1,13 +1,16 @@
 import argparse
 import json
+from time import time
 from tqdm import tqdm
 
 def para_ranking_preprocess(full_file, rank_file):
     with open(full_file, 'r', encoding='utf-8') as reader:
         full_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(full_data), full_file))
 
     with open(rank_file, 'r', encoding='utf-8') as reader:
         rank_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(rank_data), rank_file))
 
     def ranker_splitting(para_scores):
         ### split the para_scores i
@@ -19,6 +22,8 @@ def para_ranking_preprocess(full_file, rank_file):
         key = case['_id']
         para_rank_case = rank_data[key]
         print(para_rank_case)
+        break
+
 
     return
 
@@ -35,4 +40,6 @@ if __name__ == '__main__':
     full_file_name = args.full_data
     para_rank_file_name = args.rank_data
     split_rank_file_name = args.split_rank_data
+    start_time = time()
     para_ranking_preprocess(full_file=full_file_name, rank_file=para_rank_file_name)
+    print('Data splitting takes {:.4f} seconds'.format(time() - start_time))
