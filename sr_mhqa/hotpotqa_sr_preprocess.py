@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import argparse
 from model_envs import MODEL_CLASSES
+from time import time
 from sr_mhqa.hotpotqa_sr_utils import hotpot_answer_neg_sents_tokenizer
 
 def get_cached_filename(f_type, config):
@@ -59,5 +60,14 @@ if __name__ == '__main__':
         data_source_type = None
     print('data_type = {} \n data_source_id = {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))
 
+    start_time = time()
+    examples = hotpot_answer_neg_sents_tokenizer(split_para_file=args.split_rank_data,
+                                       full_file=args.full_data,
+                                       tokenizer=tokenizer,
+                                       cls_token=tokenizer.cls_token,
+                                       sep_token=tokenizer.sep_token,
+                                       is_roberta=bool(args.model_type in ['roberta']),
+                                       data_source_type=data_source_type)
+    print('Tokenizing takes {} seconds'.format(time() - start_time))
     sr_example_name = get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name), config=args)
     print('Sentence replacement example file name = {}'.format(sr_example_name))
