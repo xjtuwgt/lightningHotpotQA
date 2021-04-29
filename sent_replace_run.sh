@@ -36,7 +36,7 @@ preprocess() {
         echo "1. Extract Wiki Link & NER from DB"
         # Input: INPUT_FILE, ranking
         # Output: doc_link_ner.json
-        python sr_mhqa/hotpotqa_sent_replace_preprocess.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED
+        python sr_mhqa/hotpotqa_sent_replace_preprocess.py --full_data $INPUT_FILE --rank_data $OUTPUT_PROCESSED/train_long_para_ranking.json --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json
 #
     done
 }
