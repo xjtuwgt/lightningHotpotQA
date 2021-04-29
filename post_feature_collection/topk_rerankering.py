@@ -150,12 +150,14 @@ if args.data_type in ['train']:
     data_features = helper.train_features
     data_loader = helper.hotpot_train_dataloader
     gold_file = args.train_gold_file
+    file_type = args.daug_type
 elif args.data_type in ['dev_distractor']:
     data_example_dict = helper.dev_example_dict
     data_feature_dict = helper.dev_feature_dict
     data_features = helper.dev_features
     data_loader = helper.hotpot_val_dataloader
     gold_file = args.dev_gold_file
+    file_type = args.devf_type
 else:
     raise 'Wrong data type = {}'.format(args.data_type)
 #
@@ -171,19 +173,11 @@ model.eval()
 # ##########################################################################
 selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=data_loader,
                                                               example_dict=data_example_dict, topk=args.topk_para_num, gold_file=gold_file)
-topk_file_type_name = get_topk_cached_filename(args.topk_para_num, args.testf_type)
-output_pred_para_dict_file = join(args.exp_name, '{}_para.json'.format(topk_file_type_name))
-json.dump(selected_para_dict, open(output_pred_para_dict_file, 'w'))
-print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_dict_file))
-
-data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed/test_distractor', '{}_para.json'.format(topk_file_type_name))
+topk_file_type_name = get_topk_cached_filename(args.topk_para_num, file_type)
+data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed', args.data_type, '{}_para.json'.format(topk_file_type_name))
 json.dump(selected_para_dict, open(data_processed_pred_para_dict_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_dict_file))
 
-output_ranking_para_file = join(args.exp_name, '{}_para_ranking.json'.format(topk_file_type_name))
-json.dump(para_rank_dict, open(output_ranking_para_file, 'w'))
-print('Saving {} examples in {}'.format(len(para_rank_dict), output_ranking_para_file))
-
-data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed/test_distractor', '{}_para_ranking.json'.format(topk_file_type_name))
+data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed', args.data_type, '{}_para_ranking.json'.format(topk_file_type_name))
 json.dump(para_rank_dict, open(data_processed_ranking_para_file, 'w'))
 print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_ranking_para_file))
