@@ -671,6 +671,9 @@ if __name__ == '__main__':
     parser.add_argument("--sae_graph", action='store_true',
                         help="Set this flag if you are using SAE graph.")
 
+    parser.add_argument("--daug_type", default='long_low', type=str, help="Train Data augumentation type.")
+    parser.add_argument("--devf_type", default='long_low', type=str, help="Dev data type")
+
     # Other parameters
     parser.add_argument("--model_type", default=None, type=str, required=True,
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
@@ -724,12 +727,14 @@ if __name__ == '__main__':
 
     if "train" in data_type:
         data_source_type = data_source_name
+        file_type = args.daug_type
     else:
+        file_type = args.devf_type
         data_source_type = None
     print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
 
     if args.do_rerank:
-        topk_para_name_fix = get_topk_cached_filename(topk_para_num=args.topk, testf_type=args.testf_type)
+        topk_para_name_fix = get_topk_cached_filename(topk_para_num=args.topk, testf_type=file_type)
         topk_para_name = '{}_long_multihop_para.json'.format(topk_para_name_fix)
         args.para_path = os.path.join(args.para_path, topk_para_name)
 
