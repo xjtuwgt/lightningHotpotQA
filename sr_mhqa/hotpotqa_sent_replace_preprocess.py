@@ -14,14 +14,27 @@ def para_ranking_preprocess(full_file, rank_file):
 
     def ranker_splitting(para_scores):
         ### split the para_scores i
-        for para, score in para_scores:
-            break
-        return
+        top4 = para_scores[:4]
+        if len(para_scores) <= 4:
+            return (top4, [], [])
+        if len(para_scores) < 8:
+            top4_8 = para_scores[4:]
+            return (top4, top4_8, [])
+        else:
+            top4_8 = para_scores[4:8]
+            top8_plus = para_scores[8:]
+            return (top4, top4_8, top8_plus)
 
+        # for para, score in para_scores:
+        #     break
+        # return
+    split_rank_dict = {}
     for case in tqdm(full_data):
         key = case['_id']
         para_rank_case = rank_data[key]
+        para_split_row = ranker_splitting(para_scores=para_rank_case)
         print(para_rank_case)
+        print(para_split_row)
         break
 
 
