@@ -33,8 +33,6 @@ def para_ranking_preprocess(full_file, rank_file):
         key = case['_id']
         para_rank_case = rank_data[key]
         para_split_row = ranker_splitting(para_scores=para_rank_case)
-        print(para_rank_case)
-        print(para_split_row)
         split_rank_dict[key] = para_split_row
     return split_rank_dict
 
