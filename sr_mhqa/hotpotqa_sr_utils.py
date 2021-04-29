@@ -4,6 +4,7 @@ from sd_mhqa.hotpotqaUtils import ranked_context_processing
 from sd_mhqa.hotpotqaUtils import sub_list_match_idx
 from sd_mhqa.hotpotqaUtils import normalize_text
 from sr_mhqa.hotpotqa_sr_data_structure import Example
+from numpy import random
 from tqdm import tqdm
 
 def hotpot_answer_neg_sents_tokenizer(split_para_file: str,
@@ -168,3 +169,99 @@ def negative_context_processing(row, tokenizer, selected_para_titles, sep_token,
         ctx_token_list.append(sent_tokens_list)
         ctx_input_id_list.append(sent_input_id_list)
     return selected_contexts, ctx_token_list, ctx_input_id_list
+
+################################################################################################################
+def neg_sentence_sampler(neg_ctx_tokens: list, neg_ctx_input_ids: list):
+    assert len(neg_ctx_tokens) == len(neg_ctx_input_ids)
+    para_num = len(neg_ctx_tokens)
+    rand_para_idx = random.randint(0, para_num)
+    neg_ctx_sents = neg_ctx_tokens[rand_para_idx]
+    neg_ctx_sent_input_ids = neg_ctx_input_ids[rand_para_idx]
+    assert len(neg_ctx_sents) == len(neg_ctx_sent_input_ids)
+    sent_num = len(neg_ctx_sents)
+    rand_sent_idx = random.randint(0, sent_num)
+    neg_sent_tokens = neg_ctx_sents[rand_sent_idx]
+    neg_sent_input_ids = neg_ctx_sent_input_ids[rand_sent_idx]
+    assert len(neg_sent_tokens) == len(neg_sent_input_ids)
+    return neg_sent_tokens, neg_sent_input_ids
+################################################################################################################
+def example_sent_replacement(case: Example, replace_ratio:float = 0.1):
+    qas_id = case.qas_id
+    qas_type = case.qas_type
+    question_tokens = case.question_tokens
+    ctx_tokens = case.ctx_tokens
+    question_text = case.question_text
+    question_input_ids = case.question_input_ids
+    ctx_input_ids = case.ctx_input_ids
+    sent_names = case.sent_names
+    para_names = case.para_names
+    sup_fact_id = case.sup_fact_id
+    sup_para_id = case.sup_para_id
+    ctx_text = case.ctx_text
+    answer_text = case.answer_text
+    answer_tokens = case.answer_tokens
+    answer_input_ids = case.answer_input_ids
+    answer_positions = case.answer_positions
+    ctx_with_answer = case.ctx_with_answer
+    para_num = case.para_num
+    sent_num = case.sent_num
+    ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    neg_ctx_text = case.neg_ctx_text
+    neg_ctx_tokens = case.neg_ctx_tokens
+    neg_ctx_input_ids = case.ctx_input_ids
+    ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    assert para_num == len(ctx_tokens) and para_num == len(ctx_input_ids) and para_num == len(para_names)
+    assert sent_num == len(sent_names)
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    sent_name_to_id_dict = dict([((x[1][0], x[1][1]), x[0]) for x in enumerate(sent_names)])
+    replace_sent_idxs = []
+    replace_ctx_tokens = []
+    replace_ctx_input_ids = []
+    for para_idx, para_name in enumerate(para_names):
+        replace_para_ctx_tokens, replace_para_input_ids = [], []
+        for sent_idx, (sent_sub_token, sent_inp_ids) in enumerate(zip(ctx_tokens[para_idx], ctx_input_ids[para_idx])):
+            abs_sent_idx = sent_name_to_id_dict[(para_name, sent_idx)]
+            if abs_sent_idx not in sup_fact_id:
+                rand_s_i = random.rand()
+                if rand_s_i > replace_ratio:
+                    replace_para_ctx_tokens.append(sent_sub_token)
+                    replace_para_input_ids.append(sent_inp_ids)
+                    replace_sent_idxs.append(0)
+                else:
+                    neg_sent_tokens, neg_sent_input_ids = neg_sentence_sampler(neg_ctx_tokens=neg_ctx_tokens,
+                                                                               neg_ctx_input_ids=neg_ctx_input_ids)
+                    replace_para_ctx_tokens.append(neg_sent_tokens)
+                    replace_para_input_ids.append(neg_sent_input_ids)
+            else:
+                replace_para_ctx_tokens.append(sent_sub_token)
+                replace_para_input_ids.append(sent_inp_ids)
+                replace_sent_idxs.append(0)
+        replace_ctx_tokens.append(replace_para_ctx_tokens)
+        replace_ctx_input_ids.append(replace_para_input_ids)
+    assert len(replace_ctx_tokens) == len(replace_ctx_input_ids)
+    assert len(sent_names) == len(replace_sent_idxs)
+    replace_example = Example(
+        qas_id=qas_id,
+        qas_type=qas_type,
+        ctx_text=ctx_text,
+        ctx_tokens=replace_ctx_tokens,
+        ctx_input_ids=replace_ctx_input_ids,
+        para_names=para_names,
+        sent_names=sent_names,
+        sup_para_id=sup_para_id,
+        para_num=para_num,
+        sent_num=sent_num,
+        sup_fact_id=sup_fact_id,
+        question_text=question_text,
+        question_tokens=question_tokens,
+        question_input_ids=question_input_ids,
+        answer_text=answer_text,
+        answer_tokens=answer_tokens,
+        answer_input_ids=answer_input_ids,
+        answer_positions=answer_positions,
+        ctx_with_answer=ctx_with_answer,
+        neg_ctx_text=neg_ctx_text,
+        neg_ctx_tokens=neg_ctx_tokens,
+        neg_ctx_input_ids=neg_ctx_input_ids)
+    return replace_example, replace_sent_idxs
+###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
