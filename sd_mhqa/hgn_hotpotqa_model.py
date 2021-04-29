@@ -2,7 +2,8 @@ from torch import nn
 import logging
 import torch
 from csr_mhqa.utils import load_encoder_model
-from models.HGN import HierarchicalGraphNetwork
+# from models.HGN import HierarchicalGraphNetwork
+from jdmodels.jdHGN import HierarchicalGraphNetwork
 from os.path import join
 from csr_mhqa.utils import compute_loss
 from hgntransformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
