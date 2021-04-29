@@ -72,12 +72,12 @@ preprocess() {
 #        echo "5. Re-rank over top k via the trained model"
 #        python post_feature_collection/topk_rerankering.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM
 
-        echo "6. Re-rank over top k and hyper-link "
-        # output: topk_long_multihop_para.json
-        python leaderboardscripts/5_lb_topk_hgnmodel_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED $SELECTEED_DOC_NUM $TOPK_PARA_NUM long_low
+#        echo "6. Re-rank over top k and hyper-link "
+#        # output: topk_long_multihop_para.json
+#        python leaderboardscripts/5_lb_topk_hgnmodel_multihop_ps.py $INPUT_FILE $OUTPUT_PROCESSED/doc_link_ner.json $OUTPUT_PROCESSED/ner.json $OUTPUT_PROCESSED $SELECTEED_DOC_NUM $TOPK_PARA_NUM long_low
 
-#        echo "7. Dump features for albert do_lower_case for re-rank results"
-#        python leaderboardscripts/4_lb_ext_dump_features.py --para_path $OUTPUT_PROCESSED --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --do_rerank --topk $TOPK_PARA_NUM --max_para_num $SELECTEED_DOC_NUM
+        echo "7. Dump features for albert do_lower_case for re-rank results"
+        python leaderboardscripts/4_lb_ext_dump_features.py --para_path $OUTPUT_PROCESSED --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --do_rerank --topk $TOPK_PARA_NUM --max_para_num $SELECTEED_DOC_NUM
 
 #        echo "8. Model prediction with albert"
 #        python leaderboardscripts/lb_hotpotqa_predict.py --testf_type long_low --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
