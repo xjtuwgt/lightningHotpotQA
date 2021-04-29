@@ -232,11 +232,13 @@ for epoch in train_iterator:
                 if isinstance(model, torch.nn.parallel.DistributedDataParallel):
                     torch.save({k: v.cpu() for k, v in model.module.encoder.state_dict().items()},
                                join(args.exp_name, f'encoder_{epoch + 1}.step_{step + 1}.pkl'))
+                    torch.save({k: v.cpu() for k, v in model.module.model.state_dict().items()},
+                               join(args.exp_name, f'model_{epoch + 1}.step_{step + 1}.pkl'))
                 else:
                     torch.save({k: v.cpu() for k, v in model.encoder.state_dict().items()},
                                join(args.exp_name, f'encoder_{epoch + 1}.step_{step + 1}.pkl'))
-                torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                           join(args.exp_name, f'model_{epoch + 1}.step_{step + 1}.pkl'))
+                    torch.save({k: v.cpu() for k, v in model.model.state_dict().items()},
+                               join(args.exp_name, f'model_{epoch + 1}.step_{step + 1}.pkl'))
 
                 for key, val in metrics.items():
                     tb_writer.add_scalar(key, val, epoch)
@@ -261,14 +263,24 @@ for epoch in train_iterator:
             for key, val in metrics.items():
                 logger.info("Current {} = {}".format(key, val))
             logger.info('*' * 100)
+        # if isinstance(model, torch.nn.parallel.DistributedDataParallel):
+        #     torch.save({k: v.cpu() for k, v in model.module.encoder.state_dict().items()},
+        #                join(args.exp_name, f'encoder_{epoch + 1}.pkl'))
+        # else:
+        #     torch.save({k: v.cpu() for k, v in model.encoder.state_dict().items()},
+        #                join(args.exp_name, f'encoder_{epoch + 1}.pkl'))
+        # torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+        #            join(args.exp_name, f'model_{epoch + 1}.pkl'))
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             torch.save({k: v.cpu() for k, v in model.module.encoder.state_dict().items()},
                        join(args.exp_name, f'encoder_{epoch + 1}.pkl'))
+            torch.save({k: v.cpu() for k, v in model.module.model.state_dict().items()},
+                       join(args.exp_name, f'model_{epoch + 1}.pkl'))
         else:
             torch.save({k: v.cpu() for k, v in model.encoder.state_dict().items()},
                        join(args.exp_name, f'encoder_{epoch + 1}.pkl'))
-        torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                   join(args.exp_name, f'model_{epoch + 1}.pkl'))
+            torch.save({k: v.cpu() for k, v in model.model.state_dict().items()},
+                       join(args.exp_name, f'model_{epoch + 1}.pkl'))
 
         for key, val in metrics.items():
             tb_writer.add_scalar(key, val, epoch)
