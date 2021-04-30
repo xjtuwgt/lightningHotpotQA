@@ -735,7 +735,7 @@ if __name__ == '__main__':
     print('data type = {} \n data source type = {} \n data source name = {}'.format(data_type, data_source_type, data_source_name))
 
     if args.do_rerank:
-        topk_para_name_fix = get_topk_cached_filename(topk_para_num=args.topk, testf_type=file_type)
+        topk_para_name_fix = get_topk_cached_filename(topk_para_num=args.topk, max_para_num=args.max_para_num, testf_type=file_type)
         topk_para_name = '{}_long_multihop_para.json'.format(topk_para_name_fix)
         args.para_path = os.path.join(args.para_path, topk_para_name)
 
