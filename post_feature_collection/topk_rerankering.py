@@ -161,6 +161,9 @@ elif args.data_type in ['dev_distractor']:
     file_type = args.devf_type
 else:
     raise 'Wrong data type = {}'.format(args.data_type)
+
+for batch in data_loader:
+    print(batch)
 #
 # # # #########################################################################
 # # # # Initialize Model
