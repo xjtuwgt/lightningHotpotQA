@@ -233,6 +233,7 @@ def example_sent_replacement(case: Example, replace_ratio:float = 0.1):
                                                                                neg_ctx_input_ids=neg_ctx_input_ids)
                     replace_para_ctx_tokens.append(neg_sent_tokens)
                     replace_para_input_ids.append(neg_sent_input_ids)
+                    replace_sent_idxs.append(1)
             else:
                 replace_para_ctx_tokens.append(sent_sub_token)
                 replace_para_input_ids.append(sent_inp_ids)
