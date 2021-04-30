@@ -75,28 +75,28 @@ def consist_checker(para_rank_file: str,
         for para_name in para_names:
             contex_text.append(ctx_dict[para_name])
 
-        for para_idx, ctx_token_list in enumerate(exm_ctx_token_list):
-            ctx_inp_id_list = exm_ctx_input_ids[para_idx]
-            orig_context = contex_text[para_idx]
-            for sent_idx, sent_inp_ids in enumerate(ctx_inp_id_list):
-                print(ctx_token_list[sent_idx])
-                print(tokenizer.decode(sent_inp_ids))
-                print(orig_context[sent_idx])
-        print('*' * 75)
+        # for para_idx, ctx_token_list in enumerate(exm_ctx_token_list):
+        #     ctx_inp_id_list = exm_ctx_input_ids[para_idx]
+        #     orig_context = contex_text[para_idx]
+        #     for sent_idx, sent_inp_ids in enumerate(ctx_inp_id_list):
+        #         print(ctx_token_list[sent_idx])
+        #         print(tokenizer.decode(sent_inp_ids))
+        #         print(orig_context[sent_idx])
+        # print('*' * 75)
 
-        # if exm_answer.strip() in ['noanswer']:
-        #     print('raw answer:', raw_answer)
-        #     print('exm answer:', exm_answer)
-        #     no_answer_count = no_answer_count + 1
-        #     print('raw context:', raw_context)
-        #     print('*' * 75)
-        #     print('exm context:', exm_context)
-        #     print('*' * 75)
-        #     print('exm tokens: ', exm_ctx_token_list)
-        #     print('*' * 75)
-        #     for x in exm_ctx_input_ids:
-        #         for y in x:
-        #             print('exm decode: ', tokenizer.decode(y))
+        if exm_answer.strip() in ['noanswer']:
+            print('raw answer:', raw_answer)
+            print('exm answer:', exm_answer)
+            no_answer_count = no_answer_count + 1
+            print('raw context:', raw_context)
+            print('*' * 75)
+            print('exm context:', exm_context)
+            print('*' * 75)
+            print('exm tokens: ', exm_ctx_token_list)
+            print('*' * 75)
+            for x in exm_ctx_input_ids:
+                for y in x:
+                    print('exm decode: ', tokenizer.decode(y))
 
     print(no_answer_count)
     return
