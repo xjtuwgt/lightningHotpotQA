@@ -388,7 +388,6 @@ class HotpotDataset(Dataset):
         self.features = features
         self.example_dict = example_dict
         self.graph_dict = graph_dict
-        print(len(self.features), len(self.example_dict), len(self.graph_dict))
         self.para_limit = para_limit
         self.sent_limit = sent_limit
         self.ent_limit = ent_limit
@@ -507,10 +506,10 @@ class HotpotDataset(Dataset):
 
         tmp_graph = self.graph_dict[case.qas_id]
         graph_adj = torch.from_numpy(tmp_graph['adj'])
-        for k in range(graph_adj.size(0)):
-            graph_adj[k, k] = self.num_edge_type ## adding self-loop
-        for edge_type in self.mask_edge_types:
-            graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
+        # for k in range(graph_adj.size(0)):
+        #     graph_adj[k, k] = self.num_edge_type ## adding self-loop
+        # for edge_type in self.mask_edge_types:
+        #     graph_adj = torch.where(graph_adj == edge_type, torch.zeros_like(graph_adj), graph_adj)
         graphs[i] = graph_adj
 
         id = case.qas_id
