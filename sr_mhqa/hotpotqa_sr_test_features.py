@@ -454,7 +454,7 @@ def trim_case_to_feature_checker(para_rank_file: str,
         if len(doc_input_ids) > 512:
             larger_512 += 1
         #+++++++++++++++++++++++++++++++
-        replace_example_i, replace_sent_ids_i = example_sent_replacement(case=example_i, replace_ratio=0.25)
+        replace_example_i, replace_sent_ids_i = example_sent_replacement(case=example_i, replace_ratio=1.0)
         print('replacement ids', replace_sent_ids_i)
         supp_para_ids = replace_example_i.sup_para_id
         supp_sent_ids = replace_example_i.sup_fact_id
