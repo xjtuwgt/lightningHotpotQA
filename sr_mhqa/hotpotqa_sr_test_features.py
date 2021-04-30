@@ -85,8 +85,8 @@ def consist_checker(para_rank_file: str,
         # print('*' * 75)
 
         if exm_answer.strip() in ['noanswer']:
-            print('raw answer:', raw_answer)
-            print('exm answer:', exm_answer)
+            # print('raw answer:', raw_answer)
+            # print('exm answer:', exm_answer)
             no_answer_count = no_answer_count + 1
             # print('raw context:', raw_context)
             # print('*' * 75)
@@ -97,6 +97,10 @@ def consist_checker(para_rank_file: str,
             # for x in exm_ctx_input_ids:
             #     for y in x:
             #         print('exm decode: ', tokenizer.decode(y))
+        else:
+            print('raw answer:', raw_answer)
+            print('exm answer:', exm_answer)
+            print('*' * 75)
 
     print(no_answer_count)
     return
