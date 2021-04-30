@@ -443,7 +443,7 @@ def trim_case_to_feature_checker(para_rank_file: str,
         print('before replacement ans = {}'.format(ans_spans))
         for idx, trim_ans_span in enumerate(ans_spans):
             decoded_ans = tokenizer.decode(doc_input_ids[trim_ans_span[0]:trim_ans_span[1]])
-            print('{}\t{}'.format(idx+1, decoded_ans))
+            print('{}\txxx{}xxx'.format(idx+1, decoded_ans))
         ####++++++
         supp_para_ids = example_i.sup_para_id
         supp_sent_ids = example_i.sup_fact_id
@@ -490,7 +490,7 @@ def trim_case_to_feature_checker(para_rank_file: str,
         print('after trim = {}'.format(len(trim_doc_input_ids)))
         for idx, trim_ans_span in enumerate(trim_ans_spans):
             decoded_ans = tokenizer.decode(trim_doc_input_ids[trim_ans_span[0]:trim_ans_span[1]])
-            print('{}\t{}'.format(idx+1, decoded_ans))
+            print('{}\txxx{}xxx'.format(idx+1, decoded_ans))
         print('*' * 75)
 
 
