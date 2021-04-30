@@ -450,10 +450,10 @@ def trim_case_to_feature_checker(para_rank_file: str,
         #+++++++++++++++++++++++++++++++
         replace_example_i, replace_sent_ids_i = example_sent_replacement(case=example_i, replace_ratio=0.25)
         print('replacement ids', replace_sent_ids_i)
+        print('after replace in examples, sent num = {}'.format(len(replace_example_i.sent_names)))
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
-        print('after replace in examples, sent num = {}'.format(len(replace_example_i.sent_names)))
-        print('after replace sent {}'.format(len(trim_sent_spans)))
+        print('after trim replace sent {}'.format(len(trim_sent_spans)))
         print('*' * 75)
 
 
