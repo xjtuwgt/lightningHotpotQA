@@ -25,7 +25,7 @@ class HotpotDataset(Dataset):
     def __getitem__(self, idx):
         case: Example = self.examples[idx]
         random_number = random.random()
-        if self.sent_replace_ratio > 0:
+        if self.sent_replace_ratio > 0 and random_number < self.replace_prob:
             case, sent_replace_ids = example_sent_replacement(case=case, replace_ratio=self.sent_replace_ratio)
         else:
             sent_replace_ids = [0] * len(case.sent_names)
