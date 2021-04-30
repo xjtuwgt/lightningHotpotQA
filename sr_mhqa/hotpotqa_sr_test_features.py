@@ -439,6 +439,9 @@ def trim_case_to_feature_checker(para_rank_file: str,
         print('before replace in examples, sent num = {}'.format(len(example_i.sent_names)))
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
+        ####++++++
+        print('before replacement ans = {}'.format(ans_spans))
+        ####++++++
         supp_para_ids = example_i.sup_para_id
         supp_sent_ids = example_i.sup_fact_id
         supp_sent_num_i = len(supp_sent_ids)
@@ -477,6 +480,8 @@ def trim_case_to_feature_checker(para_rank_file: str,
         for supp_sent_id in supp_sent_ids:
             if supp_sent_id < len(trim_sent_spans):
                 print('after replace/trim, supp sent', replace_example_i.sent_names[supp_sent_id])
+        #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        print('after trim replacement ans = {}'.format(trim_ans_spans))
         print('*' * 75)
 
 
