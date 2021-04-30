@@ -18,6 +18,7 @@ def get_cached_filename(f_type, config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--full_data', type=str, required=True)
+    parser.add_argument("--input_dir", type=str, required=True, help='define output directory')
     parser.add_argument('--split_rank_data', type=str, required=True)
     parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
@@ -46,8 +47,7 @@ if __name__ == '__main__':
         print('{}: {}'.format(key, value))
     print('*' * 100)
     full_file_name = args.full_data
-    split_rank_file_name = args.split_rank_data
-
+    split_rank_file_name = join(args.input_dir, 'split_' + args.data_type + '_' + args.split_rank_data)
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)

@@ -650,7 +650,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--split_para_path", type=str, required=True)
+    parser.add_argument("--input_dir", type=str, required=True, help='define output directory')
+    parser.add_argument('--split_rank_data', type=str, required=True)
     parser.add_argument("--full_data", type=str, required=True)
     parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
@@ -697,13 +698,14 @@ if __name__ == '__main__':
         data_source_type = None
     print('data_type = {} \n data_source_id= {} \n data_source_name = {}'.format(data_type, data_source_type,
                                                                                  data_source_name))
+    split_rank_file_name = join(args.input_dir, 'split_' + args.data_type + '_' + args.split_rank_data)
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name), args))
     # consist_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
     # case_to_feature_checker(para_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file,
     #                 tokenizer=tokenizer, data_source_type=data_source_type)
-    sent_repalce_case_to_feature_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file,
+    sent_repalce_case_to_feature_checker(para_rank_file=split_rank_file_name, full_file=args.full_data, example_file=cached_examples_file,
                             tokenizer=tokenizer, data_source_type=data_source_type)
 
     # trim_case_to_feature_checker(para_file=args.split_para_path, full_file=args.full_data,
