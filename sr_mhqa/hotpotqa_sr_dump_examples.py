@@ -47,7 +47,7 @@ if __name__ == '__main__':
         print('{}: {}'.format(key, value))
     print('*' * 100)
     full_file_name = args.full_data
-    split_rank_file_name = join(args.input_dir, 'split_' + args.data_type + '_' + args.split_rank_data)
+
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case)
@@ -64,7 +64,8 @@ if __name__ == '__main__':
     print('data_type = {} \n data_source_id = {} \n data_source_name = {}'.format(data_type, data_source_type, data_source_name))
 
     start_time = time()
-    examples = hotpot_answer_neg_sents_tokenizer(split_para_file=args.split_rank_data,
+    split_rank_file_name = join(args.input_dir, 'split_' + args.data_type + '_' + args.split_rank_data)
+    examples = hotpot_answer_neg_sents_tokenizer(split_para_file=split_rank_file_name,
                                        full_file=args.full_data,
                                        tokenizer=tokenizer,
                                        cls_token=tokenizer.cls_token,
