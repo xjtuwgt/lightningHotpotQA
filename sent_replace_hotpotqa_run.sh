@@ -44,7 +44,7 @@ preprocess() {
 #        python sr_mhqa/hotpotqa_sr_dump_examples.py --full_data $INPUT_FILE --split_rank_data $OUTPUT_PROCESSED/split_train_long_para_ranking.json --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
         echo "3. Drop sentence testing (albert low)"
-        python sr_mhqa/hotpotqa_sr_test_features.py --para_path $OUTPUT_PROCESSED/long_multihop_para.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
+        python sr_mhqa/hotpotqa_sr_test_features.py --split_para_path $OUTPUT_PROCESSED/split_train_long_para_ranking.json --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT  --ranker long --data_type $DATA_TYPE
 
     done
 }
