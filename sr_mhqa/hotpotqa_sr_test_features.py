@@ -428,7 +428,7 @@ def trim_case_to_feature_checker(para_rank_file: str,
     max_sent_num = 0
     supp_sent_num_list = []
 
-
+    miss_count = 0
     for row in tqdm(full_data):
         key = row['_id']
         if data_source_type is not None:
@@ -441,6 +441,7 @@ def trim_case_to_feature_checker(para_rank_file: str,
             case_to_features(case=example_i, train_dev=True)
         supp_para_ids = example_i.sup_para_id
         supp_sent_ids = example_i.sup_fact_id
+        supp_sent_num_i = len(supp_sent_ids)
         if len(sent_spans) > max_sent_num:
             max_sent_num = len(sent_spans)
         print('before replace sent {}'.format(len(sent_spans)))
@@ -468,11 +469,14 @@ def trim_case_to_feature_checker(para_rank_file: str,
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
                                                                                         limit=512, sep_token_id=tokenizer.sep_token_id, ans_spans=ans_spans)
         supp_sent_ids = [x for x in supp_sent_ids if x < len(trim_sent_spans)]
+        if len(supp_sent_ids) < supp_sent_num_i:
+            miss_count = miss_count + 1
         supp_sent_num_list.append(len(supp_sent_ids))
         print('after trim replace sent {}'.format(len(trim_sent_spans)))
         print('*' * 75)
 
     print(Counter(supp_sent_num_list))
+    print(miss_count)
 
 
 
