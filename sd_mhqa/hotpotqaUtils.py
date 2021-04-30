@@ -6,8 +6,16 @@ from tqdm import tqdm
 import itertools
 from sd_mhqa.hotpotqa_data_structure import Example
 import spacy
+from models.layers import OutputLayer
 import numpy as np
 from numpy import random
+from torch import Tensor
+from torch import nn
+from torch.autograd import Variable
+import torch
+from models.layers import OutputLayer
+from torch import Tensor
+import torch.nn.functional as F
 
 import re
 nlp = spacy.load("en_core_web_lg", disable=['tagger', 'parser'])
@@ -482,3 +490,94 @@ def example_sent_drop(case: Example, drop_ratio:float = 0.1):
         ctx_with_answer=ctx_with_answer)
     return drop_example
 ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+def para_sent_state_feature_extractor(batch, input_state: Tensor):
+    sent_start, sent_end = batch['sent_start'], batch['sent_end']
+    para_start, para_end = batch['para_start'], batch['para_end']
+    assert (sent_start.max() < input_state.shape[1]) \
+           and (sent_end.max() < input_state.shape[1]), '{}\t{}\t{}'.format(sent_start, sent_end, input_state.shape[1])
+
+    batch_size, para_num, sent_num = para_start.shape[0], para_start.shape[1], sent_start.shape[1]
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    sent_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, sent_num)
+    sent_start_output = input_state[sent_batch_idx, sent_start]
+    sent_end_output = input_state[sent_batch_idx, sent_end]
+    sent_state = torch.cat([sent_start_output, sent_end_output], dim=-1)
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    para_batch_idx = torch.arange(0, batch_size, device=input_state.device).view(batch_size, 1).repeat(1, para_num)
+    para_start_output = input_state[para_batch_idx, para_start]
+    para_end_output = input_state[para_batch_idx, para_end]
+    para_state = torch.cat([para_start_output, para_end_output], dim=-1)
+
+    state_dict = {'para_state': para_state, 'sent_state': sent_state}
+    return state_dict
+
+class ParaSentPredictionLayer(nn.Module):
+    def __init__(self, config, hidden_dim):
+        super(ParaSentPredictionLayer, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.para_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
+        self.sent_mlp = OutputLayer(self.hidden_dim, config, num_answer=1)
+
+    def forward(self, state_dict):
+        para_state = state_dict['para_state']
+        sent_state = state_dict['sent_state']
+
+        N, _, _ = para_state.size()
+        sent_logit = self.sent_mlp(sent_state)
+        para_logit = self.para_mlp(para_state)
+
+        para_logits_aux = Variable(para_logit.data.new(para_logit.size(0), para_logit.size(1), 1).zero_())
+        para_prediction = torch.cat([para_logits_aux, para_logit], dim=-1).contiguous()
+
+        sent_logits_aux = Variable(sent_logit.data.new(sent_logit.size(0), sent_logit.size(1), 1).zero_())
+        sent_prediction = torch.cat([sent_logits_aux, sent_logit], dim=-1).contiguous()
+        return (para_prediction, sent_prediction)
+
+class PredictionLayer(nn.Module):
+    """
+    Identical to baseline prediction layer
+    for answer span prediction
+    """
+    def __init__(self, config):
+        super(PredictionLayer, self).__init__()
+        self.config = config
+        # self.hidden = config.hidden_dim
+        self.hidden = config.transformer_hidden_dim
+
+        self.start_linear = OutputLayer(self.hidden, config, num_answer=1)
+        self.end_linear = OutputLayer(self.hidden, config, num_answer=1)
+        self.type_linear = OutputLayer(self.hidden, config, num_answer=3)
+
+        self.cache_S = 0
+        self.cache_mask = None
+
+    def get_output_mask(self, outer):
+        S = outer.size(1)
+        if S <= self.cache_S:
+            return Variable(self.cache_mask[:S, :S], requires_grad=False)
+        self.cache_S = S
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), 15)
+        self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
+        return Variable(self.cache_mask, requires_grad=False)
+
+    def forward(self, batch, context_input, packing_mask=None, return_yp=False):
+        context_mask = batch['context_mask']
+        start_prediction = self.start_linear(context_input).squeeze(2) - 1e30 * (1 - context_mask)  # N x L
+        end_prediction = self.end_linear(context_input).squeeze(2) - 1e30 * (1 - context_mask)  # N x L
+        type_prediction = self.type_linear(context_input[:, 0, :])
+
+        if not return_yp:
+            return (start_prediction, end_prediction, type_prediction)
+
+        outer = start_prediction[:, :, None] + end_prediction[:, None]
+        outer_mask = self.get_output_mask(outer)
+        outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
+        if packing_mask is not None:
+            outer = outer - 1e30 * packing_mask[:, :, None]
+        # yp1: start
+        # yp2: end
+        yp1 = outer.max(dim=2)[0].max(dim=1)[1]
+        yp2 = outer.max(dim=1)[0].max(dim=1)[1]
+        return (start_prediction, end_prediction, type_prediction, yp1, yp2)
