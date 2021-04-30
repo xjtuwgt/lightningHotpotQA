@@ -33,7 +33,7 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-        echo "1. Splitting 10 paras into (4, 4, 2)"
+#        echo "1. Splitting 10 paras into (4, 4, 2)"
 #        # Input: INPUT_FILE, train_long_para_ranking.json
 #        # Output: long_para_ranking.json
 #        python sr_mhqa/hotpotqa_rank_split.py --full_data $INPUT_FILE --output_dir $OUTPUT_PROCESSED --rank_data long_para_ranking.json --data_type $DATA_TYPE
