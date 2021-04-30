@@ -293,7 +293,8 @@ def sent_repalce_case_to_feature_checker(para_rank_file: str,
         if len(doc_input_ids) > 512:
             larger_512 += 1
         # print('orig', example_i.ctx_input_ids)
-        replace_example_i, replace_ids = example_sent_replacement(case=example_i, replace_ratio=0.0)
+        replace_example_i, replace_ids = example_sent_replacement(case=example_i, replace_ratio=0.25)
+        print(replace_ids)
         # print('drop', drop_example_i.ctx_input_ids)
         query_len_list.append(query_spans[0][1])
         if max_query_len < query_spans[0][1]:
@@ -384,8 +385,8 @@ def sent_repalce_case_to_feature_checker(para_rank_file: str,
         # #     decoded_para = tokenizer.decode(para_inp_ids)
         # #     print('{} orig para: {}'.format(p_idx, contex_text[p_idx]))
         # #     print('{} deco para: {}'.format(p_idx, decoded_para))
-        # # print('-' * 75)
-        #
+        print('-' * 75)
+
         ans_count_list.append(len(ans_spans))
 
     print('Sum of ans count = {}'.format(sum(ans_count_list)))
