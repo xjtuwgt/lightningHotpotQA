@@ -726,8 +726,8 @@ if __name__ == '__main__':
         data_source_name = "{}".format(ranker)
 
     if "train" in data_type:
-        # data_source_type = data_source_name
-        data_source_type = None
+        data_source_type = data_source_name
+        # data_source_type = None
         file_type = args.daug_type
     else:
         file_type = args.devf_type
