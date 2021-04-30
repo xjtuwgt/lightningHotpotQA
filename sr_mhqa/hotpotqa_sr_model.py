@@ -1,14 +1,9 @@
 from torch import nn
-from torch.autograd import Variable
 import torch
-from models.layers import OutputLayer
-from torch import Tensor
-import torch.nn.functional as F
-import numpy as np
 from sd_mhqa.transformer import TransformerLayer
 from csr_mhqa.utils import load_encoder_model
 from sr_mhqa.hotpota_sr_data_loader import IGNORE_INDEX
-from sd_mhqa.hotpotqa_model import ParaSentPredictionLayer, PredictionLayer, para_sent_state_feature_extractor
+from sd_mhqa.hotpotqaUtils import ParaSentPredictionLayer, PredictionLayer, para_sent_state_feature_extractor
 import logging
 from os.path import join
 from hgntransformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
@@ -64,7 +59,6 @@ class ReaderModel(nn.Module):
         loss_sup = args.sent_lambda * criterion(sent_pred, sent_gold.long())
 
         loss_para = args.para_lambda * criterion(para.view(-1, 2), batch['is_gold_para'].long().view(-1))
-
         loss = loss_span + loss_type + loss_sup + loss_para
         return loss, loss_span, loss_type, loss_sup, loss_para
 
