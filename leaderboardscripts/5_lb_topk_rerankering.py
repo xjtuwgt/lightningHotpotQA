@@ -154,7 +154,7 @@ model.eval()
 # ##########################################################################
 selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=test_data_loader,
                                                               example_dict=test_example_dict, topk=args.topk_para_num, gold_file=args.dev_gold_file)
-topk_file_type_name = get_topk_cached_filename(args.topk_para_num, args.testf_type)
+topk_file_type_name = get_topk_cached_filename(args.topk_para_num, args.max_para_num, args.testf_type)
 output_pred_para_dict_file = join(args.exp_name, '{}_para.json'.format(topk_file_type_name))
 json.dump(selected_para_dict, open(output_pred_para_dict_file, 'w'))
 print('Saving {} examples in {}'.format(len(selected_para_dict), output_pred_para_dict_file))
