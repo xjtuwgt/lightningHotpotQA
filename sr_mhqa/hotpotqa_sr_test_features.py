@@ -442,9 +442,9 @@ def trim_case_to_feature_checker(para_rank_file: str,
         if len(sent_spans) > max_sent_num:
             max_sent_num = len(sent_spans)
         print('before replace sent {}'.format(len(sent_spans)))
-        for supp_para_id in supp_para_ids:
-            if supp_para_id < len(para_spans):
-                print('before replace', example_i.para_names[supp_para_id])
+        # for supp_para_id in supp_para_ids:
+        #     if supp_para_id < len(para_spans):
+        #         print('before replace', example_i.para_names[supp_para_id])
         if len(doc_input_ids) > 512:
             larger_512 += 1
         #+++++++++++++++++++++++++++++++
