@@ -209,7 +209,7 @@ def example_sent_replacement(case: Example, replace_ratio:float = 0.1):
     ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     neg_ctx_text = case.neg_ctx_text
     neg_ctx_tokens = case.neg_ctx_tokens
-    neg_ctx_input_ids = case.ctx_input_ids
+    neg_ctx_input_ids = case.neg_ctx_input_ids
     ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     assert para_num == len(ctx_tokens) and para_num == len(ctx_input_ids) and para_num == len(para_names)
     assert sent_num == len(sent_names)
