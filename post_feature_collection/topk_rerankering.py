@@ -165,20 +165,20 @@ else:
 # # # #########################################################################
 # # # # Initialize Model
 # # # ##########################################################################
-model = UnifiedHGNModel(config=args)
-model.to(args.device)
-model.eval()
+# model = UnifiedHGNModel(config=args)
+# model.to(args.device)
+# model.eval()
+# #
+# # #########################################################################
+# # # Evaluation
+# # ##########################################################################
+# selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=data_loader,
+#                                                               example_dict=data_example_dict, topk=args.topk_para_num, gold_file=gold_file)
+# topk_file_type_name = get_topk_cached_filename(args.topk_para_num, file_type)
+# data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed', args.data_type, '{}_para.json'.format(topk_file_type_name))
+# json.dump(selected_para_dict, open(data_processed_pred_para_dict_file, 'w'))
+# print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_dict_file))
 #
-# #########################################################################
-# # Evaluation
-# ##########################################################################
-selected_para_dict, para_rank_dict = albert_para_ranker_model(args=args, model=model, dataloader=data_loader,
-                                                              example_dict=data_example_dict, topk=args.topk_para_num, gold_file=gold_file)
-topk_file_type_name = get_topk_cached_filename(args.topk_para_num, file_type)
-data_processed_pred_para_dict_file = join(DATASET_FOLDER, 'data_processed', args.data_type, '{}_para.json'.format(topk_file_type_name))
-json.dump(selected_para_dict, open(data_processed_pred_para_dict_file, 'w'))
-print('Saving {} examples in {}'.format(len(selected_para_dict), data_processed_pred_para_dict_file))
-
-data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed', args.data_type, '{}_para_ranking.json'.format(topk_file_type_name))
-json.dump(para_rank_dict, open(data_processed_ranking_para_file, 'w'))
-print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_ranking_para_file))
+# data_processed_ranking_para_file = join(DATASET_FOLDER, 'data_processed', args.data_type, '{}_para_ranking.json'.format(topk_file_type_name))
+# json.dump(para_rank_dict, open(data_processed_ranking_para_file, 'w'))
+# print('Saving {} examples in {}'.format(len(para_rank_dict), data_processed_ranking_para_file))
