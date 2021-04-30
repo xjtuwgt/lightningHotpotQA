@@ -53,6 +53,6 @@ if __name__ == '__main__':
     start_time = time()
     split_rank_dict = para_ranking_preprocess(full_file=full_file_name, rank_file=para_rank_file_name)
     print('Data splitting takes {:.4f} seconds'.format(time() - start_time))
-    split_rank_file_name = join(args.output_dir, 'split_' + args.data_type + args.rank_data)
+    split_rank_file_name = join(args.output_dir, 'split_' + args.data_type + '_' + args.rank_data)
     json.dump(split_rank_dict, open(split_rank_file_name, 'w'))
     print('Saving {} records into {}'.format(len(split_rank_dict), split_rank_file_name))
