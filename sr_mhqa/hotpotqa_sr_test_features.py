@@ -700,15 +700,15 @@ if __name__ == '__main__':
                                         get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name), args))
     # consist_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
+    # case_to_feature_checker(para_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file,
     #                 tokenizer=tokenizer, data_source_type=data_source_type)
-    sent_repalce_case_to_feature_checker(para_rank_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
+    sent_repalce_case_to_feature_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file,
                             tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # trim_case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data,
+    # trim_case_to_feature_checker(para_file=args.split_para_path, full_file=args.full_data,
     #                                   example_file=cached_examples_file,
     #                                   tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # data_loader_checker(para_file=args.para_rank_path, full_file=args.full_data,
+    # data_loader_checker(para_file=args.split_para_path, full_file=args.full_data,
     #                              example_file=cached_examples_file,
     #                              tokenizer=tokenizer, data_source_type=data_source_type)
