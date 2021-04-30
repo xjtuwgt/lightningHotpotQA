@@ -49,7 +49,7 @@ if __name__ == '__main__':
         print('{}: {}'.format(key, value))
     print('*' * 100)
     full_file_name = args.full_data
-    para_rank_file_name = join(args.output_dir, args.data_type+'_' + args.rank_data)
+    para_rank_file_name = join(args.output_dir, args.data_type + '_' + args.rank_data)
     start_time = time()
     split_rank_dict = para_ranking_preprocess(full_file=full_file_name, rank_file=para_rank_file_name)
     print('Data splitting takes {:.4f} seconds'.format(time() - start_time))
