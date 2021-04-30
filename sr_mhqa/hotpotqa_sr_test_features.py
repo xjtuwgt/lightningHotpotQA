@@ -473,7 +473,11 @@ def trim_case_to_feature_checker(para_rank_file: str,
             miss_count = miss_count + 1
         supp_sent_num_list.append(len(supp_sent_ids))
         print('after trim replace sent {}'.format(len(trim_sent_spans)))
+        for supp_sent_id in supp_sent_ids:
+            if supp_sent_id < len(trim_sent_spans):
+                print('after replace/trim, supp sent', replace_example_i.sent_names[supp_sent_id])
         print('*' * 75)
+
 
     print(Counter(supp_sent_num_list))
     print(miss_count)
