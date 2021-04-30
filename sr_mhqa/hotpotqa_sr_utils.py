@@ -168,6 +168,7 @@ def negative_context_processing(row, tokenizer, selected_para_titles, sep_token,
             assert len(sent_sub_tokens) == len(sub_input_ids)
         ctx_token_list.append(sent_tokens_list)
         ctx_input_id_list.append(sent_input_id_list)
+    assert len(ctx_token_list) == len(ctx_input_id_list) and len(ctx_token_list) == len(selected_contexts)
     return selected_contexts, ctx_token_list, ctx_input_id_list
 
 ################################################################################################################
