@@ -442,13 +442,18 @@ def trim_case_to_feature_checker(para_rank_file: str,
         if len(sent_spans) > max_sent_num:
             max_sent_num = len(sent_spans)
         print('before replace sent {}'.format(len(sent_spans)))
-        # for supp_para_id in supp_para_ids:
-        #     if supp_para_id < len(para_spans):
-        #         print('before replace', example_i.para_names[supp_para_id])
+        for supp_para_id in supp_para_ids:
+            if supp_para_id < len(para_spans):
+                print('before replace', example_i.para_names[supp_para_id])
         if len(doc_input_ids) > 512:
             larger_512 += 1
         #+++++++++++++++++++++++++++++++
         replace_example_i, replace_sent_ids_i = example_sent_replacement(case=example_i, replace_ratio=0.25)
+        supp_para_ids = replace_example_i.sup_para_id
+        for supp_para_id in supp_para_ids:
+            if supp_para_id < len(replace_example_i.para_names):
+                print('after replace', replace_example_i.para_names[supp_para_id])
+
         print('replacement ids', replace_sent_ids_i)
         print('after replace in examples, sent num = {}'.format(len(replace_example_i.sent_names)))
         trim_doc_input_ids, trim_query_spans, trim_para_spans, trim_sent_spans, trim_ans_spans = trim_input_span(doc_input_ids, query_spans, para_spans, sent_spans,
