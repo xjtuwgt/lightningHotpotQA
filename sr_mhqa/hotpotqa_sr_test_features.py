@@ -22,16 +22,16 @@ from sr_mhqa.hotpotqa_sr_utils import example_sent_replacement
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 from eval.hotpot_evaluate_v1 import normalize_answer
 
-def consist_checker(para_file: str,
+def consist_checker(para_rank_file: str,
                     full_file: str,
                     example_file: str,
                     tokenizer,
                     data_source_type=None):
-    sel_para_data = json_loader(json_file_name=para_file)
+    para_rank_data = json_loader(json_file_name=para_rank_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
     example_dict = {e.qas_id: e for e in examples}
-    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    assert len(para_rank_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
     no_answer_count = 0
     for row in tqdm(full_data):
@@ -175,16 +175,16 @@ def consist_checker(para_file: str,
     # print("Question type: {}".format(q_type_counter))
     # print("Answer doesnot match: {}".format(answer_no_match_cnt))
 
-def case_to_feature_checker(para_file: str,
+def case_to_feature_checker(para_rank_file: str,
                     full_file: str,
                     example_file: str,
                     tokenizer,
                     data_source_type=None):
-    sel_para_data = json_loader(json_file_name=para_file)
+    para_rank_data = json_loader(json_file_name=para_rank_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
     example_dict = {e.qas_id: e for e in examples}
-    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    assert len(para_rank_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
     no_answer_count = 0
     sep_id = tokenizer.encode(tokenizer.sep_token)
@@ -252,16 +252,16 @@ def case_to_feature_checker(para_file: str,
     #     ans_count_list.append(len(ans_spans))
     #
     # print('Sum of ans count = {}'.format(sum(ans_count_list)))
-def sent_drop_case_to_feature_checker(para_file: str,
+def sent_drop_case_to_feature_checker(para_rank_file: str,
                     full_file: str,
                     example_file: str,
                     tokenizer,
                     data_source_type=None):
-    sel_para_data = json_loader(json_file_name=para_file)
+    para_rank_data = json_loader(json_file_name=para_rank_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
     example_dict = {e.qas_id: e for e in examples}
-    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    assert len(para_rank_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
     no_answer_count = 0
     sep_id = tokenizer.encode(tokenizer.sep_token)
@@ -394,16 +394,16 @@ def sent_drop_case_to_feature_checker(para_file: str,
     print('97.5 = {}'.format(np.percentile(query_len_array, 97.5)))
 
 
-def trim_case_to_feature_checker(para_file: str,
+def trim_case_to_feature_checker(para_rank_file: str,
                     full_file: str,
                     example_file: str,
                     tokenizer,
                     data_source_type=None):
-    sel_para_data = json_loader(json_file_name=para_file)
+    para_rank_data = json_loader(json_file_name=para_rank_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
     example_dict = {e.qas_id: e for e in examples}
-    assert len(sel_para_data) == len(full_data) and len(full_data) == len(examples)
+    assert len(para_rank_data) == len(full_data) and len(full_data) == len(examples)
     print('Number of examples = {}'.format(len(examples)))
     no_answer_count = 0
     trim_no_answer_count = 0
@@ -609,7 +609,7 @@ def data_loader_checker(para_file: str,
     #         shuffle=False,
     #         num_workers=5,
     #         collate_fn=HotpotTestDataset.collate_fn)
-    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_drop_ratio=0.25)
+    hotpotdata = HotpotDataset(examples=examples, sep_token_id=tokenizer.sep_token_id, sent_replace_ratio=0.25)
 
     dev_data_loader = DataLoader(dataset=hotpotdata, batch_size=8,
             shuffle=False,
@@ -643,7 +643,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--para_path", type=str, required=True)
+    parser.add_argument("--split_para_path", type=str, required=True)
     parser.add_argument("--full_data", type=str, required=True)
     parser.add_argument("--data_type", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, help='define output directory')
@@ -692,17 +692,17 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    consist_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
+    consist_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+    # case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
     #                 tokenizer=tokenizer, data_source_type=data_source_type)
-    # sent_drop_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data, example_file=cached_examples_file,
+    # sent_drop_case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
     #                         tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # trim_case_to_feature_checker(para_file=args.para_path, full_file=args.full_data,
+    # trim_case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data,
     #                                   example_file=cached_examples_file,
     #                                   tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # data_loader_checker(para_file=args.para_path, full_file=args.full_data,
+    # data_loader_checker(para_file=args.para_rank_path, full_file=args.full_data,
     #                              example_file=cached_examples_file,
     #                              tokenizer=tokenizer, data_source_type=data_source_type)
