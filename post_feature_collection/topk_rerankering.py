@@ -93,7 +93,7 @@ def parse_args(args=None):
     parser.add_argument('--eval_batch_size', default=16, type=int)
     parser.add_argument('--batch_size', default=8, type=int) ## for training
     parser.add_argument('--test_log_steps', default=10, type=int)
-    parser.add_argument('--cpu_num', default=24, type=int)
+    parser.add_argument('--cpu_num', default=8, type=int)
     parser.add_argument("--dev_gold_file",
                         type=str,
                         default=join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json'))
