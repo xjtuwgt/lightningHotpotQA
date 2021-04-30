@@ -256,7 +256,7 @@ def case_to_feature_checker(para_rank_file: str,
     #     ans_count_list.append(len(ans_spans))
     #
     # print('Sum of ans count = {}'.format(sum(ans_count_list)))
-def sent_drop_case_to_feature_checker(para_rank_file: str,
+def sent_repalce_case_to_feature_checker(para_rank_file: str,
                     full_file: str,
                     example_file: str,
                     tokenizer,
@@ -287,13 +287,13 @@ def sent_drop_case_to_feature_checker(para_rank_file: str,
         example_i: Example = example_dict[exam_key]
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
             case_to_features(case=example_i, train_dev=True)
-        # # print(len(doc_input_ids))
+        print('orig doc len = {}'.format(len(doc_input_ids)))
         # # print('orig', doc_input_ids)
         # # print(len(sent_spans))
         if len(doc_input_ids) > 512:
             larger_512 += 1
         # print('orig', example_i.ctx_input_ids)
-        drop_example_i, replace_ids = example_sent_replacement(case=example_i, replace_ratio=1.0)
+        replace_example_i, replace_ids = example_sent_replacement(case=example_i, replace_ratio=1.0)
         # print('drop', drop_example_i.ctx_input_ids)
         query_len_list.append(query_spans[0][1])
         if max_query_len < query_spans[0][1]:
@@ -325,7 +325,9 @@ def sent_drop_case_to_feature_checker(para_rank_file: str,
         # print('example para names: ', example_i.para_names)
 
         doc_input_ids, query_spans, para_spans, sent_spans, ans_spans, ans_type_label = \
-            case_to_features(case=drop_example_i, train_dev=True)
+            case_to_features(case=replace_example_i, train_dev=True)
+
+        print('replace doc len = {}'.format(len(doc_input_ids)))
         # print(len(drop_doc_input_ids))
         # # print('drop', drop_doc_input_ids)
         # print(len(drop_sent_spans))
@@ -696,12 +698,12 @@ if __name__ == '__main__':
                                                                                  data_source_name))
     cached_examples_file = os.path.join(args.output_dir,
                                         get_cached_filename('{}_srep_hotpotqa_tokenized_examples'.format(data_source_name), args))
-    consist_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
+    # consist_checker(para_rank_file=args.split_para_path, full_file=args.full_data, example_file=cached_examples_file, tokenizer=tokenizer, data_source_type=data_source_type)
 
     # case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
     #                 tokenizer=tokenizer, data_source_type=data_source_type)
-    # sent_drop_case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
-    #                         tokenizer=tokenizer, data_source_type=data_source_type)
+    sent_repalce_case_to_feature_checker(para_rank_file=args.para_rank_path, full_file=args.full_data, example_file=cached_examples_file,
+                            tokenizer=tokenizer, data_source_type=data_source_type)
 
     # trim_case_to_feature_checker(para_file=args.para_rank_path, full_file=args.full_data,
     #                                   example_file=cached_examples_file,
