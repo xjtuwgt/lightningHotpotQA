@@ -499,12 +499,12 @@ def trim_case_to_feature_checker(para_rank_file: str,
 
 
 
-def data_loader_checker(para_file: str,
+def data_loader_checker(para_rank_file: str,
                     full_file: str,
                     example_file: str,
                     tokenizer,
                     data_source_type=None):
-    sel_para_data = json_loader(json_file_name=para_file)
+    sel_para_data = json_loader(json_file_name=para_rank_file)
     full_data = json_loader(json_file_name=full_file)
     examples = pickle.load(gzip.open(example_file, 'rb'))
     example_dict = {e.qas_id: e for e in examples}
@@ -542,7 +542,7 @@ def data_loader_checker(para_file: str,
             orig_answer = example_dict[ids[i]].answer_text
             if y1_i > 0:
                 ans_ids = inp_id_i[y1_i:y2_i]
-                # print('deco {} \t orig {}'.format(tokenizer.decode(ans_ids), orig_answer))
+                print('deco {} \t orig {}'.format(tokenizer.decode(ans_ids), orig_answer))
 
 
 
@@ -608,10 +608,10 @@ if __name__ == '__main__':
     # sent_repalce_case_to_feature_checker(para_rank_file=split_rank_file_name, full_file=args.full_data, example_file=cached_examples_file,
     #                         tokenizer=tokenizer, data_source_type=data_source_type)
 
-    trim_case_to_feature_checker(para_rank_file=split_rank_file_name, full_file=args.full_data,
-                                      example_file=cached_examples_file,
-                                      tokenizer=tokenizer, data_source_type=data_source_type)
+    # trim_case_to_feature_checker(para_rank_file=split_rank_file_name, full_file=args.full_data,
+    #                                   example_file=cached_examples_file,
+    #                                   tokenizer=tokenizer, data_source_type=data_source_type)
 
-    # data_loader_checker(para_file=args.split_para_path, full_file=args.full_data,
-    #                              example_file=cached_examples_file,
-    #                              tokenizer=tokenizer, data_source_type=data_source_type)
+    data_loader_checker(para_rank_file=split_rank_file_name, full_file=args.full_data,
+                                 example_file=cached_examples_file,
+                                 tokenizer=tokenizer, data_source_type=data_source_type)
