@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--full_data', type=str, required=True)
     parser.add_argument('--rank_data', type=str, required=True)
-    parser.add_argument('--split_rank_data', type=str, required=True)
+    parser.add_argument('--split_rank', type=str, required=True)
 
     args = parser.parse_args()
     for key, value in vars(args).items():
