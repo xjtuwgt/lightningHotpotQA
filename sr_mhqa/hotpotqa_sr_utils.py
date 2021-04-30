@@ -175,7 +175,7 @@ def negative_context_processing(row, tokenizer, selected_para_titles, sep_token,
 def neg_sentence_sampler(neg_ctx_tokens: list, neg_ctx_input_ids: list):
     assert len(neg_ctx_tokens) == len(neg_ctx_input_ids)
     para_num = len(neg_ctx_tokens)
-    if para_num < 0:
+    if para_num == 0:
         return None, None
     rand_para_idx = random.randint(0, para_num)
     neg_ctx_sents = neg_ctx_tokens[rand_para_idx]
