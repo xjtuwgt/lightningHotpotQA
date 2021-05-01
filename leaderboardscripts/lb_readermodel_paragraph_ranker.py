@@ -193,13 +193,14 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
         for idx, case in enumerate(gold):
             key = case['_id']
             supp_title_set = set([x[0] for x in case['supporting_facts']])
-            pred_paras = prediction_para_dict[key]
-            # print('selected para {}'.format(pred_paras))
-            sel_para_names = set(itertools.chain.from_iterable(pred_paras))
-            # print('Gold para {}'.format(supp_title_set))
-            if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
-                recall_list.append(1)
-            else:
-                recall_list.append(0)
+            if key in prediction_para_dict:
+                pred_paras = prediction_para_dict[key]
+                # print('selected para {}'.format(pred_paras))
+                sel_para_names = set(itertools.chain.from_iterable(pred_paras))
+                # print('Gold para {}'.format(supp_title_set))
+                if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
+                    recall_list.append(1)
+                else:
+                    recall_list.append(0)
         print('Recall = {}'.format(sum(recall_list)*1.0/len(prediction_para_dict)))
     return prediction_para_dict, rank_paras_dict
