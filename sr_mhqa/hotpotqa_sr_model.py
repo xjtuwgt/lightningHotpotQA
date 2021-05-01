@@ -62,9 +62,9 @@ class ReaderModel(nn.Module):
         loss = loss_span + loss_type + loss_sup + loss_para
         return loss, loss_span, loss_type, loss_sup, loss_para
 
-class UnifiedSDModel(nn.Module):
+class UnifiedSRModel(nn.Module):
     def __init__(self, config):
-        super(UnifiedSDModel, self).__init__()
+        super(UnifiedSRModel, self).__init__()
         self.config = config
         self.encoder, _ = load_encoder_model(self.config.encoder_name_or_path, self.config.model_type)
         self.model = ReaderModel(config=self.config)
