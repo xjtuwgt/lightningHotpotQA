@@ -3,7 +3,7 @@ import os
 import argparse
 from os.path import join
 import json
-from plmodels.pldata_processing import DataHelper
+from post_feature_collection.post_pldata_processing import DataHelper
 
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch

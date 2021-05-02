@@ -4,7 +4,7 @@ import argparse
 from os.path import join
 import json
 # from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
-from plmodels.pldata_processing import DataHelper
+from post_feature_collection.post_pldata_processing import DataHelper
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda

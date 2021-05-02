@@ -20,7 +20,7 @@ from tqdm import tqdm
 
 from model_envs import MODEL_CLASSES
 from envs import DATASET_FOLDER
-from plmodels.pldata_processing import Example, InputFeatures, get_cached_filename
+from post_feature_collection.post_pldata_processing import Example, InputFeatures, get_cached_filename
 from eval.hotpot_evaluate_v1 import normalize_answer
 from leaderboardscripts.lb_hotpotqa_data_structure import get_topk_cached_filename
 
