@@ -145,14 +145,14 @@ for a in args_dict:
 ##########################################################################
 helper = DataHelper(gz=True, config=args)
 # Set datasets
-if args.data_type in ['train']:
+if 'train' in args.data_type:
     data_example_dict = helper.train_example_dict
     data_feature_dict = helper.train_feature_dict
     data_features = helper.train_features
     data_loader = helper.hotpot_train_dataloader
     gold_file = args.train_gold_file
     file_type = args.daug_type
-elif args.data_type in ['dev_distractor']:
+elif 'dev_distractor' in args.data_type:
     data_example_dict = helper.dev_example_dict
     data_feature_dict = helper.dev_feature_dict
     data_features = helper.dev_features
