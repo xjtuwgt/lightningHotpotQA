@@ -739,6 +739,8 @@ if __name__ == '__main__':
         topk_para_name = '{}_long_multihop_para.json'.format(topk_para_name_fix)
         args.para_path = os.path.join(args.para_path, topk_para_name)
 
+    print('para_path = {}'.format(args.para_path))
+
     start_time = time()
     examples = read_hotpot_examples(para_file=args.para_path,
                                     full_file=args.full_data,
