@@ -24,9 +24,9 @@ export PYTORCH_PRETRAINED_BERT_CACHE=$DATA_ROOT/models/pretrained_cache
 mkdir -p $DATA_ROOT/models/pretrained_cache
 
 preprocess() {
-#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor" "hotpot_train_v1.1.json;train_post")
-#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor")
-    INPUTS=("hotpot_train_v1.1.json;train_post")
+#    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor_post" "hotpot_train_v1.1.json;train_post")
+    INPUTS=("hotpot_dev_distractor_v1.json;dev_distractor_post")
+#    INPUTS=("hotpot_train_v1.1.json;train_post")
     for input in ${INPUTS[*]}; do
         INPUT_FILE=$(echo $input | cut -d ";" -f 1)
         DATA_TYPE=$(echo $input | cut -d ";" -f 2)
