@@ -187,12 +187,21 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
             prediction_para_dict[cur_id] = (sel_paras[0], sel_paras[1], sel_paras[2])
 
     recall_list = []
+
     if gold_file is not None:
+        source_type = None
+        first_para_key_id = list(prediction_para_dict.keys())[0]
+        if '_' in first_para_key_id:
+            first_dash_idx = first_para_key_id.index('_')
+            source_type = first_para_key_id[first_dash_idx]
+
         with open(gold_file) as f:
             gold = json.load(f)
         for idx, case in enumerate(gold):
             key = case['_id']
             supp_title_set = set([x[0] for x in case['supporting_facts']])
+            if source_type is not None:
+                key = key + source_type
             if key in prediction_para_dict:
                 pred_paras = prediction_para_dict[key]
                 # print('selected para {}'.format(pred_paras))
