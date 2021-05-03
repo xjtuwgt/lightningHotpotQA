@@ -19,6 +19,8 @@ class ReaderModel(nn.Module):
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
         self.transformer_layer = TransformerLayer(d_model=self.hidden_dim, ffn_hidden=4 * self.hidden_dim,
                                                   n_head=self.head_num)
+        self.second_transformer_layer = TransformerLayer(d_model=self.hidden_dim, ffn_hidden=4 * self.hidden_dim,
+                                                  n_head=self.head_num) # two layer transformer
         self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
@@ -28,6 +30,7 @@ class ReaderModel(nn.Module):
         input_state = self.linear_map(context_encoding)
         batch_mask = batch['context_mask'].unsqueeze(1)
         input_state = self.transformer_layer.forward(x=input_state, src_mask=batch_mask)
+        input_state = self.second_transformer_layer.forward(x=input_state, src_mask=batch_mask) ##two layer transformer
         ####++++++++++++++++++++++++++++++++++++++
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
         para_predictions, sent_predictions = self.para_sent_predict_layer.forward(state_dict=para_sent_state_dict)
