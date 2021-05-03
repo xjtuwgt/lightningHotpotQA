@@ -28,7 +28,7 @@ topk_file_name_prefix = get_topk_cached_filename(topk_para_num=topk, max_para_nu
 para_data_file_name = '{}_para_ranking.json'.format(topk_file_name_prefix)
 para_data = json.load(open(join(output_folder, para_data_file_name), 'r'))
 source_type = None
-first_para_key_id = para_data.keys()[0]
+first_para_key_id = list(para_data.keys())[0]
 print('first para key id = {}'.format(first_para_key_id))
 print('Loading {} records from {}'.format(len(para_data), join(output_folder, para_data_file_name)))
 print('Loading data takes {:.4f} seconds'.format(time() - start_time))
