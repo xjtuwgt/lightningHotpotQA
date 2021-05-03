@@ -53,7 +53,6 @@ def jd_unified_post_feature_collection_model(args, model, dataloader, example_di
         for i in range(predict_support_np.shape[0]):
             cur_sp_pred = [[] for _ in range(N_thresh)]
             cur_id = batch['ids'][i]
-            print(cur_id)
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             orig_supp_fact_id = example_dict[cur_id].sup_fact_id
             prune_supp_fact_id = feature_dict[cur_id].sup_fact_ids
@@ -90,6 +89,7 @@ def jd_unified_post_feature_collection_model(args, model, dataloader, example_di
                           'sp': total_sp_dict[thresh_i],
                           'type': answer_type_dict,
                           'type_prob': answer_type_prob_dict}
+
             tmp_file = os.path.join(os.path.dirname(pred_file), 'tmp.json')
             with open(tmp_file, 'w') as f:
                 json.dump(prediction, f)

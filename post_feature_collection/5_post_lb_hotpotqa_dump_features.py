@@ -735,7 +735,10 @@ if __name__ == '__main__':
         data_source_name = "{}".format(ranker)
 
     if "train" in data_type:
-        data_source_type = data_source_name
+        if args.do_rerank:
+            data_source_type = None
+        else:
+            data_source_type  = data_source_name
         # data_source_type = None
         file_type = args.daug_type
     else:
