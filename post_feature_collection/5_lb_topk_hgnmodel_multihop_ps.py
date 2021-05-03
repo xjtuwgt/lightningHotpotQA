@@ -143,6 +143,8 @@ for case in tqdm(raw_data):
     score_guid = guid
     if source_type is not None:
         score_guid = score_guid + source_type
+    if score_guid not in para_data:
+        continue
     para_scores = para_data[score_guid]
     selected_para_dict[guid] = []
     #####++++++++++++++++++++++++++++++++++++++++++
