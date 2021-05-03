@@ -18,7 +18,8 @@ def single_task_trial(search_space: dict, rand_seed=42):
     for key, value in search_space.items():
         if key == 'fine_tuned_encoder' and len(rand_search_parameter(value).strip())<=0:
             continue
-        parameter_dict[key] = rand_search_parameter(value)
+        else:
+            parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.graph.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + '.as' + str(parameter_dict['gradient_accumulation_steps']) + \
                '.lr' + str(parameter_dict['learning_rate']) + 'sdr.' + str(parameter_dict['sent_replace_ratio']) + \
