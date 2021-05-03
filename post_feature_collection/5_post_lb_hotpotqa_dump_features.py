@@ -266,8 +266,8 @@ def read_hotpot_examples(para_file,
             start_position = ans_start_position
             end_position = ans_end_position
 
-        if data_source_type is not None:
-            key = key + "_" + data_source_type ## for data augmentation
+        # if data_source_type is not None:
+        #     key = key + "_" + data_source_type ## for data augmentation
 
         example = Example(
             qas_id=key,
