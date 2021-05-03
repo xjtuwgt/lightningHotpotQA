@@ -193,7 +193,7 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
         first_para_key_id = list(prediction_para_dict.keys())[0]
         if '_' in first_para_key_id:
             first_dash_idx = first_para_key_id.index('_')
-            source_type = first_para_key_id[first_dash_idx]
+            source_type = first_para_key_id[first_dash_idx:]
 
         with open(gold_file) as f:
             gold = json.load(f)

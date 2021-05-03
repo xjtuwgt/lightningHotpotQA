@@ -31,7 +31,7 @@ source_type = None
 first_para_key_id = list(para_data.keys())[0]
 if '_' in first_para_key_id:
     first_dash_idx = first_para_key_id.index('_')
-    source_type = first_para_key_id[first_dash_idx]
+    source_type = first_para_key_id[first_dash_idx:]
 print('first para key id = {}'.format(first_para_key_id))
 print('Loading {} records from {}'.format(len(para_data), join(output_folder, para_data_file_name)))
 print('Loading data takes {:.4f} seconds'.format(time() - start_time))
