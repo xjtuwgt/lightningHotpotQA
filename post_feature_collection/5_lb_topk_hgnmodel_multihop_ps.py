@@ -140,9 +140,10 @@ start_time = time()
 for case in tqdm(raw_data):
     guid = case['_id']
     context = dict(case['context'])
+    score_guid = guid
     if source_type is not None:
-        guid = guid + source_type
-    para_scores = para_data[guid]
+        score_guid = score_guid + source_type
+    para_scores = para_data[score_guid]
     selected_para_dict[guid] = []
     #####++++++++++++++++++++++++++++++++++++++++++
     selected_para_score_threshold_dict[guid] = []
