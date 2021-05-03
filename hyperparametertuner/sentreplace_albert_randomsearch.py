@@ -16,7 +16,7 @@ def remove_all_files(dirpath):
 def single_task_trial(search_space: dict, rand_seed=42):
     parameter_dict = {}
     for key, value in search_space.items():
-        if key == 'fine_tuned_encoder' and len(value.strip())<=0:
+        if key == 'fine_tuned_encoder' and len(rand_search_parameter(value).strip())<=0:
             continue
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
