@@ -29,6 +29,7 @@ class ReaderModel(nn.Module):
         input_state = self.linear_map(context_encoding)
         batch_mask = batch['context_mask'].unsqueeze(1)
         input_state = self.transformer_layer.forward(x=input_state, src_mask=batch_mask)
+        input_state = self.second_transformer_layer.forward(x=input_state, src_mask=batch_mask)  ##two layer transformer
         ####++++++++++++++++++++++++++++++++++++++
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
         para_predictions, sent_predictions = self.para_sent_predict_layer.forward(state_dict=para_sent_state_dict)
