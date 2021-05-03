@@ -16,6 +16,8 @@ def remove_all_files(dirpath):
 def single_task_trial(search_space: dict, rand_seed=42):
     parameter_dict = {}
     for key, value in search_space.items():
+        if key == 'fine_tuned_encoder' and len(value.strip())<=0:
+            continue
         parameter_dict[key] = rand_search_parameter(value)
     parameter_dict['seed'] = rand_seed
     exp_name = 'train.graph.' + parameter_dict['model_type'] + '.bs' + str(parameter_dict['per_gpu_train_batch_size']) + '.as' + str(parameter_dict['gradient_accumulation_steps']) + \
@@ -59,7 +61,7 @@ def HypeParameterSpace():
     replace_prob = {'name': 'replace_prob', 'type': 'choice', 'values': [0.15, 0.25]}
     per_gpu_train_batch_size = {'name': 'per_gpu_train_batch_size', 'type': 'choice', 'values': [2]}
     model_type = {'name': 'model_type', 'type': 'choice', 'values': ['albert']}
-    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['albert/albert-xxlarge-v2_hotpotqa']} #'ahotrod/roberta_large_squad2'
+    fine_tuned_encoder = {'name': 'fine_tuned_encoder', 'type': 'choice', 'values': ['albert/albert-xxlarge-v2_hotpotqa', '']} #'ahotrod/roberta_large_squad2'
     encoder_name_or_path = {'name': 'encoder_name_or_path', 'type': 'choice', 'values': ['albert-xxlarge-v2']}
     optimizer = {'name': 'optimizer', 'type': 'choice', 'values': ['RecAdam']} #RecAdam
     lr_scheduler = {'name': 'lr_scheduler', 'type': 'choice', 'values': ['cosine']}
