@@ -81,6 +81,10 @@ def read_hotpot_examples(para_file,
     examples = []
     for case in tqdm(full_data):
         key = case['_id']
+        ##++++++++++++
+        if key not in para_data:
+            continue
+        ##++++++++++++
         qas_type = case['type']
         sup_facts = set([(sp[0], sp[1]) for sp in case['supporting_facts']])
         context = dict(case['context'])
