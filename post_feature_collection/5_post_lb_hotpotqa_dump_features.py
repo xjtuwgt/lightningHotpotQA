@@ -44,15 +44,20 @@ def read_hotpot_examples(para_file,
                          data_source_type=None):
     with open(para_file, 'r', encoding='utf-8') as reader:
         para_data = json.load(reader)
+    print('loading {} records from {}'.format(len(para_data), para_file))
+    print(para_data)
 
     with open(full_file, 'r', encoding='utf-8') as reader:
         full_data = json.load(reader)
 
+    print('loading {} records from {}'.format(len(full_data), full_file))
     with open(ner_file, 'r', encoding='utf-8') as reader:
         ner_data = json.load(reader)
 
+    print('loading {} records from {}'.format(len(ner_data), ner_file))
     with open(doc_link_file, 'r', encoding='utf-8') as reader:
         doc_link_data = json.load(reader)
+    print('loading {} records from {}'.format(len(doc_link_data), doc_link_file))
 
     def split_sent(sent, offset=0):
         nlp_doc = nlp(sent)
