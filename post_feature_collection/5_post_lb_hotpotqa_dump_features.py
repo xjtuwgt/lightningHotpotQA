@@ -45,7 +45,7 @@ def read_hotpot_examples(para_file,
     with open(para_file, 'r', encoding='utf-8') as reader:
         para_data = json.load(reader)
     print('loading {} records from {}'.format(len(para_data), para_file))
-    print(para_data)
+    # print(para_data)
 
     with open(full_file, 'r', encoding='utf-8') as reader:
         full_data = json.load(reader)
