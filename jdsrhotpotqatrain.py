@@ -145,6 +145,7 @@ for epoch in train_iterator:
                 batch[key] = value.to(args.device)
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         loss_list = model(batch, return_yp=True)
+        print(loss_list)
         del batch
         if args.n_gpu > 1:
             for loss in loss_list:
