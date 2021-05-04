@@ -103,7 +103,7 @@ def f1_computation(scores, labels, thresholds=None):
         if fs == max_f1:
             best_thresholds.append(f_thresh)
     min_threshold, max_threshold = min(best_thresholds), max(best_thresholds)
-    return (max_f1, (min_threshold, max_threshold)), f1_list, split_thresholds
+    return (max_f1, (min_threshold + 1e-6, max_threshold - 1e-6)), f1_list, split_thresholds
 
 def get_best_f1_intervals(scores, labels):
     best_f1_intervals = []
