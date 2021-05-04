@@ -50,6 +50,7 @@ def load_npz_data(npz_file_name):
 def load_json_score_data(json_score_file_name):
     with open(json_score_file_name, 'r', encoding='utf-8') as reader:
         score_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(score_data), json_score_file_name))
     return score_data
 
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

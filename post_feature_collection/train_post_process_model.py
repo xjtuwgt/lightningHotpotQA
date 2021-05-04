@@ -51,7 +51,7 @@ def train(args):
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     print('*' * 75)
 
-    for batch in train_data:
+    for batch in train_data_loader:
         print(batch['x_feat'].shape)
 
 if __name__ == '__main__':
