@@ -3,6 +3,7 @@ from post_feature_collection.post_process_argument_parser import train_parser
 from torch.utils.data import DataLoader
 from os.path import join
 import torch
+import json
 from adaptive_threshold.RangeModel import RangeModel, loss_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer
@@ -142,4 +143,7 @@ def eval_model(model, data_loader, device):
 if __name__ == '__main__':
 
     args = train_parser()
-    train(args)
+    best_em_ratio, dev_prediction_dict = train(args)
+    predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
+    json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
+    print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
