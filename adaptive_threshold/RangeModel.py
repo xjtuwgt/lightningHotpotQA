@@ -117,7 +117,10 @@ class RangeModel(nn.Module):
         return scores
 
 def loss_computation(scores, y_min, y_max):
-    p_score = scores
-    loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
+    # p_score = scores
+    p_score = torch.sigmoid(scores)
+
+    # loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
+    loss = F.relu(p_score - torch.sigmoid(y_max)) + F.relu(torch.sigmoid(y_min) - p_score)
     loss = loss.mean()
     return loss

@@ -131,7 +131,7 @@ def eval_model(model, data_loader, device):
                 y_min_i = y_min_np[i]
                 y_max_i = y_max_np[i]
                 y_flag_i = y_flag_np[i]
-                print(score_i, y_min_i, y_max_i)
+                # print(score_i, y_min_i, y_max_i)
                 if score_i >= y_min_i and score_i <= y_max_i and y_flag_i == 1:
                     em_count = em_count + 1
                 pred_score_dict[key] = score_i
