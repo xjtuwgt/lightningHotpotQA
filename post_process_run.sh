@@ -79,8 +79,11 @@ preprocess() {
 #        echo "7. Dump features for albert do_lower_case for re-rank results"
 #        python post_feature_collection/5_post_lb_hotpotqa_dump_features.py --daug_type long_low --devf_type long_low --para_path $OUTPUT_PROCESSED --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --do_rerank --topk $TOPK_PARA_NUM --max_para_num $SELECTEED_DOC_NUM
 
-        echo "8. Model prediction with albert"
-        python post_feature_collection/postprocess_lb_predict.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
+#        echo "8. Model prediction with albert"
+#        python post_feature_collection/postprocess_lb_predict.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
+
+        echo "9. Post process feature extraction"
+        python3 post_feature_collection/post_process_feature_extractor.py
 
     done
 
