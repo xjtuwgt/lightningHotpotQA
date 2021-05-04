@@ -82,6 +82,7 @@ def train(args):
                 if key not in ['id']:
                     batch[key] = value.to(device)
             #+++++++
+            batch_analysis(batch['x_feat'])
             scores = model(batch['x_feat']).squeeze(-1)
             loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             optimizer.zero_grad()
