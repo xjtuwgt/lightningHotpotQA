@@ -117,7 +117,6 @@ class RangeModel(nn.Module):
         return scores
 
 def loss_computation(scores, y_min, y_max):
-    # p_score = F.sigmoid(scores)
     p_score = scores
     # print(y_min)
     # print(y_max)
