@@ -94,6 +94,7 @@ def f1_computation(scores, labels, thresholds=None):
     for idx, (fs, f_thresh) in enumerate(zip(f1_list, split_thresholds)):
         if fs == max_f1:
             best_thresholds.append(f_thresh)
+            print(idx)
     min_threshold, max_threshold = min(best_thresholds), max(best_thresholds)
     print(min_threshold, max_threshold)
     # print(max_f1)
