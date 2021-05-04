@@ -29,6 +29,8 @@ def train(args):
     torch.cuda.manual_seed_all(random_seed)
     ##+++++++++
     train_data = RangeDataset(json_file_name=train_feat_file_name)
+    for x in train_data:
+        print(x)
     train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
                                    collate_fn=RangeDataset.collate_fn,
