@@ -82,8 +82,11 @@ preprocess() {
 #        echo "8. Model prediction with albert"
 #        python post_feature_collection/postprocess_lb_predict.py --daug_type long_low --devf_type long_low --data_type $DATA_TYPE --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
 
-        echo "9. Post process feature extraction"
-        python3 post_feature_collection/post_process_feature_extractor.py
+#        echo "9. Post process feature extraction"
+#        python3 post_feature_collection/post_process_feature_extractor.py
+
+        echo "9. Model training"
+        python3 post_feature_collection/train_post_process_model.py
 
     done
 
