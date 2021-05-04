@@ -70,7 +70,7 @@ def f1_computation(scores, labels, thresholds=None):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
     if thresholds is None:
-        split_thresholds = np.arange(min_score, max_score, 0.1)
+        split_thresholds = np.arange(min_score, max_score, 0.05)
     else:
         split_thresholds = thresholds
 
