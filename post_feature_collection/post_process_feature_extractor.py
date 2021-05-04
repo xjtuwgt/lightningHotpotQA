@@ -44,6 +44,7 @@ def row_y_label_extraction(row):
     trim_scores = scores[:num_candidate]
     print(trim_scores)
     print(labels)
+    get_best_f1_intervals(scores, labels)
 
 def get_best_f1_intervals(scores, labels):
     best_f1_intervals = []
