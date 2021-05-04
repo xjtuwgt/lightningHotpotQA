@@ -55,7 +55,7 @@ def get_best_f1_intervals(scores, labels):
     best_f1_intervals = []
     for s, l in zip(scores, labels):
         l1 = [1 if i in l else 0 for i in range(len(s))]
-        sorted_sl = sorted(zip(s, l1), key=lambda x: x[0])
+        sorted_sl = sorted(zip(s, l1), key=lambda x: x[0], reverse=True)
         max_f1 = 0
         max_f1_scores = []
         for i in range(len(sorted_sl)):
