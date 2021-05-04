@@ -56,7 +56,11 @@ def row_y_label_extraction(row):
 def best_f1_interval(scores, labels):
     p_scores = [scores[idx] for idx, l in enumerate(labels) if l == 1]
     n_scores = [scores[idx] for idx, l in enumerate(labels) if l == 0]
-    min_p, max_n = min(p_scores), max(n_scores)
+    if len(n_scores) > 0:
+        min_p, max_n = min(p_scores), max(n_scores)
+    else:
+        min_p = min(p_scores)
+        max_n = min_p - 11.0
     print('p: {}, n: {}'.format(min_p, max_n))
     if max_n < min_p:
         return (1.0, (max_n + 1e-6, min_p - 1e-6))
