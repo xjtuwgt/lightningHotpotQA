@@ -14,7 +14,8 @@ def feat_label_extraction(raw_data_name, score_data_name):
         score_case = score_data[key]
         # print(score_case)
         x_feat = row_x_feat_extraction(row=score_case)
-        print(score_case.keys())
+        y_label = row_y_label_extraction(row=score_case)
+        # print(y_label)
 
 
 def train_feature_label_extraction(args):
@@ -32,6 +33,13 @@ def dev_feature_label_extraction(args):
     feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
     return
 
+def row_y_label_extraction(row):
+    scores = row['sp_score']
+    mask = row['sp_mask']
+    supp_ids = row['trim_sup_fact_id']
+    print(scores)
+    print(mask)
+    print(supp_ids)
 
 def get_best_f1_intervals(scores, labels):
     best_f1_intervals = []
