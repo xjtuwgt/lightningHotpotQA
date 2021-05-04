@@ -171,8 +171,9 @@ print('Best threshold = {}'.format(best_threshold))
 
 threshold = best_threshold
 
+output_test_score_file = join(args.exp_name, 'test_score.json')
 metrics = jd_unified_test_model(args, model,
                                 test_data_loader, test_example_dict, test_feature_dict,
-                                output_pred_file, output_eval_file, threshold, args.dev_gold_file)
+                                output_pred_file, output_eval_file, threshold, args.dev_gold_file, output_test_score_file)
 for key, val in metrics.items():
     print("{} = {}".format(key, val))
