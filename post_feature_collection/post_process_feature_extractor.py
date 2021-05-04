@@ -45,8 +45,13 @@ def row_y_label_extraction(row):
         labels[sup_id] = 1
     trim_scores = scores[:num_candidate]
     assert len(labels) == len(trim_scores)
-    assert len(supp_ids) > 0, 'supp ids = {}'.format(supp_ids)
-    # get_best_f1_intervals(scores, labels)
+    if len(supp_ids) == 0:
+        sorted_scores = sorted(trim_scores, reverse=True)
+        if len(sorted_scores) > 2:
+            return (0, (sorted_scores[2], sorted_scores[1]))
+        else:
+            return (0, (None, None))
+    get_best_f1_intervals(scores, labels)
     # best_f1_interval(scores=scores, labels=labels)
 
 def best_f1_interval(scores, labels):
