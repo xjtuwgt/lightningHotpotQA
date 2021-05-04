@@ -13,10 +13,9 @@ def feat_label_extraction(raw_data_name, score_data_name):
     for case in tqdm(raw_data):
         key = case['_id']
         score_case = score_data[key]
-        # print(score_case)
         x_feat = row_x_feat_extraction(row=score_case)
         y_label = row_y_label_extraction(row=score_case)
-        # print(y_label)
+        print(y_label)
 
 
 def train_feature_label_extraction(args):
@@ -51,7 +50,6 @@ def row_y_label_extraction(row):
         else:
             return (0, (None, None))
     f1_tuple = best_f1_interval(scores=scores, labels=labels)
-    print(f1_tuple)
     return f1_tuple
 
 def best_f1_interval(scores, labels):
@@ -95,7 +93,6 @@ def f1_computation(scores, labels, thresholds=None):
     for idx, (fs, f_thresh) in enumerate(zip(f1_list, split_thresholds)):
         if fs == max_f1:
             best_thresholds.append(f_thresh)
-            print(idx)
     min_threshold, max_threshold = min(best_thresholds), max(best_thresholds)
     return (max_f1, (min_threshold, max_threshold)), f1_list, split_thresholds
 
