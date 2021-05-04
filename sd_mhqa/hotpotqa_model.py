@@ -7,7 +7,7 @@ import logging
 from os.path import join
 from hgntransformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup, get_cosine_with_hard_restarts_schedule_with_warmup
 from utils.optimizerutils import RecAdam
-from sd_mhqa.hotpotqaUtils import ParaSentPredictionLayer, PredictionLayer, para_sent_state_feature_extractor
+from sd_mhqa.hotpotqaUtils import ParaSentPredictionLayer, PredictionLayer, para_sent_state_feature_extractor, GatedAttention
 
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class ReaderModel(nn.Module):
@@ -20,6 +20,11 @@ class ReaderModel(nn.Module):
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
         self.transformer_layer = TransformerLayer(d_model=self.hidden_dim, ffn_hidden=4 * self.hidden_dim,
                                                   n_head=self.head_num)
+        self.ctx_attention = GatedAttention(input_dim=self.hidden_dim,
+                                            memory_dim=self.hidden_dim * 2,
+                                            hid_dim=self.hidden_dim,
+                                            dropout=self.config.bi_attn_drop,
+                                            gate_method=self.config.ctx_attn)
         self.para_sent_predict_layer = ParaSentPredictionLayer(self.config, hidden_dim=2 * self.hidden_dim)
         self.predict_layer = PredictionLayer(self.config)
 
@@ -31,7 +36,13 @@ class ReaderModel(nn.Module):
         input_state = self.transformer_layer.forward(x=input_state, src_mask=batch_mask)
         input_state = self.second_transformer_layer.forward(x=input_state, src_mask=batch_mask)  ##two layer transformer
         ####++++++++++++++++++++++++++++++++++++++
-        para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state)
+        para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state, co_atten=True)
+        ####++++++++++++++++++++++++++++++++++++++
+        # print(para_sent_state_dict['para_sent_state'].shape, para_sent_state_dict['para_sent_mask'].shape)
+        input_state, _ = self.ctx_attention(input_state, para_sent_state_dict['para_sent_state'],
+                                            para_sent_state_dict['para_sent_mask'].squeeze(-1))
+        para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state, co_atten=False)
+        ####++++++++++++++++++++++++++++++++++++++
         para_predictions, sent_predictions = self.para_sent_predict_layer.forward(state_dict=para_sent_state_dict)
         query_mapping = batch['query_mapping']
         if self.training:
