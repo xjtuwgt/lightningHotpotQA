@@ -21,6 +21,9 @@ def train(args):
     else:
         device = torch.device('cpu')
 
+    for key, value in vars(args).items():
+        print('{}: {}'.format(key, value))
+
     ##+++++++++
     random_seed = args.rand_seed
     random.seed(random_seed)

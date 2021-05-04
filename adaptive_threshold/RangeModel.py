@@ -121,7 +121,7 @@ class RangeModel(nn.Module):
         #                                         trans_drop=self.args.feat_drop,
         #                                         num_answer=1)
     def forward(self, x: T):
-        assert x.shape[1] == self.emb_dim
+        assert x.shape[1] == self.emb_dim, 'x shape {}, emb_dim {}'.format(x.shape, self.emb_dim)
         cls_x = x[:,:self.cls_emb_dim]
         score_x = x[:,self.cls_emb_dim:]
         cls_map_emb = self.cls_map.forward(cls_x)
