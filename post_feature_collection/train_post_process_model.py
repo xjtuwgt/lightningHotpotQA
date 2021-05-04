@@ -1,7 +1,6 @@
 from post_feature_collection.post_process_data_helper import RangeDataset
 from post_feature_collection.post_process_argument_parser import train_parser
 from torch.utils.data import DataLoader
-from leaderboardscripts.lb_postprocess_utils import load_json_score_data
 from os.path import join
 import torch
 from adaptive_threshold.RangeModel import RangeModel, loss_computation
@@ -63,6 +62,8 @@ def train(args):
     start_epoch = 0
     train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch")
     best_em_ratio = 0.0
+    dev_loss = 0.0
+    dev_prediction_dict = None
     # for epoch in train_iterator:
     for epoch in range(start_epoch, start_epoch + int(args.num_train_epochs)):
         # epoch_iterator = tqdm(train_data_loader, desc="Iteration")
@@ -83,23 +84,24 @@ def train(args):
             model.zero_grad()
 
             if step % 10 == 0:
-                print('Epoch={}\tstep={}\tloss={:.5f}\n'.format(epoch, step, loss.data.item()))
+                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, total_count = eval_model(model=model, data_loader=dev_data_loader, device=device)
+                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device)
+                dev_prediction_dict = pred_dict
+                dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
-                # print('*' * 35)
-                # print('Epoch={}\tstep={}\tem ratio=:{:.5f}\n'.format(epoch, step, em_ratio))
-                # print('*' * 35)
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
-    return best_em_ratio
+    return best_em_ratio, dev_prediction_dict
 
 def eval_model(model, data_loader, device):
     model.eval()
     em_count = 0
     total_count = 0
+    pred_score_dict = []
     # for batch in tqdm(data_loader):
+    dev_loss_list = []
     for batch in data_loader:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -107,13 +109,18 @@ def eval_model(model, data_loader, device):
                 batch[key] = value.to(device)
         with torch.no_grad():
             scores = model(batch['x_feat']).squeeze(-1)
+            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            dev_loss_list.append(loss.data.item())
             scores = torch.sigmoid(scores)
             score_np = scores.data.cpu().numpy()
             y_min_np = batch['y_min'].data.cpu().numpy()
             y_max_np = batch['y_max'].data.cpu().numpy()
             y_flag_np = batch['flag'].data.cpu().numpy()
 
+
+
             for i in range(score_np.shape[0]):
+                key = batch['id'][i]
                 total_count = total_count + 1
                 score_i = score_np[i]
                 y_min_i = y_min_np[i]
@@ -121,8 +128,10 @@ def eval_model(model, data_loader, device):
                 y_flag_i = y_flag_np[i]
                 if score_i >= y_min_i and score_i <= y_max_i and y_flag_i == 1:
                     em_count = em_count + 1
+                pred_score_dict[key] = score_i
     # print(em_count, total_count)
-    return em_count, total_count
+    avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
+    return em_count, total_count, avg_dev_loss, pred_score_dict
 
 if __name__ == '__main__':
 
