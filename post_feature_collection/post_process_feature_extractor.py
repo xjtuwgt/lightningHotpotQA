@@ -3,13 +3,13 @@ from os.path import join
 from leaderboardscripts.lb_postprocess_utils import load_json_score_data, row_x_feat_extraction
 from tqdm import tqdm
 import numpy as np
+import json
 
 def feat_label_extraction(raw_data_name, score_data_name):
     raw_data = load_json_score_data(raw_data_name)
     print('Loading {} records from {}'.format(len(raw_data), raw_data_name))
     score_data = load_json_score_data(score_data_name)
     print('Loading {} records from {}'.format(len(score_data), score_data_name))
-
     score_pred_dict = {}
     em = 0.0
     f1 = 0.0
@@ -24,8 +24,9 @@ def feat_label_extraction(raw_data_name, score_data_name):
                 if y_label[0] == 1.0:
                     em = em + 1
                 f1 = f1 + y_label[0]
-    print(em/len(score_pred_dict))
-    print(f1/len(score_pred_dict))
+    print('em : {}'.format(em/len(score_pred_dict)))
+    print('f1: {}'.format(f1/len(score_pred_dict)))
+    return score_pred_dict
 
 
 
@@ -33,16 +34,16 @@ def train_feature_label_extraction(args):
     raw_train_file_name = join(args.input_dir, args.raw_train_data)
     train_score_file_name = join(args.output_dir, args.exp_name, args.train_score_name)
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
-    feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
-
-    return
+    train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    print('Saving {} records into {}'.format(len(train_feat_dict), train_feat_file_name))
 
 def dev_feature_label_extraction(args):
     raw_dev_file_name = join(args.input_dir, args.raw_dev_data)
     dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
-    feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
-    return
+    dev_feat_dict = feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
+    json.dump(dev_feat_dict, open(dev_feat_file_name, 'w'))
+    print('Saving {} records into {}'.format(len(dev_feat_dict), dev_feat_file_name))
 
 def row_y_label_extraction(row):
     scores = row['sp_score']
