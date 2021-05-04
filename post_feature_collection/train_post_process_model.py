@@ -68,7 +68,8 @@ def train(args):
             model.train()
             #+++++++
             for key, value in batch.items():
-                batch[key] = value.to(device)
+                if key not in ['id']:
+                    batch[key] = value.to(device)
             #+++++++
             scores = model(batch['x_feat']).squeeze(-1)
             loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
@@ -99,7 +100,8 @@ def eval_model(model, data_loader, device):
     for batch in data_loader:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
-            batch[key] = value.to(device)
+            if key not in ['id']:
+                batch[key] = value.to(device)
         with torch.no_grad():
             scores = model(batch['x_feat']).squeeze(-1)
             scores = torch.sigmoid(scores)
