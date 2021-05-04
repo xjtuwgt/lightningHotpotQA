@@ -51,7 +51,6 @@ def row_y_label_extraction(row):
             return (0, (sorted_scores[2], sorted_scores[1]))
         else:
             return (0, (None, None))
-    get_best_f1_intervals(scores, labels)
     # best_f1_interval(scores=scores, labels=labels)
 
 def best_f1_interval(scores, labels):
