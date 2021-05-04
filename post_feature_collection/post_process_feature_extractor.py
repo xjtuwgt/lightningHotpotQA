@@ -37,14 +37,13 @@ def row_y_label_extraction(row):
     scores = row['sp_score']
     mask = row['sp_mask']
     supp_ids = row['trim_sup_fact_id']
-    get_best_f1_intervals(scores=scores, labels=supp_ids)
-    # num_candidate = int(sum(mask))
-    # labels = [0] * num_candidate
-    # for sup_id in supp_ids:
-    #     labels[sup_id] = 1
-    # trim_scores = scores[:num_candidate]
-    # print(trim_scores)
-    # print(labels)
+    # get_best_f1_intervals(scores=scores, labels=supp_ids)
+    num_candidate = int(sum(mask))
+    labels = [0] * num_candidate
+    for sup_id in supp_ids:
+        labels[sup_id] = 1
+    trim_scores = scores[:num_candidate]
+    assert len(labels) == len(trim_scores)
     # get_best_f1_intervals(scores, labels)
 
 def get_best_f1_intervals(scores, labels):
