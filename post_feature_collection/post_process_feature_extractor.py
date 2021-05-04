@@ -139,5 +139,5 @@ if __name__ == '__main__':
     for key, value in vars(args).items():
         print('{}: {}'.format(key, value))
     print('*' * 75)
-    # train_feature_label_extraction(args=args)
-    dev_feature_label_extraction(args=args)
+    train_feature_label_extraction(args=args)
+    # dev_feature_label_extraction(args=args)
