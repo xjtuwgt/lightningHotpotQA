@@ -89,8 +89,13 @@ def f1_computation(scores, labels, thresholds=None):
         f1_list.append(f1_i)
         if f1_i > max_f1:
             max_f1 = f1_i
-            print(prec_i, rec_i)
     assert len(f1_list) == len(split_thresholds)
+    best_thresholds = []
+    for idx, (fs, f_thresh) in enumerate(zip(f1_list, split_thresholds)):
+        if fs == max_f1:
+            best_thresholds.append(f_thresh)
+    min_threshold, max_threshold = min(best_thresholds), max(best_thresholds)
+    print(min_threshold, max_threshold)
     # print(max_f1)
     print('*' * 10)
 
