@@ -10,12 +10,21 @@ def feat_label_extraction(raw_data_name, score_data_name):
     score_data = load_json_score_data(score_data_name)
     print('Loading {} records from {}'.format(len(score_data), score_data_name))
 
+    score_pred_dict = {}
+    em = 0.0
+    f1 = 0.0
     for case in tqdm(raw_data):
         key = case['_id']
         score_case = score_data[key]
         x_feat = row_x_feat_extraction(row=score_case)
         y_label = row_y_label_extraction(row=score_case)
-        print(y_label)
+        score_pred_dict[key] = {'x_feat': x_feat, 'y_label': y_label}
+        if y_label[0] == 1.0:
+            em = em + 1
+        f1 = f1 + y_label[0]
+    print(em/len(score_pred_dict))
+    print(f1/len(score_pred_dict))
+
 
 
 def train_feature_label_extraction(args):
