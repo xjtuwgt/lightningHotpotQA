@@ -62,6 +62,7 @@ class HierarchicalGraphNetwork(nn.Module):
             graph_state, graph_state_dict, graph_mask, query_vec = self.graph_blocks[l](batch=batch,
                                                                                         graph_state_dict=graph_state_dict,
                                                                                         query_vec=query_vec)
+        print(graph_state.shape, graph_mask.shape)
         input_state, _ = self.ctx_attention(input_state, graph_state, graph_mask.squeeze(-1))
         # print('input state', input_state.shape)
         cls_emb_state = input_state[:,0]
