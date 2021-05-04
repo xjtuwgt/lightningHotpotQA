@@ -9,6 +9,12 @@ from adaptive_threshold.atutils import get_optimizer
 import random
 import numpy as np
 from utils.gpu_utils import single_free_cuda
+from torch import Tensor
+import torch
+
+def batch_analysis(x_feat: Tensor):
+    p2dist = torch.cdist(x1=x_feat, x2=x_feat, p=2)
+    print(p2dist)
 
 def train(args):
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
@@ -69,6 +75,7 @@ def train(args):
         # epoch_iterator = tqdm(train_data_loader, desc="Iteration")
         epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
+
             model.train()
             #+++++++
             for key, value in batch.items():
