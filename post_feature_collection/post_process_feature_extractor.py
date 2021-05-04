@@ -51,6 +51,7 @@ def row_y_label_extraction(row):
         else:
             return (0, (None, None))
     f1_tuple = best_f1_interval(scores=scores, labels=labels)
+    print(f1_tuple)
     return f1_tuple
 
 def best_f1_interval(scores, labels):
@@ -63,8 +64,8 @@ def best_f1_interval(scores, labels):
         max_n = min_p - 11.0
     if max_n < min_p:
         return (1.0, (max_n + 1e-6, min_p - 1e-6))
-
-    f1_computation(scores=scores, labels=labels)
+    f1_tuple, _, _ = f1_computation(scores=scores, labels=labels)
+    return f1_tuple
 
 def f1_computation(scores, labels, thresholds=None):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
@@ -96,13 +97,7 @@ def f1_computation(scores, labels, thresholds=None):
             best_thresholds.append(f_thresh)
             print(idx)
     min_threshold, max_threshold = min(best_thresholds), max(best_thresholds)
-    print(min_threshold, max_threshold)
-    # print(max_f1)
-    print('*' * 10)
-
-    # print(f1_list)
-    # print(min_score, max_score)
-    # print(sorted_sl)
+    return (max_f1, (min_threshold, max_threshold)), f1_list, split_thresholds
 
 def get_best_f1_intervals(scores, labels):
     best_f1_intervals = []
