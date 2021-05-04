@@ -76,7 +76,7 @@ def f1_computation(scores, labels, thresholds=None):
 
     def idx_in_range(threshold, sorted_score_labels):
         for i in range(len(sorted_score_labels) - 1):
-            if threshold < sorted_score_labels[i] and threshold >= sorted_score_labels[i+1]:
+            if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:
                 return i
     f1_list = []
     for s_thresh in split_thresholds:
