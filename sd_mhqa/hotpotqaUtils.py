@@ -492,7 +492,7 @@ def example_sent_drop(case: Example, drop_ratio:float = 0.1):
 ###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-def para_sent_state_feature_extractor(batch, input_state: Tensor):
+def para_sent_state_feature_extractor(batch, input_state: Tensor, co_atten=False):
     sent_start, sent_end = batch['sent_start'], batch['sent_end']
     para_start, para_end = batch['para_start'], batch['para_end']
     assert (sent_start.max() < input_state.shape[1]) \
@@ -509,8 +509,12 @@ def para_sent_state_feature_extractor(batch, input_state: Tensor):
     para_start_output = input_state[para_batch_idx, para_start]
     para_end_output = input_state[para_batch_idx, para_end]
     para_state = torch.cat([para_start_output, para_end_output], dim=-1)
-
-    state_dict = {'para_state': para_state, 'sent_state': sent_state}
+    if co_atten:
+        para_sent_state = torch.cat([para_state, sent_state], dim=1)
+        para_sent_mask = torch.cat([batch['para_mask'], batch['sent_mask']], dim=-1).unsqueeze(-1)
+        state_dict = {'para_sent_state': para_sent_state, 'para_sent_mask': para_sent_mask}
+    else:
+        state_dict = {'para_state': para_state, 'sent_state': sent_state}
     return state_dict
 
 class ParaSentPredictionLayer(nn.Module):
@@ -581,3 +585,52 @@ class PredictionLayer(nn.Module):
         yp1 = outer.max(dim=2)[0].max(dim=1)[1]
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
         return (start_prediction, end_prediction, type_prediction, yp1, yp2)
+
+
+class GatedAttention(nn.Module):
+    def __init__(self, input_dim, memory_dim, hid_dim, dropout, gate_method='gate_att_up'):
+        super(GatedAttention, self).__init__()
+        self.gate_method = gate_method
+        self.dropout = dropout
+        self.input_linear_1 = nn.Linear(input_dim, hid_dim, bias=True)
+        self.memory_linear_1 = nn.Linear(memory_dim, hid_dim, bias=True)
+
+        self.input_linear_2 = nn.Linear(input_dim + memory_dim, hid_dim, bias=True)
+
+        self.dot_scale = np.sqrt(input_dim)
+
+    def forward(self, input, memory, mask):
+        """
+        :param input: context_encoding N * Ld * d
+        :param memory: query_encoding N * Lm * d
+        :param mask: query_mask N * Lm
+        :return:
+        """
+        bsz, input_len, memory_len = input.size(0), input.size(1), memory.size(1)
+
+        input_dot = F.relu(self.input_linear_1(input))  # N x Ld x d
+        memory_dot = F.relu(self.memory_linear_1(memory))  # N x Lm x d
+
+        # N * Ld * Lm
+        att = torch.bmm(input_dot, memory_dot.permute(0, 2, 1).contiguous()) / self.dot_scale
+
+        att = att - 1e30 * (1 - mask[:, None])
+        weight_one = F.softmax(att, dim=-1)
+        output_one = torch.bmm(weight_one, memory)
+
+        if self.gate_method == 'no_gate':
+            output = torch.cat( [input, output_one], dim=-1 )
+            output = F.relu(self.input_linear_2(output))
+        elif self.gate_method == 'gate_att_or':
+            output = torch.cat( [input, input - output_one], dim=-1)
+            output = F.relu(self.input_linear_2(output))
+        elif self.gate_method == 'gate_att_up':
+            output = torch.cat([input, output_one], dim=-1 )
+            gate_sg = torch.sigmoid(self.input_linear_2(output))
+            gate_th = torch.tanh(self.input_linear_2(output))
+            output = gate_sg * gate_th
+        else:
+            raise ValueError("Not support gate method: {}".format(self.gate_method))
+
+
+        return output, memory
