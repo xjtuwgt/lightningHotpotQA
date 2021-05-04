@@ -84,7 +84,7 @@ def f1_computation(scores, labels, thresholds=None):
         count_i = sum([_[1] for _ in sorted_sl[:(s_idx+1)]])
         prec_i = count_i/(s_idx + 1)
         rec_i = count_i / (sum(labels) + 1e-9)
-        f1_i = 2 * prec_i * rec_i / (prec_i + rec_i)
+        f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
         f1_list.append(f1_i)
     assert len(f1_list) == len(split_thresholds)
     print(f1_list)
