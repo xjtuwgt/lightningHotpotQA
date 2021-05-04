@@ -99,7 +99,7 @@ def eval_model(model, data_loader, device):
     model.eval()
     em_count = 0
     total_count = 0
-    pred_score_dict = []
+    pred_score_dict = {}
     # for batch in tqdm(data_loader):
     dev_loss_list = []
     for batch in data_loader:
@@ -119,7 +119,6 @@ def eval_model(model, data_loader, device):
 
             for i in range(score_np.shape[0]):
                 key = batch['id'][i]
-                print(key)
                 total_count = total_count + 1
                 score_i = score_np[i]
                 y_min_i = y_min_np[i]
