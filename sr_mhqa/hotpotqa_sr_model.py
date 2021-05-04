@@ -39,7 +39,7 @@ class ReaderModel(nn.Module):
         ####++++++++++++++++++++++++++++++++++++++
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state, co_atten=True)
         ####++++++++++++++++++++++++++++++++++++++
-        print(para_sent_state_dict['para_sent_state'].shape, para_sent_state_dict['para_sent_mask'].shape)
+        # print(para_sent_state_dict['para_sent_state'].shape, para_sent_state_dict['para_sent_mask'].shape)
         input_state, _ = self.ctx_attention(input_state, para_sent_state_dict['para_sent_state'], para_sent_state_dict['para_sent_mask'].squeeze(-1))
         para_sent_state_dict = para_sent_state_feature_extractor(batch=batch, input_state=input_state, co_atten=False)
         ####++++++++++++++++++++++++++++++++++++++
