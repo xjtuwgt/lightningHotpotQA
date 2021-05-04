@@ -5,8 +5,8 @@
 DATA_ROOT=./data/
 
 LONG_FORMER_ROOT=allenai
-SELECTEED_DOC_NUM=5
-TOPK_PARA_NUM=3
+SELECTEED_DOC_NUM=6
+TOPK_PARA_NUM=4
 
 
 PROCS=${1:-"download"} # define the processes you want to run, e.g. "download,preprocess,train" or "preprocess" only
