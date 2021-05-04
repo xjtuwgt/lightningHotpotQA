@@ -75,14 +75,13 @@ def train(args):
         # epoch_iterator = tqdm(train_data_loader, desc="Iteration")
         epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
-
             model.train()
             #+++++++
             for key, value in batch.items():
                 if key not in ['id']:
                     batch[key] = value.to(device)
             #+++++++
-            batch_analysis(batch['x_feat'])
+            # batch_analysis(batch['x_feat'])
             scores = model(batch['x_feat']).squeeze(-1)
             loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             optimizer.zero_grad()
