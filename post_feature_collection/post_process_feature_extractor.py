@@ -79,6 +79,7 @@ def f1_computation(scores, labels, thresholds=None):
             if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:
                 return i
     f1_list = []
+    max_f1 = -10
     for s_thresh in split_thresholds:
         s_idx = idx_in_range(threshold=s_thresh, sorted_score_labels=sorted_sl)
         count_i = sum([_[1] for _ in sorted_sl[:(s_idx+1)]])
@@ -86,7 +87,11 @@ def f1_computation(scores, labels, thresholds=None):
         rec_i = count_i / (sum(labels) + 1e-9)
         f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
         f1_list.append(f1_i)
+        if f1_i > max_f1:
+            max_f1 = f1_i
     assert len(f1_list) == len(split_thresholds)
+    print(max_f1)
+
     print(f1_list)
     # print(min_score, max_score)
     # print(sorted_sl)
