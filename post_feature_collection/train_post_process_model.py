@@ -117,10 +117,9 @@ def eval_model(model, data_loader, device):
             y_max_np = batch['y_max'].data.cpu().numpy()
             y_flag_np = batch['flag'].data.cpu().numpy()
 
-
-
             for i in range(score_np.shape[0]):
                 key = batch['id'][i]
+                print(key)
                 total_count = total_count + 1
                 score_i = score_np[i]
                 y_min_i = y_min_np[i]
