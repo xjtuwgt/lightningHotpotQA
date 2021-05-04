@@ -4,8 +4,8 @@ import numpy as np
 from torch.utils.data import Dataset
 
 class RangeDataset(Dataset):
-    def __init__(self, feat_data):
-        self.feat_dict = feat_data
+    def __init__(self, json_file_name):
+        self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
         self.key_list = list(self.feat_dict.keys())
     def __len__(self):
         return len(self.key_list)

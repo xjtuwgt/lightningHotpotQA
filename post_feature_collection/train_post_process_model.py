@@ -28,20 +28,19 @@ def train(args):
     torch.manual_seed(random_seed)
     torch.cuda.manual_seed_all(random_seed)
     ##+++++++++
-    train_data_dict = load_json_score_data(json_score_file_name=train_feat_file_name)
-    train_data = RangeDataset(feat_data=train_data_dict)
+    train_data = RangeDataset(json_file_name=train_feat_file_name)
     train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
                                    collate_fn=RangeDataset.collate_fn,
-                                   num_workers=args.cpu_number // 2,
+                                   num_workers=1,
                                    batch_size=args.train_batch_size)
 
-    # dev_data = RangeDataset(json_file_name=dev_feat_file_name)
-    # dev_data_loader = DataLoader(dataset=dev_data,
-    #                              shuffle=False,
-    #                              collate_fn=RangeDataset.collate_fn,
-    #                              num_workers=args.cpu_number // 2,
-    #                              batch_size=args.eval_batch_size)
+    dev_data = RangeDataset(json_file_name=dev_feat_file_name)
+    dev_data_loader = DataLoader(dataset=dev_data,
+                                 shuffle=False,
+                                 collate_fn=RangeDataset.collate_fn,
+                                 num_workers=args.cpu_number // 2,
+                                 batch_size=args.eval_batch_size)
 
     model = RangeModel(args=args)
     model.to(device)
