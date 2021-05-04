@@ -48,18 +48,17 @@ def row_y_label_extraction(row):
     if len(supp_ids) == 0:
         sorted_scores = sorted(trim_scores, reverse=True)
         if len(sorted_scores) > 2:
-            print('here')
             return (0, (sorted_scores[2], sorted_scores[1]))
         else:
-            print('there')
             return (0, (None, None))
-    # best_f1_interval(scores=scores, labels=labels)
+    best_f1_interval(scores=scores, labels=labels)
 
 def best_f1_interval(scores, labels):
     min_score, max_score = min(scores), max(scores)
     p_scores = [scores[idx] for idx, l in enumerate(labels) if l == 1]
     n_scores = [scores[idx] for idx, l in enumerate(labels) if l == 0]
-
+    min_p, max_n = min(p_scores), max(n_scores)
+    print(min_p, max_n)
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
 
 
