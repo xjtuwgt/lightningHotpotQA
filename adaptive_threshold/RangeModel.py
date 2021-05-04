@@ -60,31 +60,32 @@ class OutputLayer(nn.Module):
             nn.Linear(hidden_dim, hidden_dim*2),
             nn.ReLU(),
             LayerNorm(hidden_dim*2, eps=1e-12),
+            nn.BatchNorm1d(num_features=hidden_dim*2, eps=1e-12)
             nn.Dropout(trans_drop),
             #+++++++++
-            nn.Linear(2*hidden_dim, hidden_dim*2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            # +++++++++
-            nn.Linear(hidden_dim * 2, hidden_dim * 2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            # +++++++++
-            nn.Linear(hidden_dim * 2, hidden_dim * 2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            # +++++++++
-            nn.Linear(hidden_dim * 2, hidden_dim * 2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            # +++++++++
-            nn.Linear(hidden_dim * 2, num_answer),
+            # nn.Linear(2*hidden_dim, hidden_dim*2),
+            # nn.ReLU(),
+            # LayerNorm(hidden_dim * 2, eps=1e-12),
+            # nn.Dropout(trans_drop),
+            # # +++++++++
+            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
+            # nn.ReLU(),
+            # LayerNorm(hidden_dim * 2, eps=1e-12),
+            # nn.Dropout(trans_drop),
+            # # +++++++++
+            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
+            # nn.ReLU(),
+            # LayerNorm(hidden_dim * 2, eps=1e-12),
+            # nn.Dropout(trans_drop),
+            # # +++++++++
+            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
+            # nn.ReLU(),
+            # LayerNorm(hidden_dim * 2, eps=1e-12),
+            # nn.Dropout(trans_drop),
+            # # +++++++++
+            # nn.Linear(hidden_dim * 2, num_answer),
             #+++++++++
-            # nn.Linear(hidden_dim*2, num_answer),
+            nn.Linear(hidden_dim*2, num_answer),
         )
 
     def forward(self, hidden_states):
@@ -118,12 +119,6 @@ class RangeModel(nn.Module):
 
 def loss_computation(scores, y_min, y_max):
     p_score = scores
-    # print(y_min)
-    # print(y_max)
-    # print(p_score)
     loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
-    # loss = F.relu(torch.tanh(p_score) - torch.tanh(y_max)) + F.relu(torch.tanh(y_min) - torch.tanh(p_score))
-    # loss = loss * loss
     loss = loss.mean()
-    # loss = loss.sum()
     return loss
