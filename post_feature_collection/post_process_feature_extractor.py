@@ -38,7 +38,6 @@ def row_y_label_extraction(row):
     scores = row['sp_score']
     mask = row['sp_mask']
     supp_ids = row['trim_sup_fact_id']
-    # get_best_f1_intervals(scores=scores, labels=supp_ids)
     num_candidate = int(sum(mask))
     labels = [0] * num_candidate
     for sup_id in supp_ids:
@@ -51,19 +50,20 @@ def row_y_label_extraction(row):
             return (0, (sorted_scores[2], sorted_scores[1]))
         else:
             return (0, (None, None))
-    best_f1_interval(scores=scores, labels=labels)
+    f1_tuple = best_f1_interval(scores=scores, labels=labels)
+    return f1_tuple
 
 def best_f1_interval(scores, labels):
-    min_score, max_score = min(scores), max(scores)
     p_scores = [scores[idx] for idx, l in enumerate(labels) if l == 1]
     n_scores = [scores[idx] for idx, l in enumerate(labels) if l == 0]
     min_p, max_n = min(p_scores), max(n_scores)
-    print(min_p, max_n)
+    print('p: {}, n: {}'.format(min_p, max_n))
+    if max_n < min_p:
+        return (1.0, (max_n + 1e-6, min_p - 1e-6))
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
-
-
-    thresholds = np.arange(min_score, max_score, 0.1).tolist()
-    print(len(thresholds))
+    min_score, max_score = min(scores), max(scores)
+    # thresholds = np.arange(min_score, max_score, 0.1).tolist()
+    # print(len(thresholds))
     # print(min_score, max_score)
     # print(sorted_sl)
 
