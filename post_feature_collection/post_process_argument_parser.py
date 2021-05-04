@@ -36,6 +36,10 @@ def train_parser():
     parser.add_argument("--input_dir", type=str, default=DATASET_FOLDER, help='define output directory')
     parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     parser.add_argument("--pred_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
+    parser.add_argument("--exp_name",
+                        type=str,
+                        default='albert_orig',
+                        help="If set, this will be used as directory name in OUTOUT folder")
     # Other parameters
     parser.add_argument("--dev_score_name", type=str, default='dev_distractor_post_6_4_score.json')
     parser.add_argument("--train_score_name", type=str, default='train_post_6_4_score.json')

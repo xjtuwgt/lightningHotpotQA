@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import ndarray
+import json
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def distribution_feat_extraction(scores: ndarray, keep_num=False):
     ##     min, max, mean, median, 1/4, 3/4 score, std, num
@@ -45,6 +46,11 @@ def load_npz_data(npz_file_name):
         y_np = data['y_np']
     print('Loading {} records from {}'.format(x.shape[0], npz_file_name))
     return x, y, y_n, y_np
+
+def load_json_score_data(json_score_file_name):
+    with open(json_score_file_name, 'r', encoding='utf-8') as reader:
+        score_data = json.load(reader)
+    return score_data
 
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import torch
