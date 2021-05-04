@@ -16,7 +16,7 @@ def distribution_feat_extraction(scores: ndarray, keep_num=False):
     return dist_feat
 
 def distribution_feat(scores: ndarray):
-    dist_feat = distribution_feat_extraction(scores=scores, keep_num=True)
+    dist_feat = distribution_feat_extraction(scores=scores, keep_num=False)
     if scores.shape[0] > 1:
         sorted_score = np.sort(scores)
         reverse_score = sorted_score[::-1]
