@@ -45,12 +45,18 @@ def row_y_label_extraction(row):
         labels[sup_id] = 1
     trim_scores = scores[:num_candidate]
     assert len(labels) == len(trim_scores)
+    assert len(supp_ids) > 0, 'supp ids = {}'.format(supp_ids)
     # get_best_f1_intervals(scores, labels)
-    best_f1_interval(scores=scores, labels=labels)
+    # best_f1_interval(scores=scores, labels=labels)
 
 def best_f1_interval(scores, labels):
-    sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
+    p_scores = [scores[idx] for idx, l in enumerate(labels) if l == 1]
+    n_scores = [scores[idx] for idx, l in enumerate(labels) if l == 0]
+
+    sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
+
+
     thresholds = np.arange(min_score, max_score, 0.1).tolist()
     print(len(thresholds))
     # print(min_score, max_score)
