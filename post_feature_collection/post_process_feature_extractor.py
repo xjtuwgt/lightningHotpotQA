@@ -61,13 +61,33 @@ def best_f1_interval(scores, labels):
     else:
         min_p = min(p_scores)
         max_n = min_p - 11.0
-    print('p: {}, n: {}'.format(min_p, max_n))
     if max_n < min_p:
         return (1.0, (max_n + 1e-6, min_p - 1e-6))
+
+    f1_computation(scores=scores, labels=labels)
+
+def f1_computation(scores, labels, thresholds=None):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
-    # thresholds = np.arange(min_score, max_score, 0.1).tolist()
-    # print(len(thresholds))
+    if thresholds is None:
+        split_thresholds = np.arange(min_score, max_score, 0.1)
+    else:
+        split_thresholds = thresholds
+
+    def idx_in_range(threshold, sorted_score_labels):
+        for i in range(len(sorted_score_labels) - 1):
+            if threshold < sorted_score_labels[i] and threshold >= sorted_score_labels[i+1]:
+                return i
+    f1_list = []
+    for s_thresh in split_thresholds:
+        s_idx = idx_in_range(threshold=s_thresh, sorted_score_labels=sorted_sl)
+        count_i = sum([_[1] for _ in sorted_sl[:(s_idx+1)]])
+        prec_i = count_i/(s_idx + 1)
+        rec_i = count_i / (sum(labels) + 1e-9)
+        f1_i = 2 * prec_i * rec_i / (prec_i + rec_i)
+        f1_list.append(f1_i)
+    assert len(f1_list) == len(split_thresholds)
+    print(f1_list)
     # print(min_score, max_score)
     # print(sorted_sl)
 
