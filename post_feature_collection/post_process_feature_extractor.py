@@ -92,7 +92,7 @@ def f1_computation(scores, labels, thresholds=None):
     assert len(f1_list) == len(split_thresholds)
     print(max_f1)
 
-    print(f1_list)
+    # print(f1_list)
     # print(min_score, max_score)
     # print(sorted_sl)
 
