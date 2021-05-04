@@ -44,12 +44,8 @@ def train_parser():
     parser.add_argument("--dev_score_name", type=str, default='dev_distractor_post_6_4_score.json')
     parser.add_argument("--train_score_name", type=str, default='train_post_6_4_score.json')
 
-    parser.add_argument("--dev_feat_name", type=str, default='dev_np_data.npz')
-    parser.add_argument("--dev_feat_class_name", type=str, default='dev_class_np_data.npz')
-    parser.add_argument("--dev_feat_json_name", type=str, default='dev_json_data.json')
-    parser.add_argument("--train_feat_name", type=str, default='train_np_data.npz')
-    parser.add_argument("--train_feat_class_name", type=str, default='train_class_np_data.npz')
-    parser.add_argument("--class_label_map_name", type=str, default='class_label_dict.json')
+    parser.add_argument("--dev_feat_json_name", type=str, default='dev_feat_json_data.json')
+    parser.add_argument("--train_feat_json_name", type=str, default='train_feat_json_data.json')
     parser.add_argument("--pred_threshold_json_name", type=str, default='pred_thresholds.json')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
