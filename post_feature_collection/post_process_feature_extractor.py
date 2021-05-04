@@ -28,8 +28,6 @@ def feat_label_extraction(raw_data_name, score_data_name):
     print('f1: {}'.format(f1/len(score_pred_dict)))
     return score_pred_dict
 
-
-
 def train_feature_label_extraction(args):
     raw_train_file_name = join(args.input_dir, args.raw_train_data)
     train_score_file_name = join(args.output_dir, args.exp_name, args.train_score_name)
@@ -144,4 +142,4 @@ if __name__ == '__main__':
         print('{}: {}'.format(key, value))
     print('*' * 75)
     train_feature_label_extraction(args=args)
-    # dev_feature_label_extraction(args=args)
+    dev_feature_label_extraction(args=args)
