@@ -48,8 +48,10 @@ def row_y_label_extraction(row):
     if len(supp_ids) == 0:
         sorted_scores = sorted(trim_scores, reverse=True)
         if len(sorted_scores) > 2:
+            print('here')
             return (0, (sorted_scores[2], sorted_scores[1]))
         else:
+            print('there')
             return (0, (None, None))
     # best_f1_interval(scores=scores, labels=labels)
 
