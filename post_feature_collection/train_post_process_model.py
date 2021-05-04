@@ -95,13 +95,13 @@ def train(args):
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device)
-                dev_prediction_dict = pred_dict
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
                                join(args.exp_name, f'threshold_pred_model.pkl'))
+                    dev_prediction_dict = pred_dict
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio, dev_prediction_dict
