@@ -51,7 +51,7 @@ def row_y_label_extraction(row):
 def best_f1_interval(scores, labels):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
-    thresholds = np.arange(min_score, max_score, 0.1)
+    thresholds = np.arange(min_score, max_score, 0.1).tolist()
     print(len(thresholds))
     # print(min_score, max_score)
     # print(sorted_sl)
