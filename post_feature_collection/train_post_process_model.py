@@ -83,12 +83,12 @@ def train(args):
             model.zero_grad()
 
             if step % 10 == 0:
-                print('{}\t{}\t{:.5f}\n'.format(epoch, step, loss.data.item()))
+                print('Epoch={}\tstep={}\tloss={:.5f}\n'.format(epoch, step, loss.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, total_count = eval_model(model=model, data_loader=dev_data_loader, device=device)
                 em_ratio = em_count * 1.0/total_count
                 print('*' * 35)
-                print('{}\t{}\t{:.5f}\n'.format(epoch, step, em_ratio))
+                print('Epoch={}\tstep={}\tem ratio=:{:.5f}\n'.format(epoch, step, em_ratio))
                 print('*' * 35)
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio

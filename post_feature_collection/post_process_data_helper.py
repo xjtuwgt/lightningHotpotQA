@@ -17,13 +17,11 @@ class RangeDataset(Dataset):
         y_label = case['y_label']
         x_i = torch.from_numpy(x_feat).float()
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        if y_p_i > y_n_i:
-            y_min = torch.FloatTensor([y_n_i])
-            y_max = torch.FloatTensor([y_p_i])
+        y_min = torch.FloatTensor([y_n_i])
+        y_max = torch.FloatTensor([y_p_i])
+        if y_label[0] == 1.0:
             flag = torch.LongTensor([1])
         else:
-            y_min = torch.FloatTensor([y_p_i])
-            y_max = torch.FloatTensor([y_n_i])
             flag = torch.LongTensor([0])
         return x_i, y_min, y_max, flag, key
 
