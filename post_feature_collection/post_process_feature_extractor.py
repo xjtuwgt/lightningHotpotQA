@@ -88,6 +88,7 @@ def f1_computation(scores, labels, thresholds=None):
         for i in range(len(sorted_score_labels) - 1):
             if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:
                 return i
+        return len(sorted_score_labels) - 1
     f1_list = []
     max_f1 = -10
     for s_thresh in split_thresholds:
