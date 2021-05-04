@@ -1,6 +1,6 @@
 from post_feature_collection.post_process_argument_parser import train_parser
 from os.path import join
-from leaderboardscripts.lb_postprocess_utils import load_json_score_data
+from leaderboardscripts.lb_postprocess_utils import load_json_score_data, row_x_feat_extraction
 from tqdm import tqdm
 
 def feat_label_extraction(raw_data_name, score_data_name):
@@ -12,7 +12,9 @@ def feat_label_extraction(raw_data_name, score_data_name):
     for case in tqdm(raw_data):
         key = case['_id']
         score_case = score_data[key]
-        print(score_case)
+        # print(score_case)
+        x_feat = row_x_feat_extraction(row=score_case)
+        print(x_feat)
 
 def train_feature_label_extraction(args):
     raw_train_file_name = join(args.input_dir, args.raw_train_data)
