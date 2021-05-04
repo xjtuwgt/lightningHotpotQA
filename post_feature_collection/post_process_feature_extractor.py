@@ -2,6 +2,7 @@ from post_feature_collection.post_process_argument_parser import train_parser
 from os.path import join
 from leaderboardscripts.lb_postprocess_utils import load_json_score_data, row_x_feat_extraction
 from tqdm import tqdm
+import numpy as np
 
 def feat_label_extraction(raw_data_name, score_data_name):
     raw_data = load_json_score_data(raw_data_name)
@@ -50,7 +51,9 @@ def row_y_label_extraction(row):
 def best_f1_interval(scores, labels):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
-    print(min_score, max_score)
+    thresholds = np.arange(min_score, max_score, 0.02)
+    print(len(thresholds))
+    # print(min_score, max_score)
     # print(sorted_sl)
 
 def get_best_f1_intervals(scores, labels):
