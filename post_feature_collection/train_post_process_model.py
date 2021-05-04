@@ -52,7 +52,7 @@ def train(args):
     print('*' * 75)
 
     for batch in train_data:
-        print(batch)
+        print(batch['x_feat'].shape)
 
 if __name__ == '__main__':
 
