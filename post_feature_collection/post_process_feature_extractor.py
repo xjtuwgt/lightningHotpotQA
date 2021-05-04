@@ -37,7 +37,7 @@ def row_y_label_extraction(row):
     scores = row['sp_score']
     mask = row['sp_mask']
     supp_ids = row['trim_sup_fact_id']
-    num_candidate = sum(mask)
+    num_candidate = int(sum(mask))
     labels = [0] * num_candidate
     for sup_id in supp_ids:
         labels[sup_id] = 1
