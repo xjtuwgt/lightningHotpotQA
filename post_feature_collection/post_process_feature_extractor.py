@@ -15,13 +15,15 @@ def feat_label_extraction(raw_data_name, score_data_name):
     f1 = 0.0
     for case in tqdm(raw_data):
         key = case['_id']
-        score_case = score_data[key]
-        x_feat = row_x_feat_extraction(row=score_case)
-        y_label = row_y_label_extraction(row=score_case)
-        score_pred_dict[key] = {'x_feat': x_feat, 'y_label': y_label}
-        if y_label[0] == 1.0:
-            em = em + 1
-        f1 = f1 + y_label[0]
+        if key in score_data:
+            score_case = score_data[key]
+            x_feat = row_x_feat_extraction(row=score_case)
+            y_label = row_y_label_extraction(row=score_case)
+            if y_label[1][0] is not None:
+                score_pred_dict[key] = {'x_feat': x_feat, 'y_label': y_label}
+                if y_label[0] == 1.0:
+                    em = em + 1
+                f1 = f1 + y_label[0]
     print(em/len(score_pred_dict))
     print(f1/len(score_pred_dict))
 
