@@ -33,6 +33,7 @@ def train_feature_label_extraction(args):
     train_score_file_name = join(args.output_dir, args.exp_name, args.train_score_name)
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
     train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    json.dump(train_feat_dict, open(train_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(train_feat_dict), train_feat_file_name))
 
 def dev_feature_label_extraction(args):
