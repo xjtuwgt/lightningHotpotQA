@@ -100,6 +100,9 @@ def train(args):
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio
+                    torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+                               join(args.exp_name, f'threshold_pred_model.pkl'))
+
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio, dev_prediction_dict
 
