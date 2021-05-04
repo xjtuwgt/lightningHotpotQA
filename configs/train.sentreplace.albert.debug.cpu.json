@@ -13,6 +13,7 @@
     "max_para_num": 4,
     "max_sent_num": 100,
     "transformer_hidden_dim": 512,
+    "logging_steps": 5,
     "transformer_head_num": 8,
     "sent_replace_ratio": 0.25
 }
