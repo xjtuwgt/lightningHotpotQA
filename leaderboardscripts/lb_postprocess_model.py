@@ -152,8 +152,7 @@ def loss_computation(scores, y_min, y_max):
 def ce_loss_computation(scores, y_min, y_max, score_gold):
     criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
     score_aux = Variable(scores.data.new(scores.size(0), scores.size(1), 1).zero_())
-    print(scores.shape)
-    score_pred = torch.cat([score_aux, scores], dim=-1).contiguous()
+    score_pred = torch.cat([score_aux, scores.unsqueeze(-1)], dim=-1).contiguous()
     loss_sup = criterion(score_pred, score_gold.long())
     p_score = torch.sigmoid(scores.squeeze(-1))
     loss_range = F.relu(p_score - torch.sigmoid(y_max)) + F.relu(torch.sigmoid(y_min) - p_score)
