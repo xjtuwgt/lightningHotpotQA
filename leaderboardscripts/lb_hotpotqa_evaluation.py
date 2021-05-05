@@ -6,9 +6,14 @@ import shutil
 import os
 from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
 from csr_mhqa.utils import convert_to_tokens
+from utils.gpu_utils import single_free_cuda
 import torch.nn.functional as F
+from leaderboardscripts.lb_postprocess_utils import row_x_feat_extraction
+from leaderboardscripts.lb_postprocess_utils import RangeDataset
+from torch.utils.data import DataLoader
 
-def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None, output_score_file=None):
+def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None,
+                          output_score_file=None):
     model.eval()
 
     answer_dict = {}
@@ -67,7 +72,7 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
                   'sp': sp_dict,
                   'type': answer_type_dict,
                   'type_prob': answer_type_prob_dict}
-    tmp_file = os.path.join(os.path.dirname(prediction_file), 'tmp.json')
+    tmp_file = os.path.join(os.path.dirname(prediction_file), 'test_prediction.json')
     with open(tmp_file, 'w') as f:
         json.dump(prediction, f)
     metrics = hotpot_eval(tmp_file, dev_gold_file)
@@ -79,8 +84,77 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
         print('Saving {} score records into {}'.format(len(prediction_res_score_dict), output_score_file))
     return metrics
 
-def jd_adaptive_threshold_post_process(args, full_file, prediction_file, score_file, threshold_dict, eval_file, dev_gold_file=None):
+def jd_post_process_feature_extraction(raw_file_name, score_file_name, feat_file_name):
+    with open(raw_file_name, 'r', encoding='utf-8') as reader:
+        raw_data = json.load(reader)
+    with open(score_file_name, 'r', encoding='utf-8') as reader:
+        score_data = json.load(reader)
+    feat_dict = {}
+    for case in tqdm(raw_data):
+        key = case['_id']
+        if key in score_data:
+            score_case = score_data[key]
+            x_feat = row_x_feat_extraction(row=score_case)
+            feat_dict[key] = {'x_feat': x_feat}
+    json.dump(feat_dict, open(feat_file_name, 'w'))
+    print('Saving {} records into {}'.format(len(feat_dict), feat_file_name))
+
+def jd_adaptive_threshold_prediction(args, model, feat_dict_file_name):
+    if torch.cuda.is_available():
+        device_ids, _ = single_free_cuda()
+        device = torch.device('cuda:{}'.format(device_ids[0]))
+    else:
+        device = torch.device('cpu')
+    data_feat = RangeDataset(json_file_name=feat_dict_file_name)
+    data_loader = DataLoader(dataset=data_feat,
+                                 shuffle=False,
+                                 collate_fn=RangeDataset.collate_fn,
+                                 batch_size=args.test_batch_size)
+    model.to(device)
+    model.eval()
+    pred_score_dict = {}
+    total_count = 0
+    for batch in data_loader:
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        for key, value in batch.items():
+            if key not in ['id']:
+                batch[key] = value.to(device)
+        with torch.no_grad():
+            scores = model(batch['x_feat'])
+            scores = scores.squeeze(-1)
+            scores = torch.sigmoid(scores)
+            score_np = scores.data.cpu().numpy()
+            for i in range(score_np.shape[0]):
+                key = batch['id'][i]
+                total_count = total_count + 1
+                score_i = score_np[i]
+                pred_score_dict[key] = float(score_i)
+    return pred_score_dict
+
+def jd_adaptive_threshold_post_process(args, full_file, prediction_file, score_dict_file, threshold_pred_dict_file, eval_file, dev_gold_file=None):
+    with open(prediction_file, 'r', encoding='utf-8') as reader:
+        pred_data = json.load(reader)
+
+    with open(full_file, 'r', encoding='utf-8') as reader:
+        full_data = json.load(reader)
+
+    with open(score_dict_file, 'r', encoding='utf-8') as reader:
+        score_dict = json.load(reader)
+
+    with open(threshold_pred_dict_file, 'r', encoding='utf-8') as reader:
+        threshold_pred_dict = json.load(reader)
+
+    pred_answer = pred_data['answer']
+    pred_type = pred_data['type']
+
+    for case in full_data:
+        key = case['_id']
+        score_case = score_dict[key]
+        threshold_case = threshold_pred_dict[key]
+
+        return
     metrics = []
+
     return metrics
 
 

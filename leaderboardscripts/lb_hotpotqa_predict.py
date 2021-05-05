@@ -8,7 +8,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
-from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model, jd_unified_eval_model
+from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model, jd_unified_eval_model, jd_post_process_feature_extraction
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -92,10 +92,12 @@ def parse_args(args=None):
     parser.add_argument('--test_batch_size', default=16, type=int)
     parser.add_argument('--test_log_steps', default=10, type=int)
     parser.add_argument('--cpu_num', default=24, type=int)
+    parser.add_argument("--raw_data",
+                        type=str,
+                        default=join(DATASET_FOLDER, 'data_raw', 'hotpot_test_distractor_v1.json'))
     parser.add_argument("--dev_gold_file",
                         type=str,
                         default=join(DATASET_FOLDER, 'data_raw', 'hotpot_dev_distractor_v1.json'))
-
     parser.add_argument("--para_path",
                         type=str,
                         default=join(DATASET_FOLDER, 'data_processed/test_distractor', 'rerank_topk_4_long_low_long_multihop_para.json'))
@@ -177,3 +179,8 @@ metrics = jd_unified_test_model(args, model,
                                 output_pred_file, output_eval_file, threshold, args.dev_gold_file, output_test_score_file)
 for key, val in metrics.items():
     print("{} = {}".format(key, val))
+
+output_test_feature_file = join(args.exp_name, 'test_feature.json')
+raw_data_file_name = args.raw_data
+jd_post_process_feature_extraction(raw_file_name=raw_data_file_name, score_file_name=output_test_score_file,
+                                   feat_file_name=output_test_feature_file)

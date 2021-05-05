@@ -1,6 +1,8 @@
 import numpy as np
 from numpy import ndarray
 import json
+import torch
+from torch.utils.data import Dataset
 ##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def distribution_feat_extraction(scores: ndarray, keep_num=False):
     ##     min, max, mean, median, 1/4, 3/4 score, std, num
@@ -54,9 +56,6 @@ def load_json_score_data(json_score_file_name):
     return score_data
 
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-import torch
-from torch.utils.data import Dataset
-import numpy as np
 class RangeDataset(Dataset):
     def __init__(self, json_file_name):
         self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
