@@ -2,6 +2,7 @@ import torch
 from torch import Tensor as T
 from torch import nn
 import torch.nn.functional as F
+from torch.autograd import Variable
 
 
 class PositionwiseFeedForward(nn.Module):
@@ -122,6 +123,18 @@ def loss_computation(scores, y_min, y_max):
     # p_score = scores
     p_score = torch.sigmoid(scores)
 
+    # loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
+    loss = F.relu(p_score - torch.sigmoid(y_max)) + F.relu(torch.sigmoid(y_min) - p_score)
+    loss = loss.mean()
+    return loss
+
+def ce_loss_computation(scores, y_min, y_max):
+
+    score_aux = Variable(scores.data.new(scores.size(0), scores.size(1), 1).zero_())
+    score_prediction = torch.cat([score_aux, scores.unsqueeze(-1)], dim=-1).contiguous()
+
+
+    p_score = torch.sigmoid(scores)
     # loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
     loss = F.relu(p_score - torch.sigmoid(y_max)) + F.relu(torch.sigmoid(y_min) - p_score)
     loss = loss.mean()
