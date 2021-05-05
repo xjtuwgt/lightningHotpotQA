@@ -85,7 +85,7 @@ def train(args):
             # batch_analysis(batch['x_feat'])
             scores = model(batch['x_feat'])
             # loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
-            loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'],
+            loss, loss_supp, loss_range = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'],
                                              score_gold=batch['flag'])
             optimizer.zero_grad()
             loss.backward()
@@ -94,7 +94,11 @@ def train(args):
             model.zero_grad()
 
             if step % 10 == 0:
-                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
+                # print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
+                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\tsupp_loss={:.5f}\trange_loss={:.5f}\n'.format(epoch, step,
+                                                                                              loss.data.item(),
+                                                                                              best_em_ratio, dev_loss, loss_supp.data.item(),
+                                                                                                                                   loss_range.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device)
                 dev_loss = dev_loss_i
