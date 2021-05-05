@@ -100,7 +100,7 @@ def train(args):
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                               join(args.exp_name, f'threshold_pred_model.pkl'))
+                               join(args.output_dir, args.exp_name, f'threshold_pred_model.pkl'))
                     dev_prediction_dict = pred_dict
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
