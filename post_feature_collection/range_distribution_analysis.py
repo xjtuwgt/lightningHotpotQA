@@ -25,7 +25,7 @@ score_dev_name = 'dev_distractor_post_6_4_score.json'
 train_feat_name = 'train_feat_data.json'
 dev_feat_name = 'dev_feat_data.json'
 # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-interval_num = 10
+interval_num = 3
 interval_range = 1.0/interval_num
 threshold_category = [(i * interval_range, (i+1) * interval_range) for i in range(interval_num)]
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -108,32 +108,23 @@ def np_sigmoid(x):
 
 def pca_analysis(x_feat, y_label):
     pca = PCA(n_components=3)
-    x_feat = skl_norm(x_feat, axis=1)
+    # x_feat = skl_norm(x_feat, axis=1)
     pca_results = pca.fit_transform(x_feat)
-    # pca_data = {'pca-2d-one': pca_results[:, 0], 'pca-2d-two': pca_results[:, 1]}
-    # df_subset = pd.DataFrame.from_dict(pca_data)
-    # y = np.zeros(y_label.shape[0])
-    # y_min_sigmoid, y_max_sigmoid = np_sigmoid(y_label[:, 1]), np_sigmoid(y_label[:, 2])
-    # f1_score = y_label[:, 0]
-    # for i in range(y_label.shape[0]):
-    #     f1_i = f1_score[i]
-    #     y_min_i = y_min_sigmoid[i]
-    #     y_max_i = y_max_sigmoid[i]
-    #     if f1_i == 1:
-    #         y[i] = 0
-    #     else:
-    #         y[i] = 1
-    # df_subset['y'] = y
-    # plt.figure(figsize=(10, 8))
-    # sns.scatterplot(
-    #     x="pca-2d-one", y="pca-2d-two",
-    #     hue="y",
-    #     palette=sns.color_palette("hls", 2),
-    #     data=df_subset,
-    #     legend="full",
-    #     alpha=0.3
-    # )
-    plt.plot(pca_results[:,0], pca_results[:,1], '.')
+    pca_data = {'pca-2d-one': pca_results[:, 0], 'pca-2d-two': pca_results[:, 1]}
+    df_subset = pd.DataFrame.from_dict(pca_data)
+    flag_idx_list, _, flag_label_freq, _ = threshold_map_to_label(y_label=y_label,
+                                                                  threshold_category=threshold_category)
+    df_subset['y'] = np.array(flag_idx_list)
+    plt.figure(figsize=(10, 8))
+    sns.scatterplot(
+        x="pca-2d-one", y="pca-2d-two",
+        hue="y",
+        palette=sns.color_palette("hls", len(flag_label_freq)),
+        data=df_subset,
+        legend="full",
+        alpha=0.3
+    )
+    # plt.plot(pca_results[:,0], pca_results[:,1], '.')
     plt.show()
 
 def over_lap_ratio(ht_pair1, ref_ht_pair2):
@@ -174,6 +165,7 @@ def threshold_map_to_label(y_label, threshold_category):
 
     flag_list = []
     flag_label_freq = {}
+    flag_label_to_idx = {}
     for i in range(y_p.shape[0]):
         # three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
         three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
@@ -186,7 +178,11 @@ def threshold_map_to_label(y_label, threshold_category):
         else:
             flag_label_freq[flag_label] = flag_label_freq[flag_label] + 1
         flag_list.append(flag_label)
-    return flag_list, flag_label_freq
+
+    flag_label_to_idx = dict([(x[1], x[0]) for x in enumerate(sorted(list(flag_label_freq.keys()), reverse=True))])
+    print(flag_label_to_idx)
+    flag_idx_list = [flag_label_to_idx[_] for _ in flag_list]
+    return flag_idx_list, flag_list, flag_label_freq, flag_label_to_idx
 
 def tsne_analysis(x_feat, y_label):
     time_start = time()
@@ -196,31 +192,33 @@ def tsne_analysis(x_feat, y_label):
     print('t-SNE done! Time elapsed: {} seconds'.format(time() - time_start))
     tsne_data = {'tsne-2d-one': tsne_results[:, 0], 'tsne-2d-two': tsne_results[:, 1]}
     df_subset = pd.DataFrame.from_dict(tsne_data)
-    y = np.zeros(y_label.shape[0])
-    y_min_sigmoid, y_max_sigmoid = np_sigmoid(y_label[:,1]), np_sigmoid(y_label[:,2])
-    f1_score = y_label[:,0]
-    for i in range(y_label.shape[0]):
-        f1_i = f1_score[i]
-        y_min_i = y_min_sigmoid[i]
-        y_max_i = y_max_sigmoid[i]
-        if f1_i == 1:
-           if y_min_i < 0.25 and y_max_i > 0.25:
-               y[i] = 0
-           else:
-               y[i] = 1
-        else:
-            y[i] = 2
-    df_subset['y'] = y
+    flag_idx_list, _, flag_label_freq, _ = threshold_map_to_label(y_label=y_label, threshold_category=threshold_category)
+    df_subset['y'] = np.array(flag_idx_list)
+    # y = np.zeros(y_label.shape[0])
+    # y_min_sigmoid, y_max_sigmoid = np_sigmoid(y_label[:,1]), np_sigmoid(y_label[:,2])
+    # f1_score = y_label[:,0]
+    # for i in range(y_label.shape[0]):
+    #     f1_i = f1_score[i]
+    #     y_min_i = y_min_sigmoid[i]
+    #     y_max_i = y_max_sigmoid[i]
+    #     if f1_i == 1:
+    #        if y_min_i < 0.25 and y_max_i > 0.25:
+    #            y[i] = 0
+    #        else:
+    #            y[i] = 1
+    #     else:
+    #         y[i] = 2
+    # df_subset['y'] = y
     plt.figure(figsize=(16, 10))
-    # sns.scatterplot(
-    #     x="tsne-2d-one", y="tsne-2d-two",
-    #     hue="y",
-    #     palette=sns.color_palette("hls", 3),
-    #     data=df_subset,
-    #     legend="full",
-    #     alpha=0.1
-    # )
-    plt.plot(tsne_results[:,0], tsne_results[:,1], 'x')
+    sns.scatterplot(
+        x="tsne-2d-one", y="tsne-2d-two",
+        hue="y",
+        palette=sns.color_palette("hls", len(flag_label_freq)),
+        data=df_subset,
+        legend="full",
+        alpha=0.1
+    )
+    # plt.plot(tsne_results[:,0], tsne_results[:,1], 'x')
     plt.show()
 
 def range_distribution(y_label):
@@ -238,13 +236,13 @@ if __name__ == '__main__':
     # train_feat_extractor()
     # # train_range_analysis()
 
-    x_feat_np, y_label_np = dev_range_analysis()
+    # x_feat_np, y_label_np = dev_range_analysis()
 
-    # flag_list, flag_freq = threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)
+    # threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)
     # # print(flag_list)
     # print(flag_freq)
     # print(len(flag_freq))
-    # x_feat_np, y_label_np = train_range_analysis()
+    x_feat_np, y_label_np = train_range_analysis()
 
     # idx_arr = np.arange(x_feat_np.shape[0])
     # np.random.shuffle(idx_arr)
@@ -252,8 +250,8 @@ if __name__ == '__main__':
     # x_feat_np = x_feat_np[sel_idx,:]
     # y_label_np = y_label_np[sel_idx,:]
 
-    tsne_analysis(x_feat=x_feat_np, y_label=y_label_np)
-    # pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
+    # tsne_analysis(x_feat=x_feat_np, y_label=y_label_np)
+    pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
 
     # range_distribution(y_label=y_label_np)
 

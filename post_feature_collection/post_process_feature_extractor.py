@@ -76,6 +76,20 @@ def best_f1_interval(scores, labels):
     f1_tuple, _, _ = f1_computation(scores=scores, labels=labels)
     return f1_tuple
 
+def single_f1_computation(scores, labels, threshold):
+    sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
+    def idx_in_range(threshold, sorted_score_labels):
+        for i in range(len(sorted_score_labels) - 1):
+            if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:
+                return i
+        return len(sorted_score_labels) - 1
+    s_idx = idx_in_range(threshold=threshold, sorted_score_labels=sorted_sl)
+    count_i = sum([_[1] for _ in sorted_sl[:(s_idx + 1)]])
+    prec_i = count_i / (s_idx + 1)
+    rec_i = count_i / (sum(labels) + 1e-9)
+    f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
+    return f1_i
+
 def f1_computation(scores, labels, thresholds=None):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
