@@ -69,6 +69,7 @@ class ReaderModel(nn.Module):
 
         sent_pred = sent.view(-1, 2)
         sent_gold = batch['is_support'].long().view(-1)
+        print(sent_pred.shape, sent_gold.shape)
         loss_sup = args.sent_lambda * criterion(sent_pred, sent_gold.long())
 
         loss_para = args.para_lambda * criterion(para.view(-1, 2), batch['is_gold_para'].long().view(-1))
