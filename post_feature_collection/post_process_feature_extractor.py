@@ -76,7 +76,7 @@ def best_f1_interval(scores, labels):
     f1_tuple, _, _ = f1_computation(scores=scores, labels=labels)
     return f1_tuple
 
-def single_f1_computation(scores, labels, threshold):
+def single_supp_f1_computation(scores, labels, threshold):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     def idx_in_range(threshold, sorted_score_labels):
         for i in range(len(sorted_score_labels) - 1):
@@ -89,6 +89,48 @@ def single_f1_computation(scores, labels, threshold):
     rec_i = count_i / (sum(labels) + 1e-9)
     f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
     return f1_i
+
+def row_supp_f1_computation(row, threshold):
+    scores = row['sp_score']
+    mask = row['sp_mask']
+    supp_ids = row['trim_sup_fact_id']
+    num_candidate = int(sum(mask))
+    labels = [0] * num_candidate
+    for sup_id in supp_ids:
+        labels[sup_id] = 1
+    trim_scores = scores[:num_candidate]
+    assert len(labels) == len(trim_scores)
+    if len(supp_ids) == 0:
+        return 0
+    f1 = single_supp_f1_computation(scores=scores, labels=labels, threshold=threshold)
+    return f1
+
+def row_f1_computation(row, raw_row, threshold):
+    scores = row['sp_score']
+    mask = row['sp_mask']
+    supp_names = row['sp_names']
+    num_candidate = int(sum(mask))
+    trim_scores = scores[:num_candidate]
+    pred_sp_names = []
+    for idx, score in enumerate(trim_scores):
+        if score > threshold and idx < len(supp_names):
+            pred_sp_names.append(supp_names[idx])
+    gold_facts = set([(sp[0], sp[1]) for sp in raw_row['supporting_facts']])
+    pred_sup_facts = set([(_[0], _[1])for _ in pred_sp_names])
+    tp, fp, fn = 0, 0, 0
+    for e in pred_sup_facts:
+        if e in gold_facts:
+            tp += 1
+        else:
+            fp += 1
+    for e in gold_facts:
+        if e not in pred_sup_facts:
+            fn += 1
+    prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
+    recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
+    f1 = 2 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
+    em = 1.0 if fp + fn == 0 else 0.0
+    return em, f1
 
 def f1_computation(scores, labels, thresholds=None):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
