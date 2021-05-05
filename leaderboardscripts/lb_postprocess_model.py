@@ -157,5 +157,5 @@ def ce_loss_computation(scores, y_min, y_max, score_gold):
     p_score = torch.sigmoid(scores.squeeze(-1))
     loss_range = F.relu(p_score - torch.sigmoid(y_max)) + F.relu(torch.sigmoid(y_min) - p_score)
     loss_range = loss_range.mean()
-    loss = 0*loss_sup + loss_range
+    loss = 10*loss_sup + loss_range
     return loss, loss_sup, loss_range
