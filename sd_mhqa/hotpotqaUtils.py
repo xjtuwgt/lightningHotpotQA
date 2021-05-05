@@ -532,13 +532,15 @@ class ParaSentPredictionLayer(nn.Module):
         sent_logit = self.sent_mlp(sent_state)
         para_logit = self.para_mlp(para_state)
 
+        print('sentpred', sent_state.shape, sent_logit.shape)
+
         para_logits_aux = Variable(para_logit.data.new(para_logit.size(0), para_logit.size(1), 1).zero_())
         para_prediction = torch.cat([para_logits_aux, para_logit], dim=-1).contiguous()
 
         sent_logits_aux = Variable(sent_logit.data.new(sent_logit.size(0), sent_logit.size(1), 1).zero_())
         sent_prediction = torch.cat([sent_logits_aux, sent_logit], dim=-1).contiguous()
 
-        print('sentpred', sent_prediction.shape)
+
         return (para_prediction, sent_prediction)
 
 class PredictionLayer(nn.Module):
