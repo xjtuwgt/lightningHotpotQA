@@ -84,9 +84,9 @@ def train(args):
             #+++++++
             # batch_analysis(batch['x_feat'])
             scores = model(batch['x_feat'])
-            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
-            # loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'],
-            #                                  score_gold=batch['flag'])
+            # loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'],
+                                             score_gold=batch['flag'])
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
@@ -122,8 +122,8 @@ def eval_model(model, data_loader, device):
                 batch[key] = value.to(device)
         with torch.no_grad():
             scores = model(batch['x_feat'])
-            # loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'], score_gold=batch['flag'])
-            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'], score_gold=batch['flag'])
+            # loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             dev_loss_list.append(loss.data.item())
             scores = scores.squeeze(-1)
             scores = torch.sigmoid(scores)
@@ -134,7 +134,6 @@ def eval_model(model, data_loader, device):
 
             for i in range(score_np.shape[0]):
                 key = batch['id'][i]
-                print(key)
                 total_count = total_count + 1
                 score_i = score_np[i]
                 y_min_i = y_min_np[i]
