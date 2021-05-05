@@ -72,7 +72,7 @@ def best_f1_interval(scores, labels):
         min_p = min(p_scores)
         max_n = min_p - 11.0
     if max_n < min_p:
-        return (1.0, (max_n + 1e-6, min_p - 1e-6))
+        return (1.0, (max_n + 1e-9, min_p - 1e-9))
     f1_tuple, _, _ = f1_computation(scores=scores, labels=labels)
     return f1_tuple
 
@@ -80,7 +80,7 @@ def f1_computation(scores, labels, thresholds=None):
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     min_score, max_score = min(scores), max(scores)
     if thresholds is None:
-        split_thresholds = np.arange(min_score, max_score, 0.05)
+        split_thresholds = np.arange(min_score, max_score, 0.01)
     else:
         split_thresholds = thresholds
 
@@ -106,7 +106,7 @@ def f1_computation(scores, labels, thresholds=None):
         if fs == max_f1:
             best_thresholds.append(f_thresh)
     min_threshold, max_threshold = min(best_thresholds), max(best_thresholds)
-    return (max_f1, (min_threshold + 1e-6, max_threshold - 1e-6)), f1_list, split_thresholds
+    return (max_f1, (min_threshold + 1e-9, max_threshold - 1e-9)), f1_list, split_thresholds
 
 def get_best_f1_intervals(scores, labels):
     best_f1_intervals = []
