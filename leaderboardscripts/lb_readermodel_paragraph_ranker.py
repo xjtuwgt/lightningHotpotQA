@@ -210,7 +210,7 @@ def albert_para_ranker_model(args, model, dataloader, example_dict, topk=2, gold
                 if supp_title_set.issubset(sel_para_names) and len(supp_title_set) == 2:
                     recall_list.append(1)
                 else:
-                    print(key)
+                    print(key, '\t', sel_para_names)
                     recall_list.append(0)
         print('Recall = {}'.format(sum(recall_list)*1.0/len(prediction_para_dict)))
     return prediction_para_dict, rank_paras_dict
