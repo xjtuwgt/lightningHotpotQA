@@ -83,7 +83,7 @@ def train(args):
                     batch[key] = value.to(device)
             #+++++++
             # batch_analysis(batch['x_feat'])
-            scores = model(batch['x_feat']).squeeze(-1)
+            scores = model(batch['x_feat'])
             # loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'],
                                              score_gold=batch['flag'])
@@ -121,9 +121,10 @@ def eval_model(model, data_loader, device):
             if key not in ['id']:
                 batch[key] = value.to(device)
         with torch.no_grad():
-            scores = model(batch['x_feat']).squeeze(-1)
+            scores = model(batch['x_feat'])
             loss, _, _ = ce_loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'], score_gold=batch['flag'])
             dev_loss_list.append(loss.data.item())
+            scores = scores.squeeze(-1)
             scores = torch.sigmoid(scores)
             score_np = scores.data.cpu().numpy()
             y_min_np = batch['y_min'].data.cpu().numpy()
