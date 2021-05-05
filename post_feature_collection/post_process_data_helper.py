@@ -34,4 +34,3 @@ class RangeDataset(Dataset):
         key = [_[3] for _ in data]
         sample = {'x_feat': x, 'y_min': y_min, 'y_max': y_max, 'flag': flag, 'id': key}
         return sample
-
