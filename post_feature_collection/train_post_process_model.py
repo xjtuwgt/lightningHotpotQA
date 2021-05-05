@@ -130,6 +130,7 @@ def eval_model(model, data_loader, device):
 
             for i in range(score_np.shape[0]):
                 key = batch['id'][i]
+                print(key)
                 total_count = total_count + 1
                 score_i = score_np[i]
                 y_min_i = y_min_np[i]
