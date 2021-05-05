@@ -26,12 +26,8 @@ train_feat_name = 'train_feat_data.json'
 dev_feat_name = 'dev_feat_data.json'
 # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
 interval_num = 10
-# interval_range = 1.0/interval_num
-# threshold_category = [(i * interval_range, (i+1) * interval_range) for i in range(interval_num)]
-min_value = -11.0
-max_value = 11.0
-interval_range = (max_value - min_value)/interval_num
-threshold_category = [(i * interval_range + min_value, (i+1) * interval_range + min_value) for i in range(interval_num)]
+interval_range = 1.0/interval_num
+threshold_category = [(i * interval_range, (i+1) * interval_range) for i in range(interval_num)]
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def train_feat_extractor():
     raw_train_file_name = join(raw_data_path, raw_train_name)
@@ -156,10 +152,10 @@ def over_lap_ratio(ht_pair1, ref_ht_pair2):
 
 def threshold_map_to_label(y_label, threshold_category):
     over_lap_res = []
-    # y_p = np_sigmoid(y_label[:, 2])
-    # y_n = np_sigmoid(y_label[:, 1])
-    y_p = y_label[:, 2]
-    y_n = y_label[:, 1]
+    y_p = np_sigmoid(y_label[:, 2])
+    y_n = np_sigmoid(y_label[:, 1])
+    # y_p = y_label[:, 2]
+    # y_n = y_label[:, 1]
     f1_score = y_label[:,0]
     for i in range(y_p.shape[0]):
         p_i = y_p[i]
@@ -194,8 +190,8 @@ def threshold_map_to_label(y_label, threshold_category):
 
 def tsne_analysis(x_feat, y_label):
     time_start = time()
-    tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
-    x_feat = skl_norm(x_feat, axis=1)
+    tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=400)
+    # x_feat = skl_norm(x_feat, axis=1)
     tsne_results = tsne.fit_transform(x_feat)
     print('t-SNE done! Time elapsed: {} seconds'.format(time() - time_start))
     tsne_data = {'tsne-2d-one': tsne_results[:, 0], 'tsne-2d-two': tsne_results[:, 1]}
@@ -227,28 +223,39 @@ def tsne_analysis(x_feat, y_label):
     plt.plot(tsne_results[:,0], tsne_results[:,1], 'x')
     plt.show()
 
+def range_distribution(y_label):
+    y_min, y_max = np_sigmoid(y_label[:, 1]), np_sigmoid(y_label[:, 2])
+    y_diff = y_max - y_min
+    # plt.hist(x=y_diff, bins='auto', color='#0504aa',
+    #          alpha=0.7, rwidth=0.85)
+
+    plt.hist(x=y_diff, bins='auto', density=True, histtype='step', cumulative=True,
+            label='Reversed emp.')
+    plt.show()
 
 if __name__ == '__main__':
     # dev_feat_extractor()
     # train_feat_extractor()
     # # train_range_analysis()
 
-    # x_feat_np, y_label_np = dev_range_analysis()
+    x_feat_np, y_label_np = dev_range_analysis()
 
     # flag_list, flag_freq = threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)
     # # print(flag_list)
     # print(flag_freq)
     # print(len(flag_freq))
-    x_feat_np, y_label_np = train_range_analysis()
+    # x_feat_np, y_label_np = train_range_analysis()
 
-    idx_arr = np.arange(x_feat_np.shape[0])
-    np.random.shuffle(idx_arr)
-    sel_idx = idx_arr[:40000]
-    x_feat_np = x_feat_np[sel_idx,:]
-    y_label_np = y_label_np[sel_idx,:]
+    # idx_arr = np.arange(x_feat_np.shape[0])
+    # np.random.shuffle(idx_arr)
+    # sel_idx = idx_arr[:40000]
+    # x_feat_np = x_feat_np[sel_idx,:]
+    # y_label_np = y_label_np[sel_idx,:]
 
     tsne_analysis(x_feat=x_feat_np, y_label=y_label_np)
     # pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
+
+    # range_distribution(y_label=y_label_np)
 
     # print(x_feat_np.shape, y_label_np.shape)
     # y_label_plot(y_label_np=y_label_np)
