@@ -31,6 +31,6 @@ class RangeDataset(Dataset):
         y_min = torch.cat([_[1] for _ in data], dim=0)
         y_max = torch.cat([_[2] for _ in data], dim=0)
         flag = torch.cat([_[3] for _ in data], dim=0)
-        key = [_[3] for _ in data]
+        key = [_[4] for _ in data]
         sample = {'x_feat': x, 'y_min': y_min, 'y_max': y_max, 'flag': flag, 'id': key}
         return sample
