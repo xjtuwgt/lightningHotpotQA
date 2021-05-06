@@ -68,13 +68,10 @@ def train(args):
     ###++++++++++++++++++++++++++++++++++++++++++
 
     start_epoch = 0
-    train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch")
     best_em_ratio = 0.0
     dev_loss = 0.0
     dev_prediction_dict = None
-    # for epoch in train_iterator:
     for epoch in range(start_epoch, start_epoch + int(args.num_train_epochs)):
-        # epoch_iterator = tqdm(train_data_loader, desc="Iteration")
         epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
             model.train()
@@ -94,10 +91,6 @@ def train(args):
 
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
-                # print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\tsupp_loss={:.5f}\trange_loss={:.5f}\n'.format(epoch, step,
-                #                                                                               loss.data.item(),
-                #                                                                               best_em_ratio, dev_loss, loss_supp.data.item(),
-                #                                                                                                                    loss_range.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device)
                 dev_loss = dev_loss_i
@@ -105,7 +98,7 @@ def train(args):
                 if em_ratio > best_em_ratio:
                     best_em_ratio = em_ratio
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
-                               join(args.output_dir, args.exp_name, f'threshold_pred_model.pkl'))
+                               join(args.output_dir, args.exp_name, f'seq_threshold_pred_model.pkl'))
                     dev_prediction_dict = pred_dict
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
