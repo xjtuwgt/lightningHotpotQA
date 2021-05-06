@@ -1,7 +1,7 @@
 import json
 from os.path import join
 from tqdm import tqdm
-from post_feature_collection.post_process_feature_extractor import feat_label_extraction
+from post_feature_collection.post_process_feature_extractor import feat_label_extraction, feat_seq_label_extraction
 from leaderboardscripts.lb_postprocess_utils import load_json_score_data
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ import pandas as pd
 import seaborn as sns
 from numpy import ndarray
 from sklearn.preprocessing import normalize as skl_norm
-from post_feature_collection.post_process_feature_extractor import threshold_map_to_label, np_sigmoid
+from post_feature_collection.post_process_feature_extractor import threshold_map_to_label, np_sigmoid, get_threshold_category
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 raw_data_path = '/Users/xjtuwgt/PycharmProjects/LongSeqMultihopReason/data/hotpotqa'
 score_data_path = '/Users/xjtuwgt/Desktop/HotPotQA'
@@ -27,23 +27,25 @@ score_dev_name = 'dev_distractor_post_6_4_score.json'
 train_feat_name = 'train_feat_data.json'
 dev_feat_name = 'dev_feat_data.json'
 # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-interval_num = 10
-interval_range = 1.0/interval_num
-threshold_category = [(i * interval_range, (i+1) * interval_range) for i in range(interval_num)]
+threshold_category = get_threshold_category(interval_num=300)
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-def train_feat_extractor():
+def train_feat_extractor(interval_num):
+    threshold_category = get_threshold_category(interval_num=interval_num)
     raw_train_file_name = join(raw_data_path, raw_train_name)
     train_score_file_name = join(score_data_path, score_train_name)
     train_feat_file_name = join(score_data_path, train_feat_name)
-    train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    # train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    train_feat_dict = feat_seq_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name, threshold_category=threshold_category)
     json.dump(train_feat_dict, open(train_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(train_feat_dict), train_feat_file_name))
 
-def dev_feat_extractor():
+def dev_feat_extractor(interval_num):
+    threshold_category = get_threshold_category(interval_num=interval_num)
     raw_dev_file_name = join(raw_data_path, raw_dev_name)
     dev_score_file_name = join(score_data_path, score_dev_name)
     dev_feat_file_name = join(score_data_path, dev_feat_name)
-    dev_feat_dict = feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
+    # dev_feat_dict = feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
+    dev_feat_dict = feat_seq_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name, threshold_category=threshold_category)
     json.dump(dev_feat_dict, open(dev_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(dev_feat_dict), dev_feat_file_name))
 
@@ -173,31 +175,62 @@ def range_distribution(y_label):
             label='Reversed emp.')
     plt.show()
 
-# if __name__ == '__main__':
-#     # dev_feat_extractor()
-#     # train_feat_extractor()
+def threshold_to_label_loop(y_label_np):
+    interval_num_list = [10 * (_ + 1) for _ in range(40)]
+    num2_ratio_list = []
+    for inter_num in interval_num_list:
+        threshold_category_i = get_threshold_category(interval_num=inter_num)
+        flag_idx_list, flag_list, flag_label_freq, _ = threshold_map_to_label(y_label=y_label_np,
+                                                                              threshold_category=threshold_category_i)
+        num2_count = 0.0
+        nun2_list = []
+        for flag in flag_list:
+            l_idx = flag.find('2')
+            r_idx = flag.rfind('2')
+            if l_idx >= 0:
+                nun2_list.append(r_idx - l_idx)
+            if '2' in flag:
+                num2_count = num2_count + 1
+        num2_ratio_i = num2_count / len(flag_list)
+        num2_ratio_list.append(num2_ratio_i)
+        print(inter_num, num2_count / len(flag_list))
+        print('*' * 75)
+    for num, ratio in zip(interval_num_list, num2_ratio_list):
+        print('{}\t{}'.format(num, ratio))
+
+
+
+if __name__ == '__main__':
+    dev_feat_extractor(interval_num=10)
+    # train_feat_extractor()
 #     # # train_range_analysis()
 #
-#     # x_feat_np, y_label_np = dev_range_analysis()
+    # x_feat_np, y_label_np = dev_range_analysis()
 #     x_feat_np, y_label_np = train_range_analysis()
+# #
+#     # threshold_to_label_loop(y_label_np=y_label_np)
+#     flag_idx_list, flag_list, flag_label_freq, _ = threshold_map_to_label(y_label=y_label_np,
+#                                                                           threshold_category=threshold_category)
+#     num2_count = 0.0
+#     nun2_list = []
+#     for flag in flag_list:
+#         l_idx = flag.find('2')
+#         r_idx = flag.rfind('2')
+#         if l_idx >= 0:
+#             nun2_list.append(r_idx - l_idx)
+#         if '2' in flag:
+#             num2_count = num2_count + 1
 #
-#     # flag_idx_list, flag_list, flag_label_freq, _ = threshold_map_to_label(y_label=y_label_np,
-#     #                                                                       threshold_category=threshold_category)
-#     # num2_count = 0.0
-#     # nun2_list = []
-#     # for flag in flag_list:
-#     #     l_idx = flag.find('2')
-#     #     r_idx = flag.rfind('2')
-#     #     if l_idx >= 0:
-#     #         nun2_list.append(r_idx - l_idx)
-#     #     if '2' in flag:
-#     #         num2_count = num2_count + 1
-#     #
-#     # print(num2_count/len(flag_list))
-#     # counter = dict(Counter(nun2_list))
-#     # for key, value in counter.items():
-#     #     print(key, value * 1.0 /len(flag_idx_list))
-#     # print(counter)
+#     print(num2_count/len(flag_list))
+#     counter = dict(Counter(nun2_list))
+#     for i in range(len(threshold_category) + 1):
+#         if i in counter:
+#             print('{}\t{}'.format(i, counter[i]))
+#         else:
+#             print('{}\t{}'.format(i, 0))
+    # for key, value in counter.items():
+    #     print(key, value * 1.0 /len(flag_idx_list))
+    # print(counter)
 #
 #
 #     # threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)

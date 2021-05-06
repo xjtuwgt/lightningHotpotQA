@@ -7,6 +7,11 @@ import json
 
 def np_sigmoid(x):
     return 1 / (1 + np.exp(-x))
+
+def get_threshold_category(interval_num):
+    interval_range = 1.0 / interval_num
+    threshold_category = [(i * interval_range, (i + 1) * interval_range) for i in range(interval_num)]
+    return threshold_category
 ##+++++++++++++++++++++++++++++++++++++++++++
 def over_lap_ratio(ht_pair1, ref_ht_pair2):
     h, t = ht_pair1
@@ -32,7 +37,13 @@ def single_threshold_map_to_label(n_i, p_i, f1_i, threshold_category):
     for b_idx, bound in enumerate(threshold_category):
         over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
         over_lap_list.append((over_lap_value, over_lap_type))
-    return over_lap_list, p_flag
+
+    str_type = ''.join([str(x[1]) for x in over_lap_list])
+    if p_flag:
+        flag_label = 'T_' + str(str_type)
+    else:
+        flag_label = 'F_' + str(str_type)
+    return over_lap_list, p_flag, flag_label
 
 def threshold_map_to_label(y_label, threshold_category):
     over_lap_res = []
@@ -52,7 +63,7 @@ def threshold_map_to_label(y_label, threshold_category):
         # for b_idx, bound in enumerate(threshold_category):
         #     over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
         #     over_lap_list.append((over_lap_value, over_lap_type))
-        over_lap_list_i, p_flag_i = single_threshold_map_to_label(n_i=n_i, p_i=p_i, f1_i=f1_i,
+        over_lap_list_i, p_flag_i, _ = single_threshold_map_to_label(n_i=n_i, p_i=p_i, f1_i=f1_i,
                                                                   threshold_category=threshold_category)
         over_lap_res.append((over_lap_list_i, p_flag_i))
 
@@ -115,9 +126,10 @@ def feat_seq_label_extraction(raw_data_name, score_data_name, threshold_category
             y_label = row_y_label_extraction(row=score_case)
             if y_label[1][0] is not None:
                 #++++++++++++++++
-                over_lap_list_i, p_flag_i = single_threshold_map_to_label(n_i=y_label[1][0], p_i=y_label[1][1], f1_i=y_label[0],
+                n_i, p_i, f1_i = np_sigmoid(y_label[1][0]), np_sigmoid(y_label[1][1]), y_label[0]
+                over_lap_list_i, p_flag_i, flag_label_i = single_threshold_map_to_label(n_i=n_i, p_i=p_i, f1_i=f1_i,
                                                                           threshold_category=threshold_category)
-                seq_label = (over_lap_list_i, p_flag_i)
+                seq_label = (over_lap_list_i, p_flag_i, flag_label_i)
                 score_pred_dict[key] = {'x_feat': x_feat, 'y_label': y_label, 'y_seq_label': seq_label}
                 #++++++++++++++++
                 if y_label[0] == 1.0:
@@ -128,20 +140,24 @@ def feat_seq_label_extraction(raw_data_name, score_data_name, threshold_category
     return score_pred_dict
 
 def train_feature_label_extraction(args):
+    assert args.interval_number > 0
+    threshold_category = get_threshold_category(interval_num=args.interval_number)
     raw_train_file_name = join(args.input_dir, args.raw_train_data)
     train_score_file_name = join(args.output_dir, args.exp_name, args.train_score_name)
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
     # train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
-    train_feat_dict = feat_seq_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    train_feat_dict = feat_seq_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name, threshold_category=threshold_category)
     json.dump(train_feat_dict, open(train_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(train_feat_dict), train_feat_file_name))
 
 def dev_feature_label_extraction(args):
+    assert args.interval_number > 0
+    threshold_category = get_threshold_category(interval_num=args.interval_number)
     raw_dev_file_name = join(args.input_dir, args.raw_dev_data)
     dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
     # dev_feat_dict = feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
-    dev_feat_dict = feat_seq_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
+    dev_feat_dict = feat_seq_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name, threshold_category=threshold_category)
     json.dump(dev_feat_dict, open(dev_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(dev_feat_dict), dev_feat_file_name))
 
