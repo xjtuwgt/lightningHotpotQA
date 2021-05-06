@@ -12,7 +12,7 @@ from sd_mhqa.hotpotqa_evalutils import jd_hotpotqa_eval_model
 from sd_mhqa.hotpotqa_datahelper import DataHelper
 
 
-from sd_mhqa.hotpotqa_model import SDModel, UnifiedSDModel
+from sd_mhqa.hotpotqa_model import UnifiedSDModel
 from model_envs import MODEL_CLASSES
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',

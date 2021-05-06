@@ -1,10 +1,10 @@
-from post_feature_collection.post_process_data_helper import RangeDataset
+from post_feature_collection.post_process_data_helper import RangeSeqDataset
 from post_feature_collection.post_process_argument_parser import train_parser
 from torch.utils.data import DataLoader
 from os.path import join
 import torch
 import json
-from leaderboardscripts.lb_postprocess_model import RangeModel, loss_computation
+from leaderboardscripts.lb_postprocess_model import RangeSeqModel, seq_loss_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer
 import random
@@ -37,19 +37,19 @@ def train(args):
     torch.manual_seed(random_seed)
     torch.cuda.manual_seed_all(random_seed)
     ##+++++++++
-    train_data = RangeDataset(json_file_name=train_feat_file_name)
+    train_data = RangeSeqDataset(json_file_name=train_feat_file_name)
     train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
-                                   collate_fn=RangeDataset.collate_fn,
+                                   collate_fn=RangeSeqDataset.collate_fn,
                                    batch_size=args.train_batch_size)
 
-    dev_data = RangeDataset(json_file_name=dev_feat_file_name)
+    dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name)
     dev_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
-                                 collate_fn=RangeDataset.collate_fn,
+                                 collate_fn=RangeSeqDataset.collate_fn,
                                  batch_size=args.eval_batch_size)
 
-    model = RangeModel(args=args)
+    model = RangeSeqModel(args=args)
     model.to(device)
 
     model.zero_grad()
@@ -83,8 +83,8 @@ def train(args):
                     batch[key] = value.to(device)
             #+++++++
             # batch_analysis(batch['x_feat'])
-            scores = model(batch['x_feat'])
-            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            start_scores, end_scores = model(batch['x_feat'])
+            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch)
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
@@ -123,8 +123,8 @@ def eval_model(model, data_loader, device):
             if key not in ['id']:
                 batch[key] = value.to(device)
         with torch.no_grad():
-            scores = model(batch['x_feat'])
-            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            start_scores, end_scores = model(batch['x_feat'])
+            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch)
             dev_loss_list.append(loss.data.item())
             scores = scores.squeeze(-1)
             scores = torch.sigmoid(scores)
