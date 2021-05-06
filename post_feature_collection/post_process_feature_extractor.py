@@ -22,6 +22,18 @@ def over_lap_ratio(ht_pair1, ref_ht_pair2):
     if r_h >= h and r_h < t: ## over-lap
         return (t - r_h) / (r_t - r_h), 4
 
+def single_threshold_map_to_label(n_i, p_i, f1_i, threshold_category):
+    ht_pair_i = (n_i, p_i)
+    if f1_i == 1:
+        p_flag = True
+    else:
+        p_flag = False
+    over_lap_list = []
+    for b_idx, bound in enumerate(threshold_category):
+        over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
+        over_lap_list.append((over_lap_value, over_lap_type))
+    return over_lap_list, p_flag
+
 def threshold_map_to_label(y_label, threshold_category):
     over_lap_res = []
     y_p = np_sigmoid(y_label[:, 2])
@@ -31,20 +43,21 @@ def threshold_map_to_label(y_label, threshold_category):
         p_i = y_p[i]
         n_i = y_n[i]
         f1_i = f1_score[i]
-        ht_pair_i = (n_i, p_i)
-        if f1_i == 1:
-            p_flag = True
-        else:
-            p_flag = False
-        over_lap_list = []
-        for b_idx, bound in enumerate(threshold_category):
-            over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
-            over_lap_list.append((over_lap_value, over_lap_type))
-        over_lap_res.append((over_lap_list, p_flag))
+        # ht_pair_i = (n_i, p_i)
+        # if f1_i == 1:
+        #     p_flag = True
+        # else:
+        #     p_flag = False
+        # over_lap_list = []
+        # for b_idx, bound in enumerate(threshold_category):
+        #     over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
+        #     over_lap_list.append((over_lap_value, over_lap_type))
+        over_lap_list_i, p_flag_i = single_threshold_map_to_label(n_i=n_i, p_i=p_i, f1_i=f1_i,
+                                                                  threshold_category=threshold_category)
+        over_lap_res.append((over_lap_list_i, p_flag_i))
 
     flag_list = []
     flag_label_freq = {}
-    flag_label_to_idx = {}
     for i in range(y_p.shape[0]):
         # three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
         three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
@@ -59,7 +72,7 @@ def threshold_map_to_label(y_label, threshold_category):
         flag_list.append(flag_label)
 
     flag_label_to_idx = dict([(x[1], x[0]) for x in enumerate(sorted(list(flag_label_freq.keys()), reverse=True))])
-    print(flag_label_to_idx)
+    # print(flag_label_to_idx)
     flag_idx_list = [flag_label_to_idx[_] for _ in flag_list]
     return flag_idx_list, flag_list, flag_label_freq, flag_label_to_idx
 

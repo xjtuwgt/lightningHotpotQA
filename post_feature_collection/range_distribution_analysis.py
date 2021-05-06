@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from collections import Counter
 from time import time
 import pandas as pd
 import seaborn as sns
@@ -26,7 +27,7 @@ score_dev_name = 'dev_distractor_post_6_4_score.json'
 train_feat_name = 'train_feat_data.json'
 dev_feat_name = 'dev_feat_data.json'
 # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-interval_num = 100
+interval_num = 10
 interval_range = 1.0/interval_num
 threshold_category = [(i * interval_range, (i+1) * interval_range) for i in range(interval_num)]
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -132,7 +133,8 @@ def tsne_analysis(x_feat, y_label, perplexity=100):
     print('t-SNE done! Time elapsed: {} seconds'.format(time() - time_start))
     tsne_data = {'tsne-2d-one': tsne_results[:, 0], 'tsne-2d-two': tsne_results[:, 1]}
     df_subset = pd.DataFrame.from_dict(tsne_data)
-    flag_idx_list, _, flag_label_freq, _ = threshold_map_to_label(y_label=y_label, threshold_category=threshold_category)
+    flag_idx_list, flag_list, flag_label_freq, _ = threshold_map_to_label(y_label=y_label, threshold_category=threshold_category)
+
     df_subset['y'] = np.array(flag_idx_list)
     # y = np.zeros(y_label.shape[0])
     # y_min_sigmoid, y_max_sigmoid = np_sigmoid(y_label[:,1]), np_sigmoid(y_label[:,2])
@@ -171,30 +173,48 @@ def range_distribution(y_label):
             label='Reversed emp.')
     plt.show()
 
-if __name__ == '__main__':
-    # dev_feat_extractor()
-    # train_feat_extractor()
-    # # train_range_analysis()
-
-    x_feat_np, y_label_np = dev_range_analysis()
-
-    # threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)
-    # # print(flag_list)
-    # print(flag_freq)
-    # print(len(flag_freq))
-    # x_feat_np, y_label_np = train_range_analysis()
-
-    # idx_arr = np.arange(x_feat_np.shape[0])
-    # np.random.shuffle(idx_arr)
-    # sel_idx = idx_arr[:40000]
-    # x_feat_np = x_feat_np[sel_idx,:]
-    # y_label_np = y_label_np[sel_idx,:]
-
-    tsne_analysis(x_feat=x_feat_np, y_label=y_label_np)
-    # pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
-
-    # range_distribution(y_label=y_label_np)
-
-    # print(x_feat_np.shape, y_label_np.shape)
-    # y_label_plot(y_label_np=y_label_np)
-    print()
+# if __name__ == '__main__':
+#     # dev_feat_extractor()
+#     # train_feat_extractor()
+#     # # train_range_analysis()
+#
+#     # x_feat_np, y_label_np = dev_range_analysis()
+#     x_feat_np, y_label_np = train_range_analysis()
+#
+#     # flag_idx_list, flag_list, flag_label_freq, _ = threshold_map_to_label(y_label=y_label_np,
+#     #                                                                       threshold_category=threshold_category)
+#     # num2_count = 0.0
+#     # nun2_list = []
+#     # for flag in flag_list:
+#     #     l_idx = flag.find('2')
+#     #     r_idx = flag.rfind('2')
+#     #     if l_idx >= 0:
+#     #         nun2_list.append(r_idx - l_idx)
+#     #     if '2' in flag:
+#     #         num2_count = num2_count + 1
+#     #
+#     # print(num2_count/len(flag_list))
+#     # counter = dict(Counter(nun2_list))
+#     # for key, value in counter.items():
+#     #     print(key, value * 1.0 /len(flag_idx_list))
+#     # print(counter)
+#
+#
+#     # threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)
+#     # # print(flag_list)
+#     # print(flag_freq)
+#
+#     idx_arr = np.arange(x_feat_np.shape[0])
+#     np.random.shuffle(idx_arr)
+#     sel_idx = idx_arr[:40000]
+#     x_feat_np = x_feat_np[sel_idx,:]
+#     y_label_np = y_label_np[sel_idx,:]
+#
+#     tsne_analysis(x_feat=x_feat_np, y_label=y_label_np, perplexity=150)
+#     # pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
+#
+#     # range_distribution(y_label=y_label_np)
+#
+#     # print(x_feat_np.shape, y_label_np.shape)
+#     # y_label_plot(y_label_np=y_label_np)
+#     print()
