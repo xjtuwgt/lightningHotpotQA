@@ -101,11 +101,15 @@ def feat_overlap_analysis(x_feat, y_label, sigmoid=False, x_norm=False):
 
     plt.show()
 
-x_feat_np, y_label_np = train_range_analysis()
-# x_feat_np, y_label_np = dev_range_analysis()
+# x_feat_np, y_label_np = train_range_analysis()
+# # x_feat_np, y_label_np = dev_range_analysis()
+#
+# print(x_feat_np.shape)
+# print(y_label_np.shape)
+#
+# feat_correlation_analysis(x_feat=x_feat_np, y_label=y_label_np, sigmoid=False)
+# # feat_overlap_analysis(x_feat=x_feat_np, y_label=y_label_np, sigmoid=False)
 
-print(x_feat_np.shape)
-print(y_label_np.shape)
-
-feat_correlation_analysis(x_feat=x_feat_np, y_label=y_label_np, sigmoid=False)
-# feat_overlap_analysis(x_feat=x_feat_np, y_label=y_label_np, sigmoid=False)
+x = (0.5, 0.6)
+y = (0.55, 0.8)
+print(over_lap_ratio(x, y))
