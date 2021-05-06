@@ -12,6 +12,7 @@ import numpy as np
 from utils.gpu_utils import single_free_cuda
 from torch import Tensor
 import torch
+from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid
 
 def batch_analysis(x_feat: Tensor):
     p2dist = torch.cdist(x1=x_feat, x2=x_feat, p=2)
@@ -110,7 +111,7 @@ def train(args):
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio, dev_prediction_dict
 
-def eval_model(model, data_loader, device):
+def eval_model(model, data_loader, threshold_category, device):
     model.eval()
     em_count = 0
     total_count = 0
@@ -123,22 +124,23 @@ def eval_model(model, data_loader, device):
             if key not in ['id']:
                 batch[key] = value.to(device)
         with torch.no_grad():
-            start_scores, end_scores = model(batch['x_feat'])
+            start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
             loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch)
             dev_loss_list.append(loss.data.item())
-            scores = scores.squeeze(-1)
-            scores = torch.sigmoid(scores)
-            score_np = scores.data.cpu().numpy()
             y_min_np = batch['y_min'].data.cpu().numpy()
             y_max_np = batch['y_max'].data.cpu().numpy()
             y_flag_np = batch['flag'].data.cpu().numpy()
+            start_indexes = y1.data.cpu().numpy()
+            end_indexes = y2.data.cpu().numpy()
 
-            for i in range(score_np.shape[0]):
+            for i in range(y_min_np.shape[0]):
                 key = batch['id'][i]
                 total_count = total_count + 1
-                score_i = score_np[i]
-                y_min_i = y_min_np[i]
-                y_max_i = y_max_np[i]
+                start_i = int(start_indexes[i])
+                end_i = int(end_indexes[i])
+                score_i = (threshold_category[start_i][1] + threshold_category[end_i][0])/2.0
+                y_min_i = np_sigmoid(y_min_np[i])
+                y_max_i = np_sigmoid(y_max_np[i])
                 y_flag_i = y_flag_np[i]
                 # print(score_i, y_min_i, y_max_i)
                 if score_i >= y_min_i and score_i <= y_max_i and y_flag_i == 1:

@@ -141,12 +141,16 @@ class RangeSeqModel(nn.Module):
         self.start_linear = OutputLayer(self.hidden, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
         self.end_linear = OutputLayer(self.hidden, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
 
+        self.cache_S = 0
+        self.cache_mask = None
+        self.span_window_size = self.args.span_window_size
+
     def get_output_mask(self, outer):
         S = outer.size(1)
         if S <= self.cache_S:
             return Variable(self.cache_mask[:S, :S], requires_grad=False)
         self.cache_S = S
-        np_mask = np.tril(np.triu(np.ones((S, S)), 0), 15)
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.span_window_size)
         self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
         return Variable(self.cache_mask, requires_grad=False)
 
