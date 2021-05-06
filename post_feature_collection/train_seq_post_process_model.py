@@ -75,6 +75,7 @@ def train(args):
     for epoch in range(start_epoch, start_epoch + int(args.num_train_epochs)):
         epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
+            print(batch)
             model.train()
             #+++++++
             for key, value in batch.items():
@@ -93,7 +94,7 @@ def train(args):
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device)
+                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, threshold_category=threshold_category)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
