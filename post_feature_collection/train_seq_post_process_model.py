@@ -21,6 +21,7 @@ def batch_analysis(x_feat: Tensor):
 def train(args):
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
+    threshold_category = get_threshold_category(interval_num=args.interval_number)
 
     if torch.cuda.is_available():
         device_ids, _ = single_free_cuda()
