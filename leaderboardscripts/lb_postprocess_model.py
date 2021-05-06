@@ -164,7 +164,10 @@ class RangeSeqModel(nn.Module):
 
         outer = start_prediction_scores[:, :, None] + end_prediction_scores[:, None]
         outer_mask = self.get_output_mask(outer)
-        return start_prediction_scores, end_prediction_scores
+        outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
+        yp1 = outer.max(dim=2)[0].max(dim=1)[1]
+        yp2 = outer.max(dim=1)[0].max(dim=1)[1]
+        return start_prediction_scores, end_prediction_scores, yp1, yp2
 
 
 class PredictionLayer(nn.Module):
