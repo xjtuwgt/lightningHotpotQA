@@ -580,7 +580,9 @@ class PredictionLayer(nn.Module):
             return (start_prediction, end_prediction, type_prediction)
 
         outer = start_prediction[:, :, None] + end_prediction[:, None]
+        print('outer', outer.shape)
         outer_mask = self.get_output_mask(outer)
+        print('outer mask', outer_mask.shape)
         outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
         if packing_mask is not None:
             outer = outer - 1e30 * packing_mask[:, :, None]
