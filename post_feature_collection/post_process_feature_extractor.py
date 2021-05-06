@@ -5,6 +5,64 @@ from tqdm import tqdm
 import numpy as np
 import json
 
+def np_sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+##+++++++++++++++++++++++++++++++++++++++++++
+def over_lap_ratio(ht_pair1, ref_ht_pair2):
+    h, t = ht_pair1
+    r_h, r_t = ref_ht_pair2
+    if t < r_h or h > r_t: ## no overlap
+        return 0.0, 1
+    if r_h >= h and r_t <= t: ## subset: ref is a subset of given pair
+        return 1.0, 2
+    if r_h <= h and r_t >= t:
+        return (t - h) / (r_t - r_h), 3 ## superset: ref is a superset of given pair
+    if h >= r_h and h < r_t: ## over-lap
+        return (r_t - h) / (r_t - r_h), 4
+    if r_h >= h and r_h < t: ## over-lap
+        return (t - r_h) / (r_t - r_h), 4
+
+def threshold_map_to_label(y_label, threshold_category):
+    over_lap_res = []
+    y_p = np_sigmoid(y_label[:, 2])
+    y_n = np_sigmoid(y_label[:, 1])
+    f1_score = y_label[:,0]
+    for i in range(y_p.shape[0]):
+        p_i = y_p[i]
+        n_i = y_n[i]
+        f1_i = f1_score[i]
+        ht_pair_i = (n_i, p_i)
+        if f1_i == 1:
+            p_flag = True
+        else:
+            p_flag = False
+        over_lap_list = []
+        for b_idx, bound in enumerate(threshold_category):
+            over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
+            over_lap_list.append((over_lap_value, over_lap_type))
+        over_lap_res.append((over_lap_list, p_flag))
+
+    flag_list = []
+    flag_label_freq = {}
+    flag_label_to_idx = {}
+    for i in range(y_p.shape[0]):
+        # three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
+        three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
+        if over_lap_res[i][1]:
+            flag_label = 'T_' + str(three_types)
+        else:
+            flag_label = 'F_' + str(three_types)
+        if flag_label not in flag_label_freq:
+            flag_label_freq[flag_label] = 1
+        else:
+            flag_label_freq[flag_label] = flag_label_freq[flag_label] + 1
+        flag_list.append(flag_label)
+
+    flag_label_to_idx = dict([(x[1], x[0]) for x in enumerate(sorted(list(flag_label_freq.keys()), reverse=True))])
+    print(flag_label_to_idx)
+    flag_idx_list = [flag_label_to_idx[_] for _ in flag_list]
+    return flag_idx_list, flag_list, flag_label_freq, flag_label_to_idx
+
 def feat_label_extraction(raw_data_name, score_data_name):
     raw_data = load_json_score_data(raw_data_name)
     print('Loading {} records from {}'.format(len(raw_data), raw_data_name))
@@ -139,7 +197,6 @@ def f1_computation(scores, labels, thresholds=None):
         split_thresholds = np.arange(min_score, max_score, 0.01)
     else:
         split_thresholds = thresholds
-
     def idx_in_range(threshold, sorted_score_labels):
         for i in range(len(sorted_score_labels) - 1):
             if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:

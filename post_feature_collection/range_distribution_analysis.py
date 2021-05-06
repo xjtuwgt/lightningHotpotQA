@@ -12,6 +12,7 @@ import pandas as pd
 import seaborn as sns
 from numpy import ndarray
 from sklearn.preprocessing import normalize as skl_norm
+from post_feature_collection.post_process_feature_extractor import threshold_map_to_label, np_sigmoid
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 raw_data_path = '/Users/xjtuwgt/PycharmProjects/LongSeqMultihopReason/data/hotpotqa'
 score_data_path = '/Users/xjtuwgt/Desktop/HotPotQA'
@@ -25,7 +26,7 @@ score_dev_name = 'dev_distractor_post_6_4_score.json'
 train_feat_name = 'train_feat_data.json'
 dev_feat_name = 'dev_feat_data.json'
 # threshold_category = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
-interval_num = 3
+interval_num = 100
 interval_range = 1.0/interval_num
 threshold_category = [(i * interval_range, (i+1) * interval_range) for i in range(interval_num)]
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -102,10 +103,6 @@ def y_label_plot(y_label_np):
     plt.plot(x, y_max, '.')
     plt.show()
 
-
-def np_sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
 def pca_analysis(x_feat, y_label):
     pca = PCA(n_components=3)
     # x_feat = skl_norm(x_feat, axis=1)
@@ -127,66 +124,9 @@ def pca_analysis(x_feat, y_label):
     # plt.plot(pca_results[:,0], pca_results[:,1], '.')
     plt.show()
 
-def over_lap_ratio(ht_pair1, ref_ht_pair2):
-    h, t = ht_pair1
-    r_h, r_t = ref_ht_pair2
-    if t < r_h or h > r_t: ## no overlap
-        return 0.0, 1
-    if r_h >= h and r_t <= t: ## subset: ref is a subset of given pair
-        return 1.0, 2
-    if r_h <= h and r_t >= t:
-        return (t - h) / (r_t - r_h), 3 ## superset: ref is a superset of given pair
-    if h >= r_h and h < r_t: ## over-lap
-        return (r_t - h) / (r_t - r_h), 4
-    if r_h >= h and r_h < t: ## over-lap
-        return (t - r_h) / (r_t - r_h), 4
-
-def threshold_map_to_label(y_label, threshold_category):
-    over_lap_res = []
-    y_p = np_sigmoid(y_label[:, 2])
-    y_n = np_sigmoid(y_label[:, 1])
-    # y_p = y_label[:, 2]
-    # y_n = y_label[:, 1]
-    f1_score = y_label[:,0]
-    for i in range(y_p.shape[0]):
-        p_i = y_p[i]
-        n_i = y_n[i]
-        f1_i = f1_score[i]
-        ht_pair_i = (n_i, p_i)
-        if f1_i == 1:
-            p_flag = True
-        else:
-            p_flag = False
-        over_lap_list = []
-        for b_idx, bound in enumerate(threshold_category):
-            over_lap_value, over_lap_type = over_lap_ratio(ht_pair_i, bound)
-            over_lap_list.append((over_lap_value, over_lap_type))
-        over_lap_res.append((over_lap_list, p_flag))
-
-    flag_list = []
-    flag_label_freq = {}
-    flag_label_to_idx = {}
-    for i in range(y_p.shape[0]):
-        # three_types = ''.join([str(int(x[1] > 1)) for x in over_lap_res[i][0]])
-        three_types = ''.join([str(x[1]) for x in over_lap_res[i][0]])
-        if over_lap_res[i][1]:
-            flag_label = 'T_' + str(three_types)
-        else:
-            flag_label = 'F_' + str(three_types)
-        if flag_label not in flag_label_freq:
-            flag_label_freq[flag_label] = 1
-        else:
-            flag_label_freq[flag_label] = flag_label_freq[flag_label] + 1
-        flag_list.append(flag_label)
-
-    flag_label_to_idx = dict([(x[1], x[0]) for x in enumerate(sorted(list(flag_label_freq.keys()), reverse=True))])
-    print(flag_label_to_idx)
-    flag_idx_list = [flag_label_to_idx[_] for _ in flag_list]
-    return flag_idx_list, flag_list, flag_label_freq, flag_label_to_idx
-
-def tsne_analysis(x_feat, y_label):
+def tsne_analysis(x_feat, y_label, perplexity=100):
     time_start = time()
-    tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=400)
+    tsne = TSNE(n_components=2, verbose=1, perplexity=perplexity, n_iter=500)
     # x_feat = skl_norm(x_feat, axis=1)
     tsne_results = tsne.fit_transform(x_feat)
     print('t-SNE done! Time elapsed: {} seconds'.format(time() - time_start))
@@ -236,13 +176,13 @@ if __name__ == '__main__':
     # train_feat_extractor()
     # # train_range_analysis()
 
-    # x_feat_np, y_label_np = dev_range_analysis()
+    x_feat_np, y_label_np = dev_range_analysis()
 
     # threshold_map_to_label(y_label=y_label_np, threshold_category=threshold_category)
     # # print(flag_list)
     # print(flag_freq)
     # print(len(flag_freq))
-    x_feat_np, y_label_np = train_range_analysis()
+    # x_feat_np, y_label_np = train_range_analysis()
 
     # idx_arr = np.arange(x_feat_np.shape[0])
     # np.random.shuffle(idx_arr)
@@ -250,11 +190,11 @@ if __name__ == '__main__':
     # x_feat_np = x_feat_np[sel_idx,:]
     # y_label_np = y_label_np[sel_idx,:]
 
-    # tsne_analysis(x_feat=x_feat_np, y_label=y_label_np)
-    pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
+    tsne_analysis(x_feat=x_feat_np, y_label=y_label_np)
+    # pca_analysis(x_feat=x_feat_np, y_label=y_label_np)
 
     # range_distribution(y_label=y_label_np)
 
     # print(x_feat_np.shape, y_label_np.shape)
     # y_label_plot(y_label_np=y_label_np)
-    # print()
+    print()
