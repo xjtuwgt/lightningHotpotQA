@@ -99,11 +99,40 @@ def feat_label_extraction(raw_data_name, score_data_name):
     print('f1: {}'.format(f1/len(score_pred_dict)))
     return score_pred_dict
 
+def feat_seq_label_extraction(raw_data_name, score_data_name, threshold_category):
+    raw_data = load_json_score_data(raw_data_name)
+    print('Loading {} records from {}'.format(len(raw_data), raw_data_name))
+    score_data = load_json_score_data(score_data_name)
+    print('Loading {} records from {}'.format(len(score_data), score_data_name))
+    score_pred_dict = {}
+    em = 0.0
+    f1 = 0.0
+    for case in tqdm(raw_data):
+        key = case['_id']
+        if key in score_data:
+            score_case = score_data[key]
+            x_feat = row_x_feat_extraction(row=score_case)
+            y_label = row_y_label_extraction(row=score_case)
+            if y_label[1][0] is not None:
+                #++++++++++++++++
+                over_lap_list_i, p_flag_i = single_threshold_map_to_label(n_i=y_label[1][0], p_i=y_label[1][1], f1_i=y_label[0],
+                                                                          threshold_category=threshold_category)
+                seq_label = (over_lap_list_i, p_flag_i)
+                score_pred_dict[key] = {'x_feat': x_feat, 'y_label': y_label, 'y_seq_label': seq_label}
+                #++++++++++++++++
+                if y_label[0] == 1.0:
+                    em = em + 1
+                f1 = f1 + y_label[0]
+    print('em : {}'.format(em/len(score_pred_dict)))
+    print('f1: {}'.format(f1/len(score_pred_dict)))
+    return score_pred_dict
+
 def train_feature_label_extraction(args):
     raw_train_file_name = join(args.input_dir, args.raw_train_data)
     train_score_file_name = join(args.output_dir, args.exp_name, args.train_score_name)
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
-    train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    # train_feat_dict = feat_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
+    train_feat_dict = feat_seq_label_extraction(raw_data_name=raw_train_file_name, score_data_name=train_score_file_name)
     json.dump(train_feat_dict, open(train_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(train_feat_dict), train_feat_file_name))
 
@@ -111,7 +140,8 @@ def dev_feature_label_extraction(args):
     raw_dev_file_name = join(args.input_dir, args.raw_dev_data)
     dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
-    dev_feat_dict = feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
+    # dev_feat_dict = feat_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
+    dev_feat_dict = feat_seq_label_extraction(raw_data_name=raw_dev_file_name, score_data_name=dev_score_file_name)
     json.dump(dev_feat_dict, open(dev_feat_file_name, 'w'))
     print('Saving {} records into {}'.format(len(dev_feat_dict), dev_feat_file_name))
 
