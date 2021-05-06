@@ -138,8 +138,8 @@ class RangeSeqModel(nn.Module):
         self.score_map = PositionwiseFeedForward(model_dim=self.score_dim,
                                                d_hidden=1024, out_dim=self.hid_dim)
 
-        self.start_linear = OutputLayer(self.hidden, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
-        self.end_linear = OutputLayer(self.hidden, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+        self.start_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+        self.end_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
 
         self.cache_S = 0
         self.cache_mask = None
