@@ -175,5 +175,5 @@ class RangeSeqModel(nn.Module):
 
 def seq_loss_computation(start, end, batch):
     criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
-    loss_span = (criterion(start, batch['y1']) + criterion(end, batch['y2']))
+    loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
     return loss_span

@@ -75,7 +75,6 @@ def train(args):
     for epoch in range(start_epoch, start_epoch + int(args.num_train_epochs)):
         epoch_iterator = train_data_loader
         for step, batch in enumerate(epoch_iterator):
-            print(batch)
             model.train()
             #+++++++
             for key, value in batch.items():
