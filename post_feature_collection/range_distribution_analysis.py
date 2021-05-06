@@ -201,8 +201,8 @@ def threshold_to_label_loop(y_label_np):
 
 
 if __name__ == '__main__':
-    dev_feat_extractor(interval_num=10)
-    # train_feat_extractor()
+    # dev_feat_extractor(interval_num=150)
+    train_feat_extractor(interval_num=150)
 #     # # train_range_analysis()
 #
     # x_feat_np, y_label_np = dev_range_analysis()
