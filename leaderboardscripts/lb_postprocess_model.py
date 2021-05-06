@@ -162,6 +162,8 @@ class RangeSeqModel(nn.Module):
         if not return_yp:
             return (start_prediction_scores, end_prediction_scores)
 
+        outer = start_prediction_scores[:, :, None] + end_prediction_scores[:, None]
+        outer_mask = self.get_output_mask(outer)
         return start_prediction_scores, end_prediction_scores
 
 

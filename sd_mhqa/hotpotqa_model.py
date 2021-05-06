@@ -20,6 +20,8 @@ class ReaderModel(nn.Module):
         self.linear_map = nn.Linear(in_features=self.input_dim, out_features=self.hidden_dim, bias=False)
         self.transformer_layer = TransformerLayer(d_model=self.hidden_dim, ffn_hidden=4 * self.hidden_dim,
                                                   n_head=self.head_num)
+        self.second_transformer_layer = TransformerLayer(d_model=self.hidden_dim, ffn_hidden=4 * self.hidden_dim,
+                                                         n_head=self.head_num)  # two layer transformer
         self.ctx_attention = GatedAttention(input_dim=self.hidden_dim,
                                             memory_dim=self.hidden_dim * 2,
                                             hid_dim=self.hidden_dim,
