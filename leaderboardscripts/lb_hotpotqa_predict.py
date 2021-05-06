@@ -90,6 +90,7 @@ def parse_args(args=None):
     parser.add_argument("--model_type", default='albert', type=str, help="alber reader model")
     parser.add_argument('--gpus', default=1, type=int)
     parser.add_argument('--test_batch_size', default=16, type=int)
+    parser.add_argument("--ans_window_size", default=15, type=int)
     parser.add_argument('--test_log_steps', default=10, type=int)
     parser.add_argument('--cpu_num', default=24, type=int)
     parser.add_argument("--raw_data",

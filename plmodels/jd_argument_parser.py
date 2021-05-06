@@ -131,6 +131,7 @@ def default_train_parser():
                         help="Batch size per GPU/CPU for training.")
     parser.add_argument("--eval_batch_size", default=16, type=int)
     parser.add_argument("--fine_tuned_model", default=None, type=str)
+    parser.add_argument("--ans_window_size", default=15, type=int)
 
     # encoder
     parser.add_argument("--frozen_layer_number", default=0, type=int)

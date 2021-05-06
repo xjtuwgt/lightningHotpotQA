@@ -132,6 +132,8 @@ def default_train_parser():
                         help="Batch size per GPU/CPU for training.")
     parser.add_argument("--eval_batch_size", default=16, type=int)
 
+    parser.add_argument("--ans_window_size", default=15, type=int)
+
     # eval
     parser.add_argument("--encoder_ckpt", default=None, type=str)
     parser.add_argument("--model_ckpt", default=None, type=str)
