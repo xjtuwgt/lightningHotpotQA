@@ -12,7 +12,7 @@ import numpy as np
 from utils.gpu_utils import single_free_cuda
 from torch import Tensor
 import torch
-from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, row_f1_computation
+from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, score_row_supp_f1_computation
 
 def batch_analysis(x_feat: Tensor):
     p2dist = torch.cdist(x1=x_feat, x2=x_feat, p=2)
@@ -147,7 +147,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, de
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
                 if key in dev_score_dict:
                     score_row = dev_score_dict[key]
-                    f1_i = row_f1_computation(row=score_row, threshold=score_i)
+                    f1_i = score_row_supp_f1_computation(row=score_row, threshold=score_i)
                     dev_f1_list.append(f1_i)
                 else:
                     dev_f1_list.append(0.0)

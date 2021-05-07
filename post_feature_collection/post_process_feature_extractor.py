@@ -208,7 +208,7 @@ def single_supp_f1_computation(scores, labels, threshold):
     f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
     return f1_i
 
-def row_supp_f1_computation(row, threshold):
+def score_row_supp_f1_computation(row, threshold):
     scores = row['sp_score']
     scores = np_sigmoid(np.array(scores))
     scores = scores.tolist()
