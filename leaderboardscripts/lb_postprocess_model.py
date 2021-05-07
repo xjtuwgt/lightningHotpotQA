@@ -98,13 +98,17 @@ class RangeModel(nn.Module):
         scores = self.threshold_score_func.forward(x_emb)
         return scores
 
-def loss_computation(scores, y_min, y_max):
+def loss_computation(scores, y_min, y_max, weight=None):
     # p_score = F.sigmoid(scores)
     p_score = scores.squeeze(-1)
     # print(y_min)
     # print(y_max)
     # print(p_score)
-    loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
+    if weight is None:
+        loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
+    else:
+        loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
+        loss = loss * weight
     # loss = F.relu(torch.tanh(p_score) - torch.tanh(y_max)) + F.relu(torch.tanh(y_min) - torch.tanh(p_score))
     loss = loss * loss
     # loss = loss.mean()
