@@ -70,6 +70,7 @@ def train(args):
     start_epoch = 0
     train_iterator = trange(start_epoch, start_epoch + int(args.num_train_epochs), desc="Epoch")
     best_em_ratio = 0.0
+    best_f1 = 0.0
     dev_loss = 0.0
     dev_prediction_dict = None
     # for epoch in train_iterator:
@@ -96,13 +97,9 @@ def train(args):
             model.zero_grad()
 
             if step % 10 == 0:
-                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
-                # print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\tsupp_loss={:.5f}\trange_loss={:.5f}\n'.format(epoch, step,
-                #                                                                               loss.data.item(),
-                #                                                                               best_em_ratio, dev_loss, loss_supp.data.item(),
-                #                                                                                                                    loss_range.data.item()))
+                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={:.6f}\teval_f1={:.6f}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, best_f1, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, weigted_loss=args.weighted_loss)
+                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, weigted_loss=args.weighted_loss)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
@@ -110,9 +107,12 @@ def train(args):
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
                                join(args.output_dir, args.exp_name, f'threshold_pred_model.pkl'))
                     dev_prediction_dict = pred_dict
+                if best_f1 < dev_f1:
+                    best_f1 = dev_f1
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
-    return best_em_ratio, dev_prediction_dict
+    print('Best f1 = {:.5f}'.format(best_f1))
+    return best_em_ratio, best_f1, dev_prediction_dict
 
 def eval_model(model, data_loader, dev_score_dict, device, weigted_loss):
     model.eval()
@@ -160,12 +160,13 @@ def eval_model(model, data_loader, dev_score_dict, device, weigted_loss):
                 pred_score_dict[key] = float(score_i)
     # print(em_count, total_count)
     avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
-    return em_count, total_count, avg_dev_loss, pred_score_dict
+    dev_f1 = sum(dev_f1_list)/len(dev_f1_list)
+    return em_count, dev_f1, total_count, avg_dev_loss, pred_score_dict
 
 if __name__ == '__main__':
 
     args = train_parser()
-    best_em_ratio, dev_prediction_dict = train(args)
+    best_em_ratio, best_f1, dev_prediction_dict = train(args)
     predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
     json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
     print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
