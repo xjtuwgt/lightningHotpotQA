@@ -86,8 +86,8 @@ preprocess() {
 #        python3 post_feature_collection/post_process_feature_extractor.py
 
         echo "10. Model training"
-#        python3 post_feature_collection/train_post_process_model.py
-        CUDA_LAUNCH_BLOCKING=1 python3 post_feature_collection/train_seq_post_process_model.py
+        python3 post_feature_collection/train_post_process_model.py
+#        CUDA_LAUNCH_BLOCKING=1 python3 post_feature_collection/train_seq_post_process_model.py
 
     done
 
