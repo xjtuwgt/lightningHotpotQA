@@ -67,7 +67,6 @@ class RangeSeqDataset(Dataset):
         weight = torch.FloatTensor([1 - np_sigmoid(y_p_i) + np_sigmoid(y_n_i)])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
-
         if l_idx < 0:
             y1[0] = IGNORE_INDEX
             y2[0] = IGNORE_INDEX
