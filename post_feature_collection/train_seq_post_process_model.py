@@ -96,7 +96,7 @@ def train(args):
             model.zero_grad()
 
             if step % 10 == 0:
-                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
+                print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_f1={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, best_f1, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader,
                                                                           device=device, alpha=args.alpha, threshold_category=threshold_category, dev_score_dict=dev_score_dict)
