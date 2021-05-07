@@ -86,7 +86,7 @@ def train(args):
             #+++++++
             # batch_analysis(batch['x_feat'])
             start_scores, end_scores = model(batch['x_feat'])
-            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch)
+            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=args.weighted_loss)
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
@@ -97,7 +97,7 @@ def train(args):
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={:.6f}\teval_f1={:.6f}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, best_f1, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader,
+                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, weighted_loss=args.weighted_loss,
                                                                           device=device, alpha=args.alpha, threshold_category=threshold_category, dev_score_dict=dev_score_dict)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
@@ -113,7 +113,7 @@ def train(args):
     print('Best f1 = {:.5f}'.format(best_f1))
     return best_em_ratio, best_f1, dev_prediction_dict
 
-def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, device):
+def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, weighted_loss, device):
     model.eval()
     em_count = 0
     total_count = 0
@@ -128,7 +128,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, de
                 batch[key] = value.to(device)
         with torch.no_grad():
             start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
-            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch)
+            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=weighted_loss)
             dev_loss_list.append(loss.data.item())
             y_min_np = batch['y_min'].data.cpu().numpy()
             y_max_np = batch['y_max'].data.cpu().numpy()

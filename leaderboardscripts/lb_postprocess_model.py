@@ -181,11 +181,16 @@ class RangeSeqModel(nn.Module):
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
         return start_prediction_scores, end_prediction_scores, yp1, yp2
 
-def seq_loss_computation(start, end, batch):
+def seq_loss_computation(start, end, batch, weight=False):
     # print(start.shape)
     # print(end.shape)
     # print(batch['y_1'].shape, batch['y_2'].shape)
     # print(batch['y_1'].max(), batch['y_2'].max())
-    criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
-    loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
+    if not weight:
+        criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
+        loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
+    else:
+        criterion = nn.CrossEntropyLoss(reduction='none', ignore_index=IGNORE_INDEX)
+        loss_span = (criterion(start, batch['y_1']) + criterion(end, batch['y_2'])) * batch['weight']
+        loss_span = torch.mean(loss_span)
     return loss_span
