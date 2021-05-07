@@ -194,6 +194,7 @@ def best_f1_interval(scores, labels):
     return f1_tuple
 
 def single_supp_f1_computation(scores, labels, threshold):
+
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     def idx_in_range(threshold, sorted_score_labels):
         for i in range(len(sorted_score_labels) - 1):
@@ -209,6 +210,8 @@ def single_supp_f1_computation(scores, labels, threshold):
 
 def row_supp_f1_computation(row, threshold):
     scores = row['sp_score']
+    scores = np_sigmoid(np.array(scores))
+    scores = scores.tolist()
     mask = row['sp_mask']
     supp_ids = row['trim_sup_fact_id']
     num_candidate = int(sum(mask))

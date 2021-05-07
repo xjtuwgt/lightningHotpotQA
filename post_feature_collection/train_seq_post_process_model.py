@@ -12,7 +12,7 @@ import numpy as np
 from utils.gpu_utils import single_free_cuda
 from torch import Tensor
 import torch
-from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid
+from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, row_f1_computation
 
 def batch_analysis(x_feat: Tensor):
     p2dist = torch.cdist(x1=x_feat, x2=x_feat, p=2)
@@ -21,6 +21,7 @@ def batch_analysis(x_feat: Tensor):
 def train(args):
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
+    dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
     threshold_category = get_threshold_category(interval_num=args.interval_number)
 
     if torch.cuda.is_available():
@@ -50,7 +51,7 @@ def train(args):
                                  shuffle=False,
                                  collate_fn=RangeSeqDataset.collate_fn,
                                  batch_size=args.eval_batch_size)
-
+    dev_score_dict = load_json_score_data(json_score_file_name=dev_score_file_name)
     t_total_steps = len(train_data_loader) * args.num_train_epochs
     model = RangeSeqModel(args=args)
     model.to(device)
@@ -72,6 +73,7 @@ def train(args):
 
     start_epoch = 0
     best_em_ratio = 0.0
+    best_f1 = 0.0
     dev_loss = 0.0
     dev_prediction_dict = None
     for epoch in range(start_epoch, start_epoch + int(args.num_train_epochs)):
@@ -96,8 +98,8 @@ def train(args):
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader,
-                                                                          device=device, alpha=args.alpha, threshold_category=threshold_category)
+                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader,
+                                                                          device=device, alpha=args.alpha, threshold_category=threshold_category, dev_score_dict=dev_score_dict)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
@@ -105,17 +107,21 @@ def train(args):
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
                                join(args.output_dir, args.exp_name, f'seq_threshold_pred_model.pkl'))
                     dev_prediction_dict = pred_dict
+                if best_f1 < dev_f1:
+                    best_f1 = dev_f1
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
-    return best_em_ratio, dev_prediction_dict
+    print('Best f1 = {:.5f}'.format(best_f1))
+    return best_em_ratio, best_f1, dev_prediction_dict
 
-def eval_model(model, data_loader, threshold_category, alpha, device):
+def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, device):
     model.eval()
     em_count = 0
     total_count = 0
     pred_score_dict = {}
     # for batch in tqdm(data_loader):
     dev_loss_list = []
+    dev_f1_list = []
     for batch in data_loader:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -139,6 +145,12 @@ def eval_model(model, data_loader, threshold_category, alpha, device):
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
+                if key in dev_score_dict:
+                    score_row = dev_score_dict[key]
+                    f1_i = row_f1_computation(row=score_row, threshold=score_i)
+                    dev_f1_list.append(f1_i)
+                else:
+                    dev_f1_list.append(0.0)
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
                 y_flag_i = y_flag_np[i]
@@ -148,12 +160,13 @@ def eval_model(model, data_loader, threshold_category, alpha, device):
                 pred_score_dict[key] = float(score_i)
     # print(em_count, total_count)
     avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
-    return em_count, total_count, avg_dev_loss, pred_score_dict
+    dev_f1 = sum(dev_f1_list)/len(dev_f1_list)
+    return em_count, dev_f1, total_count, avg_dev_loss, pred_score_dict
 
 if __name__ == '__main__':
 
     args = train_parser()
-    best_em_ratio, dev_prediction_dict = train(args)
+    best_em_ratio, best_f1, dev_prediction_dict = train(args)
     predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
     json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
     print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
