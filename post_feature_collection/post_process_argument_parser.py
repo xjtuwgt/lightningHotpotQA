@@ -52,19 +52,19 @@ def train_parser():
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=4321)
 
-    parser.add_argument("--train_batch_size", type=int, default=8192, help='training batch size')
+    parser.add_argument("--train_batch_size", type=int, default=1024, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=125, help='span_window_size')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
-    parser.add_argument("--hid_dim", type=int, default=256, help='cls_emb_dim')
+    parser.add_argument("--hid_dim", type=int, default=128, help='cls_emb_dim')
     parser.add_argument("--cpu_number", type=int, default=4, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=150, help='interval number')
     parser.add_argument("--alpha", type=float, default=0.25, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=1e-3, type=float,
+    parser.add_argument("--learning_rate", default=1e-5, type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=1e-6, type=float,
                         help="Weight deay if we apply some.")
