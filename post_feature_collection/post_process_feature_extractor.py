@@ -194,42 +194,42 @@ def best_f1_interval(scores, labels):
     return f1_tuple
 
 def single_supp_f1_computation(scores, labels, threshold):
-    pred_ = []
-    for idx, score in enumerate(scores):
-        if score >= threshold:
-            pred_.append(idx)
-    gold_ = []
-    for idx, label in enumerate(labels):
-        if label == 1:
-            gold_.append(idx)
-    pred_sup_facts = set(pred_)
-    gold_facts = set(gold_)
-    tp, fp, fn = 0, 0, 0
-    for e in pred_sup_facts:
-        if e in gold_facts:
-            tp += 1
-        else:
-            fp += 1
-    for e in gold_facts:
-        if e not in pred_sup_facts:
-            fn += 1
-    prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
-    recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
-    f1 = 2 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
-    em = 1.0 if fp + fn == 0 else 0.0
+    # pred_ = []
+    # for idx, score in enumerate(scores):
+    #     if score >= threshold:
+    #         pred_.append(idx)
+    # gold_ = []
+    # for idx, label in enumerate(labels):
+    #     if label == 1:
+    #         gold_.append(idx)
+    # pred_sup_facts = set(pred_)
+    # gold_facts = set(gold_)
+    # tp, fp, fn = 0, 0, 0
+    # for e in pred_sup_facts:
+    #     if e in gold_facts:
+    #         tp += 1
+    #     else:
+    #         fp += 1
+    # for e in gold_facts:
+    #     if e not in pred_sup_facts:
+    #         fn += 1
+    # prec = 1.0 * tp / (tp + fp) if tp + fp > 0 else 0.0
+    # recall = 1.0 * tp / (tp + fn) if tp + fn > 0 else 0.0
+    # f1 = 2 * prec * recall / (prec + recall) if prec + recall > 0 else 0.0
+    # em = 1.0 if fp + fn == 0 else 0.0
 
-    # sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
-    # def idx_in_range(threshold, sorted_score_labels):
-    #     for i in range(len(sorted_score_labels) - 1):
-    #         if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:
-    #             return i
-    #     return len(sorted_score_labels) - 1
-    # s_idx = idx_in_range(threshold=threshold, sorted_score_labels=sorted_sl)
-    # count_i = sum([_[1] for _ in sorted_sl[:(s_idx + 1)]])
-    # prec_i = count_i / (s_idx + 1)
-    # rec_i = count_i / (sum(labels) + 1e-9)
-    # f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
-    f1_i = f1
+    sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
+    def idx_in_range(threshold, sorted_score_labels):
+        for i in range(len(sorted_score_labels) - 1):
+            if threshold < sorted_score_labels[i][0] and threshold >= sorted_score_labels[i+1][0]:
+                return i
+        return len(sorted_score_labels) - 1
+    s_idx = idx_in_range(threshold=threshold, sorted_score_labels=sorted_sl)
+    count_i = sum([_[1] for _ in sorted_sl[:(s_idx + 1)]])
+    prec_i = count_i / (s_idx + 1)
+    rec_i = count_i / (sum(labels) + 1e-9)
+    f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
+    em = 1.0 if f1_i == 1 else 0.0
     return em, f1_i
 
 def score_row_supp_f1_computation(row, threshold):
