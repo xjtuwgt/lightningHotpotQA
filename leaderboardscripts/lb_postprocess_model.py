@@ -175,10 +175,10 @@ class RangeSeqModel(nn.Module):
         return start_prediction_scores, end_prediction_scores, yp1, yp2
 
 def seq_loss_computation(start, end, batch):
-    print(start.shape)
-    print(end.shape)
-    print(batch['y_1'].shape, batch['y_2'].shape)
-    print(batch['y_1'].max(), batch['y_2'].max())
+    # print(start.shape)
+    # print(end.shape)
+    # print(batch['y_1'].shape, batch['y_2'].shape)
+    # print(batch['y_1'].max(), batch['y_2'].max())
     criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
     loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
     return loss_span

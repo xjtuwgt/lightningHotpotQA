@@ -52,14 +52,13 @@ class RangeSeqDataset(Dataset):
         y_seq_label = case['y_seq_label']
         _, p_flag, seq_label = y_seq_label
         x_i = torch.from_numpy(x_feat).float()
-        l_idx = seq_label.find('2')
-        r_idx = seq_label.rfind('2')
+        l_idx = seq_label.find('2') - 2
+        r_idx = seq_label.rfind('2') - 2
 
         y1 = torch.zeros(1, dtype=torch.long)
         y2 = torch.zeros(1, dtype=torch.long)
 
         y_label = case['y_label']
-        x_i = torch.from_numpy(x_feat).float()
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
