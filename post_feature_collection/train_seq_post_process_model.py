@@ -42,7 +42,7 @@ def train(args):
     ##+++++++++
     train_data = RangeSeqDataset(json_file_name=train_feat_file_name)
     dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name)
-    train_data_loader = DataLoader(dataset=dev_data,
+    train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
                                    collate_fn=RangeSeqDataset.collate_fn,
                                    batch_size=args.train_batch_size)
