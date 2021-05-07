@@ -145,13 +145,13 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, de
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
                 y_flag_i = y_flag_np[i]
-                score_i = y_min_i
+                score_i = y_max_i
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
                 if key in dev_score_dict:
                     score_row = dev_score_dict[key]
                     f1_i = score_row_supp_f1_computation(row=score_row, threshold=score_i)
-                    print(f1_i)
+                    # print(f1_i)
                     dev_f1_list.append(f1_i)
                 else:
                     dev_f1_list.append(0.0)
