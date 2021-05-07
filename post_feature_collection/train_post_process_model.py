@@ -31,6 +31,7 @@ def train(args):
     for key, value in vars(args).items():
         print('{}: {}'.format(key, value))
 
+    print('device = {}'.format(device))
     ##+++++++++
     random_seed = args.rand_seed
     random.seed(random_seed)
