@@ -110,9 +110,9 @@ def loss_computation(scores, y_min, y_max, weight=None):
         loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
         loss = loss * weight
     # loss = F.relu(torch.tanh(p_score) - torch.tanh(y_max)) + F.relu(torch.tanh(y_min) - torch.tanh(p_score))
-    loss = loss * loss
-    # loss = loss.mean()
-    loss = loss.sum()
+    # loss = loss * loss
+    loss = loss.mean()
+    # loss = loss.sum()
     return loss
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
