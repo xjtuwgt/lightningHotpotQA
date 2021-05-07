@@ -163,6 +163,7 @@ class RangeSeqModel(nn.Module):
         x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
         start_prediction_scores = self.start_linear(x_emb)
         end_prediction_scores = self.end_linear(x_emb)
+
         if not return_yp:
             return (start_prediction_scores, end_prediction_scores)
 
@@ -174,6 +175,9 @@ class RangeSeqModel(nn.Module):
         return start_prediction_scores, end_prediction_scores, yp1, yp2
 
 def seq_loss_computation(start, end, batch):
+    print(start.shape)
+    print(end.shape)
+    print(batch['y_1'].shape, batch['y_2'].shape)
     criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
     loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
     return loss_span
