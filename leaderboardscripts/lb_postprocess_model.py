@@ -42,17 +42,17 @@ class OutputLayer(nn.Module):
         super(OutputLayer, self).__init__()
         self.output = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim*2),
-            nn.LeakyReLU(),
+            nn.ReLU(),
             LayerNorm(hidden_dim*2, eps=1e-12),
             nn.Dropout(trans_drop),
             nn.Linear(2*hidden_dim, hidden_dim*2),
 
-            nn.LeakyReLU(),
+            nn.ReLU(),
             LayerNorm(hidden_dim * 2, eps=1e-12),
             nn.Dropout(trans_drop),
             nn.Linear(hidden_dim * 2, hidden_dim * 2),
 
-            nn.LeakyReLU(),
+            nn.ReLU(),
             LayerNorm(hidden_dim * 2, eps=1e-12),
             nn.Dropout(trans_drop),
             # nn.Linear(hidden_dim * 2, hidden_dim * 2),
