@@ -64,9 +64,9 @@ def train_parser():
     parser.add_argument("--alpha", type=float, default=0.25, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=0.003, type=float,
+    parser.add_argument("--learning_rate", default=0.001, type=float,
                         help="The initial learning rate for Adam.")
-    parser.add_argument("--weight_decay", default=1e-4, type=float,
+    parser.add_argument("--weight_decay", default=1e-7, type=float,
                         help="Weight deay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float,
                         help="Epsilon for Adam optimizer.")
@@ -78,6 +78,6 @@ def train_parser():
                         help="epochs")
     parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
-    parser.add_argument("--feat_drop", type=float, default=0.5, help='feature dropout ratio')
+    parser.add_argument("--feat_drop", type=float, default=0.3, help='feature dropout ratio')
     args = parser.parse_args()
     return args
