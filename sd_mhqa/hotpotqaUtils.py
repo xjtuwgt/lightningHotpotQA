@@ -583,7 +583,7 @@ class PredictionLayer(nn.Module):
         # print('outer', outer.shape)
         outer_mask = self.get_output_mask(outer)
         # print('outer mask', outer_mask.shape)
-        print(outer_mask)
+        # print(outer_mask)
         outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
         if packing_mask is not None:
             outer = outer - 1e30 * packing_mask[:, :, None]
@@ -591,7 +591,8 @@ class PredictionLayer(nn.Module):
         # yp2: end
         yp1 = outer.max(dim=2)[0].max(dim=1)[1]
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
-        print(yp1.shape, yp2.shape)
+        print(start_prediction.shape, end_prediction.shape, batch['y1'].shape, batch['y2'].shape)
+        # print(yp1.shape, yp2.shape)
         return (start_prediction, end_prediction, type_prediction, yp1, yp2)
 
 
