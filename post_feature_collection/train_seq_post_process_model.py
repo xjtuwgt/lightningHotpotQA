@@ -132,7 +132,7 @@ def eval_model(model, data_loader, threshold_category, device):
                 total_count = total_count + 1
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
-                score_i = (threshold_category[start_i][1] + threshold_category[end_i][0])/2.0
+                score_i = (threshold_category[start_i][1] * 0.75 + threshold_category[end_i][0] * 0.25)
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
                 y_min_i = np_sigmoid(y_min_np[i])
