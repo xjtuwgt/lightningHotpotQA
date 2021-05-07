@@ -54,7 +54,7 @@ def train_parser():
 
     parser.add_argument("--train_batch_size", type=int, default=8192, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
-    parser.add_argument("--span_window_size", type=int, default=100, help='span_window_size')
+    parser.add_argument("--span_window_size", type=int, default=125, help='span_window_size')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
