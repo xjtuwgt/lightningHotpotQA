@@ -177,7 +177,7 @@ def row_y_label_extraction(row):
             return (0, (sorted_scores[2], sorted_scores[1]))
         else:
             return (0, (None, None))
-    f1_tuple = best_f1_interval(scores=scores, labels=labels)
+    f1_tuple = best_f1_interval(scores=trim_scores, labels=labels)
     return f1_tuple
 
 def best_f1_interval(scores, labels):
@@ -194,7 +194,6 @@ def best_f1_interval(scores, labels):
     return f1_tuple
 
 def single_supp_f1_computation(scores, labels, threshold):
-
     sorted_sl = sorted(zip(scores, labels), key=lambda x: x[0], reverse=True)
     def idx_in_range(threshold, sorted_score_labels):
         for i in range(len(sorted_score_labels) - 1):
@@ -222,7 +221,7 @@ def score_row_supp_f1_computation(row, threshold):
     assert len(labels) == len(trim_scores)
     if len(supp_ids) == 0:
         return 0
-    f1 = single_supp_f1_computation(scores=scores, labels=labels, threshold=threshold)
+    f1 = single_supp_f1_computation(scores=trim_scores, labels=labels, threshold=threshold)
     return f1
 
 def row_f1_computation(row, raw_row, threshold):
