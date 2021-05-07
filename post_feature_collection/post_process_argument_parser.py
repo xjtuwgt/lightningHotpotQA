@@ -58,15 +58,15 @@ def train_parser():
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
-    parser.add_argument("--hid_dim", type=int, default=512, help='cls_emb_dim')
+    parser.add_argument("--hid_dim", type=int, default=128, help='cls_emb_dim')
     parser.add_argument("--cpu_number", type=int, default=4, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=150, help='interval number')
-    parser.add_argument("--alpha", type=float, default=0.1, help='prediction alpha')
+    parser.add_argument("--alpha", type=float, default=0.25, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
     parser.add_argument("--learning_rate", default=0.001, type=float,
                         help="The initial learning rate for Adam.")
-    parser.add_argument("--weight_decay", default=1e-6, type=float,
+    parser.add_argument("--weight_decay", default=1e-4, type=float,
                         help="Weight deay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float,
                         help="Epsilon for Adam optimizer.")
