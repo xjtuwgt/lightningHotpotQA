@@ -62,7 +62,7 @@ def train_parser():
     parser.add_argument("--cpu_number", type=int, default=4, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=150, help='interval number')
 
-    parser.add_argument("--learning_rate", default=2e-5, type=float,
+    parser.add_argument("--learning_rate", default=1e-3, type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=1e-6, type=float,
                         help="Weight deay if we apply some.")
