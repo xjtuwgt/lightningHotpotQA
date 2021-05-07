@@ -133,7 +133,7 @@ def eval_model(model, data_loader, device, weigted_loss):
                 loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             dev_loss_list.append(loss.data.item())
             scores = scores.squeeze(-1)
-            scores = torch.sigmoid(scores)
+            # scores = torch.sigmoid(scores)
             score_np = scores.data.cpu().numpy()
             y_min_np = batch['y_min'].data.cpu().numpy()
             y_max_np = batch['y_max'].data.cpu().numpy()
