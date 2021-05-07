@@ -41,12 +41,11 @@ def train(args):
     torch.cuda.manual_seed_all(random_seed)
     ##+++++++++
     train_data = RangeSeqDataset(json_file_name=train_feat_file_name)
-    train_data_loader = DataLoader(dataset=train_data,
+    dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name)
+    train_data_loader = DataLoader(dataset=dev_data,
                                    shuffle=True,
                                    collate_fn=RangeSeqDataset.collate_fn,
                                    batch_size=args.train_batch_size)
-
-    dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name)
     dev_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
                                  collate_fn=RangeSeqDataset.collate_fn,
