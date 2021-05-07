@@ -23,7 +23,6 @@ def train(args):
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
     dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
     threshold_category = get_threshold_category(interval_num=args.interval_number)
-
     if torch.cuda.is_available():
         device_ids, _ = single_free_cuda()
         device = torch.device('cuda:{}'.format(device_ids[0]))
@@ -153,7 +152,6 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, de
                 if key in dev_score_dict:
                     score_row = dev_score_dict[key]
                     f1_i = score_row_supp_f1_computation(row=score_row, threshold=score_i)
-                    # print(f1_i)
                     dev_f1_list.append(f1_i)
                 else:
                     dev_f1_list.append(0.0)

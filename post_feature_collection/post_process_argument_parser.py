@@ -52,7 +52,7 @@ def train_parser():
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=4321)
 
-    parser.add_argument("--train_batch_size", type=int, default=1024, help='training batch size')
+    parser.add_argument("--train_batch_size", type=int, default=2048, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=125, help='span_window_size')
 
