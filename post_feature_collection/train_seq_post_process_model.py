@@ -142,6 +142,10 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, de
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
+                y_min_i = np_sigmoid(y_min_np[i])
+                y_max_i = np_sigmoid(y_max_np[i])
+                y_flag_i = y_flag_np[i]
+                score_i = y_min_i
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
                 if key in dev_score_dict:
@@ -150,9 +154,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, de
                     dev_f1_list.append(f1_i)
                 else:
                     dev_f1_list.append(0.0)
-                y_min_i = np_sigmoid(y_min_np[i])
-                y_max_i = np_sigmoid(y_max_np[i])
-                y_flag_i = y_flag_np[i]
+
                 # print(score_i, y_min_i, y_max_i)
                 if score_i >= y_min_i and score_i <= y_max_i and y_flag_i == 1:
                     em_count = em_count + 1
