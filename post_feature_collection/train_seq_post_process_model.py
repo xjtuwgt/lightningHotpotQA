@@ -133,6 +133,8 @@ def eval_model(model, data_loader, threshold_category, device):
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
                 score_i = (threshold_category[start_i][1] + threshold_category[end_i][0])/2.0
+                print('pred', start_i, end_i)
+                print('gold', batch['y_1'][i], batch['y_2'[i]])
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
                 y_flag_i = y_flag_np[i]
