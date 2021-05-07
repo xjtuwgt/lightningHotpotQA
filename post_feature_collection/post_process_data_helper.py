@@ -1,6 +1,7 @@
 from leaderboardscripts.lb_postprocess_utils import load_json_score_data
 import torch
 import numpy as np
+from post_feature_collection.post_process_feature_extractor import np_sigmoid
 from torch.utils.data import Dataset
 IGNORE_INDEX = -100
 
@@ -18,7 +19,7 @@ class RangeDataset(Dataset):
         y_label = case['y_label']
         x_i = torch.from_numpy(x_feat).float()
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        weight = torch.FloatTensor([y_p_i - y_n_i])
+        weight = torch.FloatTensor([1 - np_sigmoid(y_p_i) + np_sigmoid(y_n_i)])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if y_label[0] == 1.0:
@@ -62,7 +63,8 @@ class RangeSeqDataset(Dataset):
 
         y_label = case['y_label']
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        weight = torch.FloatTensor([y_p_i - y_n_i])
+        # weight = torch.FloatTensor([y_p_i - y_n_i])
+        weight = torch.FloatTensor([1 - np_sigmoid(y_p_i) + np_sigmoid(y_n_i)])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
 
