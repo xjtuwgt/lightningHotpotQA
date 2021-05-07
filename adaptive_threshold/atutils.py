@@ -3,9 +3,10 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from numpy import ndarray
 import numpy as np
 from tqdm import tqdm
-from hgntransformers import AdamW
+from hgntransformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup
 import json
 from os.path import join
+
 
 
 def parse_args(args=None):
@@ -289,6 +290,12 @@ def get_optimizer(model, args):
     print('Learning rate = {}'.format(args.learning_rate))
     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
     return optimizer
+
+def get_scheduler(optimizer, total_steps, args):
+    scheduler = get_cosine_schedule_with_warmup(optimizer=optimizer,
+                                                        num_warmup_steps=args.warmup_steps,
+                                                        num_training_steps=total_steps)
+    return scheduler
 
 
 def dev_data_collection(args):

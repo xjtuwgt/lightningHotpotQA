@@ -6,7 +6,7 @@ import torch
 import json
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel, seq_loss_computation
 from tqdm import tqdm, trange
-from adaptive_threshold.atutils import get_optimizer
+from adaptive_threshold.atutils import get_optimizer, get_scheduler
 import random
 import numpy as np
 from utils.gpu_utils import single_free_cuda
@@ -51,12 +51,14 @@ def train(args):
                                  collate_fn=RangeSeqDataset.collate_fn,
                                  batch_size=args.eval_batch_size)
 
+    t_total_steps = len(train_data_loader) * args.num_train_epochs
     model = RangeSeqModel(args=args)
     model.to(device)
 
     model.zero_grad()
     model.train()
     optimizer = get_optimizer(model=model, args=args)
+    scheduler = get_scheduler(optimizer=optimizer, args=args, total_steps=t_total_steps)
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     print('*' * 75)
@@ -88,6 +90,7 @@ def train(args):
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             optimizer.step()
+            scheduler.step()
             model.zero_grad()
 
             if step % 10 == 0:
