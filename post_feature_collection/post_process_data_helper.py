@@ -68,7 +68,6 @@ class RangeSeqDataset(Dataset):
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
 
-
         if l_idx < 0:
             y1[0] = IGNORE_INDEX
             y2[0] = IGNORE_INDEX
