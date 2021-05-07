@@ -93,7 +93,8 @@ def train(args):
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, threshold_category=threshold_category)
+                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader,
+                                                                          device=device, alpha=args.alpha, threshold_category=threshold_category)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
@@ -105,7 +106,7 @@ def train(args):
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio, dev_prediction_dict
 
-def eval_model(model, data_loader, threshold_category, device):
+def eval_model(model, data_loader, threshold_category, alpha, device):
     model.eval()
     em_count = 0
     total_count = 0
@@ -132,7 +133,7 @@ def eval_model(model, data_loader, threshold_category, device):
                 total_count = total_count + 1
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
-                score_i = (threshold_category[start_i][1] * 0.75 + threshold_category[end_i][0] * 0.25)
+                score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
                 y_min_i = np_sigmoid(y_min_np[i])
