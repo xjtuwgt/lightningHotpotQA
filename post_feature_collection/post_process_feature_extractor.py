@@ -230,7 +230,7 @@ def single_supp_f1_computation(scores, labels, threshold):
     # rec_i = count_i / (sum(labels) + 1e-9)
     # f1_i = 2 * prec_i * rec_i / (prec_i + rec_i + 1e-9)
     f1_i = f1
-    return f1_i
+    return em, f1_i
 
 def score_row_supp_f1_computation(row, threshold):
     scores = row['sp_score']
@@ -246,7 +246,7 @@ def score_row_supp_f1_computation(row, threshold):
     assert len(labels) == len(trim_scores)
     if len(supp_ids) == 0:
         return 0
-    f1 = single_supp_f1_computation(scores=trim_scores, labels=labels, threshold=threshold)
+    em, f1 = single_supp_f1_computation(scores=trim_scores, labels=labels, threshold=threshold)
     return f1
 
 def row_f1_computation(row, raw_row, threshold):
