@@ -61,7 +61,7 @@ def train_parser():
     parser.add_argument("--hid_dim", type=int, default=256, help='cls_emb_dim')
     parser.add_argument("--cpu_number", type=int, default=4, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=150, help='interval number')
-    parser.add_argument("--alpha", type=float, default=0.1, help='prediction alpha')
+    parser.add_argument("--alpha", type=float, default=0.25, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
     parser.add_argument("--learning_rate", default=5e-4, type=float,

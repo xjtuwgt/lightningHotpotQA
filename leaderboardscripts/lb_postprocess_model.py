@@ -45,23 +45,23 @@ class OutputLayer(nn.Module):
             nn.ReLU(),
             LayerNorm(hidden_dim*2, eps=1e-12),
             nn.Dropout(trans_drop),
-            #+++++++++
             nn.Linear(2*hidden_dim, hidden_dim*2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            nn.Linear(hidden_dim * 2, hidden_dim * 2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            nn.Linear(hidden_dim * 2, hidden_dim * 2),
+
+            # nn.ReLU(),
+            # LayerNorm(hidden_dim * 2, eps=1e-12),
+            # nn.Dropout(trans_drop),
+            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
+            #
+            # nn.ReLU(),
+            # LayerNorm(hidden_dim * 2, eps=1e-12),
+            # nn.Dropout(trans_drop),
+            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
 
             nn.ReLU(),
             LayerNorm(hidden_dim * 2, eps=1e-12),
             nn.Dropout(trans_drop),
             nn.Linear(hidden_dim * 2, hidden_dim * 2),
 
-            # nn.Linear(2 * hidden_dim, hidden_dim * 2),
             nn.ReLU(),
             LayerNorm(hidden_dim * 2, eps=1e-12),
             nn.Dropout(trans_drop),
@@ -138,9 +138,9 @@ class RangeSeqModel(nn.Module):
         self.hid_dim = self.args.hid_dim
 
         self.cls_map = PositionwiseFeedForward(model_dim=self.cls_emb_dim,
-                                               d_hidden=1024, out_dim=self.hid_dim)
+                                               d_hidden=2048, out_dim=self.hid_dim)
         self.score_map = PositionwiseFeedForward(model_dim=self.score_dim,
-                                               d_hidden=1024, out_dim=self.hid_dim)
+                                               d_hidden=2048, out_dim=self.hid_dim)
 
         self.start_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
         self.end_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
