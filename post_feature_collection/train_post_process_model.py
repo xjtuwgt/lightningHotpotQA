@@ -84,7 +84,10 @@ def train(args):
             #+++++++
             # batch_analysis(batch['x_feat'])
             scores = model(batch['x_feat'])
-            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            if args.weighted_loss:
+                loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'], weight=batch['weight'])
+            else:
+                loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
@@ -98,7 +101,7 @@ def train(args):
                 #                                                                               best_em_ratio, dev_loss, loss_supp.data.item(),
                 #                                                                                                                    loss_range.data.item()))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device)
+                em_count, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, weigted_loss=args.weighted_loss)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
@@ -110,7 +113,7 @@ def train(args):
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio, dev_prediction_dict
 
-def eval_model(model, data_loader, device):
+def eval_model(model, data_loader, device, weigted_loss):
     model.eval()
     em_count = 0
     total_count = 0
@@ -124,7 +127,10 @@ def eval_model(model, data_loader, device):
                 batch[key] = value.to(device)
         with torch.no_grad():
             scores = model(batch['x_feat'])
-            loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
+            if weigted_loss:
+                loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'], weight=batch['weight'])
+            else:
+                loss = loss_computation(scores=scores, y_min=batch['y_min'], y_max=batch['y_max'])
             dev_loss_list.append(loss.data.item())
             scores = scores.squeeze(-1)
             scores = torch.sigmoid(scores)
