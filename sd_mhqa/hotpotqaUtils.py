@@ -591,7 +591,7 @@ class PredictionLayer(nn.Module):
         # yp2: end
         yp1 = outer.max(dim=2)[0].max(dim=1)[1]
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
-        print(start_prediction.shape, end_prediction.shape, batch['y1'].shape, batch['y2'].shape)
+        # print(start_prediction.shape, end_prediction.shape, batch['y1'].shape, batch['y2'].shape)
         # print(yp1.shape, yp2.shape)
         return (start_prediction, end_prediction, type_prediction, yp1, yp2)
 
