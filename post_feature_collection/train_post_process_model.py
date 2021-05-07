@@ -5,6 +5,7 @@ from os.path import join
 import torch
 import json
 from leaderboardscripts.lb_postprocess_model import RangeModel, loss_computation
+from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, score_row_supp_f1_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer
 import random
@@ -113,13 +114,14 @@ def train(args):
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     return best_em_ratio, dev_prediction_dict
 
-def eval_model(model, data_loader, device, weigted_loss):
+def eval_model(model, data_loader, dev_score_dict, device, weigted_loss):
     model.eval()
     em_count = 0
     total_count = 0
     pred_score_dict = {}
     # for batch in tqdm(data_loader):
     dev_loss_list = []
+    dev_f1_list = []
     for batch in data_loader:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -143,6 +145,12 @@ def eval_model(model, data_loader, device, weigted_loss):
                 key = batch['id'][i]
                 total_count = total_count + 1
                 score_i = score_np[i]
+                if key in dev_score_dict:
+                    score_row = dev_score_dict[key]
+                    f1_i = score_row_supp_f1_computation(row=score_row, threshold=np_sigmoid(score_i))
+                    dev_f1_list.append(f1_i)
+                else:
+                    dev_f1_list.append(0.0)
                 y_min_i = y_min_np[i]
                 y_max_i = y_max_np[i]
                 y_flag_i = y_flag_np[i]
