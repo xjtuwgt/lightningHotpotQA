@@ -54,7 +54,7 @@ def train_parser():
 
     parser.add_argument("--train_batch_size", type=int, default=8192, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
-    parser.add_argument("--span_window_size", type=int, default=120, help='span_window_size')
+    parser.add_argument("--span_window_size", type=int, default=145, help='span_window_size')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
@@ -64,7 +64,7 @@ def train_parser():
     parser.add_argument("--alpha", type=float, default=0.25, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=0.01, type=float,
+    parser.add_argument("--learning_rate", default=0.001, type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=1e-6, type=float,
                         help="Weight deay if we apply some.")
