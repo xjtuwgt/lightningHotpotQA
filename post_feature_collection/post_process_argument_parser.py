@@ -66,13 +66,13 @@ def train_parser():
 
     parser.add_argument("--learning_rate", default=0.001, type=float,
                         help="The initial learning rate for Adam.")
-    parser.add_argument("--weight_decay", default=1e-6, type=float,
+    parser.add_argument("--weight_decay", default=1e-5, type=float,
                         help="Weight deay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float,
                         help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float,
                         help="Max gradient norm.")
-    parser.add_argument("--num_train_epochs", default=800, type=int,
+    parser.add_argument("--num_train_epochs", default=200, type=int,
                         help="epochs")
     parser.add_argument("--warmup_steps", default=0, type=int,
                         help="epochs")
