@@ -189,8 +189,6 @@ class MultiHeadAttention(nn.Module):
         output = self.linear(context)
         return output, attn
 
-
-
 class TransformerEncoderLayer(nn.Module):
     """
     EncoderLayer is made up of self-attention and feedforward network.
