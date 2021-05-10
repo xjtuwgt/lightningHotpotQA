@@ -68,7 +68,6 @@ class PoswiseFeedForwardNet(nn.Module):
             output = self.conv2(output).transpose(1, 2)
         return output
 
-
 class AddNorm(nn.Module):
     """
     Add & Normalization layer proposed in "Attention Is All You Need".
@@ -87,7 +86,6 @@ class AddNorm(nn.Module):
             return self.layer_norm(output[0] + residual), output[1]
         else:
             return self.layer_norm(output + residual)
-
 
 class ScaledDotProductAttention(nn.Module):
     """

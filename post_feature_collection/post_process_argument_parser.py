@@ -55,6 +55,13 @@ def train_parser():
     parser.add_argument("--train_batch_size", type=int, default=4096, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=125, help='span_window_size')
+    parser.add_argument("--encoder_type", type=str, default='ff', help='the encoder type to fuse cls, and score: ff, conv, transformer')
+    parser.add_argument("--encoder_layer", type=int, default=2,
+                        help='number of layer in encoder')
+    parser.add_argument("--encoder_hid_dim", type=int, default=512,
+                        help='hid_dim of encoder')
+    parser.add_argument("--encoder_drop_out", type=float, default=0.25,
+                        help='hid_dim of encoder')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')

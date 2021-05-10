@@ -3,7 +3,7 @@ from torch import Tensor as T
 from torch import nn
 import torch.nn.functional as F
 import numpy as np
-from torch.nn import TransformerEncoderLayer
+from leaderboardscripts.lb_postprocess_model_utils import AddNorm, PoswiseFeedForwardNet
 from torch.autograd import Variable
 IGNORE_INDEX = -100
 
@@ -36,29 +36,6 @@ class LayerNorm(nn.Module):
         s = (x - u).pow(2).mean(-1, keepdim=True)
         x = (x - u) / torch.sqrt(s + self.variance_epsilon)
         return self.weight * x + self.bias
-
-class FeatureInteractionLayer(nn.Module):
-    def __init__(self, input_dim, hidden_dim, layer_num):
-        super(FeatureInteractionLayer, self).__init__()
-
-
-
-
-
-
-class OutputLayer(nn.Module):
-    def __init__(self, hidden_dim, trans_drop=0.35, num_answer=1):
-        super(OutputLayer, self).__init__()
-        self.output = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim*2),
-            nn.ReLU(),
-            LayerNorm(hidden_dim*2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            nn.Linear(hidden_dim * 2, num_answer)
-        )
-
-    def forward(self, hidden_states):
-        return self.output(hidden_states)
 
 class RangeModel(nn.Module):
     def __init__(self, args):
@@ -98,6 +75,59 @@ def loss_computation(scores, y_min, y_max, weight=None):
     loss = loss.mean()
     # loss = loss.sum()
     return loss
+
+class TransformerEncoder(nn.Module):
+    def __init__(self, input_dim, hidden_dim, layer_num):
+        super(TransformerEncoder, self).__init__()
+
+
+
+class ConvEncoder(nn.Module):
+    def __init__(self, d_model, d_ff, dropout_p, layer_num):
+        super(ConvEncoder, self).__init__()
+        self.conv_encoder = nn.ModuleList()
+        for i in range(layer_num):
+            self.conv_encoder.append(AddNorm(PoswiseFeedForwardNet(d_model, d_ff, dropout_p, 'conv'), d_model))
+    def forward(self, inputs: T) -> T:
+        """
+        :param inputs: batch size x 2 x dim
+        :return:
+        """
+        output = inputs
+        for layer in self.conv_encoder:
+            output = layer(output)
+        return output.flatten(start_dim=1)
+
+class MLPEncoder(nn.Module):
+    def __init__(self, d_model, d_ff, dropout_p, layer_num):
+        super(MLPEncoder, self).__init__()
+        self.mlp_encoder = nn.ModuleList()
+        for i in range(layer_num):
+            self.mlp_encoder.append(AddNorm(PoswiseFeedForwardNet(d_model, d_ff, dropout_p, 'ff'), d_model))
+    def forward(self, inputs: T) -> T:
+        """
+        :param inputs: batch_size x (2 * dim)
+        :return:
+        """
+        output = inputs
+        for layer in self.conv_encoder:
+            output = layer(output)
+        return output
+
+
+class OutputLayer(nn.Module):
+    def __init__(self, hidden_dim, trans_drop=0.35, num_answer=1):
+        super(OutputLayer, self).__init__()
+        self.output = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim*2),
+            nn.ReLU(),
+            LayerNorm(hidden_dim*2, eps=1e-12),
+            nn.Dropout(trans_drop),
+            nn.Linear(hidden_dim * 2, num_answer)
+        )
+
+    def forward(self, hidden_states):
+        return self.output(hidden_states)
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class RangeSeqModel(nn.Module):
     def __init__(self, args):
@@ -112,6 +142,19 @@ class RangeSeqModel(nn.Module):
                                                d_hidden=2048, out_dim=self.hid_dim)
         self.score_map = PositionwiseFeedForward(model_dim= 3 * self.score_dim,
                                                d_hidden=2048, out_dim=self.hid_dim)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        self.encoder_type = self.args.encoder_type
+        if self.encoder_type == 'ff':
+            self.encoder = MLPEncoder(d_model= 2*self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        elif self.encoder_type == 'conv':
+            self.encoder = ConvEncoder(d_model= self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        elif self.encoder_type == 'transformer':
+            self.encoder = None
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
 
         self.start_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
         self.end_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
@@ -138,7 +181,16 @@ class RangeSeqModel(nn.Module):
         score_x = torch.cat([score_x, tanh_score_x, power_score], dim=-1)
         cls_map_emb = self.cls_map.forward(cls_x)
         score_map_emb = self.score_map.forward(score_x)
-        x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        if self.encoder_type == 'ff':
+            x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+        elif self.encoder_type == 'conv':
+            x_emb = torch.stack([cls_map_emb, score_map_emb], dim=1)
+        elif self.encoder_type == 'transformer':
+            x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
         start_prediction_scores = self.start_linear(x_emb)
         end_prediction_scores = self.end_linear(x_emb)
 
