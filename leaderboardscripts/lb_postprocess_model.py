@@ -45,6 +45,7 @@ class FeatureInteractionLayer(nn.Module):
 
 
 
+
 class OutputLayer(nn.Module):
     def __init__(self, hidden_dim, trans_drop=0.35, num_answer=1):
         super(OutputLayer, self).__init__()
@@ -53,28 +54,7 @@ class OutputLayer(nn.Module):
             nn.ReLU(),
             LayerNorm(hidden_dim*2, eps=1e-12),
             nn.Dropout(trans_drop),
-            nn.Linear(2*hidden_dim, hidden_dim*2),
-
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            nn.Linear(hidden_dim * 2, hidden_dim * 2),
-
-            nn.ReLU(),
-            LayerNorm(hidden_dim * 2, eps=1e-12),
-            nn.Dropout(trans_drop),
-            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
-
-            # nn.ReLU(),
-            # LayerNorm(hidden_dim * 2, eps=1e-12),
-            # nn.Dropout(trans_drop),
-            # nn.Linear(hidden_dim * 2, hidden_dim * 2),
-
-            # nn.ReLU(),
-            # LayerNorm(hidden_dim * 2, eps=1e-12),
-            # nn.Dropout(trans_drop),
-            nn.Linear(hidden_dim * 2, num_answer),
-            #+++++++++
+            nn.Linear(hidden_dim * 2, num_answer)
         )
 
     def forward(self, hidden_states):
@@ -107,11 +87,7 @@ class RangeModel(nn.Module):
         return scores
 
 def loss_computation(scores, y_min, y_max, weight=None):
-    # p_score = F.sigmoid(scores)
     p_score = scores.squeeze(-1)
-    # print(y_min)
-    # print(y_max)
-    # print(p_score)
     if weight is None:
         loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
     else:
@@ -123,19 +99,6 @@ def loss_computation(scores, y_min, y_max, weight=None):
     # loss = loss.sum()
     return loss
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-# def ce_loss_computation(scores, y_min, y_max, score_gold):
-#     criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
-#     score_aux = Variable(scores.data.new(scores.size(0), scores.size(1)).zero_())
-#     score_pred = torch.cat([score_aux, scores], dim=-1).contiguous()
-#     loss_sup = criterion(score_pred, score_gold.long())
-#     p_score = torch.sigmoid(scores.squeeze(-1))
-#     loss_range = F.relu(p_score - torch.sigmoid(y_max)) + F.relu(torch.sigmoid(y_min) - p_score)
-#     loss_range = loss_range.mean()
-#     loss = 0*loss_sup + loss_range
-#     return loss, loss_sup, loss_range
-
-
 class RangeSeqModel(nn.Module):
     def __init__(self, args):
         super(RangeSeqModel, self).__init__()
@@ -190,10 +153,6 @@ class RangeSeqModel(nn.Module):
         return start_prediction_scores, end_prediction_scores, yp1, yp2
 
 def seq_loss_computation(start, end, batch, weight=False):
-    # print(start.shape)
-    # print(end.shape)
-    # print(batch['y_1'].shape, batch['y_2'].shape)
-    # print(batch['y_1'].max(), batch['y_2'].max())
     if not weight:
         criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
         loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
