@@ -110,7 +110,7 @@ class MLPEncoder(nn.Module):
         :return:
         """
         output = inputs
-        for layer in self.conv_encoder:
+        for layer in self.mlp_encoder:
             output = layer(output)
         return output
 
