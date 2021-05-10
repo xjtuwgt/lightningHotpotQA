@@ -3,6 +3,7 @@ from torch import Tensor as T
 from torch import nn
 import torch.nn.functional as F
 import numpy as np
+from torch.nn import TransformerEncoderLayer
 from torch.autograd import Variable
 IGNORE_INDEX = -100
 
@@ -35,6 +36,13 @@ class LayerNorm(nn.Module):
         s = (x - u).pow(2).mean(-1, keepdim=True)
         x = (x - u) / torch.sqrt(s + self.variance_epsilon)
         return self.weight * x + self.bias
+
+class FeatureInteractionLayer(nn.Module):
+    def __init__(self, input_dim, hidden_dim, layer_num):
+        super(FeatureInteractionLayer, self).__init__()
+
+
+
 
 
 class OutputLayer(nn.Module):

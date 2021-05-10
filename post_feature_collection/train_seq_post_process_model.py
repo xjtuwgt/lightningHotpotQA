@@ -12,7 +12,8 @@ import numpy as np
 from utils.gpu_utils import single_free_cuda
 from torch import Tensor
 import torch
-from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, score_row_supp_f1_computation
+from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, \
+    load_json_score_data, score_row_supp_f1_computation
 
 def batch_analysis(x_feat: Tensor):
     p2dist = torch.cdist(x1=x_feat, x2=x_feat, p=2)
