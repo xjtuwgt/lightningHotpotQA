@@ -184,13 +184,16 @@ class RangeSeqModel(nn.Module):
         ##+++++++++++++++++++++++++++++++++++++++++
         if self.encoder_type == 'ff':
             x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+            x_emb = self.encoder.forward(x_emb)
         elif self.encoder_type == 'conv':
             x_emb = torch.stack([cls_map_emb, score_map_emb], dim=1)
+            x_emb = self.encoder.forward(x_emb)
         elif self.encoder_type == 'transformer':
             x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
         else:
             raise '{} encoder is not supported'.format(self.encoder_type)
         ##+++++++++++++++++++++++++++++++++++++++++
+
         start_prediction_scores = self.start_linear(x_emb)
         end_prediction_scores = self.end_linear(x_emb)
 
