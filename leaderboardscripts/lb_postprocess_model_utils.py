@@ -6,7 +6,6 @@ import torch.nn.functional as F
 import numpy as np
 from typing import Optional, Tuple
 
-
 class Linear(nn.Module):
     def __init__(self, in_features: int, out_features: int, bias: bool = True):
         super(Linear, self).__init__()
@@ -17,12 +16,11 @@ class Linear(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         return self.linear(x)
 
-
 class LayerNorm(nn.Module):
     def __init__(self, dim: int, eps: float = 1e-6) -> None:
         super(LayerNorm, self).__init__()
-        self.gamma = nn.Parameter(torch.ones(dim))
-        self.beta = nn.Parameter(torch.zeros(dim))
+        self.gamma = nn.Parameter(torch.ones(dim), requires_grad=True)
+        self.beta = nn.Parameter(torch.zeros(dim), requires_grad=True)
         self.eps = eps
 
     def forward(self, z: Tensor) -> Tensor:
@@ -53,12 +51,10 @@ class PoswiseFeedForwardNet(nn.Module):
                 Linear(d_ff, d_model),
                 nn.Dropout(dropout_p)
             )
-
         elif self.ffnet_style == 'conv':
             self.conv1 = nn.Conv1d(in_channels=d_model, out_channels=d_ff, kernel_size=1)
             self.relu = nn.ReLU()
             self.conv2 = nn.Conv1d(in_channels=d_ff, out_channels=d_model, kernel_size=1)
-
         else:
             raise ValueError("Unsupported mode: {0}".format(self.mode))
 
