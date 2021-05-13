@@ -7,12 +7,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from torch.utils.data import DataLoader
 from collections import Counter
 from time import time
 import pandas as pd
 import seaborn as sns
 from numpy import ndarray
 from sklearn.preprocessing import normalize as skl_norm
+from post_feature_collection.post_process_data_helper import RangeSeqDropDataset
 from post_feature_collection.post_process_feature_extractor import threshold_map_to_label, np_sigmoid, get_threshold_category
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 raw_data_path = '/Users/xjtuwgt/PycharmProjects/LongSeqMultihopReason/data/hotpotqa'
@@ -201,8 +203,44 @@ def threshold_to_label_loop(y_label_np):
 
 
 if __name__ == '__main__':
-    # dev_feat_extractor(interval_num=150)
-    train_feat_extractor(interval_num=150)
+    interval_num = 300
+    # dev_feat_extractor(interval_num=interval_num)
+    # train_feat_extractor(interval_num=interval_num)
+
+    train_data_set = RangeSeqDropDataset(json_file_name=join(score_data_path, train_feat_name))
+    dev_data_set = RangeSeqDropDataset(json_file_name=join(score_data_path, dev_feat_name))
+    train_data_loader = DataLoader(dataset=train_data_set,
+                                   shuffle=False,
+                                   collate_fn=RangeSeqDropDataset.collate_fn,
+                                   batch_size=1)
+    dev_data_loader = DataLoader(dataset=dev_data_set, shuffle=False, collate_fn=RangeSeqDropDataset.collate_fn,
+                                   batch_size=1)
+
+    range_len_list = []
+    for batch_idx, batch in tqdm(enumerate(train_data_loader)):
+        range_len = (batch['y_2'] - batch['y_1']).data.item()
+        range_len_list.append(range_len)
+    rang_len_counter = dict(Counter(range_len_list))
+    for key, value in rang_len_counter.items():
+        print('{}\t{}'.format(key, value))
+
+    print('Average len = {}'.format(sum(range_len_list)/len(range_len_list)))
+
+    dev_range_len_list = []
+    for batch_idx, batch in tqdm(enumerate(dev_data_loader)):
+        range_len = (batch['y_2'] - batch['y_1']).data.item()
+        dev_range_len_list.append(range_len)
+    print('Average len = {}'.format(sum(dev_range_len_list) / len(dev_range_len_list)))
+
+    dev_range_len_counter = dict(Counter(dev_range_len_list))
+    for i in range(interval_num):
+        if i not in rang_len_counter:
+            rang_len_counter[i] = 0
+        if i not in dev_range_len_counter:
+            dev_range_len_counter[i] = 0
+        print('{} \t {}\t{}'.format(i, rang_len_counter[i], dev_range_len_counter[i]))
+
+
 #     # # train_range_analysis()
 #
     # x_feat_np, y_label_np = dev_range_analysis()
