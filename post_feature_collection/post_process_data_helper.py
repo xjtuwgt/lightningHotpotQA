@@ -19,9 +19,8 @@ class RangeDataset(Dataset):
         y_label = case['y_label']
         x_i = torch.from_numpy(x_feat).float()
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        # weight = torch.FloatTensor([1 - np_sigmoid(y_p_i) + np_sigmoid(y_n_i)])
-        weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
-        # weight = torch.FloatTensor([np_sigmoid(y_p_i - y_n_i)])
+        weight = torch.FloatTensor([y_p_i - y_n_i])
+        print(y_p_i, y_n_i)
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if y_label[0] == 1.0:
@@ -65,9 +64,7 @@ class RangeSeqDataset(Dataset):
 
         y_label = case['y_label']
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        # weight = torch.FloatTensor([y_p_i - y_n_i])
-        weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
-        # weight = torch.FloatTensor([np_sigmoid(y_p_i - y_n_i)])
+        weight = torch.FloatTensor([y_p_i - y_n_i])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if l_idx < 0:
@@ -94,7 +91,7 @@ class RangeSeqDataset(Dataset):
         sample = {'x_feat': x, 'y_1': y_1, 'y_2': y_2, 'y_min': y_min, 'y_max': y_max, 'weight': weight, 'flag': flag, 'id': key}
         return sample
 
-
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class RangeSeqDropDataset(Dataset):
     def __init__(self, json_file_name, drop_ratio=0.25):
         self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
@@ -119,7 +116,7 @@ class RangeSeqDropDataset(Dataset):
 
         y_label = case['y_label']
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        weight = torch.FloatTensor([y_p_i - y_n_i])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if l_idx < 0:
