@@ -1,6 +1,7 @@
 from post_feature_collection.post_process_data_helper import RangeSeqDataset
 from post_feature_collection.post_process_argument_parser import train_parser
 from torch.utils.data import DataLoader
+from utils.jdutils import seed_everything
 from os.path import join
 import torch
 import json
@@ -173,6 +174,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 if __name__ == '__main__':
 
     args = train_parser()
+    seed_everything(seed=args.rand_seed)
     best_em_ratio, best_f1, dev_prediction_dict = train(args)
     predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
     json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
