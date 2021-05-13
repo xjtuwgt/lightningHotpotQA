@@ -53,7 +53,7 @@ def trim_range(start_position, end_position, span_length):
             end_position_i = start_position_i + span_length -1
             assert end_position_i <= end_position
             span_list.append((start_position_i, end_position_i))
-        rand_idx = random.randint(0, len(span_list))
+        rand_idx = random.randint(0, len(span_list) - 1)
         span_start, span_end = span_list[rand_idx]
         return span_start, span_end
 
