@@ -52,12 +52,12 @@ def train_parser():
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=4321)
 
-    parser.add_argument("--train_batch_size", type=int, default=512, help='training batch size')
+    parser.add_argument("--train_batch_size", type=int, default=4096, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=245, help='span_window_size')
     parser.add_argument("--decoder_window_size", type=int, default=265, help='span_window_size')
     parser.add_argument("--encoder_type", type=str, default='conv', help='the encoder type to fuse cls, and score: ff, conv, transformer')
-    parser.add_argument("--encoder_layer", type=int, default=2,
+    parser.add_argument("--encoder_layer", type=int, default=1,
                         help='number of layer in encoder')
     parser.add_argument("--encoder_hid_dim", type=int, default=512,
                         help='hid_dim of encoder')
@@ -66,13 +66,13 @@ def train_parser():
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
-    parser.add_argument("--hid_dim", type=int, default=256, help='cls_emb_dim')
-    parser.add_argument("--cpu_number", type=int, default=4, help='cpu number')
+    parser.add_argument("--hid_dim", type=int, default=512, help='cls_emb_dim')
+    parser.add_argument("--cpu_number", type=int, default=6, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=300, help='interval number')
-    parser.add_argument("--alpha", type=float, default=0.5, help='prediction alpha')
+    parser.add_argument("--alpha", type=float, default=0.2, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=True, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=0.0005, type=float,
+    parser.add_argument("--learning_rate", default=0.001, type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=1e-5, type=float,
                         help="Weight deay if we apply some.")
