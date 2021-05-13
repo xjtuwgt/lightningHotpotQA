@@ -324,7 +324,8 @@ class RangeSeqCLSModel(nn.Module):
     def forward(self, x: T, return_yp=False):
         assert x.shape[1] == self.emb_dim
         cls_x = x[:,:self.cls_emb_dim]
-        x_emb = self.encoder.forward(cls_x)
+        cls_emb = self.cls_map(cls_x)
+        x_emb = self.encoder.forward(cls_emb)
         ##+++++++++++++++++++++++++++++++++++++++++
         start_prediction_scores = self.start_linear(x_emb)
         end_prediction_scores = self.end_linear(x_emb)
