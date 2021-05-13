@@ -123,10 +123,11 @@ def seq_drop(start_position, end_position, drop_ratio):
     return
 
 class RangeSeqDropDataset(Dataset):
-    def __init__(self, json_file_name, drop_ratio=0.25):
+    def __init__(self, json_file_name, span_window_size, drop_ratio=0.25):
         self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
         self.key_list = list(self.feat_dict.keys())
         self.drop_ratio = drop_ratio
+        self.span_window_size = span_window_size
 
     def __len__(self):
         return len(self.key_list)
@@ -140,6 +141,10 @@ class RangeSeqDropDataset(Dataset):
         x_i = torch.from_numpy(x_feat).float()
         l_idx = seq_label.find('2') - 2
         r_idx = seq_label.rfind('2') - 2
+
+        ##++++++
+        l_idx, r_idx = trim_range(start_position=l_idx, end_position=r_idx, span_length=self.span_window_size)
+        ##++++++
 
         y1 = torch.zeros(1, dtype=torch.long)
         y2 = torch.zeros(1, dtype=torch.long)
