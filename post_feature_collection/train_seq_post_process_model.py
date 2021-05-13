@@ -54,8 +54,8 @@ def train(args):
                                  batch_size=args.eval_batch_size)
     dev_score_dict = load_json_score_data(json_score_file_name=dev_score_file_name)
     t_total_steps = len(train_data_loader) * args.num_train_epochs
-    model = RangeSeqModel(args=args)
-    # model = RangeSeqScoreModel(args=args)
+    # model = RangeSeqModel(args=args)
+    model = RangeSeqScoreModel(args=args)
     # model = RangeSeqCLSModel(args=args)
     #++++++++++++++++++++++++++++++++++++++++++++
     model.to(device)
