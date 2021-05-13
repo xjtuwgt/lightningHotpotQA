@@ -93,6 +93,14 @@ class RangeSeqDataset(Dataset):
         return sample
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+def seq_drop(left_idx, right_idx, drop_ratio):
+    seq_len = right_idx - left_idx
+    window_len = int(seq_len * (1-drop_ratio))
+    if window_len == 0:
+        return left_idx, right_idx
+
+    return
+
 class RangeSeqDropDataset(Dataset):
     def __init__(self, json_file_name, drop_ratio=0.25):
         self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
