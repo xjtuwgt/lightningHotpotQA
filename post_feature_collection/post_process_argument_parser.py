@@ -57,7 +57,7 @@ def train_parser():
     parser.add_argument("--span_window_size", type=int, default=250, help='span_window_size')
     parser.add_argument("--decoder_window_size", type=int, default=280, help='span_window_size')
     parser.add_argument("--encoder_type", type=str, default='conv', help='the encoder type to fuse cls, and score: ff, conv, transformer')
-    parser.add_argument("--encoder_layer", type=int, default=1,
+    parser.add_argument("--encoder_layer", type=int, default=2,
                         help='number of layer in encoder')
     parser.add_argument("--encoder_hid_dim", type=int, default=512,
                         help='hid_dim of encoder')
@@ -72,9 +72,9 @@ def train_parser():
     parser.add_argument("--alpha", type=float, default=0.75, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=0.01, type=float,
+    parser.add_argument("--learning_rate", default=0.005, type=float,
                         help="The initial learning rate for Adam.")
-    parser.add_argument("--weight_decay", default=1e-3, type=float,
+    parser.add_argument("--weight_decay", default=1e-8, type=float,
                         help="Weight deay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float,
                         help="Epsilon for Adam optimizer.")
