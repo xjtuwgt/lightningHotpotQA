@@ -216,3 +216,128 @@ def seq_loss_computation(start, end, batch, weight=False):
         loss_span = (criterion(start, batch['y_1']) + criterion(end, batch['y_2'])) * batch['weight']
         loss_span = torch.mean(loss_span)
     return loss_span
+
+##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+class RangeSeqScoreModel(nn.Module):
+    def __init__(self, args):
+        super(RangeSeqScoreModel, self).__init__()
+        self.args = args
+        self.cls_emb_dim = self.args.cls_emb_dim
+        self.emb_dim = self.args.emb_dim
+        self.score_dim = self.emb_dim - self.cls_emb_dim
+        self.hid_dim = self.args.hid_dim
+
+        self.score_map = PositionwiseFeedForward(model_dim= self.score_dim,
+                                               d_hidden=2048, out_dim=self.hid_dim)
+        self.score_square_map = PositionwiseFeedForward(model_dim=self.score_dim, d_hidden=2048, out_dim=self.hid_dim)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        self.encoder_type = self.args.encoder_type
+        if self.encoder_type == 'ff':
+            self.encoder = MLPEncoder(d_model= 2*self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        elif self.encoder_type == 'conv':
+            self.encoder = ConvEncoder(d_model= self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
+
+        self.start_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+        self.end_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+
+        self.cache_S = 0
+        self.cache_mask = None
+        self.span_window_size = self.args.span_window_size
+
+    def get_output_mask(self, outer):
+        S = outer.size(1)
+        if S <= self.cache_S:
+            return Variable(self.cache_mask[:S, :S], requires_grad=False)
+        self.cache_S = S
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.span_window_size)
+        self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
+        return Variable(self.cache_mask, requires_grad=False)
+
+    def forward(self, x: T, return_yp=False):
+        assert x.shape[1] == self.emb_dim
+        score_x = x[:,self.cls_emb_dim:]
+        score_square_x = torch.pow(score_x, 2)
+        score_square_map_emb = self.score_square_map.forward(score_square_x)
+        score_map_emb = self.score_map.forward(score_x)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        if self.encoder_type == 'ff':
+            x_emb = torch.cat([score_square_map_emb, score_map_emb], dim=-1)
+            x_emb = self.encoder.forward(x_emb)
+        elif self.encoder_type == 'conv':
+            x_emb = torch.stack([score_square_map_emb, score_map_emb], dim=1)
+            x_emb = self.encoder.forward(x_emb)
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
+
+        start_prediction_scores = self.start_linear(x_emb)
+        end_prediction_scores = self.end_linear(x_emb)
+
+        if not return_yp:
+            return (start_prediction_scores, end_prediction_scores)
+
+        outer = start_prediction_scores[:, :, None] + end_prediction_scores[:, None]
+        outer_mask = self.get_output_mask(outer)
+        outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
+        yp1 = outer.max(dim=2)[0].max(dim=1)[1]
+        yp2 = outer.max(dim=1)[0].max(dim=1)[1]
+        return start_prediction_scores, end_prediction_scores, yp1, yp2
+
+class RangeSeqCLSModel(nn.Module):
+    def __init__(self, args):
+        super(RangeSeqCLSModel, self).__init__()
+        self.args = args
+        self.cls_emb_dim = self.args.cls_emb_dim
+        self.emb_dim = self.args.emb_dim
+        self.score_dim = self.emb_dim - self.cls_emb_dim
+        self.hid_dim = self.args.hid_dim
+
+        self.cls_map = PositionwiseFeedForward(model_dim=self.cls_emb_dim,
+                                               d_hidden=2048, out_dim=self.hid_dim)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        self.encoder_type = self.args.encoder_type
+        if self.encoder_type == 'ff':
+            self.encoder = MLPEncoder(d_model=self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
+
+        self.start_linear = OutputLayer(self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+        self.end_linear = OutputLayer(self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+
+        self.cache_S = 0
+        self.cache_mask = None
+        self.span_window_size = self.args.span_window_size
+
+    def get_output_mask(self, outer):
+        S = outer.size(1)
+        if S <= self.cache_S:
+            return Variable(self.cache_mask[:S, :S], requires_grad=False)
+        self.cache_S = S
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.span_window_size)
+        self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
+        return Variable(self.cache_mask, requires_grad=False)
+
+    def forward(self, x: T, return_yp=False):
+        assert x.shape[1] == self.emb_dim
+        cls_x = x[:,:self.cls_emb_dim]
+        x_emb = self.encoder.forward(cls_x)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        start_prediction_scores = self.start_linear(x_emb)
+        end_prediction_scores = self.end_linear(x_emb)
+
+        if not return_yp:
+            return (start_prediction_scores, end_prediction_scores)
+
+        outer = start_prediction_scores[:, :, None] + end_prediction_scores[:, None]
+        outer_mask = self.get_output_mask(outer)
+        outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
+        yp1 = outer.max(dim=2)[0].max(dim=1)[1]
+        yp2 = outer.max(dim=1)[0].max(dim=1)[1]
+        return start_prediction_scores, end_prediction_scores, yp1, yp2
