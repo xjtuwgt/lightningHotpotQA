@@ -217,6 +217,25 @@ def seq_loss_computation(start, end, batch, weight=False):
         loss_span = torch.mean(loss_span)
     return loss_span
 
+def seq_score_loss_computation(start, end, scores, batch, weight=False):
+    if not weight:
+        criterion = nn.CrossEntropyLoss(reduction='mean', ignore_index=IGNORE_INDEX)
+        loss_span = criterion(start, batch['y_1']) + criterion(end, batch['y_2'])
+    else:
+        criterion = nn.CrossEntropyLoss(reduction='none', ignore_index=IGNORE_INDEX)
+        loss_span = (criterion(start, batch['y_1']) + criterion(end, batch['y_2'])) * batch['weight']
+        loss_span = torch.mean(loss_span)
+
+    p_score = scores.squeeze(-1)
+    if weight is None:
+        score_loss = F.relu(p_score - batch['y_max']) + F.relu(batch['y_min'] - p_score)
+    else:
+        score_loss = F.relu(p_score - batch['y_max']) + F.relu(batch['y_min']- p_score)
+        score_loss = score_loss * weight
+    score_loss = score_loss.mean()
+    loss = loss_span + score_loss
+    return loss
+
 ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class RangeSeqScoreModel(nn.Module):
     def __init__(self, args):
@@ -244,6 +263,10 @@ class RangeSeqScoreModel(nn.Module):
 
         self.start_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
         self.end_linear = OutputLayer(2 * self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
+
+        self.threshold_score_func = OutputLayer(hidden_dim=2 * self.hid_dim,
+                                           trans_drop=self.args.feat_drop,
+                                           num_answer=1)
 
         self.cache_S = 0
         self.cache_mask = None
@@ -278,15 +301,17 @@ class RangeSeqScoreModel(nn.Module):
         start_prediction_scores = self.start_linear(x_emb)
         end_prediction_scores = self.end_linear(x_emb)
 
+        scores = self.threshold_score_func.forward(x_emb)
+
         if not return_yp:
-            return (start_prediction_scores, end_prediction_scores)
+            return (start_prediction_scores, end_prediction_scores, scores)
 
         outer = start_prediction_scores[:, :, None] + end_prediction_scores[:, None]
         outer_mask = self.get_output_mask(outer)
         outer = outer - 1e30 * (1 - outer_mask[None].expand_as(outer))
         yp1 = outer.max(dim=2)[0].max(dim=1)[1]
         yp2 = outer.max(dim=1)[0].max(dim=1)[1]
-        return start_prediction_scores, end_prediction_scores, yp1, yp2
+        return start_prediction_scores, end_prediction_scores, scores, yp1, yp2
 
 class RangeSeqCLSModel(nn.Module):
     def __init__(self, args):
