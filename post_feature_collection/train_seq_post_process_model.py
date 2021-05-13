@@ -166,8 +166,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 # print(score_i, y_min_i, y_max_i)
                 if score_i > y_min_i and score_i < y_max_i and y_flag_i == 1:
                     em_count = em_count + 1
-                else:
-                    print(f1_i)
+                # else:
+                #     print(f1_i)
                 pred_score_dict[key] = float(score_i)
     # print(em_count, total_count)
     avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
