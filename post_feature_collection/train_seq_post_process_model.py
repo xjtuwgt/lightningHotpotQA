@@ -151,7 +151,6 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
-                # print(y_min_i, y_max_i, score_i)
                 y_flag_i = y_flag_np[i]
 
                 # print('pred', start_i, end_i)
