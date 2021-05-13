@@ -47,7 +47,7 @@ def train(args):
     train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
                                    collate_fn=RangeSeqDataset.collate_fn,
-                                   num_workers=args.cpu_num,
+                                   num_workers=args.cpu_number,
                                    batch_size=args.train_batch_size)
     dev_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
