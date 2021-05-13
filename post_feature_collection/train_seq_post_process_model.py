@@ -5,7 +5,7 @@ from utils.jdutils import seed_everything
 from os.path import join
 import torch
 import json
-from leaderboardscripts.lb_postprocess_model import RangeSeqModel, RangeSeqScoreModel, RangeSeqCLSModel, seq_loss_computation, seq_score_loss_computation
+from leaderboardscripts.lb_postprocess_model import RangeSeqModel, RangeSeqScoreModel, RangeSeqCLSModel, seq_loss_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer, get_scheduler
 import random
@@ -90,10 +90,8 @@ def train(args):
                     batch[key] = value.to(device)
             #+++++++
             # batch_analysis(batch['x_feat'])
-            # start_scores, end_scores = model(batch['x_feat'])
-            # loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=args.weighted_loss)
-            start_scores, end_scores, scores = model(batch['x_feat'])
-            loss = seq_score_loss_computation(start=start_scores, end=end_scores, scores=scores, batch=batch, weight=args.weighted_loss)
+            start_scores, end_scores = model(batch['x_feat'])
+            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=args.weighted_loss)
             optimizer.zero_grad()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
@@ -134,11 +132,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
             if key not in ['id']:
                 batch[key] = value.to(device)
         with torch.no_grad():
-            # start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
-            # loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=weighted_loss)
-
-            start_scores, end_scores, scores, y1, y2 = model(batch['x_feat'], return_yp=True)
-            loss = seq_score_loss_computation(start=start_scores, end=end_scores, scores=scores, batch=batch, weight=weighted_loss)
+            start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
+            loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=weighted_loss)
             dev_loss_list.append(loss.data.item())
             y_min_np = batch['y_min'].data.cpu().numpy()
             y_max_np = batch['y_max'].data.cpu().numpy()
@@ -147,18 +142,16 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
             end_indexes = y2.data.cpu().numpy()
             # gold_y_1 = batch['y_1'].data.cpu().numpy()
             # gold_y_2 = batch['y_2'].data.cpu().numpy()
-            scores_np = scores.detach().data.cpu().numpy()
 
             for i in range(y_min_np.shape[0]):
                 key = batch['id'][i]
                 total_count = total_count + 1
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
-                # score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
+                score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
                 y_flag_i = y_flag_np[i]
-                score_i = scores_np[i]
 
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])

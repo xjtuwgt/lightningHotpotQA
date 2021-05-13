@@ -72,7 +72,7 @@ def train_parser():
     parser.add_argument("--alpha", type=float, default=0.5, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=True, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=0.005, type=float,
+    parser.add_argument("--learning_rate", default=0.002, type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=1e-8, type=float,
                         help="Weight deay if we apply some.")
