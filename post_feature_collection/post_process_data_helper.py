@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from post_feature_collection.post_process_feature_extractor import np_sigmoid
 from torch.utils.data import Dataset
+import random
 IGNORE_INDEX = -100
 
 class RangeDataset(Dataset):
@@ -41,10 +42,26 @@ class RangeDataset(Dataset):
         return sample
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+def trim_range(start_position, end_position, span_length):
+    seq_len = end_position - start_position + 1
+    if seq_len <= span_length:
+        return start_position, end_position
+    else:
+        span_list = []
+        for i in range(seq_len - span_length):
+            start_position_i = start_position + i
+            end_position_i = start_position_i + span_length -1
+            assert end_position_i <= end_position
+            span_list.append((start_position_i, end_position_i))
+        rand_idx = random.randint(0, len(span_list))
+        span_start, span_end = span_list[rand_idx]
+        return span_start, span_end
+
 class RangeSeqDataset(Dataset):
-    def __init__(self, json_file_name):
+    def __init__(self, json_file_name, span_window_size):
         self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
         self.key_list = list(self.feat_dict.keys())
+        self.span_window_size = span_window_size
 
     def __len__(self):
         return len(self.key_list)
@@ -58,6 +75,10 @@ class RangeSeqDataset(Dataset):
         x_i = torch.from_numpy(x_feat).float()
         l_idx = seq_label.find('2') - 2
         r_idx = seq_label.rfind('2') - 2
+
+        ##++++++
+        l_idx, r_idx = trim_range(start_position=l_idx, end_position=r_idx, span_length=self.span_window_size)
+        ##++++++
 
         y1 = torch.zeros(1, dtype=torch.long)
         y2 = torch.zeros(1, dtype=torch.long)
@@ -93,11 +114,11 @@ class RangeSeqDataset(Dataset):
         return sample
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-def seq_drop(left_idx, right_idx, drop_ratio):
-    seq_len = right_idx - left_idx
+def seq_drop(start_position, end_position, drop_ratio):
+    seq_len = end_position - start_position + 1
     window_len = int(seq_len * (1-drop_ratio))
     if window_len == 0:
-        return left_idx, right_idx
+        return start_position, end_position
 
     return
 
