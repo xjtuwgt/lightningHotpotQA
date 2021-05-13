@@ -161,14 +161,14 @@ class RangeSeqModel(nn.Module):
 
         self.cache_S = 0
         self.cache_mask = None
-        self.span_window_size = self.args.span_window_size
+        self.decoder_window_size = self.args.decoder_window_size
 
     def get_output_mask(self, outer):
         S = outer.size(1)
         if S <= self.cache_S:
             return Variable(self.cache_mask[:S, :S], requires_grad=False)
         self.cache_S = S
-        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.span_window_size)
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.decoder_window_size)
         self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
         return Variable(self.cache_mask, requires_grad=False)
 
@@ -247,14 +247,14 @@ class RangeSeqScoreModel(nn.Module):
 
         self.cache_S = 0
         self.cache_mask = None
-        self.span_window_size = self.args.span_window_size
+        self.decoder_window_size = self.args.decoder_window_size
 
     def get_output_mask(self, outer):
         S = outer.size(1)
         if S <= self.cache_S:
             return Variable(self.cache_mask[:S, :S], requires_grad=False)
         self.cache_S = S
-        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.span_window_size)
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.decoder_window_size)
         self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
         return Variable(self.cache_mask, requires_grad=False)
 
@@ -310,14 +310,14 @@ class RangeSeqCLSModel(nn.Module):
 
         self.cache_S = 0
         self.cache_mask = None
-        self.span_window_size = self.args.span_window_size
+        self.decoder_window_size = self.args.decoder_window_size
 
     def get_output_mask(self, outer):
         S = outer.size(1)
         if S <= self.cache_S:
             return Variable(self.cache_mask[:S, :S], requires_grad=False)
         self.cache_S = S
-        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.span_window_size)
+        np_mask = np.tril(np.triu(np.ones((S, S)), 0), self.decoder_window_size)
         self.cache_mask = outer.data.new(S, S).copy_(torch.from_numpy(np_mask))
         return Variable(self.cache_mask, requires_grad=False)
 
