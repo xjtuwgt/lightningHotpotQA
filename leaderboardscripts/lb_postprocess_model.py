@@ -301,11 +301,8 @@ class RangeSeqCLSModel(nn.Module):
                                                d_hidden=2048, out_dim=self.hid_dim)
         ##+++++++++++++++++++++++++++++++++++++++++
         self.encoder_type = self.args.encoder_type
-        if self.encoder_type == 'ff':
-            self.encoder = MLPEncoder(d_model=self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
-                                      layer_num=self.args.encoder_layer)
-        else:
-            raise '{} encoder is not supported'.format(self.encoder_type)
+        self.encoder = MLPEncoder(d_model=self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                  layer_num=self.args.encoder_layer)
         ##+++++++++++++++++++++++++++++++++++++++++
 
         self.start_linear = OutputLayer(self.hid_dim, trans_drop=self.args.feat_drop, num_answer=self.args.interval_number)
