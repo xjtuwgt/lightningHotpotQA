@@ -47,6 +47,7 @@ def train(args):
     train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
                                    collate_fn=RangeSeqDataset.collate_fn,
+                                   num_workers=args.cpu_num,
                                    batch_size=args.train_batch_size)
     dev_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
@@ -148,6 +149,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 total_count = total_count + 1
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
+                if start_i > end_i:
+                    print('here')
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
