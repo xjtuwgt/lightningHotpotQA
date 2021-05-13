@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from os.path import join
 import torch
 import json
-from leaderboardscripts.lb_postprocess_model import RangeSeqModel, RangeSeqScoreModel, seq_loss_computation
+from leaderboardscripts.lb_postprocess_model import RangeSeqModel, RangeSeqScoreModel, RangeSeqCLSModel, seq_loss_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer, get_scheduler
 import random
@@ -54,7 +54,8 @@ def train(args):
     dev_score_dict = load_json_score_data(json_score_file_name=dev_score_file_name)
     t_total_steps = len(train_data_loader) * args.num_train_epochs
     # model = RangeSeqModel(args=args)
-    model = RangeSeqScoreModel(args=args)
+    # model = RangeSeqScoreModel(args=args)
+    model = RangeSeqCLSModel(args=args)
     #++++++++++++++++++++++++++++++++++++++++++++
     model.to(device)
 
