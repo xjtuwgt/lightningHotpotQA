@@ -18,10 +18,12 @@ class RangeDataset(Dataset):
         case = self.feat_dict[key]
         x_feat = np.array(case['x_feat'])
         y_label = case['y_label']
+        y_f1_score = y_label[0]
         x_i = torch.from_numpy(x_feat).float()
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
 
+        # weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        weight = torch.FloatTensor([(np_sigmoid(y_p_i) - np_sigmoid(y_n_i)) * y_f1_score])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if y_label[0] == 1.0:
@@ -84,9 +86,10 @@ class RangeSeqDataset(Dataset):
         y2 = torch.zeros(1, dtype=torch.long)
 
         y_label = case['y_label']
-        # y_f1_score = y_label[0]
+        y_f1_score = y_label[0]
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        # weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        weight = torch.FloatTensor([(np_sigmoid(y_p_i) - np_sigmoid(y_n_i)) * y_f1_score])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if l_idx < 0:
@@ -150,8 +153,10 @@ class RangeSeqDropDataset(Dataset):
         y2 = torch.zeros(1, dtype=torch.long)
 
         y_label = case['y_label']
+        y_f1_score = y_label[0]
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
-        weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        # weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        weight = torch.FloatTensor([(np_sigmoid(y_p_i) - np_sigmoid(y_n_i)) * y_f1_score])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
         if l_idx < 0:
