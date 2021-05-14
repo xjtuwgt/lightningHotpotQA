@@ -80,7 +80,7 @@ def train_parser():
                         help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float,
                         help="Max gradient norm.")
-    parser.add_argument("--num_train_epochs", default=400, type=int,
+    parser.add_argument("--num_train_epochs", default=150, type=int,
                         help="epochs")
     parser.add_argument("--warmup_steps", default=0, type=int,
                         help="epochs")
