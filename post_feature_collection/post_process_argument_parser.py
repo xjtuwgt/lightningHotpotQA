@@ -50,7 +50,7 @@ def train_parser():
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
-    parser.add_argument("--rand_seed", type=int, default=4321)
+    parser.add_argument("--rand_seed", type=int, default=1234)
 
     parser.add_argument("--train_batch_size", type=int, default=4096, help='training batch size')
     parser.add_argument("--eval_batch_size", type=int, default=1024, help='evaluation batch size')
