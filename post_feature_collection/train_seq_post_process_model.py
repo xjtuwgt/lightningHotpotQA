@@ -75,6 +75,7 @@ def train(args):
     eval_batch_interval_num = int(total_batch_num * args.eval_interval_ratio) + 1
     print('Evaluate the model by = {} batches'.format(eval_batch_interval_num))
     ###++++++++++++++++++++++++++++++++++++++++++
+    early_stop_step = 0
 
     start_epoch = 0
     best_em_ratio = 0.0
@@ -114,6 +115,12 @@ def train(args):
                     dev_prediction_dict = pred_dict
                 if best_f1 < dev_f1:
                     best_f1 = dev_f1
+                    early_stop_step = 0
+                else:
+                    early_stop_step += 1
+
+        if early_stop_step >= 20:
+            break
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     print('Best f1 = {:.5f}'.format(best_f1))
@@ -179,9 +186,17 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 
 if __name__ == '__main__':
 
+    alpha_array = [0.1, 0.15, 0.2, 0.25, 0.3]
+    learning_rate_array = [0.0005, 0.001, 0.002, 0.003]
+    decoder_span_window_size_pair = [(180, 190), (170, 180)]
+    encoder = ['conv', 'ff']
+
+
     args = train_parser()
     seed_everything(seed=args.rand_seed)
     best_em_ratio, best_f1, dev_prediction_dict = train(args)
+
+
     predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
     json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
     print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
