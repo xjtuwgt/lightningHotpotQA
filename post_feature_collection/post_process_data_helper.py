@@ -59,7 +59,7 @@ def trim_range(start_position, end_position, span_length, rand_ratio=0.2):
             rand_idx = random.randint(0, len(span_list) - 1)
             span_start, span_end = span_list[rand_idx]
         else:
-            span_start, span_end = span_list[0]
+            span_start, span_end = span_list[-1]
         return span_start, span_end
 
 class RangeSeqDataset(Dataset):
