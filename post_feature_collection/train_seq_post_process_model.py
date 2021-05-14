@@ -119,7 +119,7 @@ def train(args):
                 else:
                     early_stop_step += 1
 
-        if early_stop_step >= 20:
+        if early_stop_step >= 50:
             break
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
