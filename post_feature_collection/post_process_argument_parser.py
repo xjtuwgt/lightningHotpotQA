@@ -61,7 +61,7 @@ def train_parser():
                         help='number of layer in encoder')
     parser.add_argument("--encoder_hid_dim", type=int, default=512,
                         help='hid_dim of encoder')
-    parser.add_argument("--encoder_drop_out", type=float, default=0.35,
+    parser.add_argument("--encoder_drop_out", type=float, default=0.25,
                         help='hid_dim of encoder')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
