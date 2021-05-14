@@ -69,10 +69,10 @@ def train_parser():
     parser.add_argument("--hid_dim", type=int, default=512, help='cls_emb_dim')
     parser.add_argument("--cpu_number", type=int, default=6, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=300, help='interval number')
-    parser.add_argument("--alpha", type=float, default=0.75, help='prediction alpha')
+    parser.add_argument("--alpha", type=float, default=0.25, help='prediction alpha')
     parser.add_argument("--weighted_loss", type=bool, default=False, help='weighted loss')
 
-    parser.add_argument("--learning_rate", default=0.005, type=float,
+    parser.add_argument("--learning_rate", default=0.001, type=float,
                         help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=1e-8, type=float,
                         help="Weight deay if we apply some.")
