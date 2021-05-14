@@ -209,3 +209,6 @@ if __name__ == '__main__':
                     print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
                     expriment_num = expriment_num + 1
                     print('Experiment {} completed'.format(experiment_id))
+
+    for res in best_res_metrics:
+        print(res)
