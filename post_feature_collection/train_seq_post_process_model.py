@@ -196,10 +196,10 @@ if __name__ == '__main__':
         for lr in learning_rate_array:
             for win_pair in decoder_span_window_size_pair:
                 for encode_dr in encoder_drop_out:
-                    for tr_drop_ratio in trim_drop_ratio:
+                    for t_dr in trim_drop_ratio:
                         for encoder in encoder_array:
                             experiment_id = encoder + '_' + str(alpha) + '_' + str(lr) + '_' + str(win_pair[0]) + '_' + \
-                                            str(win_pair[1]) + '_' + str(encode_dr) + '_' + str(tr_drop_ratio)
+                                            str(win_pair[1]) + '_' + str(encode_dr) + '_' + str(t_dr)
                             print('training post process via {}'.format(experiment_id))
                             args = train_parser()
                             args.rand_seed = args.rand_seed + 1
@@ -207,7 +207,7 @@ if __name__ == '__main__':
                             args.encoder_type = encoder
                             args.decoder_window_size = win_pair[1]
                             args.span_window_size = win_pair[0]
-                            args.trim_drop_ratio = trim_drop_ratio
+                            args.trim_drop_ratio = t_dr
                             args.learning_rate = lr
                             best_em_ratio, best_f1, dev_prediction_dict = train(args)
                             best_res_metrics.append((expriment_num, experiment_id, best_em_ratio, best_f1))
