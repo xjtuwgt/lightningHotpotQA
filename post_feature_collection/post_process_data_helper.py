@@ -44,7 +44,7 @@ class RangeDataset(Dataset):
         return sample
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-def trim_range(start_position, end_position, span_length, rand_ratio=0.2):
+def trim_range(start_position, end_position, span_length, rand_ratio=0.1):
     seq_len = end_position - start_position + 1
     if seq_len <= span_length:
         return start_position, end_position
