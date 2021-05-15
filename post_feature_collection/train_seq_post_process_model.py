@@ -185,7 +185,8 @@ if __name__ == '__main__':
 
     alpha_array = [0.1, 0.15, 0.2, 0.25, 0.3]
     learning_rate_array = [0.0005, 0.001, 0.002]
-    decoder_span_window_size_pair = [(180, 190), (170, 180), (150, 180), (120, 150)]
+    # decoder_span_window_size_pair = [(180, 190), (170, 180), (150, 180), (120, 150)]
+    decoder_span_window_size_pair = [(120, 150), (100, 120), (50, 80)]
     encoder_drop_out = [0.25, 0.3, 0.35, 0.4]
 
     encoder_array = ['conv', 'ff']
