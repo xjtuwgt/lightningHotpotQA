@@ -42,8 +42,8 @@ def train(args):
     torch.manual_seed(random_seed)
     torch.cuda.manual_seed_all(random_seed)
     ##+++++++++
-    train_data = RangeSeqDataset(json_file_name=train_feat_file_name, span_window_size=args.span_window_size)
-    dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name, span_window_size=args.span_window_size)
+    train_data = RangeSeqDataset(json_file_name=train_feat_file_name, span_window_size=args.span_window_size, trim_drop_ratio=args.trim_drop_ratio)
+    dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name, span_window_size=args.span_window_size, trim_drop_ratio=0.0)
     train_data_loader = DataLoader(dataset=train_data,
                                    shuffle=True,
                                    collate_fn=RangeSeqDataset.collate_fn,

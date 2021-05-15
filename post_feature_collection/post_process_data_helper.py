@@ -63,10 +63,11 @@ def trim_range(start_position, end_position, span_length, rand_ratio=0.1):
         return span_start, span_end
 
 class RangeSeqDataset(Dataset):
-    def __init__(self, json_file_name, span_window_size):
+    def __init__(self, json_file_name, span_window_size, trim_drop_ratio):
         self.feat_dict = load_json_score_data(json_score_file_name=json_file_name)
         self.key_list = list(self.feat_dict.keys())
         self.span_window_size = span_window_size
+        self.trim_drop_ratio = trim_drop_ratio
 
     def __len__(self):
         return len(self.key_list)
@@ -82,7 +83,7 @@ class RangeSeqDataset(Dataset):
         r_idx = seq_label.rfind('2') - 2
 
         ##++++++
-        l_idx, r_idx = trim_range(start_position=l_idx, end_position=r_idx, span_length=self.span_window_size)
+        l_idx, r_idx = trim_range(start_position=l_idx, end_position=r_idx, span_length=self.span_window_size, rand_ratio=self.trim_drop_ratio)
         ##++++++
 
         y1 = torch.zeros(1, dtype=torch.long)

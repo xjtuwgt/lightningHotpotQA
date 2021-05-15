@@ -63,6 +63,8 @@ def train_parser():
                         help='hid_dim of encoder')
     parser.add_argument("--encoder_drop_out", type=float, default=0.3,
                         help='hid_dim of encoder')
+    parser.add_argument("--trim_drop_ratio", type=float, default=0.1,
+                        help='trim drop ratio')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
