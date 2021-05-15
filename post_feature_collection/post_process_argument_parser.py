@@ -66,7 +66,7 @@ def train_parser():
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
     parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
-    parser.add_argument("--hid_dim", type=int, default=768, help='cls_emb_dim')
+    parser.add_argument("--hid_dim", type=int, default=256, help='cls_emb_dim')
     parser.add_argument("--cpu_number", type=int, default=6, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=200, help='interval number')
     parser.add_argument("--alpha", type=float, default=0.2, help='prediction alpha')
@@ -80,7 +80,7 @@ def train_parser():
                         help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float,
                         help="Max gradient norm.")
-    parser.add_argument("--num_train_epochs", default=200, type=int,
+    parser.add_argument("--num_train_epochs", default=210, type=int,
                         help="epochs")
     parser.add_argument("--warmup_steps", default=0, type=int,
                         help="epochs")

@@ -199,8 +199,8 @@ if __name__ == '__main__':
                         experiment_id = encoder + '_' + str(alpha) + '_' + str(lr) + '_' + str(win_pair[0]) + '_' + str(win_pair[1]) + '_' + str(encode_dr)
                         print('training post process via {}'.format(experiment_id))
                         args = train_parser()
-                        seed_everything(seed=args.rand_seed)
                         args.rand_seed = args.rand_seed + 1
+                        seed_everything(seed=args.rand_seed)
                         args.encoder_type = encoder
                         args.decoder_window_size = win_pair[1]
                         args.span_window_size = win_pair[0]
