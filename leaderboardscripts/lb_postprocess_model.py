@@ -9,7 +9,7 @@ IGNORE_INDEX = -100
 
 class PositionwiseFeedForward(nn.Module):
     "Implements FFN equation."
-    def __init__(self, model_dim, d_hidden, out_dim, dropout=0.1):
+    def __init__(self, model_dim, d_hidden, out_dim, dropout=0.25):
         super(PositionwiseFeedForward, self).__init__()
         self.output = nn.Sequential(
             nn.Linear(model_dim, d_hidden * 4),
