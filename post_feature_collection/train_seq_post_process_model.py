@@ -107,14 +107,18 @@ def train(args):
                                                                           device=device, alpha=args.alpha, threshold_category=threshold_category, dev_score_dict=dev_score_dict)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
-                if em_ratio > best_em_ratio:
+                # if em_ratio > best_em_ratio:
+                #     best_em_ratio = em_ratio
+                #     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+                #                join(args.output_dir, args.exp_name, f'seq_threshold_pred_model.pkl'))
+                #     dev_prediction_dict = pred_dict
+                if best_f1 < dev_f1:
+                    best_f1 = dev_f1
+                    early_stop_step = 0
                     best_em_ratio = em_ratio
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
                                join(args.output_dir, args.exp_name, f'seq_threshold_pred_model.pkl'))
                     dev_prediction_dict = pred_dict
-                if best_f1 < dev_f1:
-                    best_f1 = dev_f1
-                    early_stop_step = 0
                 else:
                     early_stop_step += 1
 
