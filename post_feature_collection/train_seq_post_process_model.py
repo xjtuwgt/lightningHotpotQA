@@ -190,9 +190,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 
 if __name__ == '__main__':
 
-    learning_rate_array = [0.0005, 0.001, 0.003]
-    # decoder_span_window_size_pair = [(180, 190), (170, 180)]
-    decoder_span_window_size_pair = [(125, 190), (60, 190), (40, 190)]
+    learning_rate_array = [0.001, 0.001, 0.003]
+    decoder_span_window_size_pair = [(185, 190), (170, 180)]
     encoder_drop_out = [0.3]
     trim_drop_ratio = [0.05, 0.1]
 

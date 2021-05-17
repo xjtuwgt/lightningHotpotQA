@@ -84,7 +84,7 @@ def train_parser():
                         help="Max gradient norm.")
     parser.add_argument("--num_train_epochs", default=100, type=int,
                         help="epochs")
-    parser.add_argument("--warmup_steps", default=0, type=int,
+    parser.add_argument("--warmup_steps", default=30, type=int,
                         help="epochs")
     parser.add_argument('--eval_interval_ratio', type=float, default=0.1,
                         help="evaluate every X updates steps.")
