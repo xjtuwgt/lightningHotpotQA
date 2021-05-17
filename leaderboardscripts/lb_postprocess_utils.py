@@ -8,7 +8,8 @@ def distribution_feat_extraction(scores: ndarray, keep_num=False):
     ##     min, max, mean, median, 1/4, 3/4 score, std, num
     ##gap: min, max, mean, median, 1/4, 3/4 score, std
     min_value, max_value, mean_value, median_value, std_value = np.min(scores), np.max(scores), np.mean(scores), np.median(scores), np.std(scores)
-    quartile_value_list = [2.5, 3, 4, 5, 10, 15, 20, 25, 30, 40, 50, 75, 80, 90]
+    # quartile_value_list = [2.5, 3, 4, 5, 10, 15, 20, 25, 30, 40, 50, 75, 80, 90]
+    quartile_value_list = [1, 2, 3, 4, 5, 6, 7.5, 10, 15, 20, 25, 30, 40, 50, 75, 80, 90]
     quartile_feats = [np.percentile(scores, _) for _ in quartile_value_list]
     dist_feat = [min_value, max_value, mean_value, median_value, std_value] + quartile_feats
     dist_feat = [x.tolist() for x in dist_feat]
