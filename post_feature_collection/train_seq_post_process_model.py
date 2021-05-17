@@ -5,7 +5,7 @@ from utils.jdutils import seed_everything
 from os.path import join
 import torch
 import json
-from leaderboardscripts.lb_postprocess_model import RangeSeqModel, RangeSeqScoreModel, RangeSeqCLSModel, seq_loss_computation
+from leaderboardscripts.lb_postprocess_model import RangeSeqModel, RangeSeqScoreModel, seq_loss_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer, get_scheduler
 import random
