@@ -186,7 +186,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 
 if __name__ == '__main__':
 
-    alpha_array = [0.2, 0.25]
+    alpha_array = [0.1, 0.15]
     learning_rate_array = [0.0005, 0.001, 0.003]
     decoder_span_window_size_pair = [(180, 190), (170, 180)]
     # decoder_span_window_size_pair = [(125, 150), (60, 120), (40, 120)]
