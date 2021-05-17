@@ -213,6 +213,7 @@ if __name__ == '__main__':
                             args.span_window_size = win_pair[0]
                             args.trim_drop_ratio = t_dr
                             args.learning_rate = lr
+                            args.alpha = alpha
                             best_em_ratio, best_f1, dev_prediction_dict = train(args)
                             best_res_metrics.append((expriment_num, experiment_id, best_em_ratio, best_f1))
                             predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
