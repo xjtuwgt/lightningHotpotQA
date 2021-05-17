@@ -160,7 +160,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                     print('here')
                 # print('start pred: {} \t true: {}'.format(start_i, gold_y_1[i]))
                 # print('end pred: {} \t true: {}'.format(end_i, gold_y_2[i]))
-                pred_idx_i = (start_i + end_i) // 2
+                pred_idx_i = (start_i + end_i) // 2 + 1
                 # score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 score_i = threshold_category[pred_idx_i][0]
                 y_min_i = np_sigmoid(y_min_np[i])
