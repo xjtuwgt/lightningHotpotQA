@@ -158,8 +158,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 end_i = int(end_indexes[i])
                 if start_i > end_i:
                     print('here')
-                print('start {} \t{}'.format(start_i, gold_y_1[i]))
-                print('end {} \t{}'.format(end_i, gold_y_2[i]))
+                print('start pred: {} \t true: {}'.format(start_i, gold_y_1[i]))
+                print('end pred: {} \t true: {}'.format(end_i, gold_y_2[i]))
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
