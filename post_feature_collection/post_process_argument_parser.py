@@ -67,7 +67,7 @@ def train_parser():
                         help='trim drop ratio')
 
     parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
-    parser.add_argument("--emb_dim", type=int, default=338, help='cls_emb_dim')
+    parser.add_argument("--emb_dim", type=int, default=344, help='cls_emb_dim')
     parser.add_argument("--hid_dim", type=int, default=512, help='cls_emb_dim')
     parser.add_argument("--cpu_number", type=int, default=6, help='cpu number')
     parser.add_argument("--interval_number", type=int, default=200, help='interval number')
