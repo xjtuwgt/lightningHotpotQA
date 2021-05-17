@@ -57,7 +57,6 @@ def train(args):
     t_total_steps = len(train_data_loader) * args.num_train_epochs
     model = RangeSeqModel(args=args)
     # model = RangeSeqScoreModel(args=args)
-    # model = RangeSeqCLSModel(args=args)
     #++++++++++++++++++++++++++++++++++++++++++++
     model.to(device)
 
