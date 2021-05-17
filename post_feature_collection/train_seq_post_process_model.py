@@ -55,8 +55,8 @@ def train(args):
                                  batch_size=args.eval_batch_size)
     dev_score_dict = load_json_score_data(json_score_file_name=dev_score_file_name)
     t_total_steps = len(train_data_loader) * args.num_train_epochs
-    # model = RangeSeqModel(args=args)
-    model = RangeSeqScoreModel(args=args)
+    model = RangeSeqModel(args=args)
+    # model = RangeSeqScoreModel(args=args)
     #++++++++++++++++++++++++++++++++++++++++++++
     model.to(device)
 
@@ -190,41 +190,38 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 
 if __name__ == '__main__':
 
-    alpha_array = [0.1, 0.15]
     learning_rate_array = [0.0005, 0.001, 0.003]
-    decoder_span_window_size_pair = [(180, 190), (170, 180)]
-    # decoder_span_window_size_pair = [(125, 150), (60, 120), (40, 120)]
+    # decoder_span_window_size_pair = [(180, 190), (170, 180)]
+    decoder_span_window_size_pair = [(125, 150), (60, 120), (40, 120)]
     encoder_drop_out = [0.3]
     trim_drop_ratio = [0.2, 0.25]
 
     encoder_array = ['conv', 'ff']
     expriment_num = 0
     best_res_metrics = []
-    for alpha in alpha_array:
-        for lr in learning_rate_array:
-            for win_pair in decoder_span_window_size_pair:
-                for encode_dr in encoder_drop_out:
-                    for t_dr in trim_drop_ratio:
-                        for encoder in encoder_array:
-                            experiment_id = encoder + '_' + str(alpha) + '_' + str(lr) + '_' + str(win_pair[0]) + '_' + \
-                                            str(win_pair[1]) + '_' + str(encode_dr) + '_' + str(t_dr)
-                            print('training post process via {}'.format(experiment_id))
-                            args = train_parser()
-                            args.rand_seed = args.rand_seed + 1
-                            seed_everything(seed=args.rand_seed)
-                            args.encoder_type = encoder
-                            args.decoder_window_size = win_pair[1]
-                            args.span_window_size = win_pair[0]
-                            args.trim_drop_ratio = t_dr
-                            args.learning_rate = lr
-                            args.alpha = alpha
-                            best_em_ratio, best_f1, dev_prediction_dict = train(args)
-                            best_res_metrics.append((expriment_num, experiment_id, best_em_ratio, best_f1))
-                            predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
-                            json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
-                            print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
-                            expriment_num = expriment_num + 1
-                            print('Experiment {} completed'.format(experiment_id))
+    for lr in learning_rate_array:
+        for win_pair in decoder_span_window_size_pair:
+            for encode_dr in encoder_drop_out:
+                for t_dr in trim_drop_ratio:
+                    for encoder in encoder_array:
+                        experiment_id = encoder + '_' + str(lr) + '_' + str(win_pair[0]) + '_' + \
+                                        str(win_pair[1]) + '_' + str(encode_dr) + '_' + str(t_dr)
+                        print('training post process via {}'.format(experiment_id))
+                        args = train_parser()
+                        args.rand_seed = args.rand_seed + 1
+                        seed_everything(seed=args.rand_seed)
+                        args.encoder_type = encoder
+                        args.decoder_window_size = win_pair[1]
+                        args.span_window_size = win_pair[0]
+                        args.trim_drop_ratio = t_dr
+                        args.learning_rate = lr
+                        best_em_ratio, best_f1, dev_prediction_dict = train(args)
+                        best_res_metrics.append((expriment_num, experiment_id, best_em_ratio, best_f1))
+                        predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
+                        json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
+                        print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
+                        expriment_num = expriment_num + 1
+                        print('Experiment {} completed'.format(experiment_id))
 
     for res in best_res_metrics:
         print(res)
