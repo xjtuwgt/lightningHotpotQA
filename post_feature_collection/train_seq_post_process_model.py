@@ -148,8 +148,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
             y_flag_np = batch['flag'].data.cpu().numpy()
             start_indexes = y1.data.cpu().numpy()
             end_indexes = y2.data.cpu().numpy()
-            # gold_y_1 = batch['y_1'].data.cpu().numpy()
-            # gold_y_2 = batch['y_2'].data.cpu().numpy()
+            gold_y_1 = batch['y_1'].data.cpu().numpy()
+            gold_y_2 = batch['y_2'].data.cpu().numpy()
 
             for i in range(y_min_np.shape[0]):
                 key = batch['id'][i]
@@ -158,6 +158,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 end_i = int(end_indexes[i])
                 if start_i > end_i:
                     print('here')
+                print('start {} \t{}'.format(start_i, gold_y_1[i]))
+                print('end {} \t{}'.format(end_i, gold_y_2[i]))
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha)
                 y_min_i = np_sigmoid(y_min_np[i])
                 y_max_i = np_sigmoid(y_max_np[i])
