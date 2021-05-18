@@ -164,7 +164,7 @@ class RangeSeqModel(nn.Module):
 
         self.cls_map = PositionwiseFeedForward(model_dim=self.cls_emb_dim,
                                                d_hidden=2048, out_dim=self.hid_dim)
-        self.score_map = PositionwiseFeedForward(model_dim= 3 * self.score_dim,
+        self.score_map = PositionwiseFeedForward(model_dim= self.score_dim,
                                                d_hidden=2048, out_dim=self.hid_dim)
         ##+++++++++++++++++++++++++++++++++++++++++
         self.encoder_type = self.args.encoder_type
@@ -200,9 +200,9 @@ class RangeSeqModel(nn.Module):
         assert x.shape[1] == self.emb_dim
         cls_x = x[:,:self.cls_emb_dim]
         score_x = x[:,self.cls_emb_dim:]
-        tanh_score_x = F.tanh(score_x)
-        power_score = torch.pow(score_x, 2)
-        score_x = torch.cat([score_x, tanh_score_x, power_score], dim=-1)
+        # tanh_score_x = F.tanh(score_x)
+        # power_score = torch.pow(score_x, 2)
+        # score_x = torch.cat([score_x, tanh_score_x, power_score], dim=-1)
         cls_map_emb = self.cls_map.forward(cls_x)
         score_map_emb = self.score_map.forward(score_x)
         ##+++++++++++++++++++++++++++++++++++++++++
