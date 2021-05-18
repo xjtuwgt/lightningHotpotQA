@@ -21,6 +21,7 @@ def batch_analysis(x_feat: Tensor):
 def train(args):
     train_feat_file_name = join(args.output_dir, args.exp_name, args.train_feat_json_name)
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
+    dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
 
     if torch.cuda.is_available():
         device_ids, _ = single_free_cuda()
@@ -50,7 +51,7 @@ def train(args):
                                  shuffle=False,
                                  collate_fn=RangeDataset.collate_fn,
                                  batch_size=args.eval_batch_size)
-
+    dev_score_dict = load_json_score_data(json_score_file_name=dev_score_file_name)
     model = RangeModel(args=args)
     model.to(device)
 
@@ -100,7 +101,7 @@ def train(args):
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={:.6f}\teval_f1={:.6f}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, best_f1, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, weigted_loss=args.weighted_loss)
+                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, dev_score_dict=dev_score_dict, weigted_loss=args.weighted_loss)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
                 if em_ratio > best_em_ratio:
