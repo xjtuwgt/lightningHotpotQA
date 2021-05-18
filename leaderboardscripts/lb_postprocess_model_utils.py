@@ -28,9 +28,7 @@ class LayerNorm(nn.Module):
         std = z.std(dim=-1, keepdim=True)
         output = (z - mean) / (std + self.eps)
         output = self.gamma * output + self.beta
-
         return output
-
 
 class PoswiseFeedForwardNet(nn.Module):
     """

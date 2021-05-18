@@ -16,8 +16,7 @@ class PositionwiseFeedForward(nn.Module):
             nn.ReLU(),
             LayerNorm(d_hidden * 4, eps=1e-12),
             nn.Dropout(dropout),
-            nn.Linear(d_hidden * 4, out_dim),
-        )
+            nn.Linear(d_hidden * 4, out_dim),)
 
     def forward(self, hidden_states):
         return self.output(hidden_states)
@@ -100,12 +99,6 @@ def loss_computation(scores, y_min, y_max, weight=None):
     loss = loss.mean()
     return loss
 
-class TransformerEncoder(nn.Module):
-    def __init__(self, input_dim, hidden_dim, layer_num):
-        super(TransformerEncoder, self).__init__()
-
-
-
 class ConvEncoder(nn.Module):
     def __init__(self, d_model, d_ff, dropout_p, layer_num):
         super(ConvEncoder, self).__init__()
@@ -138,7 +131,6 @@ class MLPEncoder(nn.Module):
             output = layer(output)
         return output
 
-
 class OutputLayer(nn.Module):
     def __init__(self, hidden_dim, trans_drop=0.35, num_answer=1):
         super(OutputLayer, self).__init__()
@@ -164,7 +156,7 @@ class RangeSeqModel(nn.Module):
 
         self.cls_map = PositionwiseFeedForward(model_dim=self.cls_emb_dim,
                                                d_hidden=2048, out_dim=self.hid_dim)
-        self.score_map = PositionwiseFeedForward(model_dim= self.score_dim,
+        self.score_map = PositionwiseFeedForward(model_dim=3 * self.score_dim,
                                                d_hidden=2048, out_dim=self.hid_dim)
         ##+++++++++++++++++++++++++++++++++++++++++
         self.encoder_type = self.args.encoder_type
@@ -198,9 +190,9 @@ class RangeSeqModel(nn.Module):
         assert x.shape[1] == self.emb_dim
         cls_x = x[:,:self.cls_emb_dim]
         score_x = x[:,self.cls_emb_dim:]
-        # tanh_score_x = F.tanh(score_x)
-        # power_score = torch.pow(score_x, 2)
-        # score_x = torch.cat([score_x, tanh_score_x, power_score], dim=-1)
+        tanh_score_x = F.tanh(score_x)
+        power_score = torch.pow(score_x, 2)
+        score_x = torch.cat([score_x, tanh_score_x, power_score], dim=-1)
         cls_map_emb = self.cls_map.forward(cls_x)
         score_map_emb = self.score_map.forward(score_x)
         ##+++++++++++++++++++++++++++++++++++++++++
