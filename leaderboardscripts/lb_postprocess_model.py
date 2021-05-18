@@ -92,9 +92,6 @@ class RangeModel(nn.Module):
 
 def loss_computation(scores, y_min, y_max, weight=None):
     p_score = scores.squeeze(-1)
-    print(p_score.shape)
-    print(y_min.shape)
-    print(y_max.shape)
     if weight is None:
         loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
     else:

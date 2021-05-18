@@ -2,6 +2,7 @@ from post_feature_collection.post_process_data_helper import RangeDataset
 from post_feature_collection.post_process_argument_parser import train_parser
 from torch.utils.data import DataLoader
 from os.path import join
+from utils.jdutils import seed_everything
 import torch
 import json
 from leaderboardscripts.lb_postprocess_model import RangeModel, loss_computation
@@ -167,8 +168,35 @@ def eval_model(model, data_loader, dev_score_dict, device, weigted_loss):
 
 if __name__ == '__main__':
 
-    args = train_parser()
-    best_em_ratio, best_f1, dev_prediction_dict = train(args)
-    predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
-    json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
-    print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
+    # args = train_parser()
+    # best_em_ratio, best_f1, dev_prediction_dict = train(args)
+    # predict_threshold_file_name = join(args.output_dir, args.exp_name, args.pred_threshold_json_name)
+    # json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
+    # print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
+
+    learning_rate_array = [0.001, 0.003]
+    encoder_drop_out = [0.25, 0.3]
+    encoder_array = ['conv', 'ff']
+    expriment_num = 0
+    best_res_metrics = []
+    for lr in learning_rate_array:
+        for encode_dr in encoder_drop_out:
+            for encoder in encoder_array:
+                experiment_id = encoder + '_' + str(lr) + '_' + str(encode_dr)
+                print('training post process via {}'.format(experiment_id))
+                args = train_parser()
+                args.rand_seed = args.rand_seed + 1
+                seed_everything(seed=args.rand_seed)
+                args.encoder_type = encoder
+                args.learning_rate = lr
+                best_em_ratio, best_f1, dev_prediction_dict = train(args)
+                best_res_metrics.append((expriment_num, experiment_id, best_em_ratio, best_f1))
+                predict_threshold_file_name = join(args.output_dir, args.exp_name,
+                                                   args.pred_threshold_json_name)
+                json.dump(dev_prediction_dict, open(predict_threshold_file_name, 'w'))
+                print('Saving {} records into {}'.format(len(dev_prediction_dict), predict_threshold_file_name))
+                expriment_num = expriment_num + 1
+                print('Experiment {} completed'.format(experiment_id))
+
+    for res in best_res_metrics:
+        print(res)
