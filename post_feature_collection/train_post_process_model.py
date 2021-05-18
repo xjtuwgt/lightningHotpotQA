@@ -8,7 +8,7 @@ import json
 from leaderboardscripts.lb_postprocess_model import RangeModel, loss_computation
 from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, score_row_supp_f1_computation
 from tqdm import tqdm, trange
-from adaptive_threshold.atutils import get_optimizer
+from adaptive_threshold.atutils import get_optimizer, get_scheduler
 import random
 import numpy as np
 from utils.gpu_utils import single_free_cuda
@@ -53,12 +53,14 @@ def train(args):
                                  collate_fn=RangeDataset.collate_fn,
                                  batch_size=args.eval_batch_size)
     dev_score_dict = load_json_score_data(json_score_file_name=dev_score_file_name)
+    t_total_steps = len(train_data_loader) * args.num_train_epochs
     model = RangeModel(args=args)
     model.to(device)
 
     model.zero_grad()
     model.train()
     optimizer = get_optimizer(model=model, args=args)
+    scheduler = get_scheduler(optimizer=optimizer, args=args, total_steps=t_total_steps)
     for name, param in model.named_parameters():
         print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
     print('*' * 75)
@@ -97,6 +99,7 @@ def train(args):
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             optimizer.step()
+            scheduler.step()
             model.zero_grad()
 
             if step % 10 == 0:
@@ -105,13 +108,17 @@ def train(args):
                 em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, device=device, dev_score_dict=dev_score_dict, weigted_loss=args.weighted_loss)
                 dev_loss = dev_loss_i
                 em_ratio = em_count * 1.0/total_count
-                if em_ratio > best_em_ratio:
+                # if em_ratio > best_em_ratio:
+                #     best_em_ratio = em_ratio
+                #     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+                #                join(args.output_dir, args.exp_name, f'threshold_pred_model.pkl'))
+                #     dev_prediction_dict = pred_dict
+                if best_f1 < dev_f1:
+                    best_f1 = dev_f1
                     best_em_ratio = em_ratio
                     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
                                join(args.output_dir, args.exp_name, f'threshold_pred_model.pkl'))
                     dev_prediction_dict = pred_dict
-                if best_f1 < dev_f1:
-                    best_f1 = dev_f1
 
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     print('Best f1 = {:.5f}'.format(best_f1))
