@@ -47,19 +47,46 @@ class RangeModel(nn.Module):
         self.hid_dim = self.args.hid_dim
 
         self.cls_map = PositionwiseFeedForward(model_dim=self.cls_emb_dim,
-                                               d_hidden=1024, out_dim=self.hid_dim)
-        self.score_map = PositionwiseFeedForward(model_dim= self.score_dim,
-                                               d_hidden=1024, out_dim=self.hid_dim)
+                                               d_hidden=2048, out_dim=self.hid_dim)
+        self.score_map = PositionwiseFeedForward(model_dim= 3 * self.score_dim,
+                                               d_hidden=2048, out_dim=self.hid_dim)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        self.encoder_type = self.args.encoder_type
+        if self.encoder_type == 'ff':
+            self.encoder = MLPEncoder(d_model= 2*self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        elif self.encoder_type == 'conv':
+            self.encoder = ConvEncoder(d_model= self.hid_dim, d_ff=2048, dropout_p=self.args.encoder_drop_out,
+                                      layer_num=self.args.encoder_layer)
+        elif self.encoder_type == 'transformer':
+            self.encoder = None
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
         self.threshold_score_func = OutputLayer(hidden_dim=2 * self.hid_dim,
                                            trans_drop=self.args.feat_drop,
                                            num_answer=1)
     def forward(self, x: T):
         assert x.shape[1] == self.emb_dim
-        cls_x = x[:,:self.cls_emb_dim]
-        score_x = x[:,self.cls_emb_dim:]
+        cls_x = x[:, :self.cls_emb_dim]
+        score_x = x[:, self.cls_emb_dim:]
+        tanh_score_x = F.tanh(score_x)
+        power_score = torch.pow(score_x, 2)
+        score_x = torch.cat([score_x, tanh_score_x, power_score], dim=-1)
         cls_map_emb = self.cls_map.forward(cls_x)
         score_map_emb = self.score_map.forward(score_x)
-        x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+        ##+++++++++++++++++++++++++++++++++++++++++
+        if self.encoder_type == 'ff':
+            x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+            x_emb = self.encoder.forward(x_emb)
+        elif self.encoder_type == 'conv':
+            x_emb = torch.stack([cls_map_emb, score_map_emb], dim=1)
+            x_emb = self.encoder.forward(x_emb)
+        elif self.encoder_type == 'transformer':
+            x_emb = torch.cat([cls_map_emb, score_map_emb], dim=-1)
+        else:
+            raise '{} encoder is not supported'.format(self.encoder_type)
+        ##+++++++++++++++++++++++++++++++++++++++++
         scores = self.threshold_score_func.forward(x_emb)
         return scores
 
@@ -70,10 +97,7 @@ def loss_computation(scores, y_min, y_max, weight=None):
     else:
         loss = F.relu(p_score - y_max) + F.relu(y_min - p_score)
         loss = loss * weight
-    # loss = F.relu(torch.tanh(p_score) - torch.tanh(y_max)) + F.relu(torch.tanh(y_min) - torch.tanh(p_score))
-    # loss = loss * loss
     loss = loss.mean()
-    # loss = loss.sum()
     return loss
 
 class TransformerEncoder(nn.Module):
