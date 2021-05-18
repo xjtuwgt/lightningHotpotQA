@@ -121,7 +121,6 @@ def train(args):
                     dev_prediction_dict = pred_dict
                 else:
                     early_stop_step += 1
-
     print('Best em ratio = {:.5f}'.format(best_em_ratio))
     print('Best f1 = {:.5f}'.format(best_f1))
     return best_em_ratio, best_f1, dev_prediction_dict
