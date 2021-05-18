@@ -194,7 +194,7 @@ if __name__ == '__main__':
     decoder_span_window_size_pair = [(170, 180)]
     encoder_drop_out = [0.25]
     trim_drop_ratio = [0.1]
-    alpha_array = [0.05, 0.1]
+    alpha_array = [0.05, 0.1, 0.25]
 
     encoder_array = ['ff']
     expriment_num = 0
