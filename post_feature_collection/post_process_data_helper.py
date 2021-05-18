@@ -93,6 +93,7 @@ class RangeSeqDataset(Dataset):
         y_f1_score = y_label[0]
         y_p_i, y_n_i = y_label[1][1], y_label[1][0]
         weight = torch.FloatTensor([np_sigmoid(y_p_i) - np_sigmoid(y_n_i)])
+        weight = torch.FloatTensor([1.0])
         # weight = torch.FloatTensor([(np_sigmoid(y_p_i) - np_sigmoid(y_n_i)) * y_f1_score])
         y_min = torch.FloatTensor([y_n_i])
         y_max = torch.FloatTensor([y_p_i])
