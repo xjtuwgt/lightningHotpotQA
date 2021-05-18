@@ -195,7 +195,7 @@ if __name__ == '__main__':
     trim_drop_ratio = [0.1]
     alpha_array = [0.05, 0.1]
 
-    encoder_array = ['conv', 'ff']
+    encoder_array = ['ff']
     expriment_num = 0
     best_res_metrics = []
     for lr in learning_rate_array:
