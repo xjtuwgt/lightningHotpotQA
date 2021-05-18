@@ -2,7 +2,6 @@ import logging
 import os
 import argparse
 from os.path import join
-import json
 from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch

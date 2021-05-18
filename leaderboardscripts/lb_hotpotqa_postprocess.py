@@ -1,0 +1,60 @@
+import logging
+import os
+import argparse
+from os.path import join
+from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
+from envs import OUTPUT_FOLDER, DATASET_FOLDER
+
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def boolean_string(s):
+    if s.lower() not in {'false', 'true'}:
+        raise ValueError('Not a valid boolean string')
+    return s.lower() == 'true'
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Adaptive threshold prediction')
+    ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    parser.add_argument("--raw_test_data", type=str, default='data_raw/hotpot_test_distractor_v1.json')
+    parser.add_argument("--input_dir", type=str, default=DATASET_FOLDER, help='define output directory')
+    parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
+    parser.add_argument("--pred_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
+    parser.add_argument("--exp_name",
+                        type=str,
+                        default='albert_orig',
+                        help="If set, this will be used as directory name in OUTOUT folder")
+    parser.add_argument("--test_score_name", type=str, default='test_score.json')
+    parser.add_argument("--test_feat_json_name", type=str, default='test_feat.json')
+    parser.add_argument("--pred_threshold_json_name", type=str, default='pred_thresholds.json')
+
+    parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
+    parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
+    parser.add_argument("--rand_seed", type=int, default=1234)
+    parser.add_argument("--test_batch_size", type=int, default=1024, help='evaluation batch size')
+    parser.add_argument("--span_window_size", type=int, default=165, help='span_window_size')
+    parser.add_argument("--decoder_window_size", type=int, default=180, help='span_window_size')
+    parser.add_argument("--encoder_type", type=str, default='conv',
+                        help='the encoder type to fuse cls, and score: ff, conv, transformer')
+    parser.add_argument("--encoder_layer", type=int, default=2,
+                        help='number of layer in encoder')
+    parser.add_argument("--encoder_hid_dim", type=int, default=512,
+                        help='hid_dim of encoder')
+    parser.add_argument("--encoder_drop_out", type=float, default=0.3,
+                        help='hid_dim of encoder')
+    parser.add_argument("--trim_drop_ratio", type=float, default=0.1,
+                        help='trim drop ratio')
+
+    parser.add_argument("--cls_emb_dim", type=int, default=300, help='cls_emb_dim')
+    parser.add_argument("--emb_dim", type=int, default=344, help='cls_emb_dim')
+    parser.add_argument("--hid_dim", type=int, default=512, help='cls_emb_dim')
+    parser.add_argument("--cpu_number", type=int, default=6, help='cpu number')
+    parser.add_argument("--interval_number", type=int, default=200, help='interval number')
+    parser.add_argument("--alpha", type=float, default=0.05, help='prediction alpha')
+    parser.add_argument("--feat_drop", type=float, default=0.3, help='feature dropout ratio')
+    args = parser.parse_args()
+    return args
