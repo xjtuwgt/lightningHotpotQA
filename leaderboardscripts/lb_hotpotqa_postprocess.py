@@ -26,7 +26,6 @@ def parse_args():
     parser.add_argument("--raw_test_data", type=str, default='data_raw/hotpot_test_distractor_v1.json')
     parser.add_argument("--input_dir", type=str, default=DATASET_FOLDER, help='define output directory')
     parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
-    parser.add_argument("--pred_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     parser.add_argument("--exp_name",
                         type=str,
                         default='albert_orig',
@@ -79,8 +78,10 @@ print('-' * 100)
 
 output_test_feature_file = join(args.output_dir, args.exp_name, args.test_feat_name)
 output_test_score_file = join(args.output_dir, args.exp_name, args.test_score_name)
+prediction_score_file = join(args.output_dir, args.exp_name, args.pred_threshold_name)
 print(output_test_feature_file)
 print(output_test_score_file)
+print(prediction_score_file)
 
 test_data_set = RangeDataset(json_file_name=output_test_feature_file)
 test_data_loader = DataLoader(dataset=test_data_set,
@@ -90,6 +91,8 @@ test_data_loader = DataLoader(dataset=test_data_set,
 
 model = RangeSeqModel(args=args)
 model.to(args.device)
+
+
 
 for batch in test_data_loader:
     print(batch['x_feat'].shape)
