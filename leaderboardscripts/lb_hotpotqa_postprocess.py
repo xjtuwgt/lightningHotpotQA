@@ -120,7 +120,8 @@ with open(post_predict_file, 'w') as fp:
     json.dump(post_predict_dict, fp)
 print('Saving {} records into {}'.format(len(post_predict_dict), post_predict_file))
 
-metrics = hotpot_eval(post_predict_file, raw_test_data_file)
+raw_dev_data_file = join(args.input_dir, args.raw_dev_data)
+metrics = hotpot_eval(post_predict_file, raw_dev_data_file)
 for key, value in metrics.items():
     print('{}:{}'.format(key, value))
 print('-' * 75)
