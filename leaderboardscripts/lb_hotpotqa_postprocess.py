@@ -28,6 +28,7 @@ def parse_args():
         description='Adaptive threshold prediction')
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     parser.add_argument("--raw_test_data", type=str, default='data_raw/hotpot_test_distractor_v1.json')
+    parser.add_argument("--raw_dev_data", type=str, default='data_raw/hotpot_dev_distractor_v1.json')
     parser.add_argument("--input_dir", type=str, default=DATASET_FOLDER, help='define output directory')
     parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     parser.add_argument("--exp_name",
