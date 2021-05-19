@@ -205,6 +205,7 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         if len(supp_para_names) < 2:
             for i in range(len(pred_supp_fact_ids), sent_num):
                 s_idx_i = sorted_idx[i]
+                print(s_idx_i, len(sp_names))
                 sp_name_i = sp_names[s_idx_i]
                 if sp_name_i[0] in supp_para_names:
                     pred_supp_fact_res.append(sp_name_i)
