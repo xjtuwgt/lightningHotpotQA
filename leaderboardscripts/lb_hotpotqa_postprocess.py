@@ -102,15 +102,15 @@ for name, param in model.named_parameters():
 print('-' * 75)
 prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
                                                         threshold_category=threshold_category)
-with open(prediction_score_file, 'w') as fp:
-    json.dump(prediction_score_dict, fp)
-print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-raw_test_data_file = join(args.input_dir, args.raw_test_data)
-test_answer_file = join(args.output_dir, args.exp_name, args.test_answer_predict_name)
-jd_adaptive_threshold_post_process(args=args, full_file=raw_test_data_file,
-                                   score_dict_file=output_test_score_file,
-                                   prediction_answer_file=test_answer_file,
-                                   threshold_pred_dict_file=prediction_score_file)
+# with open(prediction_score_file, 'w') as fp:
+#     json.dump(prediction_score_dict, fp)
+# print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
+# #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# raw_test_data_file = join(args.input_dir, args.raw_test_data)
+# test_answer_file = join(args.output_dir, args.exp_name, args.test_answer_predict_name)
+# jd_adaptive_threshold_post_process(args=args, full_file=raw_test_data_file,
+#                                    score_dict_file=output_test_score_file,
+#                                    prediction_answer_file=test_answer_file,
+#                                    threshold_pred_dict_file=prediction_score_file)
 
 
