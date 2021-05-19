@@ -188,15 +188,29 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         sp_names = score_case['sp_names']
         assert sent_num <= len(sp_names)
         sp_pred_scores = np_sigmoid(np.array(sp_pred_scores))
+        sorted_idx = np.argsort[sp_pred_scores][::-1]
+
+
         pred_supp_fact_res = []
+        pred_supp_fact_ids = []
         supp_para_names = {}
         for i in range(sent_num):
             if sp_pred_scores[i] >= 0.25:
                 pred_supp_fact_res.append(sp_names[i])
+                pred_supp_fact_ids.append(i)
                 if sp_names[i][0] not in supp_para_names:
                     supp_para_names[sp_names[i][0]] = 1
                 else:
                     supp_para_names[sp_names[i][0]] = supp_para_names[sp_names[i][0]] + 1
+        if len(supp_para_names) < 2:
+            for i in range(len(pred_supp_fact_ids), sent_num):
+                s_idx_i = sorted_idx[i]
+                sp_name_i = sp_names[s_idx_i]
+                if sp_name_i[0] in supp_para_names:
+                    pred_supp_fact_res.append(sp_name_i)
+                else:
+                    pred_supp_fact_res.append(sp_name_i)
+                    break
         return pred_supp_fact_res, len(supp_para_names) != 2
 
     pred_answer_dict = pred_data['answer']
