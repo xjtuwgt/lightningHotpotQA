@@ -6,6 +6,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel
 from leaderboardscripts.lb_postprocess_utils import RangeDataset
+from leaderboardscripts.lb_hotpotqa_evaluation import jd_postprocess_score_prediction
 from torch.utils.data import DataLoader
 
 

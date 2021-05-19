@@ -6,7 +6,8 @@ from utils.jdutils import seed_everything
 import torch
 import json
 from leaderboardscripts.lb_postprocess_model import RangeModel, loss_computation
-from post_feature_collection.post_process_feature_extractor import get_threshold_category, np_sigmoid, load_json_score_data, score_row_supp_f1_computation
+from leaderboardscripts.lb_postprocess_utils import get_threshold_category
+from post_feature_collection.post_process_feature_extractor import np_sigmoid, load_json_score_data, score_row_supp_f1_computation
 from tqdm import tqdm, trange
 from adaptive_threshold.atutils import get_optimizer, get_scheduler
 import random

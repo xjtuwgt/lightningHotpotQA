@@ -1,6 +1,6 @@
 from post_feature_collection.post_process_argument_parser import train_parser
 from os.path import join
-from leaderboardscripts.lb_postprocess_utils import load_json_score_data, row_x_feat_extraction
+from leaderboardscripts.lb_postprocess_utils import load_json_score_data, row_x_feat_extraction, get_threshold_category
 from tqdm import tqdm
 import numpy as np
 import json
@@ -8,10 +8,6 @@ import json
 def np_sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-def get_threshold_category(interval_num):
-    interval_range = 1.0 / interval_num
-    threshold_category = [(i * interval_range, (i + 1) * interval_range) for i in range(interval_num)]
-    return threshold_category
 ##+++++++++++++++++++++++++++++++++++++++++++
 def over_lap_ratio(ht_pair1, ref_ht_pair2):
     h, t = ht_pair1
