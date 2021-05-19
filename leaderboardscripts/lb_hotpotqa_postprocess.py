@@ -1,9 +1,8 @@
 import logging
-import os
 import argparse
 from os.path import join
-from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
+from leaderboardscripts.lb_postprocess_model import RangeSeqModel
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -58,3 +57,13 @@ def parse_args():
     parser.add_argument("--feat_drop", type=float, default=0.3, help='feature dropout ratio')
     args = parser.parse_args()
     return args
+
+
+args = parse_args()
+logger.info('-' * 100)
+logger.info('Input Argument Information')
+logger.info('-' * 100)
+args_dict = vars(args)
+for a in args_dict:
+    logger.info('%-28s  %s' % (a, args_dict[a]))
+print('-' * 100)
