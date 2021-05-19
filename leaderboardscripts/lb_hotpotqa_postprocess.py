@@ -10,6 +10,7 @@ from leaderboardscripts.lb_postprocess_utils import RangeDataset
 from leaderboardscripts.lb_postprocess_utils import get_threshold_category
 from leaderboardscripts.lb_hotpotqa_evaluation import jd_postprocess_score_prediction, jd_adaptive_threshold_post_process
 from torch.utils.data import DataLoader
+from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -37,6 +38,7 @@ def parse_args():
     parser.add_argument("--test_score_name", type=str, default='test_score.json')
     parser.add_argument("--test_feat_name", type=str, default='test_feature.json')
     parser.add_argument("--pred_threshold_name", type=str, default='pred_thresholds.json')
+    parser.add_argument("--post_test_prediction_name", type=str, default='test_post_prediction.json')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
@@ -108,9 +110,19 @@ print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_
 # #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 raw_test_data_file = join(args.input_dir, args.raw_test_data)
 test_answer_file = join(args.output_dir, args.exp_name, args.test_answer_predict_name)
-jd_adaptive_threshold_post_process(args=args, full_file=raw_test_data_file,
+post_predict_dict = jd_adaptive_threshold_post_process(full_file=raw_test_data_file,
                                    score_dict_file=output_test_score_file,
                                    prediction_answer_file=test_answer_file,
                                    threshold_pred_dict_file=prediction_score_file)
+post_predict_file = join(args.output_dir, args.exp_name, args.post_test_prediction_name)
+with open(post_predict_file, 'w') as fp:
+    json.dump(post_predict_dict, fp)
+print('Saving {} records into {}'.format(len(post_predict_dict), post_predict_file))
+
+metrics = hotpot_eval(post_predict_file, raw_test_data_file)
+for key, value in metrics.items():
+    print('{}:{}'.format(key, value))
+print('-' * 75)
+
 
 
