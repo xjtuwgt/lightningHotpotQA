@@ -192,13 +192,11 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         supp_para_names = {}
         for i in range(sent_num):
             if sp_pred_scores[i] >= 0.25:
+                pred_supp_fact_res.append(sp_names[i])
                 if sp_names[i][0] not in supp_para_names:
                     supp_para_names[sp_names[i][0]] = 1
                 else:
                     supp_para_names[sp_names[i][0]] = supp_para_names[sp_names[i][0]] + 1
-                if len(supp_para_names) <= 2:
-                    pred_supp_fact_res.append(sp_names[i])
-        supp_para_names = set([x[0] for x in pred_supp_fact_res])
         return pred_supp_fact_res, len(supp_para_names) != 2
 
     pred_answer_dict = pred_data['answer']
