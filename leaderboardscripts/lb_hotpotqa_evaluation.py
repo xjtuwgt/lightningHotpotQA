@@ -211,6 +211,7 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
                 else:
                     pred_supp_fact_res.append(sp_name_i)
                     break
+        supp_para_names = set([x[0] for x in pred_supp_fact_res])
         return pred_supp_fact_res, len(supp_para_names) != 2
 
     pred_answer_dict = pred_data['answer']
