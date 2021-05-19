@@ -102,8 +102,8 @@ for name, param in model.named_parameters():
 print('-' * 75)
 prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
                                                         threshold_category=threshold_category)
-# with open(prediction_score_file, 'w') as fp:
-#     json.dump(prediction_score_dict, fp)
+with open(prediction_score_file, 'w') as fp:
+    json.dump(prediction_score_dict, fp)
 # print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
 # #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # raw_test_data_file = join(args.input_dir, args.raw_test_data)
