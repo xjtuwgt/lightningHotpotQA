@@ -28,8 +28,8 @@ def parse_args():
                         default='albert_orig',
                         help="If set, this will be used as directory name in OUTOUT folder")
     parser.add_argument("--test_score_name", type=str, default='test_score.json')
-    parser.add_argument("--test_feat_json_name", type=str, default='test_feat.json')
-    parser.add_argument("--pred_threshold_json_name", type=str, default='pred_thresholds.json')
+    parser.add_argument("--test_feat_name", type=str, default='test_feat.json')
+    parser.add_argument("--pred_threshold_name", type=str, default='pred_thresholds.json')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
@@ -67,3 +67,8 @@ args_dict = vars(args)
 for a in args_dict:
     logger.info('%-28s  %s' % (a, args_dict[a]))
 print('-' * 100)
+
+output_test_feature_file = join(args.output_dir, args.exp_name, args.test_feat_name)
+output_test_score_file = join(args.output_dir, args.exp_name, args.test_score_name)
+print(output_test_feature_file)
+print(output_test_score_file)
