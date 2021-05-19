@@ -175,13 +175,13 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
         threshold_pred_dict = json.load(reader)
     print('Loading {} records from {}'.format(len(threshold_pred_dict), threshold_pred_dict))
 
-    pred_answer = pred_data['answer']
-    pred_type = pred_data['type']
-
-    for case in tqdm(full_data):
-        key = case['_id']
-        score_case = score_dict[key]
-        threshold_case = threshold_pred_dict[key]
+    # pred_answer = pred_data['answer']
+    # pred_type = pred_data['type']
+    #
+    # for case in tqdm(full_data):
+    #     key = case['_id']
+    #     score_case = score_dict[key]
+    #     threshold_case = threshold_pred_dict[key]
 
     return
 
