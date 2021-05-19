@@ -177,7 +177,8 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
 
     pred_answer = pred_data['answer']
     pred_type = pred_data['type']
-
+    print(type(pred_answer), type(pred_type), len(pred_answer), len(pred_type))
+    pred_supp_fact = {}
     for case in tqdm(full_data):
         key = case['_id']
         score_case = score_dict[key]
