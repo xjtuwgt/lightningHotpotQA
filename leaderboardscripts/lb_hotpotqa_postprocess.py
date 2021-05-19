@@ -89,4 +89,4 @@ test_data_loader = DataLoader(dataset=test_data_set,
                                  batch_size=args.test_batch_size)
 
 for batch in test_data_loader:
-    print(batch)
+    print(batch['feature'].shape)
