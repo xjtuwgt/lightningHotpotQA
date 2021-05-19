@@ -6,6 +6,7 @@ from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel
 from leaderboardscripts.lb_postprocess_utils import RangeDataset
+from leaderboardscripts.lb_postprocess_utils import get_threshold_category
 from leaderboardscripts.lb_hotpotqa_evaluation import jd_postprocess_score_prediction
 from torch.utils.data import DataLoader
 
@@ -80,6 +81,7 @@ print('-' * 100)
 output_test_feature_file = join(args.output_dir, args.exp_name, args.test_feat_name)
 output_test_score_file = join(args.output_dir, args.exp_name, args.test_score_name)
 prediction_score_file = join(args.output_dir, args.exp_name, args.pred_threshold_name)
+threshold_category = get_threshold_category(interval_num=args.interval_number)
 print(output_test_feature_file)
 print(output_test_score_file)
 print(prediction_score_file)
@@ -93,7 +95,5 @@ test_data_loader = DataLoader(dataset=test_data_set,
 model = RangeSeqModel(args=args)
 model.to(args.device)
 
-
-
-for batch in test_data_loader:
-    print(batch['x_feat'].shape)
+prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
+                                                        threshold_category=threshold_category)
