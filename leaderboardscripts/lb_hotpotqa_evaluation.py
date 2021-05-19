@@ -8,7 +8,7 @@ from eval.hotpot_evaluate_v1 import normalize_answer, eval as hotpot_eval
 from csr_mhqa.utils import convert_to_tokens
 from utils.gpu_utils import single_free_cuda
 import torch.nn.functional as F
-from leaderboardscripts.lb_postprocess_utils import row_x_feat_extraction
+from leaderboardscripts.lb_postprocess_utils import row_x_feat_extraction, np_sigmoid
 from leaderboardscripts.lb_postprocess_utils import RangeDataset
 from torch.utils.data import DataLoader
 
@@ -175,7 +175,14 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
         threshold_pred_dict = json.load(reader)
     print('Loading {} records from {}'.format(len(threshold_pred_dict), threshold_pred_dict_file))
 
-    def inner_supp_fact(score_case, pred_score):
+    def inner_supp_fact(score_case, threshold_case):
+        sp_pred_scores = score_case['sp_score']
+        sp_pred_mask = score_case['sp_mask']
+        assert len(sp_pred_scores) == len(sp_pred_mask)
+        sp_pred_scores = np_sigmoid(np.array(sp_pred_scores))
+        sp_names = score_case['sp_names']
+        pred_supp_facts = []
+
         return
 
     pred_answer = pred_data['answer']
@@ -185,8 +192,9 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
         key = case['_id']
         score_case = score_dict[key]
         threshold_case = threshold_pred_dict[key]
+        inner_supp_fact(score_case=score_case, threshold_case=threshold_case)
         print(threshold_case)
-        print(score_case['sp_score'])
+        # print(score_case['sp_score'])
 
     return
 

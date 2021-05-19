@@ -60,6 +60,9 @@ def get_threshold_category(interval_num):
     interval_range = 1.0 / interval_num
     threshold_category = [(i * interval_range, (i + 1) * interval_range) for i in range(interval_num)]
     return threshold_category
+
+def np_sigmoid(x):
+    return 1 / (1 + np.exp(-x))
 ###+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 class RangeDataset(Dataset):
     def __init__(self, json_file_name):
