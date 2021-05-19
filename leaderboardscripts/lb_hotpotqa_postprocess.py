@@ -30,7 +30,7 @@ def parse_args():
                         default='albert_orig',
                         help="If set, this will be used as directory name in OUTOUT folder")
     parser.add_argument("--test_score_name", type=str, default='test_score.json')
-    parser.add_argument("--test_feat_name", type=str, default='test_feat.json')
+    parser.add_argument("--test_feat_name", type=str, default='test_feature.json')
     parser.add_argument("--pred_threshold_name", type=str, default='pred_thresholds.json')
 
     parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
