@@ -156,31 +156,32 @@ def jd_adaptive_threshold_prediction(args, model, feat_dict_file_name):
                 pred_score_dict[key] = float(score_i)
     return pred_score_dict
 
-def jd_adaptive_threshold_post_process(args, full_file, prediction_file, score_dict_file, threshold_pred_dict_file, eval_file, dev_gold_file=None):
-    with open(prediction_file, 'r', encoding='utf-8') as reader:
+def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, score_dict_file, threshold_pred_dict_file, eval_file=None, dev_gold_file=None):
+    with open(prediction_answer_file, 'r', encoding='utf-8') as reader:
         pred_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(pred_data), prediction_answer_file))
 
     with open(full_file, 'r', encoding='utf-8') as reader:
         full_data = json.load(reader)
+    print('Loading {} records from {}'.format(len(full_data), full_file))
 
     with open(score_dict_file, 'r', encoding='utf-8') as reader:
         score_dict = json.load(reader)
+    print('Loading {} records from {}'.format(len(score_dict), score_dict_file))
 
     with open(threshold_pred_dict_file, 'r', encoding='utf-8') as reader:
         threshold_pred_dict = json.load(reader)
+    print('Loading {} records from {}'.format(len(threshold_pred_dict), threshold_pred_dict))
 
     pred_answer = pred_data['answer']
     pred_type = pred_data['type']
 
-    for case in full_data:
+    for case in tqdm(full_data):
         key = case['_id']
         score_case = score_dict[key]
         threshold_case = threshold_pred_dict[key]
 
-        return
-    metrics = []
-
-    return metrics
+    return
 
 
 def jd_unified_eval_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file=None):

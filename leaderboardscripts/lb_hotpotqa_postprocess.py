@@ -8,7 +8,7 @@ from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel
 from leaderboardscripts.lb_postprocess_utils import RangeDataset
 from leaderboardscripts.lb_postprocess_utils import get_threshold_category
-from leaderboardscripts.lb_hotpotqa_evaluation import jd_postprocess_score_prediction
+from leaderboardscripts.lb_hotpotqa_evaluation import jd_postprocess_score_prediction, jd_adaptive_threshold_post_process
 from torch.utils.data import DataLoader
 
 
@@ -33,6 +33,7 @@ def parse_args():
                         type=str,
                         default='albert_orig',
                         help="If set, this will be used as directory name in OUTOUT folder")
+    parser.add_argument("--test_answer_predict_name", type=str, default='test_pred.json')
     parser.add_argument("--test_score_name", type=str, default='test_score.json')
     parser.add_argument("--test_feat_name", type=str, default='test_feature.json')
     parser.add_argument("--pred_threshold_name", type=str, default='pred_thresholds.json')
@@ -83,10 +84,10 @@ output_test_feature_file = join(args.output_dir, args.exp_name, args.test_feat_n
 output_test_score_file = join(args.output_dir, args.exp_name, args.test_score_name)
 prediction_score_file = join(args.output_dir, args.exp_name, args.pred_threshold_name)
 threshold_category = get_threshold_category(interval_num=args.interval_number)
-print(output_test_feature_file)
-print(output_test_score_file)
-print(prediction_score_file)
-
+# print(output_test_feature_file)
+# print(output_test_score_file)
+# print(prediction_score_file)
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 test_data_set = RangeDataset(json_file_name=output_test_feature_file)
 test_data_loader = DataLoader(dataset=test_data_set,
                                  shuffle=False,
@@ -103,3 +104,12 @@ prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, 
                                                         threshold_category=threshold_category)
 json.dump(prediction_score_file, open(prediction_score_file, 'w'))
 print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+raw_test_data_file = join(args.input_dir, args.raw_test_data)
+test_answer_file = join(args.output_dir, args.exp_name, args.test_answer_predict_name)
+jd_adaptive_threshold_post_process(args=args, full_file=raw_test_data_file,
+                                   score_dict_file=output_test_score_file,
+                                   prediction_answer_file=test_answer_file,
+                                   threshold_pred_dict_file=prediction_score_file)
+
+
