@@ -3,6 +3,8 @@ import argparse
 from os.path import join
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel
+from leaderboardscripts.lb_postprocess_utils import RangeDataset
+from torch.utils.data import DataLoader
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -72,3 +74,12 @@ output_test_feature_file = join(args.output_dir, args.exp_name, args.test_feat_n
 output_test_score_file = join(args.output_dir, args.exp_name, args.test_score_name)
 print(output_test_feature_file)
 print(output_test_score_file)
+
+test_data_set = RangeDataset(json_file_name=output_test_feature_file)
+test_data_loader = DataLoader(dataset=test_data_set,
+                                 shuffle=False,
+                                 collate_fn=RangeDataset.collate_fn,
+                                 batch_size=args.test_batch_size)
+
+for batch in test_data_loader:
+    print(batch)
