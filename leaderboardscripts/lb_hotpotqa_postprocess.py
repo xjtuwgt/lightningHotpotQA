@@ -2,6 +2,7 @@ import logging
 import argparse
 from os.path import join
 import torch
+import json
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel
@@ -100,3 +101,5 @@ for name, param in model.named_parameters():
 print('-' * 75)
 prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
                                                         threshold_category=threshold_category)
+json.dump(prediction_score_file, open(prediction_score_file, 'w'))
+print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
