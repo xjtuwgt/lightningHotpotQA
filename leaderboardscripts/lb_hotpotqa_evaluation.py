@@ -44,10 +44,15 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
         answer_dict.update(answer_dict_)
 
         predict_support_np = torch.sigmoid(sent[:, :, 1]).data.cpu().numpy()
+        predict_support_para_np = torch.sigmoid(paras[:,:,1]).data.cpu().numpy()
 
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         predict_support_logit_np = sent[:, :, 1].data.cpu().numpy()
         support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
+        predict_support_para_logit_np = paras[:, :, 1].data.cpu().numpy()
+        support_para_mask_np = batch['para_mask'].data.cpu().numpy()
+
+
         cls_emb_np = cls_emb.data.cpu().numpy()
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -57,8 +62,11 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             sent_pred_ = {'sp_score': predict_support_logit_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(),
                           'sp_names': example_dict[cur_id].sent_names}
+            para_pred_ = {'sp_para_score': predict_support_para_logit_np[i].tolist(), 'sp_para_mask': support_para_mask_np[i].tolist(),
+                          'sp_para_names': example_dict[cur_id].para_names}
+
             cls_emb_ = {'cls_emb': cls_emb_np[i].tolist()}
-            res_score = {**sent_pred_, **cls_emb_}
+            res_score = {**sent_pred_, **cls_emb_, **para_pred_}
             prediction_res_score_dict[cur_id] = res_score
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -179,11 +187,15 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
         sp_pred_scores = score_case['sp_score']
         sp_pred_mask = score_case['sp_mask']
         assert len(sp_pred_scores) == len(sp_pred_mask)
-        sp_pred_scores = np_sigmoid(np.array(sp_pred_scores))
+        sent_num = int(sum(sp_pred_mask))
         sp_names = score_case['sp_names']
-        pred_supp_facts = []
-
-        return
+        assert sent_num <= len(sp_names)
+        sp_pred_scores = np_sigmoid(np.array(sp_pred_scores))
+        pred_supp_fact_res = []
+        for i in range(sent_num):
+            if sp_pred_scores[i] >= threshold_case:
+                pred_supp_fact_res.append(sp_names[i])
+        return pred_supp_fact_res
 
     pred_answer = pred_data['answer']
     pred_type = pred_data['type']
