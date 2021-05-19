@@ -119,6 +119,8 @@ def jd_postprocess_score_prediction(args, model, data_loader, threshold_category
             if start_i > end_i:
                 print('here')
             pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
+            if pred_idx_i == len(threshold_category):
+                print('hhhhhhhhh')
             score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
             score_i = (threshold_category[pred_idx_i][1] + score_i)/2
             pred_score_dict[key] = score_i
