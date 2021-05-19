@@ -167,13 +167,13 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
         full_data = json.load(reader)
     print('Loading {} records from {}'.format(len(full_data), full_file))
 
-    with open(score_dict_file, 'r', encoding='utf-8') as reader:
-        score_dict = json.load(reader)
-    print('Loading {} records from {}'.format(len(score_dict), score_dict_file))
-
-    with open(threshold_pred_dict_file, 'r', encoding='utf-8') as reader:
-        threshold_pred_dict = json.load(reader)
-    print('Loading {} records from {}'.format(len(threshold_pred_dict), threshold_pred_dict))
+    # with open(score_dict_file, 'r', encoding='utf-8') as reader:
+    #     score_dict = json.load(reader)
+    # print('Loading {} records from {}'.format(len(score_dict), score_dict_file))
+    #
+    # with open(threshold_pred_dict_file, 'r', encoding='utf-8') as reader:
+    #     threshold_pred_dict = json.load(reader)
+    # print('Loading {} records from {}'.format(len(threshold_pred_dict), threshold_pred_dict))
 
     # pred_answer = pred_data['answer']
     # pred_type = pred_data['type']
