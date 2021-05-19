@@ -190,7 +190,7 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         sp_pred_scores = np_sigmoid(np.array(sp_pred_scores))
         pred_supp_fact_res = []
         for i in range(sent_num):
-            if sp_pred_scores[i] >= threshold_case:
+            if sp_pred_scores[i] >= 0.25:
                 pred_supp_fact_res.append(sp_names[i])
         return pred_supp_fact_res
 
