@@ -88,5 +88,8 @@ test_data_loader = DataLoader(dataset=test_data_set,
                                  collate_fn=RangeDataset.collate_fn,
                                  batch_size=args.test_batch_size)
 
+model = RangeSeqModel(args=args)
+model.to(args.device)
+
 for batch in test_data_loader:
     print(batch['x_feat'].shape)
