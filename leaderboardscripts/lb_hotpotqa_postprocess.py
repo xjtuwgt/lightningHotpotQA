@@ -1,7 +1,9 @@
 import logging
 import argparse
 from os.path import join
+import torch
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
+from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_postprocess_model import RangeSeqModel
 from leaderboardscripts.lb_postprocess_utils import RangeDataset
 from torch.utils.data import DataLoader
@@ -60,8 +62,13 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
 args = parse_args()
+if torch.cuda.is_available():
+    device_ids, _ = single_free_cuda()
+    device = torch.device('cuda:{}'.format(device_ids[0]))
+else:
+    device = torch.device('cpu')
+args.device = device
 logger.info('-' * 100)
 logger.info('Input Argument Information')
 logger.info('-' * 100)
