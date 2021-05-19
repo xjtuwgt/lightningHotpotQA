@@ -192,25 +192,27 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         for i in range(sent_num):
             if sp_pred_scores[i] >= 0.25:
                 pred_supp_fact_res.append(sp_names[i])
-        pred_para_names = set([x[0] for x in pred_supp_fact_res])
-        if len(pred_para_names) < 2:
-            print(pred_para_names)
-        return pred_supp_fact_res
+        supp_para_names = set([x[0] for x in pred_supp_fact_res])
+        return pred_supp_fact_res, len(supp_para_names) != 2
 
     pred_answer_dict = pred_data['answer']
     pred_type_dict = pred_data['type']
     pred_supp_fact_dict = {}
+    para_count = 0
     for case in tqdm(full_data):
         key = case['_id']
         score_case = score_dict[key]
         threshold_case = threshold_pred_dict[key]
-        supp_fact_i = inner_supp_fact(score_case=score_case, threshold_case=threshold_case)
+        supp_fact_i, flag = inner_supp_fact(score_case=score_case, threshold_case=threshold_case)
         pred_supp_fact_dict[key] = supp_fact_i
+        if flag:
+            para_count = para_count + 1
         # print(threshold_case)
         # print(score_case['sp_score'])
     prediction_res = {'answer': pred_answer_dict,
                   'sp': pred_supp_fact_dict,
                   'type': pred_type_dict}
+    print(para_count)
     return prediction_res
 
 
