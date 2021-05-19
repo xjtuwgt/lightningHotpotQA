@@ -50,7 +50,6 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
         predict_support_para_logit_np = paras[:, :, 1].data.cpu().numpy()
         support_para_mask_np = batch['para_mask'].data.cpu().numpy()
 
-
         cls_emb_np = cls_emb.data.cpu().numpy()
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
