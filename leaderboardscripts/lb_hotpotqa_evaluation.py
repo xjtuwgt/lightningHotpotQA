@@ -112,16 +112,16 @@ def jd_postprocess_score_prediction(args, model, data_loader, threshold_category
             start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
             start_indexes = y1.data.cpu().numpy()
             end_indexes = y2.data.cpu().numpy()
-            for i in range(start_indexes.shape[0]):
-                key = batch['id'][i]
-                start_i = int(start_indexes[i])
-                end_i = int(end_indexes[i])
-                if start_i > end_i:
-                    print('here')
-                pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
-                score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
-                score_i = (threshold_category[pred_idx_i][1] + score_i)/2
-                pred_score_dict[key] = score_i
+        for i in range(start_indexes.shape[0]):
+            key = batch['id'][i]
+            start_i = int(start_indexes[i])
+            end_i = int(end_indexes[i])
+            if start_i > end_i:
+                print('here')
+            pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
+            score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
+            score_i = (threshold_category[pred_idx_i][1] + score_i)/2
+            pred_score_dict[key] = score_i
     return pred_score_dict
 
 def jd_adaptive_threshold_prediction(args, model, feat_dict_file_name):
