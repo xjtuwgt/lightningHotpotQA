@@ -186,6 +186,7 @@ def jd_adaptive_threshold_post_process(args, full_file, prediction_answer_file, 
         score_case = score_dict[key]
         threshold_case = threshold_pred_dict[key]
         print(threshold_case)
+        print(score_case['sp_score'])
 
     return
 
