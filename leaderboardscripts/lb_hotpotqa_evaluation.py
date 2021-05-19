@@ -44,8 +44,6 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
         answer_dict.update(answer_dict_)
 
         predict_support_np = torch.sigmoid(sent[:, :, 1]).data.cpu().numpy()
-        predict_support_para_np = torch.sigmoid(paras[:,:,1]).data.cpu().numpy()
-
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         predict_support_logit_np = sent[:, :, 1].data.cpu().numpy()
         support_sent_mask_np = batch['sent_mask'].data.cpu().numpy()
