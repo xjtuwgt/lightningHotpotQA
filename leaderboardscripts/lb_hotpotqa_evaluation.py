@@ -114,7 +114,6 @@ def jd_postprocess_score_prediction(args, model, data_loader, threshold_category
             end_indexes = y2.data.cpu().numpy()
             for i in range(start_indexes.shape[0]):
                 key = batch['id'][i]
-                total_count = total_count + 1
                 start_i = int(start_indexes[i])
                 end_i = int(end_indexes[i])
                 if start_i > end_i:
