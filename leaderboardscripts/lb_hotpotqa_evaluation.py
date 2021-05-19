@@ -187,7 +187,7 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         sent_num = int(sum(sp_pred_mask))
         sp_names = score_case['sp_names']
         assert sent_num <= len(sp_names)
-        sp_pred_scores = np_sigmoid(np.array(sp_pred_scores))
+        sp_pred_scores = np_sigmoid(np.array(sp_pred_scores)[:sent_num])
         sorted_idx = np.argsort(sp_pred_scores)[::-1]
 
 
