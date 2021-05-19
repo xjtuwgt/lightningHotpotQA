@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument("--test_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=165, help='span_window_size')
     parser.add_argument("--decoder_window_size", type=int, default=180, help='span_window_size')
-    parser.add_argument("--encoder_type", type=str, default='conv',
+    parser.add_argument("--encoder_type", type=str, default='ff',
                         help='the encoder type to fuse cls, and score: ff, conv, transformer')
     parser.add_argument("--encoder_layer", type=int, default=2,
                         help='number of layer in encoder')
@@ -94,6 +94,10 @@ test_data_loader = DataLoader(dataset=test_data_set,
 
 model = RangeSeqModel(args=args)
 model.to(args.device)
+
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+print('-' * 75)
 
 prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
                                                         threshold_category=threshold_category)
