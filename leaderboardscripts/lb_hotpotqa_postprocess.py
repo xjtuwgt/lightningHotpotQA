@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=1234)
     parser.add_argument("--test_batch_size", type=int, default=1024, help='evaluation batch size')
-    parser.add_argument("--span_window_size", type=int, default=165, help='span_window_size')
+    parser.add_argument("--span_window_size", type=int, default=170, help='span_window_size')
     parser.add_argument("--decoder_window_size", type=int, default=180, help='span_window_size')
     parser.add_argument("--encoder_type", type=str, default='ff',
                         help='the encoder type to fuse cls, and score: ff, conv, transformer')
@@ -98,6 +98,5 @@ model.to(args.device)
 for name, param in model.named_parameters():
     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
 print('-' * 75)
-
 prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
                                                         threshold_category=threshold_category)
