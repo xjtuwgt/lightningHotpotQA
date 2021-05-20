@@ -172,7 +172,6 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
                 score_i = (threshold_category[pred_idx_i][1] + score_i)/2
-                score_i = 0.25
                 # score_i = threshold_category[pred_idx_i][1]
                 # y_min_i = np_sigmoid(y_min_np[i])
                 # y_max_i = np_sigmoid(y_max_np[i])
