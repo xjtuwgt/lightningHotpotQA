@@ -197,8 +197,8 @@ if __name__ == '__main__':
     learning_rate_array = [0.003, 0.005]
     decoder_span_window_size_pair = [(180, 190)]
     encoder_drop_out = [0.25]
-    trim_drop_ratio = [0.1]
-    alpha_array = [0.2, 0.25]
+    trim_drop_ratio = [0.05]
+    alpha_array = [0.05, 0.1]
 
     encoder_array = ['ff']
     expriment_num = 0
