@@ -111,9 +111,9 @@ for batch in test_data_loader:
     print(batch['x_feat'].shape)
 
 model = RangeSeqModel(args=args)
-checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
-model.load_state_dict(torch.load(checkpoint_name))
-print('Loading parameters from {}'.format(checkpoint_name))
+# checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
+# model.load_state_dict(torch.load(checkpoint_name))
+# print('Loading parameters from {}'.format(checkpoint_name))
 model.to(args.device)
 
 for name, param in model.named_parameters():
