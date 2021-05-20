@@ -15,7 +15,7 @@ from torch import Tensor
 import torch
 from leaderboardscripts.lb_postprocess_utils import get_threshold_category
 from post_feature_collection.post_process_feature_extractor import np_sigmoid, \
-    load_json_score_data, score_row_supp_f1_computation
+    load_json_score_data, score_row_supp_f1_computation, row_f1_computation
 
 def batch_analysis(x_feat: Tensor):
     p2dist = torch.cdist(x1=x_feat, x2=x_feat, p=2)
@@ -26,6 +26,12 @@ def train(args):
     dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
     dev_score_file_name = join(args.output_dir, args.exp_name, args.dev_score_name)
     threshold_category = get_threshold_category(interval_num=args.interval_number)
+    raw_dev_data_file_name = join(args.input_dir, args.raw_dev_data)
+
+    raw_data = load_json_score_data(json_score_file_name=raw_dev_data_file_name)
+    raw_data_dict = dict([(row['_id'], row)for row in raw_data])
+
+
     if torch.cuda.is_available():
         device_ids, _ = single_free_cuda()
         device = torch.device('cuda:{}'.format(device_ids[0]))
@@ -104,10 +110,10 @@ def train(args):
             if step % 10 == 0:
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={:.6f}\teval_f1={:.6f}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, best_f1, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
-                em_count, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, weighted_loss=args.weighted_loss,
+                em_ratio, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, weighted_loss=args.weighted_loss,
                                                                           device=device, alpha=args.alpha, threshold_category=threshold_category, dev_score_dict=dev_score_dict)
                 dev_loss = dev_loss_i
-                em_ratio = em_count * 1.0/total_count
+                # em_ratio = em_count * 1.0/total_count
                 # if em_ratio > best_em_ratio:
                 #     best_em_ratio = em_ratio
                 #     torch.save({k: v.cpu() for k, v in model.state_dict().items()},
@@ -127,7 +133,7 @@ def train(args):
     print('Best f1 = {:.5f}'.format(best_f1))
     return best_em_ratio, best_f1, dev_prediction_dict
 
-def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, weighted_loss, device):
+def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, weighted_loss, device, raw_dev_dict):
     model.eval()
     em_count = 0
     total_count = 0
@@ -135,6 +141,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
     # for batch in tqdm(data_loader):
     dev_loss_list = []
     dev_f1_list = []
+    dev_em_list = []
     for batch in data_loader:
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -164,30 +171,37 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
                 score_i = (threshold_category[pred_idx_i][1] + score_i)/2
-                y_min_i = np_sigmoid(y_min_np[i])
-                y_max_i = np_sigmoid(y_max_np[i])
-                y_flag_i = y_flag_np[i]
+                # y_min_i = np_sigmoid(y_min_np[i])
+                # y_max_i = np_sigmoid(y_max_np[i])
+                # y_flag_i = y_flag_np[i]
+                #
+                # raw_row = raw_dev_dict[key]
 
                 # print('pred', start_i, end_i)
                 # print('gold', batch['y_1'][i], batch['y_2'][i])
                 if key in dev_score_dict:
                     score_row = dev_score_dict[key]
-                    f1_i = score_row_supp_f1_computation(row=score_row, threshold=score_i)
-                    dev_f1_list.append(f1_i)
+                    raw_row = raw_dev_dict[key]
+                    # f1_i = score_row_supp_f1_computation(row=score_row, threshold=score_i)
+                    em_i, f1_i = row_f1_computation(row=score_row, raw_row=raw_row, threshold=score_i)
                 else:
                     f1_i = 0.0
-                    dev_f1_list.append(f1_i)
+                    em_i = 0.0
+
+                dev_f1_list.append(f1_i)
+                dev_em_list.append(em_i)
 
                 # print(score_i, y_min_i, y_max_i)
-                if score_i > y_min_i and score_i < y_max_i and y_flag_i == 1:
-                    em_count = em_count + 1
+                # if score_i > y_min_i and score_i < y_max_i and y_flag_i == 1:
+                #     em_count = em_count + 1
                 # else:
                 #     print(f1_i)
                 pred_score_dict[key] = float(score_i)
     # print(em_count, total_count)
     avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
     dev_f1 = sum(dev_f1_list)/len(dev_f1_list)
-    return em_count, dev_f1, total_count, avg_dev_loss, pred_score_dict
+    dev_em = sum(dev_em_list)/len(dev_em_list)
+    return dev_em, dev_f1, total_count, avg_dev_loss, pred_score_dict
 
 if __name__ == '__main__':
 
