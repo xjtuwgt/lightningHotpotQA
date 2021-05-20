@@ -464,7 +464,6 @@ def post_process_sent_para(cur_id, example_dict, feature_dict, sent_scores_np_i,
     # ++++++++++++++++++++++++++
     return topk_score_ref, cut_sent_flag, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras
 
-
 def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_names, topk_pred_paras, ans_sent_name):
     if len(cur_sp_pred) < 2:
         post_process_sp_pred = topk_pred_sent_names
@@ -477,7 +476,6 @@ def post_process_technique(cur_sp_pred, topk_pred_sent_names, diff_para_sent_nam
     if (ans_sent_name is not None) and (ans_sent_name not in post_process_sp_pred):
         post_process_sp_pred.append(ans_sent_name)
     return post_process_sp_pred
-
 
 def jd_postprocess_unified_eval_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, dev_gold_file=None):
     model.eval()
