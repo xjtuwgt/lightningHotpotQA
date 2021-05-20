@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 
 from post_feature_collection.post_process_data_helper import RangeSeqDataset
+from utils.jdutils import seed_everything
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -68,10 +69,12 @@ def parse_args():
     parser.add_argument("--interval_number", type=int, default=200, help='interval number')
     parser.add_argument("--alpha", type=float, default=0.05, help='prediction alpha')
     parser.add_argument("--feat_drop", type=float, default=0.3, help='feature dropout ratio')
+    parser.add_argument("--rand_seed", type=int, default=1234, help='random seed')
     args = parser.parse_args()
     return args
 
 args = parse_args()
+seed_everything(seed=args.rand_seed)
 if torch.cuda.is_available():
     device_ids, _ = single_free_cuda()
     device = torch.device('cuda:{}'.format(device_ids[0]))
@@ -109,6 +112,7 @@ test_data_loader = DataLoader(dataset=dev_data,
                                  batch_size=args.test_batch_size)
 for batch in test_data_loader:
     print(batch['x_feat'].shape)
+
 
 model = RangeSeqModel(args=args)
 # checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
