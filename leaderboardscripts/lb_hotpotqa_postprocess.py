@@ -113,19 +113,21 @@ test_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
                                  collate_fn=RangeSeqDataset.collate_fn,
                                  batch_size=1)
+count = 0
 for batch in test_data_loader:
     ids = batch['id']
     test_feature = batch_dict[ids[0]]
     dev_feature = batch['x_feat']
     diff = (test_feature - dev_feature).sum()
     if diff != 0:
+        count += 1
         print(test_feature)
         print(dev_feature)
         print('-' * 75)
     # print((test_feature - dev_feature).sum())
     # print(test_feature)
     # print(dev_feature)
-
+print(count)
 
 # model = RangeSeqModel(args=args)
 # # checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
