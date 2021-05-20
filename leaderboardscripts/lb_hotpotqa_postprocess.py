@@ -121,8 +121,9 @@ for batch in test_data_loader:
     diff = (test_feature - dev_feature).sum()
     if diff != 0:
         count += 1
-        print(test_feature)
-        print(dev_feature)
+        # print(test_feature)
+        # print(dev_feature)
+        print(diff)
         print('-' * 75)
     # print((test_feature - dev_feature).sum())
     # print(test_feature)
