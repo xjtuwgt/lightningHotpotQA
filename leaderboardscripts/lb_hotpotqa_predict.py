@@ -21,7 +21,6 @@ def boolean_string(s):
         raise ValueError('Not a valid boolean string')
     return s.lower() == 'true'
 
-
 def parse_args(args=None):
     parser = argparse.ArgumentParser(
         description='Evaluating albert based reader Model')
@@ -178,7 +177,8 @@ for key, val in best_metrics.items():
     print("{} = {}".format(key, val))
 print('Best threshold = {}'.format(best_threshold))
 
-# threshold = best_threshold
+threshold = best_threshold
+
 #
 # output_test_score_file = join(args.exp_name, 'test_score.json')
 # metrics = jd_unified_test_model(args, model,
