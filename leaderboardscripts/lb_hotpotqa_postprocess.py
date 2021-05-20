@@ -12,6 +12,8 @@ from leaderboardscripts.lb_hotpotqa_evaluation import jd_postprocess_score_predi
 from torch.utils.data import DataLoader
 from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 
+from post_feature_collection.post_process_data_helper import RangeSeqDataset
+
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -39,6 +41,8 @@ def parse_args():
     parser.add_argument("--test_score_name", type=str, default='test_score.json')
     parser.add_argument("--test_feat_name", type=str, default='test_feature.json')
     parser.add_argument("--pred_threshold_name", type=str, default='pred_thresholds.json')
+
+    parser.add_argument("--dev_feat_json_name", type=str, default='dev_feat_data.json')
     parser.add_argument("--post_test_prediction_name", type=str, default='test_post_prediction.json')
 
     parser.add_argument("--pickle_model_check_point_name", type=str, default='seq_pred_model_32.step_3.f1_0.8977_em_0.6463.pkl', help='checkpoint name')
@@ -91,7 +95,9 @@ threshold_category = get_threshold_category(interval_num=args.interval_number)
 # print(prediction_score_file)
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 test_data_set = RangeDataset(json_file_name=output_test_feature_file)
-test_data_loader = DataLoader(dataset=test_data_set,
+dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
+dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name, span_window_size=args.span_window_size, trim_drop_ratio=0.0)
+test_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
                                  collate_fn=RangeDataset.collate_fn,
                                  batch_size=args.test_batch_size)
