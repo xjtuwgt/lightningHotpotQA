@@ -247,6 +247,8 @@ def score_row_supp_f1_computation(row, threshold):
 
 def row_f1_computation(row, raw_row, threshold):
     scores = row['sp_score']
+    print(scores)
+    # scores = np_sigmoid(np.array(scores)).to
     mask = row['sp_mask']
     supp_names = row['sp_names']
     num_candidate = int(sum(mask))
