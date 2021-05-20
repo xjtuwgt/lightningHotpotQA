@@ -111,7 +111,8 @@ def train(args):
                 print('Epoch={}\tstep={}\tloss={:.5f}\teval_em={:.6f}\teval_f1={:.6f}\teval_loss={:.5f}\n'.format(epoch, step, loss.data.item(), best_em_ratio, best_f1, dev_loss))
             if (step + 1) % eval_batch_interval_num == 0:
                 em_ratio, dev_f1, total_count, dev_loss_i, pred_dict = eval_model(model=model, data_loader=dev_data_loader, weighted_loss=args.weighted_loss,
-                                                                          device=device, alpha=args.alpha, threshold_category=threshold_category, dev_score_dict=dev_score_dict)
+                                                                          device=device, alpha=args.alpha, threshold_category=threshold_category,
+                                                                                  dev_score_dict=dev_score_dict, raw_dev_dict=raw_data_dict)
                 dev_loss = dev_loss_i
                 # em_ratio = em_count * 1.0/total_count
                 # if em_ratio > best_em_ratio:
