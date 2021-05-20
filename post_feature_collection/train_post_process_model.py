@@ -191,7 +191,8 @@ def eval_model(model, data_loader, dev_score_dict, device, weigted_loss, raw_dev
     # print(em_count, total_count)
     avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
     dev_f1 = sum(dev_f1_list)/len(dev_f1_list)
-    return em_count, dev_f1, total_count, avg_dev_loss, pred_score_dict
+    em_ratio = sum(dev_em_list)/len(dev_em_list)
+    return em_ratio, dev_f1, total_count, avg_dev_loss, pred_score_dict
 
 if __name__ == '__main__':
 
