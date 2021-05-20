@@ -194,13 +194,13 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 
 if __name__ == '__main__':
 
-    learning_rate_array = [0.003, 0.005, 0.01]
-    decoder_span_window_size_pair = [(170, 190)]
+    learning_rate_array = [0.003, 0.005]
+    decoder_span_window_size_pair = [(120, 190), (170, 190)]
     encoder_drop_out = [0.25]
-    trim_drop_ratio = [0.105]
-    alpha_array = [0.2]
+    trim_drop_ratio = [0.1]
+    alpha_array = [0.05, 0.1]
 
-    encoder_array = ['ff']
+    encoder_array = ['conv', 'ff']
     expriment_num = 0
     best_res_metrics = []
     for lr in learning_rate_array:
