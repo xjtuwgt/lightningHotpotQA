@@ -5,10 +5,12 @@ from os.path import join
 from leaderboardscripts.lb_hotpotqa_data_structure import DataHelper
 from envs import OUTPUT_FOLDER, DATASET_FOLDER
 import torch
+import json
 from utils.gpu_utils import single_free_cuda
 from leaderboardscripts.lb_ReaderModel import UnifiedHGNModel
 from leaderboardscripts.lb_hotpotqa_evaluation import jd_unified_test_model, jd_unified_eval_model, jd_post_process_feature_extraction, \
     jd_postprocess_unified_eval_model, jd_postprecess_unified_test_model
+from eval.hotpot_evaluate_v1 import eval as hotpot_eval
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -48,7 +50,6 @@ def parse_args(args=None):
     parser.add_argument("--trans_drop", type=float, default=0.2)
     parser.add_argument("--trans_heads", type=int, default=3)
     parser.add_argument("--do_rerank", action='store_true', help="Whether re-rank")
-
 
     # graph
     parser.add_argument('--num_edge_type', type=int, default=8)  ### number of edge types
@@ -176,18 +177,15 @@ best_metrics, best_threshold = jd_postprocess_unified_eval_model(args, model, te
 for key, val in best_metrics.items():
     print("{} = {}".format(key, val))
 print('Best threshold = {}'.format(best_threshold))
-
 threshold = best_threshold
-
-#
-# output_test_score_file = join(args.exp_name, 'test_score.json')
-# metrics = jd_unified_test_model(args, model,
-#                                 test_data_loader, test_example_dict, test_feature_dict,
-#                                 output_pred_file, output_eval_file, threshold, args.dev_gold_file, output_test_score_file)
-# for key, val in metrics.items():
-#     print("{} = {}".format(key, val))
-#
-# output_test_feature_file = join(args.exp_name, 'test_feature.json')
-# raw_data_file_name = args.raw_data
-# jd_post_process_feature_extraction(raw_file_name=raw_data_file_name, score_file_name=output_test_score_file,
-#                                    feat_file_name=output_test_feature_file)
+output_test_score_file = join(args.exp_name, 'test_score.json')
+output_prediction_file = join(args.exp_name, 'prediction.json')
+predictions = jd_postprecess_unified_test_model(args, model,
+                                test_data_loader, test_example_dict, test_feature_dict,
+                                threshold, output_test_score_file)
+with open(output_prediction_file, 'w') as f:
+    json.dump(predictions, f)
+if args.dev_gold_file is not None:
+    metrics = hotpot_eval(output_eval_file, args.dev_gold_file)
+    for key, value in metrics.items():
+        print('{}:{}'.format(key, value))

@@ -12,7 +12,7 @@ from leaderboardscripts.lb_postprocess_utils import row_x_feat_extraction, np_si
 from leaderboardscripts.lb_postprocess_utils import RangeDataset
 from torch.utils.data import DataLoader
 
-def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None,
+def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, threshold=0.45,
                           output_score_file=None):
     model.eval()
 
@@ -72,22 +72,15 @@ def jd_unified_test_model(args, model, dataloader, example_dict, feature_dict, p
                     break
                 if predict_support_np[i, j] > threshold:
                     sp_dict[cur_id].append(example_dict[cur_id].sent_names[j])
-
     prediction = {'answer': answer_dict,
                   'sp': sp_dict,
                   'type': answer_type_dict,
                   'type_prob': answer_type_prob_dict}
-    tmp_file = os.path.join(os.path.dirname(prediction_file), 'test_prediction.json')
-    with open(tmp_file, 'w') as f:
-        json.dump(prediction, f)
-    metrics = hotpot_eval(tmp_file, dev_gold_file)
-    json.dump(metrics, open(eval_file, 'w'))
-
     if output_score_file is not None:
         with open(output_score_file, 'w') as f:
             json.dump(prediction_res_score_dict, f)
         print('Saving {} score records into {}'.format(len(prediction_res_score_dict), output_score_file))
-    return metrics
+    return prediction
 
 def jd_post_process_feature_extraction(raw_file_name, score_file_name, feat_file_name):
     with open(raw_file_name, 'r', encoding='utf-8') as reader:
@@ -569,7 +562,7 @@ def jd_postprocess_unified_eval_model(args, model, dataloader, example_dict, fea
     return best_metrics, best_threshold
 
 
-def jd_postprecess_unified_test_model(args, model, dataloader, example_dict, feature_dict, prediction_file, eval_file, threshold=0.45, dev_gold_file=None,
+def jd_postprecess_unified_test_model(args, model, dataloader, example_dict, feature_dict, threshold=0.35,
                           output_score_file=None):
     model.eval()
     answer_dict = {}
