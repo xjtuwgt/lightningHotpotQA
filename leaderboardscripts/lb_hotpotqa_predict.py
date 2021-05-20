@@ -163,24 +163,17 @@ model.to(args.device)
 
 output_pred_file = join(args.exp_name, 'test_pred.json')
 output_eval_file = join(args.exp_name, 'test_eval.txt')
-output_score_file = join(args.exp_name, 'dev_score.json')
+output_test_score_file = join(args.exp_name, 'test_score.json')
+output_prediction_file = join(args.exp_name, 'prediction.json')
 
 
-# best_metrics, best_threshold = jd_unified_eval_model(args, model, test_data_loader, test_example_dict, test_feature_dict,
-#                                 output_pred_file, output_eval_file, args.dev_gold_file)
-# for key, val in best_metrics.items():
-#     print("{} = {}".format(key, val))
-# print('Best threshold = {}'.format(best_threshold))
-
-best_metrics, best_threshold = jd_postprocess_unified_eval_model(args, model, test_data_loader, test_example_dict, test_feature_dict,
+best_metrics, best_threshold = jd_unified_eval_model(args, model, test_data_loader, test_example_dict, test_feature_dict,
                                 output_pred_file, output_eval_file, args.dev_gold_file)
 for key, val in best_metrics.items():
     print("{} = {}".format(key, val))
 print('Best threshold = {}'.format(best_threshold))
 threshold = best_threshold
-output_test_score_file = join(args.exp_name, 'test_score.json')
-output_prediction_file = join(args.exp_name, 'prediction.json')
-predictions = jd_postprecess_unified_test_model(args, model,
+predictions = jd_unified_test_model(args, model,
                                 test_data_loader, test_example_dict, test_feature_dict,
                                 threshold, output_test_score_file)
 with open(output_prediction_file, 'w') as f:
@@ -189,3 +182,21 @@ if args.dev_gold_file is not None:
     metrics = hotpot_eval(output_eval_file, args.dev_gold_file)
     for key, value in metrics.items():
         print('{}:{}'.format(key, value))
+
+# best_metrics, best_threshold = jd_postprocess_unified_eval_model(args, model, test_data_loader, test_example_dict, test_feature_dict,
+#                                 output_pred_file, output_eval_file, args.dev_gold_file)
+# for key, val in best_metrics.items():
+#     print("{} = {}".format(key, val))
+# print('Best threshold = {}'.format(best_threshold))
+# threshold = best_threshold
+# output_test_score_file = join(args.exp_name, 'test_score.json')
+# output_prediction_file = join(args.exp_name, 'prediction.json')
+# predictions = jd_postprecess_unified_test_model(args, model,
+#                                 test_data_loader, test_example_dict, test_feature_dict,
+#                                 threshold, output_test_score_file)
+# with open(output_prediction_file, 'w') as f:
+#     json.dump(predictions, f)
+# if args.dev_gold_file is not None:
+#     metrics = hotpot_eval(output_eval_file, args.dev_gold_file)
+#     for key, value in metrics.items():
+#         print('{}:{}'.format(key, value))
