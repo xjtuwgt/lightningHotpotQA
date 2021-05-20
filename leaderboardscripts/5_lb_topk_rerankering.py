@@ -40,7 +40,7 @@ def parse_args(args=None):
                         default=None,
                         help="configuration file for command parser")
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # parser.add_argument('--input_data', default=None, type=str, required=True)
+    parser.add_argument('--input_model_path', default=None, type=str, required=True)
     parser.add_argument("--encoder_ckpt", default='encoder.pkl', type=str)
     parser.add_argument("--model_ckpt", default='model.pkl', type=str)
     ##++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -113,8 +113,8 @@ def complete_default_test_parser(args):
     args.exp_name = os.path.join(args.output_dir, args.exp_name)
     os.makedirs(args.exp_name, exist_ok=True)
 
-    encoder_path = join(args.exp_name, args.encoder_ckpt)  ## replace encoder.pkl as encoder
-    model_path = join(args.exp_name, args.model_ckpt)  ## replace encoder.pkl as encoder
+    encoder_path = join(args.input_model_path, args.encoder_ckpt)  ## replace encoder.pkl as encoder
+    model_path = join(args.input_model_path, args.model_ckpt)  ## replace encoder.pkl as encoder
     args.encoder_path = encoder_path
     args.model_path = model_path
     return args
