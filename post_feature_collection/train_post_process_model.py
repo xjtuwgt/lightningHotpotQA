@@ -204,7 +204,7 @@ if __name__ == '__main__':
 
     learning_rate_array = [0.001, 0.003]
     encoder_drop_out = [0.25, 0.3]
-    encoder_array = ['conv', 'ff']
+    encoder_array = ['ff']
     expriment_num = 0
     best_res_metrics = []
     for lr in learning_rate_array:
