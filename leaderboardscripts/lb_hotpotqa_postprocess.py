@@ -41,8 +41,7 @@ def parse_args():
     parser.add_argument("--pred_threshold_name", type=str, default='pred_thresholds.json')
     parser.add_argument("--post_test_prediction_name", type=str, default='test_post_prediction.json')
 
-    parser.add_argument("--pickle_model_name", type=str, default='at_pred_model.pkl')
-    parser.add_argument("--pickle_model_check_point_name", type=str, help='checkpoint name')
+    parser.add_argument("--pickle_model_check_point_name", type=str, default='seq_pred_model_32.step_3.f1_0.8977_em_0.6463.pkl', help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=1234)
     parser.add_argument("--test_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=170, help='span_window_size')
@@ -98,6 +97,9 @@ test_data_loader = DataLoader(dataset=test_data_set,
                                  batch_size=args.test_batch_size)
 
 model = RangeSeqModel(args=args)
+checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
+model.load_state_dict(torch.load(checkpoint_name))
+print('Loading parameters from {}'.format(checkpoint_name))
 model.to(args.device)
 
 for name, param in model.named_parameters():
