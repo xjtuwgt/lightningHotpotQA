@@ -578,11 +578,9 @@ def jd_postprecess_unified_test_model(args, model, dataloader, example_dict, fea
     answer_type_dict = {}
     answer_type_prob_dict = {}
     sp_dict = {}
-
     ##++++++
     prediction_res_score_dict = {}
     ##++++++
-
     for batch in tqdm(dataloader):
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for key, value in batch.items():
@@ -618,7 +616,6 @@ def jd_postprecess_unified_test_model(args, model, dataloader, example_dict, fea
         for i in range(predict_support_np.shape[0]):
             cur_id = batch['ids'][i]
             cur_sp_pred = []
-
             # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             sent_pred_ = {'sp_score': predict_support_logit_np[i].tolist(), 'sp_mask': support_sent_mask_np[i].tolist(),
                           'sp_names': example_dict[cur_id].sent_names}
