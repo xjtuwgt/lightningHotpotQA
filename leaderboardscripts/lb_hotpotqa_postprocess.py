@@ -46,7 +46,7 @@ def parse_args():
     parser.add_argument("--dev_feat_json_name", type=str, default='dev_feat_data.json')
     parser.add_argument("--post_test_prediction_name", type=str, default='test_post_prediction.json')
 
-    parser.add_argument("--pickle_model_check_point_name", type=str, default='seq_pred_model_32.step_3.f1_0.8977_em_0.6463.pkl', help='checkpoint name')
+    parser.add_argument("--pickle_model_check_point_name", type=str, default='seq_pred_model_29.step_9.f1_0.8974_em_0.6474.pkl', help='checkpoint name')
     parser.add_argument("--rand_seed", type=int, default=1234)
     parser.add_argument("--test_batch_size", type=int, default=1024, help='evaluation batch size')
     parser.add_argument("--span_window_size", type=int, default=170, help='span_window_size')
@@ -102,65 +102,36 @@ dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name, span_window_size=a
 test_data_loader = DataLoader(dataset=test_data_set,
                                  shuffle=False,
                                  collate_fn=RangeDataset.collate_fn,
-                                 batch_size=1)
-batch_dict = {}
-for batch in test_data_loader:
-    ids = batch['id']
-    batch_dict[ids[0]] = batch['x_feat']
-    # print(ids)
-    # print(batch['x_feat'].shape)
-test_data_loader = DataLoader(dataset=dev_data,
-                                 shuffle=False,
-                                 collate_fn=RangeSeqDataset.collate_fn,
-                                 batch_size=1)
-count = 0
-for batch in test_data_loader:
-    ids = batch['id']
-    test_feature = batch_dict[ids[0]]
-    dev_feature = batch['x_feat']
-    diff = (test_feature - dev_feature).sum()
-    if diff != 0:
-        count += 1
-        # print(test_feature)
-        # print(dev_feature)
-        print(diff)
-        print('-' * 75)
-    # print((test_feature - dev_feature).sum())
-    # print(test_feature)
-    # print(dev_feature)
-print(count)
+                                 batch_size=args.test_batch_size)
 
-# model = RangeSeqModel(args=args)
-# # checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
-# # model.load_state_dict(torch.load(checkpoint_name))
-# # print('Loading parameters from {}'.format(checkpoint_name))
-# model.to(args.device)
-#
-# for name, param in model.named_parameters():
-#     print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
-# print('-' * 75)
-# prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
-#                                                         threshold_category=threshold_category)
-# with open(prediction_score_file, 'w') as fp:
-#     json.dump(prediction_score_dict, fp)
-# print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
-# # #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# raw_test_data_file = join(args.input_dir, args.raw_test_data)
-# test_answer_file = join(args.output_dir, args.exp_name, args.test_answer_predict_name)
-# post_predict_dict = jd_adaptive_threshold_post_process(full_file=raw_test_data_file,
-#                                    score_dict_file=output_test_score_file,
-#                                    prediction_answer_file=test_answer_file,
-#                                    threshold_pred_dict_file=prediction_score_file)
-# post_predict_file = join(args.output_dir, args.exp_name, args.post_test_prediction_name)
-# with open(post_predict_file, 'w') as fp:
-#     json.dump(post_predict_dict, fp)
-# print('Saving {} records into {}'.format(len(post_predict_dict), post_predict_file))
-#
-# raw_dev_data_file = join(args.input_dir, args.raw_dev_data)
-# metrics = hotpot_eval(post_predict_file, raw_dev_data_file)
-# for key, value in metrics.items():
-#     print('{}:{}'.format(key, value))
-# print('-' * 75)
+model = RangeSeqModel(args=args)
+checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
+model.load_state_dict(torch.load(checkpoint_name))
+print('Loading parameters from {}'.format(checkpoint_name))
+model.to(args.device)
 
+for name, param in model.named_parameters():
+    print('Parameter {}: {}, require_grad = {}'.format(name, str(param.size()), str(param.requires_grad)))
+print('-' * 75)
+prediction_score_dict = jd_postprocess_score_prediction(args=args, model=model, data_loader=test_data_loader,
+                                                        threshold_category=threshold_category)
+with open(prediction_score_file, 'w') as fp:
+    json.dump(prediction_score_dict, fp)
+print('Saving {} records into {}'.format(len(prediction_score_dict), prediction_score_file))
+# #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+raw_test_data_file = join(args.input_dir, args.raw_test_data)
+test_answer_file = join(args.output_dir, args.exp_name, args.test_answer_predict_name)
+post_predict_dict = jd_adaptive_threshold_post_process(full_file=raw_test_data_file,
+                                   score_dict_file=output_test_score_file,
+                                   prediction_answer_file=test_answer_file,
+                                   threshold_pred_dict_file=prediction_score_file)
+post_predict_file = join(args.output_dir, args.exp_name, args.post_test_prediction_name)
+with open(post_predict_file, 'w') as fp:
+    json.dump(post_predict_dict, fp)
+print('Saving {} records into {}'.format(len(post_predict_dict), post_predict_file))
 
-
+raw_dev_data_file = join(args.input_dir, args.raw_dev_data)
+metrics = hotpot_eval(post_predict_file, raw_dev_data_file)
+for key, value in metrics.items():
+    print('{}:{}'.format(key, value))
+print('-' * 75)
