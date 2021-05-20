@@ -36,7 +36,7 @@ def parse_args():
     parser.add_argument("--output_dir", type=str, default=OUTPUT_FOLDER, help='define output directory')
     parser.add_argument("--exp_name",
                         type=str,
-                        default='albert_orig',
+                        default='lb_test',
                         help="If set, this will be used as directory name in OUTOUT folder")
     parser.add_argument("--test_answer_predict_name", type=str, default='test_pred.json')
     parser.add_argument("--test_score_name", type=str, default='test_score.json')
