@@ -99,10 +99,15 @@ threshold_category = get_threshold_category(interval_num=args.interval_number)
 test_data_set = RangeDataset(json_file_name=output_test_feature_file)
 dev_feat_file_name = join(args.output_dir, args.exp_name, args.dev_feat_json_name)
 dev_data = RangeSeqDataset(json_file_name=dev_feat_file_name, span_window_size=args.span_window_size, trim_drop_ratio=0.0)
-test_data_loader = DataLoader(dataset=test_data_set,
-                                 shuffle=False,
-                                 collate_fn=RangeDataset.collate_fn,
-                                 batch_size=args.test_batch_size)
+# test_data_loader = DataLoader(dataset=test_data_set,
+#                                  shuffle=False,
+#                                  collate_fn=RangeDataset.collate_fn,
+#                                  batch_size=args.test_batch_size)
+
+test_data_loader = DataLoader(dataset=dev_data,
+                              shuffle=False,
+                              collate_fn=RangeSeqDataset.collate_fn,
+                              batch_size=args.test_batch_size)
 
 model = RangeSeqModel(args=args)
 checkpoint_name = join(args.output_dir, args.exp_name, args.pickle_model_check_point_name)
