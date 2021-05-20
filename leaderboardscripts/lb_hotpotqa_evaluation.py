@@ -195,7 +195,7 @@ def jd_adaptive_threshold_post_process(full_file, prediction_answer_file, score_
         pred_supp_fact_ids = []
         supp_para_names = {}
         for i in range(sent_num):
-            if sp_pred_scores[i] >= 0.25:
+            if sp_pred_scores[i] >= threshold_case:
                 pred_supp_fact_res.append(sp_names[i])
                 pred_supp_fact_ids.append(i)
                 if sp_names[i][0] not in supp_para_names:
