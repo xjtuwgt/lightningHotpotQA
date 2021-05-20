@@ -152,15 +152,15 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
             start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
             loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=weighted_loss)
             dev_loss_list.append(loss.data.item())
-            y_min_np = batch['y_min'].data.cpu().numpy()
-            y_max_np = batch['y_max'].data.cpu().numpy()
-            y_flag_np = batch['flag'].data.cpu().numpy()
+            # y_min_np = batch['y_min'].data.cpu().numpy()
+            # y_max_np = batch['y_max'].data.cpu().numpy()
+            # y_flag_np = batch['flag'].data.cpu().numpy()
             start_indexes = y1.data.cpu().numpy()
             end_indexes = y2.data.cpu().numpy()
             # gold_y_1 = batch['y_1'].data.cpu().numpy()
             # gold_y_2 = batch['y_2'].data.cpu().numpy()
 
-            for i in range(y_min_np.shape[0]):
+            for i in range(start_indexes.shape[0]):
                 key = batch['id'][i]
                 total_count = total_count + 1
                 start_i = int(start_indexes[i])
@@ -171,8 +171,8 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 # print('end pred: {} \t true: {}'.format(end_i, gold_y_2[i]))
                 pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
                 # score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
-                # score_i = (threshold_category[pred_idx_i][1] + score_i)/2
-                score_i = threshold_category[pred_idx_i][1]
+                score_i = (threshold_category[pred_idx_i][1] + score_i)/2
+                # score_i = threshold_category[pred_idx_i][1]
                 # y_min_i = np_sigmoid(y_min_np[i])
                 # y_max_i = np_sigmoid(y_max_np[i])
                 # y_flag_i = y_flag_np[i]
