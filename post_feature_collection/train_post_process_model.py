@@ -173,6 +173,8 @@ def eval_model(model, data_loader, dev_score_dict, device, weigted_loss, raw_dev
                 else:
                     f1_i = 0.0
                     em_i = 0.0
+                dev_em_list.append(em_i)
+                dev_f1_list.append(f1_i)
                 # if key in dev_score_dict:
                 #     score_row = dev_score_dict[key]
                 #     f1_i = score_row_supp_f1_computation(row=score_row, threshold=np_sigmoid(score_i))
