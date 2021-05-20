@@ -179,7 +179,7 @@ predictions = jd_unified_test_model(args, model,
 with open(output_prediction_file, 'w') as f:
     json.dump(predictions, f)
 if args.dev_gold_file is not None:
-    metrics = hotpot_eval(output_eval_file, args.dev_gold_file)
+    metrics = hotpot_eval(output_prediction_file, args.dev_gold_file)
     for key, value in metrics.items():
         print('{}:{}'.format(key, value))
 
