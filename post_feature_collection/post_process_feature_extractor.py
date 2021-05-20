@@ -253,7 +253,7 @@ def row_f1_computation(row, raw_row, threshold):
     trim_scores = scores[:num_candidate]
     pred_sp_names = []
     for idx, score in enumerate(trim_scores):
-        if score > threshold and idx < len(supp_names):
+        if score >= threshold and idx < len(supp_names):
             pred_sp_names.append(supp_names[idx])
     gold_facts = set([(sp[0], sp[1]) for sp in raw_row['supporting_facts']])
     pred_sup_facts = set([(_[0], _[1])for _ in pred_sp_names])
