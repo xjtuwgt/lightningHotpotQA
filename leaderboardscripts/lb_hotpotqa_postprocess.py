@@ -103,18 +103,22 @@ test_data_loader = DataLoader(dataset=test_data_set,
                                  shuffle=False,
                                  collate_fn=RangeDataset.collate_fn,
                                  batch_size=1)
+batch_dict = {}
 for batch in test_data_loader:
     ids = batch['id']
-    print(ids)
-    print(batch['x_feat'].shape)
+    batch_dict[ids[0]] = batch['x_feat']
+    # print(ids)
+    # print(batch['x_feat'].shape)
 test_data_loader = DataLoader(dataset=dev_data,
                                  shuffle=False,
                                  collate_fn=RangeSeqDataset.collate_fn,
                                  batch_size=1)
 for batch in test_data_loader:
     ids = batch['id']
-    print(ids)
-    print(batch['x_feat'].shape)
+    test_feature = batch_dict[ids[0]]
+    dev_feature = batch['x_feat']
+    print(test_feature)
+    print(dev_feature)
 
 
 # model = RangeSeqModel(args=args)
