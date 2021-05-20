@@ -57,7 +57,7 @@ def train_parser():
     parser.add_argument("--span_window_size", type=int, default=165, help='span_window_size')
     parser.add_argument("--decoder_window_size", type=int, default=180, help='span_window_size')
     parser.add_argument("--encoder_type", type=str, default='ff', help='the encoder type to fuse cls, and score: ff, conv, transformer')
-    parser.add_argument("--encoder_layer", type=int, default=3,
+    parser.add_argument("--encoder_layer", type=int, default=2,
                         help='number of layer in encoder')
     parser.add_argument("--encoder_hid_dim", type=int, default=512,
                         help='hid_dim of encoder')
