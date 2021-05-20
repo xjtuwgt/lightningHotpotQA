@@ -69,7 +69,6 @@ def parse_args():
     parser.add_argument("--interval_number", type=int, default=200, help='interval number')
     parser.add_argument("--alpha", type=float, default=0.05, help='prediction alpha')
     parser.add_argument("--feat_drop", type=float, default=0.3, help='feature dropout ratio')
-    parser.add_argument("--rand_seed", type=int, default=1234, help='random seed')
     args = parser.parse_args()
     return args
 
