@@ -164,7 +164,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 end_i = int(end_indexes[i])
                 if start_i > end_i:
                     print('here')
-                pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
+                pred_idx_i = (start_i + end_i) // 2 ## better for EM
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
                 score_i = (threshold_category[pred_idx_i][0] + score_i)/2
                 # score_i = threshold_category[pred_idx_i][0]
