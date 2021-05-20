@@ -152,9 +152,6 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
             start_scores, end_scores, y1, y2 = model(batch['x_feat'], return_yp=True)
             loss = seq_loss_computation(start=start_scores, end=end_scores, batch=batch, weight=weighted_loss)
             dev_loss_list.append(loss.data.item())
-            # y_min_np = batch['y_min'].data.cpu().numpy()
-            # y_max_np = batch['y_max'].data.cpu().numpy()
-            # y_flag_np = batch['flag'].data.cpu().numpy()
             start_indexes = y1.data.cpu().numpy()
             end_indexes = y2.data.cpu().numpy()
             # gold_y_1 = batch['y_1'].data.cpu().numpy()
@@ -167,8 +164,6 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 end_i = int(end_indexes[i])
                 if start_i > end_i:
                     print('here')
-                # print('start pred: {} \t true: {}'.format(start_i, gold_y_1[i]))
-                # print('end pred: {} \t true: {}'.format(end_i, gold_y_2[i]))
                 pred_idx_i = (start_i + end_i) // 2 + 1 ## better for EM
                 score_i = (threshold_category[start_i][1] * (1 - alpha) + threshold_category[end_i][0] * alpha) ## better for F1
                 score_i = (threshold_category[pred_idx_i][1] + score_i)/2
@@ -184,7 +179,6 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
                 if key in dev_score_dict:
                     score_row = dev_score_dict[key]
                     raw_row = raw_dev_dict[key]
-                    # f1_i = score_row_supp_f1_computation(row=score_row, threshold=score_i)
                     em_i, f1_i = row_f1_computation(row=score_row, raw_row=raw_row, threshold=score_i)
                 else:
                     f1_i = 0.0
@@ -192,14 +186,7 @@ def eval_model(model, data_loader, dev_score_dict, threshold_category, alpha, we
 
                 dev_f1_list.append(f1_i)
                 dev_em_list.append(em_i)
-
-                # print(score_i, y_min_i, y_max_i)
-                # if score_i > y_min_i and score_i < y_max_i and y_flag_i == 1:
-                #     em_count = em_count + 1
-                # else:
-                #     print(f1_i)
                 pred_score_dict[key] = float(score_i)
-    # print(em_count, total_count)
     avg_dev_loss = sum(dev_loss_list)/len(dev_loss_list)
     dev_f1 = sum(dev_f1_list)/len(dev_f1_list)
     dev_em = sum(dev_em_list)/len(dev_em_list)
