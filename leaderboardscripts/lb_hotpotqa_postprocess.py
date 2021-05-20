@@ -117,8 +117,9 @@ for batch in test_data_loader:
     ids = batch['id']
     test_feature = batch_dict[ids[0]]
     dev_feature = batch['x_feat']
-    print(test_feature)
-    print(dev_feature)
+    print((test_feature - dev_feature).sum())
+    # print(test_feature)
+    # print(dev_feature)
 
 
 # model = RangeSeqModel(args=args)
