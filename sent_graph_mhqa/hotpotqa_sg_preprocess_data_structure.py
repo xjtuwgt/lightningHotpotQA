@@ -18,7 +18,8 @@ class Example(object):
                  answer_tokens=None,
                  answer_input_ids=None,
                  answer_positions=None,
-                 ctx_with_answer=None):
+                 ctx_with_answer=None,
+                 edges=None):
         self.qas_id = qas_id
         self.qas_type = qas_type
         self.question_tokens = question_tokens
@@ -38,3 +39,4 @@ class Example(object):
         self.ctx_with_answer = ctx_with_answer
         self.para_num = para_num
         self.sent_num = sent_num
+        self.edges=edges
