@@ -153,10 +153,11 @@ for data in tqdm(input_data):
             print("{} not exist in DB".format(title))
         else:
             doc_id = title_to_id[title]
-            text_with_links = pickle.loads(doc_db.get_doc_text_with_links(doc_id))
             text_ner = pickle.loads(doc_db.get_doc_ner(doc_id))
 
-            hyperlink_titles, hyperlink_spans = [], []
+            text_with_links = pickle.loads(doc_db.get_doc_text_with_links(doc_id))
+            hyperlink_titles = []
+            hyperlink_spans = []
             hyperlink_paras = []
             for i, sentence in enumerate(text_with_links):
                 _lt, _ls, _lp = [], [], []
@@ -167,8 +168,8 @@ for data in tqdm(input_data):
                         if link_title in title_to_id:
                             _lt.append(link_title)
                             _ls.append(mention_entity)
-                            doc_text = pickle.loads(doc_db.get_doc_text(title_to_id[link_title]))
-                            _lp.append(doc_text)
+                            # doc_text = pickle.loads(doc_db.get_doc_text(title_to_id[link_title]))
+                            # _lp.append(doc_text)
                 hyperlink_titles.append(_lt)
                 hyperlink_spans.append(_ls)
                 hyperlink_paras.append(_lp)
@@ -176,7 +177,9 @@ for data in tqdm(input_data):
             #                       'hyperlink_paras': hyperlink_paras,
             #                       'hyperlink_spans': hyperlink_spans,
             #                       'text_ner': text_ner}
-            output_data[title] = {'text_ner': text_ner}
+            output_data[title] = {
+                'hyperlink_titles': hyperlink_titles,
+                'text_ner': text_ner}
 json.dump(output_data, open(output_file, 'w'))
 print('Saving {} records in to {}'.format(len(output_data), output_file))
 print('Processing takes {:.5f} seconds'.format(time() - start_time))
