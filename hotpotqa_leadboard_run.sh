@@ -38,10 +38,10 @@ preprocess() {
         [[ -d $OUTPUT_PROCESSED ]] || mkdir -p $OUTPUT_PROCESSED
         [[ -d $OUTPUT_FEAT ]] || mkdir -p $OUTPUT_FEAT
 
-#        echo "1. Extract Wiki Link & NER from DB"
-#        # Input: INPUT_FILE, enwiki_ner.db
-#        # Output: doc_link_ner.json
-#        python leaderboardscripts/1_lb_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner.json
+        echo "1. Extract Wiki Link & NER from DB"
+        # Input: INPUT_FILE, enwiki_ner.db
+        # Output: doc_link_ner.json
+        python leaderboardscripts/1_lb_extract_db.py $INPUT_FILE $DATA_ROOT/knowledge/enwiki_ner.db $OUTPUT_PROCESSED/doc_link_ner.json
 #
 #        echo "2. Extract NER for Question and Context"
 #        # Input: doc_link_ner.json
@@ -76,8 +76,8 @@ preprocess() {
 #        echo "9. Dump features for albert do_lower_case for re-rank results"
 #        python leaderboardscripts/4_lb_ext_dump_features.py --para_path $OUTPUT_PROCESSED --full_data $INPUT_FILE --model_name_or_path albert-xxlarge-v2 --do_lower_case --ner_path $OUTPUT_PROCESSED/ner.json --model_type albert --tokenizer_name albert-xxlarge-v2 --output_dir $OUTPUT_FEAT --doc_link_ner $OUTPUT_PROCESSED/doc_link_ner.json --ranker long --data_type $DATA_TYPE --do_rerank --topk $TOPK_PARA_NUM --max_para_num $SELECTEED_DOC_NUM
 
-        echo "10. Model prediction with albert"
-        python leaderboardscripts/lb_hotpotqa_predict.py --testf_type long_low --input_model_path $DATA_ROOT/models/finetuned/QA --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
+#        echo "10. Model prediction with albert"
+#        python leaderboardscripts/lb_hotpotqa_predict.py --testf_type long_low --input_model_path $DATA_ROOT/models/finetuned/QA --max_para_num $SELECTEED_DOC_NUM --topk_para_num $TOPK_PARA_NUM --do_rerank
 
 #        echo "11. Model postprocessing"
 #        python leaderboardscripts/lb_hotpotqa_postprocess.py
