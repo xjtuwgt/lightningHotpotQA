@@ -147,6 +147,8 @@ input_data = json.load(open(input_file, 'r'))
 print('Loading {} records from {}'.format(len(input_data), input_file))
 output_data = {}
 for data in tqdm(input_data):
+    for key, value in data.items():
+        print(key)
     context = dict(data['context'])
     for title in context.keys():
         if title not in title_to_id:

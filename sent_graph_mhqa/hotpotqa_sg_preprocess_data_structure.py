@@ -39,4 +39,4 @@ class Example(object):
         self.ctx_with_answer = ctx_with_answer
         self.para_num = para_num
         self.sent_num = sent_num
-        self.edges=edges
+        self.edges=edges ## triple list
